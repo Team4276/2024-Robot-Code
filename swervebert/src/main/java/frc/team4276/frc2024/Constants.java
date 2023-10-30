@@ -123,7 +123,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final int kopControllerPort = 1;
+    public static final int kOpControllerPort = 1;
     public static final double kJoystickDeadband = 0.1;
   }
 

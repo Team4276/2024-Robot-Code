@@ -22,10 +22,6 @@ public class AutoPicker {
         return chooser.getSelected();
     }
 
-
-    //TODO: look into auto architecture
-    //TODO: give heading control to the code
-
    
 
 

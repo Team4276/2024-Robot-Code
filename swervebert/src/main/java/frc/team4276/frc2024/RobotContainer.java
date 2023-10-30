@@ -4,12 +4,10 @@
 
 package frc.team4276.frc2024;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.team4276.frc2024.auto.AutoPicker;
-import frc.team4276.frc2024.Constants.OIConstants;
-import frc.team4276.frc2024.controlboard.BetterXboxController;
+import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -27,12 +25,7 @@ public class RobotContainer {
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = DriveSubsystem.getInstance();
 
-    // The driver's controller
-    private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-    private final BetterXboxController m_bDriverController = new BetterXboxController(m_driverController);
-
-    private final XboxController m_opController = new XboxController(OIConstants.kopControllerPort);
-    private final BetterXboxController m_BetterXboxController = new BetterXboxController(m_opController);
+    private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
     private final AutoPicker chooser;
 
@@ -51,9 +44,9 @@ public class RobotContainer {
                 // Turning is controlled by the X axis of the right stick.
                 new RunCommand(
                         () -> m_robotDrive.drive(
-                                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kJoystickDeadband),
-                                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kJoystickDeadband),
-                                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kJoystickDeadband),
+                                -mControlBoard.driver.getLeftY(),
+                                -mControlBoard.driver.getLeftX(),
+                                -mControlBoard.driver.getRightX(),
                                 true, false),
                         m_robotDrive));
     }
@@ -68,34 +61,34 @@ public class RobotContainer {
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
-        new JoystickButton(m_driverController, Button.kR1.value)
+        new JoystickButton(mControlBoard.driver.getController(), Button.kR1.value)
                 .whileTrue(new RunCommand(
                         () -> m_robotDrive.setX(),
                         m_robotDrive));
 
-        new Trigger(m_driverController::getLeftBumper)
+        new Trigger(mControlBoard.driver.getController()::getLeftBumper)
                 .onTrue(new InstantCommand(() -> m_robotDrive.shiftSpeedDown()));
 
-        new Trigger(m_driverController::getRightBumper)
+        new Trigger(mControlBoard.driver.getController()::getRightBumper)
                 .onTrue(new InstantCommand(() -> m_robotDrive.shiftSpeedUp()));
 
         
-        new Trigger(m_driverController::getAButton)
+        new Trigger(mControlBoard.driver.getController()::getAButton)
                 .onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
 
-        new Trigger(m_bDriverController::getLT)
+        new Trigger(mControlBoard.driver::getLT)
                 .whileTrue(new RunCommand(() -> 
                 m_robotDrive.snapDrive(
-                                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kJoystickDeadband),
-                                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kJoystickDeadband),
+                                -mControlBoard.driver.getLeftY(),
+                                -mControlBoard.driver.getLeftX(),
                                 0,
                                 true, false)));
         
-        new Trigger(m_bDriverController::getRT)
+        new Trigger(mControlBoard.driver::getRT)
                 .whileTrue(new RunCommand(() -> 
                         m_robotDrive.snapDrive(
-                                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kJoystickDeadband),
-                                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kJoystickDeadband),
+                                -mControlBoard.driver.getLeftY(),
+                                -mControlBoard.driver.getLeftX(),
                                 180,
                                 true, false)));
 

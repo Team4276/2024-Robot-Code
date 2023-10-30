@@ -27,7 +27,7 @@
 // (tax free) to "Marina High School Educational Foundation, attn: FRC team 4276"          //
 // (Huntington Beach, CA)                                                                  //
 //*****************************************************************************************//
-package frc.team4276.frc2024.utils;
+package frc.team4276.frc2024.logger;
 
 import java.io.BufferedWriter;
 import java.io.File;
