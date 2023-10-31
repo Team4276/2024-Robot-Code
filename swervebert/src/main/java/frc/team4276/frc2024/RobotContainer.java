@@ -5,7 +5,6 @@
 package frc.team4276.frc2024;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.team4276.frc2024.auto.AutoPicker;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
@@ -61,11 +60,6 @@ public class RobotContainer {
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
-        new JoystickButton(mControlBoard.driver.getController(), Button.kR1.value)
-                .whileTrue(new RunCommand(
-                        () -> m_robotDrive.setX(),
-                        m_robotDrive));
-
         new Trigger(mControlBoard.driver.getController()::getLeftBumper)
                 .onTrue(new InstantCommand(() -> m_robotDrive.shiftSpeedDown()));
 
