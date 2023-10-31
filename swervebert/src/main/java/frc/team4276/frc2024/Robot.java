@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     allianceChooser = new SendableChooser<Alliance>();
-    allianceChooser.setDefaultOption("No Alliance", Alliance.Invalid);
+    allianceChooser.setDefaultOption("Unselected", Alliance.Invalid);
     allianceChooser.addOption("Blue", Alliance.Blue);
     allianceChooser.addOption("Red", Alliance.Red);
 
@@ -81,8 +81,6 @@ public class Robot extends TimedRobot {
     }
 
     SmartDashboard.putString("Alliance", alliance.name());
-    
-
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

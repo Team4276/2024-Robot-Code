@@ -44,7 +44,7 @@ public class BetterXboxController {
     }
 
     public boolean getLT(){
-        if (mController.getLeftTriggerAxis() > 0.1){
+        if (mController.getLeftTriggerAxis() > OIConstants.kJoystickDeadband){
             return true;
         } else {
             return false;
@@ -52,7 +52,7 @@ public class BetterXboxController {
     }
 
     public boolean getRT(){
-        if (mController.getRightTriggerAxis() > 0.1){
+        if (mController.getRightTriggerAxis() > OIConstants.kJoystickDeadband){
             return true;
         } else {
             return false;

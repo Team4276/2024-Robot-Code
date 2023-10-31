@@ -38,7 +38,6 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Robot;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
-import frc.team4276.lib.MAXSwerveModule;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
