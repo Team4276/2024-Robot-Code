@@ -15,7 +15,7 @@ public class AutoEvents {
     private static boolean event = false;
 
     /** Template */
-    public static boolean waitForEvent(){
+    public boolean waitForEvent(){
         if (event == true){
             event = false;
             return true;
