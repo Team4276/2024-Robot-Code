@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.team4276.frc2024.logger.CTestMonitor;
 
 
 
@@ -26,8 +25,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-
-  public static CTestMonitor m_testMonitor = new CTestMonitor();
   
   public static Alliance alliance;
 

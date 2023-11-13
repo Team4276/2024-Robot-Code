@@ -11,7 +11,7 @@ public class WaitForEventAction implements Action{
 
     @Override
     public boolean isFinished() {
-        return AutoEvents.event;
+        return AutoEvents.getEvent();
     }
 
     @Override

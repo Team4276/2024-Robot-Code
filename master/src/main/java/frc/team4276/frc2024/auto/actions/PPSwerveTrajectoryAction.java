@@ -4,26 +4,26 @@ import frc.team4276.frc2024.subsystems.DriveSubsystem;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class PPSwerveTrajectoryAction implements Action {
 
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
-    private final Trajectory mTrajectory;
-    private final Rotation2d mHeading;
+    private final PathPlannerTrajectory mTrajectory;
+    private final Command mCommand;
 
-    public PPSwerveTrajectoryAction(PathPlannerTrajectory trajectory, Rotation2d heading){
+    public PPSwerveTrajectoryAction(PathPlannerTrajectory trajectory){
         mTrajectory = trajectory;
-        mHeading = heading;
+
+        mCommand = mDriveSubsystem.followPathCommand(trajectory);
     }
 
     @Override
-    public void start() { //TODO: check if position is reset
-        if (true) {
+    public void start() {
+        if (mDriveSubsystem.readyForAuto()) {
             System.out.println("Starting trajectory! (length=" + mTrajectory.getTotalTimeSeconds() + " seconds)");
-            mDriveSubsystem.followPathCommandEvents(null);
+            mCommand.schedule();
         } else {
             System.out.println("Odometry reset failed!!! Not starting trajectory!!!");
         }
@@ -35,7 +35,7 @@ public class PPSwerveTrajectoryAction implements Action {
 
     @Override
     public boolean isFinished() {
-        if (mDriveSubsystem.getCurrentCommand().isFinished()) {
+        if (mCommand.isFinished()) {
             mDriveSubsystem.stop();
             return true;
         } 

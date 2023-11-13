@@ -60,13 +60,6 @@ public class RobotContainer {
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
-        new Trigger(mControlBoard.driver.getController()::getLeftBumper)
-                .onTrue(new InstantCommand(() -> m_robotDrive.shiftSpeedDown()));
-
-        new Trigger(mControlBoard.driver.getController()::getRightBumper)
-                .onTrue(new InstantCommand(() -> m_robotDrive.shiftSpeedUp()));
-
-        
         new Trigger(mControlBoard.driver.getController()::getAButton)
                 .onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
 

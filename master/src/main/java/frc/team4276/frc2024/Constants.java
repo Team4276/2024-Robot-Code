@@ -7,9 +7,10 @@ package frc.team4276.frc2024;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -24,20 +25,38 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double kLooperDt = 0.02;
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 5.5;
-    public static final double kMaxAttainableSpeed = kMaxSpeedMetersPerSecond * 0.85;
+    public static final double kMaxVel = 5.5; // meters per second
+    public static final double kMaxAttainableVel = kMaxVel * 0.85;
 
-    public static final double kMaxSpeedMetersPerSecondB = 2.3529;
-    public static final double kMaxAttainableSpeedB = kMaxSpeedMetersPerSecondB * 0.85;
+    public static final double kMaxAngularVel = 2 * Math.PI; // radians per second
 
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    public static class KinematicLimits {
+      public double kMaxDriveVelocity = kMaxVel; // m/s
+      public double kMaxAccel = Double.MAX_VALUE; // m/s^2
+      public double kMaxAngularVelocity = kMaxAngularVel; // rad/s
+      public double kMaxAngularAccel = Double.MAX_VALUE; // rad/s^2
+  } 
 
-    public static final double kDirectionSlewRate = 1.2; // radians per second
-    public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
-    public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+    public static final KinematicLimits kUncappedLimits = new KinematicLimits();
+    static {
+            kUncappedLimits.kMaxDriveVelocity = kMaxVel;
+            kUncappedLimits.kMaxAccel = Double.MAX_VALUE;
+            kUncappedLimits.kMaxAngularVelocity = kMaxAngularVel;
+            kUncappedLimits.kMaxAngularAccel = Double.MAX_VALUE;
+    }
+
+    public static final KinematicLimits kAutoLimits = new KinematicLimits();
+    static {
+            kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
+            kAutoLimits.kMaxAccel = Double.MAX_VALUE;
+            kAutoLimits.kMaxAngularVelocity =  Double.MAX_VALUE; // Rad/Sec
+            kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+    }
 
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(25);
@@ -49,6 +68,12 @@ public final class Constants {
         new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+
+        public static final SwerveDriveKinematics kDriveKinematicsT = new SwerveDriveKinematics(
+          new Translation2d(kWheelBase / 2, kTrackWidth / 2),
+          new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
+          new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
+          new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
@@ -134,8 +159,11 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = 2 * Math.PI;
 
     public static final double kPXController = 1;
+    public static final double kDXController = 0;
     public static final double kPYController = 1;
+    public static final double kDYController = 0;
     public static final double kPThetaController = 1;
+    public static final double kDThetaController = 1;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -144,44 +172,6 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
-  }
-
-  public static final class ElbowConstants {
-    public static final int ElbowID = 17;
-
-    public static final double elbowArcLength = 0.5639;
-    public static final double elbowGroundOffset = 0.16;
-
-    public static final double powerToRadsConversion = 1.9708333333333 * 2 * Math.PI;
-
-    public static final double kP = 0.5;
-    public static final double kI = 0.0;
-    public static final double kD = 0;
-
-    public static final double kIRange = 0.2;
-
-    public static final double kS = 0.025;
-    public static final double kG = 0.109;
-    public static final double kV = 0.3;
-    public static final double kA = 0.05;
-
-    public static final double manualCoefficient = 0.5;
-
-    public static final double maxPower = 0.5;
-
-    public static final double setPointStow = 0.5;
-    public static final double setPointIntake = 0.025;
-    public static final double setPointLow = 0.025;
-    public static final double setPointMid = 0.21;
-    public static final double setPointHigh = 0.27;
-  }
-
-  public static final class IntakeConstants {
-    public static final int IntakeID = 18;
-
-    public static final double intakeSpeed = 0.8;
-    public static final double outtakeSpeed = -0.85;
-    public static final double idleSpeed = 0.05;
   }
 
   public static final class SnapConstants{

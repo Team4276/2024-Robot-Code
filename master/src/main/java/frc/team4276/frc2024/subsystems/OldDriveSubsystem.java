@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -27,74 +28,71 @@ import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
 import frc.team4276.frc2024.auto.AutoEvents;
 import frc.team4276.lib.MAXSwerveModule;
-import frc.team4276.lib.drivers.Pigeon;
 
 
-public class DriveSubsystem extends SubsystemBase {
+public class OldDriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
-  private MAXSwerveModule m_frontLeft;
-  private MAXSwerveModule m_frontRight;
-  private MAXSwerveModule m_rearLeft;
-  private MAXSwerveModule m_rearRight;
-
-  // The gyro sensor
-  private Pigeon mPigeon;
-
-  // Odometry class for tracking robot pose
-  private SwerveDriveOdometry mOdometry;
-  private boolean odometryReset = false;
-
-  private double maxSpeed = DriveConstants.kMaxVel;
-  private double maxAttainableSpeed = DriveConstants.kMaxAttainableVel;
-
-  private PIDController snapController;
-
-  private static DriveSubsystem mInstance;
-
-  public static DriveSubsystem getInstance() {
-    if (mInstance == null) {
-      mInstance = new DriveSubsystem();
-    }
-
-    return mInstance;
-  }
-
-  /** Creates a new DriveSubsystem. */
-  private DriveSubsystem() {
-    m_frontLeft = new MAXSwerveModule(
+  private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
       DriveConstants.kFrontLeftTurningCanId,
       DriveConstants.kFrontLeftChassisAngularOffset);
 
-    m_frontRight = new MAXSwerveModule(
+  private final MAXSwerveModule m_frontRight = new MAXSwerveModule(
       DriveConstants.kFrontRightDrivingCanId,
       DriveConstants.kFrontRightTurningCanId,
       DriveConstants.kFrontRightChassisAngularOffset);
-    
-    m_rearLeft = new MAXSwerveModule(
+
+  private final MAXSwerveModule m_rearLeft = new MAXSwerveModule(
       DriveConstants.kRearLeftDrivingCanId,
       DriveConstants.kRearLeftTurningCanId,
       DriveConstants.kBackLeftChassisAngularOffset);
 
-    m_rearRight  = new MAXSwerveModule(
-        DriveConstants.kRearRightDrivingCanId,
-        DriveConstants.kRearRightTurningCanId,
-        DriveConstants.kBackRightChassisAngularOffset);
+  private final MAXSwerveModule m_rearRight = new MAXSwerveModule(
+      DriveConstants.kRearRightDrivingCanId,
+      DriveConstants.kRearRightTurningCanId,
+      DriveConstants.kBackRightChassisAngularOffset);
 
-    mPigeon = Pigeon.getInstance();
-    mPigeon.setYaw(0.0);
+  // The gyro sensor
+  private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
-    mOdometry = new SwerveDriveOdometry(
+  // Odometry class for tracking robot pose
+  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
-      mPigeon.getYaw(),
+      Rotation2d.fromDegrees(m_gyro.getAngle()),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
       });
-    
-    snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
+
+  SwerveDriveOdometry m_odometry_PV = new SwerveDriveOdometry(
+      DriveConstants.kDriveKinematics,
+      Rotation2d.fromDegrees(m_gyro.getAngle()),
+      new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearRight.getPosition()
+      });
+
+  private double maxSpeed = DriveConstants.kMaxVel;
+  private double maxAttainableSpeed = DriveConstants.kMaxAttainableVel;
+
+  private PIDController snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
+
+  private static OldDriveSubsystem mInstance;
+
+  public static OldDriveSubsystem getInstance() {
+    if (mInstance == null) {
+      mInstance = new OldDriveSubsystem();
+    }
+
+    return mInstance;
+  }
+
+  /** Creates a new DriveSubsystem. */
+  private OldDriveSubsystem() {
     snapController.enableContinuousInput(0, 2 * Math.PI);
 
   }
@@ -102,8 +100,8 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    mOdometry.update(
-        mPigeon.getYaw(),
+    m_odometry.update(
+        Rotation2d.fromDegrees(m_gyro.getAngle()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -111,8 +109,17 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
 
-    SmartDashboard.putNumber("Robot X", mOdometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("Robot Y", mOdometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("Robot X", getPose().getX());
+    SmartDashboard.putNumber("Robot Y", getPose().getY());
+  }
+
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
   }
 
   /**
@@ -121,8 +128,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    mOdometry.resetPosition(
-      mPigeon.getYaw(),
+    m_odometry.resetPosition(
+        Rotation2d.fromDegrees(m_gyro.getAngle()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -130,7 +137,6 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         },
         pose);
-    odometryReset = true;
   }
 
   /**
@@ -152,7 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                mPigeon.getYaw())
+                Rotation2d.fromDegrees(m_gyro.getAngle()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, maxSpeed);
@@ -160,6 +166,16 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+  /**
+   * Sets the wheels into an X formation to prevent movement.
+   */
+  public void setX() {
+    m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+    m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+    m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+    m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
   /**
@@ -185,7 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
-    mPigeon.setYaw(0);
+    m_gyro.reset();
   }
 
   /**
@@ -194,7 +210,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return mPigeon.getYaw().getDegrees();
+    return Rotation2d.fromDegrees(m_gyro.getAngle()).getDegrees();
   }
 
   /**
@@ -203,21 +219,17 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return mPigeon.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-  }
-
-  public double getPitch() {
-    return mPigeon.getPitch().getDegrees();
+    return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
   public Command followPathCommand(PathPlannerTrajectory path) {
-    return new FollowPathWithEvents(new SequentialCommandGroup(
+    return new SequentialCommandGroup(
         new InstantCommand(() -> {
           this.resetOdometry(path.getInitialHolonomicPose());
         }),
         new PPSwerveControllerCommand(
             path,
-            mOdometry::getPoseMeters,
+            this::getPose,
             DriveConstants.kDriveKinematics,
             new PIDController(Constants.AutoConstants.kPXController, 0, 0),
             new PIDController(Constants.AutoConstants.kPYController, 0, 0),
@@ -227,18 +239,22 @@ public class DriveSubsystem extends SubsystemBase {
             this),
         new InstantCommand(() -> {
           stop();
-        })), path.getMarkers(), AutoEvents.eventMap);
+        }));
   }
 
-  public boolean readyForAuto(){
-    return odometryReset;
+  public Command followPathCommandEvents(PathPlannerTrajectory path) {
+    return new FollowPathWithEvents(followPathCommand(path), path.getMarkers(), AutoEvents.eventMap);
+  }
+
+  public double getPitch() {
+    return m_gyro.getYComplementaryAngle();
   }
 
   /**
    * @param desiredRotDeg Must be a value between 0 and 360
    */
   public void snapDrive(double xSpeed, double ySpeed, double desiredRotDeg, boolean fieldRelative, boolean rateLimit) {
-    double rot = snapController.calculate(Math.toRadians(mPigeon.getYaw().getDegrees()), Math.toRadians(desiredRotDeg));
+    double rot = snapController.calculate(Math.toRadians(m_gyro.getAngle()), Math.toRadians(desiredRotDeg));
 
     SmartDashboard.putNumber("Snap output", rot);
     // drive(xSpeed, ySpeed, rot, fieldRelative, rateLimit);
@@ -246,16 +262,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void stop() {
     drive(0, 0, 0, false, false);
-  }
-
-    /**
-   * Sets the wheels into an X formation to prevent movement.
-   */
-  public void setX() {
-    m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
-    m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
-    m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
-    m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
 }

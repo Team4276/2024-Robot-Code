@@ -8,12 +8,31 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 public class AutoEvents {
     public static HashMap<String, Command> eventMap = new HashMap<>();
 
-    public static boolean event;
+    private static boolean event = false;
 
-    public AutoEvents(){
+    private static boolean isInit = false;
+
+    private AutoEvents(){}
+
+    private static void init(){
         eventMap.put("event", new InstantCommand(() -> event = true));
+    }
 
-    }    
+    public static boolean getEvent(){
+        if(!isInit){
+            init();
+            isInit = true;
+        }
+
+        if (event){
+            event = false;
+            return true;
+        }
+
+        return false;
+    }
+
+
 
     
 }
