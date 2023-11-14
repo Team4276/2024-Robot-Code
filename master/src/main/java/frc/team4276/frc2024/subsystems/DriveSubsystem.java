@@ -42,7 +42,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Odometry class for tracking robot pose
   private SwerveDriveOdometry mOdometry;
-  private boolean odometryReset = false;
 
   private double maxSpeed = DriveConstants.kMaxVel;
   private double maxAttainableSpeed = DriveConstants.kMaxAttainableVel;
@@ -130,7 +129,6 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         },
         pose);
-    odometryReset = true;
   }
 
   /**
@@ -141,9 +139,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rot           Angular rate of the robot.
    * @param fieldRelative Whether the provided x and y speeds are relative to the
    *                      field.
-   * @param rateLimit     Whether to enable rate limiting for smoother control.
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * maxAttainableSpeed;
     double ySpeedDelivered = ySpeed * maxAttainableSpeed;
@@ -188,13 +185,17 @@ public class DriveSubsystem extends SubsystemBase {
     mPigeon.setYaw(0);
   }
 
+  public void zeroHeading(double reset){
+    mPigeon.setYaw(reset);
+  }
+
   /**
    * Returns the heading of the robot.
    *
    * @return the robot's heading in degrees, from -180 to 180
    */
-  public double getHeading() {
-    return mPigeon.getYaw().getDegrees();
+  public Rotation2d getHeading() {
+    return mPigeon.getYaw();
   }
 
   /**
@@ -206,8 +207,8 @@ public class DriveSubsystem extends SubsystemBase {
     return mPigeon.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
-  public double getPitch() {
-    return mPigeon.getPitch().getDegrees();
+  public Rotation2d getPitch() {
+    return mPigeon.getPitch();
   }
 
   public Command followPathCommand(PathPlannerTrajectory path) {
@@ -230,22 +231,18 @@ public class DriveSubsystem extends SubsystemBase {
         })), path.getMarkers(), AutoEvents.eventMap);
   }
 
-  public boolean readyForAuto(){
-    return odometryReset;
-  }
-
   /**
    * @param desiredRotDeg Must be a value between 0 and 360
    */
-  public void snapDrive(double xSpeed, double ySpeed, double desiredRotDeg, boolean fieldRelative, boolean rateLimit) {
+  public void snapDrive(double xSpeed, double ySpeed, double desiredRotDeg, boolean fieldRelative) {
     double rot = snapController.calculate(Math.toRadians(mPigeon.getYaw().getDegrees()), Math.toRadians(desiredRotDeg));
 
     SmartDashboard.putNumber("Snap output", rot);
-    // drive(xSpeed, ySpeed, rot, fieldRelative, rateLimit);
+    drive(xSpeed, ySpeed, rot, fieldRelative);
   }
 
   public void stop() {
-    drive(0, 0, 0, false, false);
+    drive(0, 0, 0, false);
   }
 
     /**

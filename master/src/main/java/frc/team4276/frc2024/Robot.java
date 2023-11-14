@@ -4,14 +4,19 @@
 
 package frc.team4276.frc2024;
 
+import java.util.Optional;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.team4276.frc2024.auto.AutoModeBase;
+import frc.team4276.frc2024.auto.AutoModeExecutor;
+import frc.team4276.frc2024.auto.AutoModeSelector;
+import frc.team4276.frc2024.controlboard.ControlBoard;
+import frc.team4276.frc2024.subsystems.DriveSubsystem;
 
 
 
@@ -22,13 +27,17 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
-  private RobotContainer m_robotContainer;
-  
+  private final ControlBoard mControlBoard = ControlBoard.getInstance();
+
+  private final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
+
   public static Alliance alliance;
-
   private SendableChooser<Alliance> allianceChooser;
+
+  private AutoModeExecutor mAutoModeExecutor;
+
 
   
   /**
@@ -37,22 +46,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
-
     allianceChooser = new SendableChooser<Alliance>();
     allianceChooser.setDefaultOption("Unselected", Alliance.Invalid);
     allianceChooser.addOption("Blue", Alliance.Blue);
     allianceChooser.addOption("Red", Alliance.Red);
 
+    SmartDashboard.putData(allianceChooser);
+
     CameraServer.startAutomaticCapture();
-
-
   }
-
-
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -62,47 +64,41 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
-
-    SmartDashboard.putData(allianceChooser);
-
-    if (DriverStation.isDSAttached()){
-      alliance = DriverStation.getAlliance();
-    } else {
-      alliance = allianceChooser.getSelected();
-    }
-
-    SmartDashboard.putString("Alliance", alliance.name());
-  }
+  public void robotPeriodic() {}
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    if (mAutoModeExecutor != null) {
+			mAutoModeExecutor.stop();
+		}
+
+    mAutoModeExecutor = new AutoModeExecutor();
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    try {
+      Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
+        if (autoMode.isPresent()) {
+          mAutoModeExecutor.setAutoMode(autoMode.get());
+        }
+
+      if (DriverStation.isDSAttached()){
+        alliance = DriverStation.getAlliance();
+      } else {
+        alliance = allianceChooser.getSelected();
+      }
+    } catch (Throwable t) {
+      throw t;
+    }
+
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    mAutoModeExecutor.start();
   }
 
   /** This function is called periodically during autonomous. */
@@ -111,12 +107,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    try {
+      if(mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0){
+        mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().getDegrees() + 180);
+      }
+    } catch (Throwable t) {
+      throw t;
     }
   }
 
@@ -124,6 +120,30 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     try {        
+      if(mControlBoard.driver.getController().getAButtonPressed()){
+        mDriveSubsystem.zeroHeading();
+      }
+
+      if(mControlBoard.driver.getController().getXButton()){
+        mDriveSubsystem.setX();
+      } else if(mControlBoard.driver.getLT()){
+        mDriveSubsystem.snapDrive(
+          -mControlBoard.driver.getLeftY(),
+          -mControlBoard.driver.getLeftX(),
+          0, true);
+      } else if(mControlBoard.driver.getRT()){
+        mDriveSubsystem.snapDrive(
+          -mControlBoard.driver.getLeftY(),
+          -mControlBoard.driver.getLeftX(),
+          180, true);
+      } else {
+        mDriveSubsystem.drive(
+          -mControlBoard.driver.getLeftY(),
+          -mControlBoard.driver.getLeftX(),
+          -mControlBoard.driver.getRightX(),
+          true);
+      }
+
 
     } catch (Throwable t) {
       throw t;
@@ -131,10 +151,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
+  public void testInit() {}
 
   /** This function is called periodically during test mode. */
   @Override

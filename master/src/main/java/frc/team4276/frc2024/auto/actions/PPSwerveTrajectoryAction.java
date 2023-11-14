@@ -10,28 +10,22 @@ public class PPSwerveTrajectoryAction implements Action {
 
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
-    private final PathPlannerTrajectory mTrajectory;
     private final Command mCommand;
 
     public PPSwerveTrajectoryAction(PathPlannerTrajectory trajectory){
-        mTrajectory = trajectory;
-
         mCommand = mDriveSubsystem.followPathCommand(trajectory);
     }
 
     @Override
     public void start() {
-        if (mDriveSubsystem.readyForAuto()) {
-            System.out.println("Starting trajectory! (length=" + mTrajectory.getTotalTimeSeconds() + " seconds)");
-            mCommand.schedule();
-        } else {
-            System.out.println("Odometry reset failed!!! Not starting trajectory!!!");
-        }
+        mCommand.initialize();
 
     }
 
     @Override
-    public void update() {}
+    public void update() {
+        mCommand.execute();
+    }
 
     @Override
     public boolean isFinished() {

@@ -38,6 +38,6 @@ public class ActionExample extends AutoModeBase {
 
     @Override
     public Pose2d getStartingPose() {
-        return null;
+        return traj1.getInitialHolonomicPose();
     }
 }
