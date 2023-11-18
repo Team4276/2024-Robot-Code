@@ -108,9 +108,12 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     try {
-      if(mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0){
-        mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().getDegrees() + 180);
+      if (mAutoModeSelector.getAutoMode().isPresent()){
+        if(mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0){
+          mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().getDegrees() + 180);
+        }
       }
+      
     } catch (Throwable t) {
       throw t;
     }
