@@ -4,7 +4,9 @@ import frc.team4276.frc2024.auto.AutoEvents;
 
 public class WaitForEventAction implements Action{
     @Override
-    public void start() {}
+    public void start() {
+        AutoEvents.init();
+    }
 
     @Override
     public void update() {}

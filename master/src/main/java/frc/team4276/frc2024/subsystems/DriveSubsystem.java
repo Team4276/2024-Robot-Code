@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
@@ -29,8 +28,10 @@ import frc.team4276.frc2024.auto.AutoEvents;
 import frc.team4276.lib.MAXSwerveModule;
 import frc.team4276.lib.drivers.Pigeon;
 
+import frc.team1678.lib.loops.Loop;
+import frc.team1678.lib.loops.ILooper;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends Subsystem {
   // Create MAXSwerveModules
   private MAXSwerveModule m_frontLeft;
   private MAXSwerveModule m_frontRight;
@@ -61,21 +62,21 @@ public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
   private DriveSubsystem() {
     m_frontLeft = new MAXSwerveModule(
-      DriveConstants.kFrontLeftDrivingCanId,
-      DriveConstants.kFrontLeftTurningCanId,
-      DriveConstants.kFrontLeftChassisAngularOffset);
+        DriveConstants.kFrontLeftDrivingCanId,
+        DriveConstants.kFrontLeftTurningCanId,
+        DriveConstants.kFrontLeftChassisAngularOffset);
 
     m_frontRight = new MAXSwerveModule(
-      DriveConstants.kFrontRightDrivingCanId,
-      DriveConstants.kFrontRightTurningCanId,
-      DriveConstants.kFrontRightChassisAngularOffset);
-    
-    m_rearLeft = new MAXSwerveModule(
-      DriveConstants.kRearLeftDrivingCanId,
-      DriveConstants.kRearLeftTurningCanId,
-      DriveConstants.kBackLeftChassisAngularOffset);
+        DriveConstants.kFrontRightDrivingCanId,
+        DriveConstants.kFrontRightTurningCanId,
+        DriveConstants.kFrontRightChassisAngularOffset);
 
-    m_rearRight  = new MAXSwerveModule(
+    m_rearLeft = new MAXSwerveModule(
+        DriveConstants.kRearLeftDrivingCanId,
+        DriveConstants.kRearLeftTurningCanId,
+        DriveConstants.kBackLeftChassisAngularOffset);
+
+    m_rearRight = new MAXSwerveModule(
         DriveConstants.kRearRightDrivingCanId,
         DriveConstants.kRearRightTurningCanId,
         DriveConstants.kBackRightChassisAngularOffset);
@@ -84,24 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
     mPigeon.setYaw(0.0);
 
     mOdometry = new SwerveDriveOdometry(
-      DriveConstants.kDriveKinematics,
-      mPigeon.getYaw(),
-      new SwerveModulePosition[] {
-          m_frontLeft.getPosition(),
-          m_frontRight.getPosition(),
-          m_rearLeft.getPosition(),
-          m_rearRight.getPosition()
-      });
-    
-    snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
-    snapController.enableContinuousInput(0, 2 * Math.PI);
-
-  }
-
-  @Override
-  public void periodic() {
-    // Update the odometry in the periodic block
-    mOdometry.update(
+        DriveConstants.kDriveKinematics,
         mPigeon.getYaw(),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
@@ -109,6 +93,45 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+    snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
+    snapController.enableContinuousInput(0, 2 * Math.PI);
+
+  }
+
+  @Override
+  public void registerEnabledLoops(ILooper enabledLooper) {
+    enabledLooper.register(new Loop() {
+
+      @Override
+      public void onStart(double timestamp) {
+      }
+
+      @Override
+      public void onLoop(double timestamp) {
+        synchronized (DriveSubsystem.this) {
+          mOdometry.update(
+              mPigeon.getYaw(),
+              new SwerveModulePosition[] {
+                  m_frontLeft.getPosition(),
+                  m_frontRight.getPosition(),
+                  m_rearLeft.getPosition(),
+                  m_rearRight.getPosition()
+              });
+        }
+      }
+
+      @Override
+      public void onStop(double timestamp) {}
+    });
+
+  }
+
+  @Override
+  public void outputTelemetry() {
+    if (Constants.disableExtraTelemetry) {
+      return;
+    }
 
     SmartDashboard.putNumber("Robot X", mOdometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Robot Y", mOdometry.getPoseMeters().getY());
@@ -121,7 +144,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     mOdometry.resetPosition(
-      mPigeon.getYaw(),
+        mPigeon.getYaw(),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -185,7 +208,7 @@ public class DriveSubsystem extends SubsystemBase {
     mPigeon.setYaw(0);
   }
 
-  public void zeroHeading(double reset){
+  public void zeroHeading(double reset) {
     mPigeon.setYaw(reset);
   }
 
@@ -225,7 +248,7 @@ public class DriveSubsystem extends SubsystemBase {
             new PIDController(Constants.AutoConstants.kPThetaController, 0, 0),
             this::setModuleStates,
             false,
-            this),
+            new EmptySubsystem()),
         new InstantCommand(() -> {
           stop();
         })), path.getMarkers(), AutoEvents.eventMap);
@@ -245,7 +268,7 @@ public class DriveSubsystem extends SubsystemBase {
     drive(0, 0, 0, false);
   }
 
-    /**
+  /**
    * Sets the wheels into an X formation to prevent movement.
    */
   public void setX() {

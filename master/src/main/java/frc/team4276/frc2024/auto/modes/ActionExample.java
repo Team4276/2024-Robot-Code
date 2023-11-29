@@ -24,6 +24,8 @@ public class ActionExample extends AutoModeBase {
             PathPlanner.loadPath(path1, 1, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared),
             Robot.alliance);
 
+        System.out.println("Loaded path with " + Robot.alliance.toString() + " alliance.");
+
     }
 
     @Override

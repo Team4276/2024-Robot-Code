@@ -12,18 +12,16 @@ public class AutoEvents {
 
     private static boolean isInit = false;
 
-    private AutoEvents(){}
+    public static void init(){
+        if(!isInit){
+            eventMap.put("event", new InstantCommand(() -> event = true));
 
-    private static void init(){
-        eventMap.put("event", new InstantCommand(() -> event = true));
+            isInit = true;
+        }
+        
     }
 
     public static boolean getEvent(){
-        if(!isInit){
-            init();
-            isInit = true;
-        }
-
         if (event){
             event = false;
             return true;

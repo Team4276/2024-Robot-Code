@@ -27,6 +27,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 public final class Constants {
   public static final double kLooperDt = 0.02;
 
+  // Enables extra SmartDashboard Debugs
+  // Don't use during competition
+  public static final boolean disableExtraTelemetry = true;
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
