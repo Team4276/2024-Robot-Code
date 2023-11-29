@@ -221,15 +221,6 @@ public class DriveSubsystem extends Subsystem {
     return mPigeon.getYaw();
   }
 
-  /**
-   * Returns the turn rate of the robot.
-   *
-   * @return The turn rate of the robot, in degrees per second
-   */
-  public double getTurnRate() {
-    return mPigeon.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-  }
-
   public Rotation2d getPitch() {
     return mPigeon.getPitch();
   }
