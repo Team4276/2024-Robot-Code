@@ -31,7 +31,7 @@ import frc.team4276.lib.drivers.Pigeon;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 
-public class DriveSubsystem extends Subsystem {
+public class ExperimentalDrive extends Subsystem {
 
   public enum DriveControlState {
       FORCE_ORIENT,
@@ -57,18 +57,18 @@ public class DriveSubsystem extends Subsystem {
 
   private PIDController snapController;
 
-  private static DriveSubsystem mInstance;
+  private static ExperimentalDrive mInstance;
 
-  public static DriveSubsystem getInstance() {
+  public static ExperimentalDrive getInstance() {
     if (mInstance == null) {
-      mInstance = new DriveSubsystem();
+      mInstance = new ExperimentalDrive();
     }
 
     return mInstance;
   }
 
   /** Creates a new DriveSubsystem. */
-  private DriveSubsystem() {
+  private ExperimentalDrive() {
     m_frontLeft = new MAXSwerveModule(
         DriveConstants.kFrontLeftDrivingCanId,
         DriveConstants.kFrontLeftTurningCanId,

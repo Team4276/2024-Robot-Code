@@ -10,110 +10,173 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1678.lib.loops.Looper;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 
-
-
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the
+ * build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
+
+  private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
+  private final ControlBoard mControlBoard = ControlBoard.getInstance();
+
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
-  private final ControlBoard mControlBoard = ControlBoard.getInstance();
+  private final Looper mEnabledLooper = new Looper();
+  private final Looper mDisabledLooper = new Looper();
 
   private final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
-  public static Alliance alliance;
-  private SendableChooser<Alliance> allianceChooser;
-
   private AutoModeExecutor mAutoModeExecutor;
 
+  public static boolean is_red_alliance = false;
 
-  
   /**
-   * This function is run when the robot is first started up and should be used for any
+   * This function is run when the robot is first started up and should be used
+   * for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    allianceChooser = new SendableChooser<Alliance>();
-    allianceChooser.setDefaultOption("Unselected", Alliance.Invalid);
-    allianceChooser.addOption("Blue", Alliance.Blue);
-    allianceChooser.addOption("Red", Alliance.Red);
+    try {
+      mSubsystemManager.setSubsystems(
+          mDriveSubsystem);
 
-    SmartDashboard.putData(allianceChooser);
+      mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+      mSubsystemManager.registerDisabledLoops(mDisabledLooper);
+
+    } catch (Throwable t) {
+      throw t;
+    }
 
     CameraServer.startAutomaticCapture();
   }
 
   /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * This function is called every 20 ms, no matter the mode. Use this for items
+   * like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    mSubsystemManager.outputToSmartDashboard();
+    mEnabledLooper.outputToSmartDashboard();
+  }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    if (mAutoModeExecutor != null) {
-			mAutoModeExecutor.stop();
-		}
+    try {
+      mEnabledLooper.stop();
+      mDisabledLooper.start();
 
+    } catch (Throwable t) {
+      throw t;
+
+    }
+
+    if (mAutoModeExecutor != null) {
+      mAutoModeExecutor.stop();
+    }
+
+    mAutoModeSelector.reset();
+    mAutoModeSelector.updateModeCreator(false);
     mAutoModeExecutor = new AutoModeExecutor();
   }
 
   @Override
   public void disabledPeriodic() {
     try {
-      Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
-        if (autoMode.isPresent()) {
-          mAutoModeExecutor.setAutoMode(autoMode.get());
-        }
 
-      if (DriverStation.isDSAttached()){
-        alliance = DriverStation.getAlliance();
+      boolean alliance_changed = false;
+      if (DriverStation.isDSAttached()) {
+        if (DriverStation.getAlliance() == Alliance.Red) {
+          if (!is_red_alliance) {
+            alliance_changed = true;
+          } else {
+            alliance_changed = false;
+          }
+          is_red_alliance = true;
+        } else if (DriverStation.getAlliance() == Alliance.Blue) {
+          if (is_red_alliance) {
+            alliance_changed = true;
+          } else {
+            alliance_changed = false;
+          }
+          is_red_alliance = false;
+        }
       } else {
-        alliance = allianceChooser.getSelected();
+        alliance_changed = true;
       }
+
+      mAutoModeSelector.updateModeCreator(alliance_changed);
+      Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
+      if (autoMode.isPresent()) {
+        mAutoModeExecutor.setAutoMode(autoMode.get());
+      }
+
     } catch (Throwable t) {
       throw t;
     }
 
   }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  /**
+   * This autonomous runs the autonomous command selected by your
+   * {@link RobotContainer} class.
+   */
   @Override
   public void autonomousInit() {
-    mAutoModeExecutor.start();
+    try {
+      
+			mDisabledLooper.stop();
+      
+      Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
+      if (autoMode.isPresent()) {
+        mAutoModeExecutor.setAutoMode(autoMode.get());
+      }
+
+      mEnabledLooper.start();
+      mAutoModeExecutor.start();
+
+    } catch (Throwable t) {
+      throw t;
+    }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void teleopInit() {
     try {
-      if (mAutoModeSelector.getAutoMode().isPresent()){
-        if(mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0){
+      if (mAutoModeSelector.getAutoMode().isPresent()) {
+        if (mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0) {
           mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().getDegrees() + 180);
         }
       }
-      
+
+      mDisabledLooper.stop();
+      mEnabledLooper.start();
+
     } catch (Throwable t) {
       throw t;
     }
@@ -122,41 +185,42 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    try {        
-      if(mControlBoard.driver.getController().getAButtonPressed()){
+    try {
+      if (mControlBoard.driver.getController().getAButtonPressed()) {
         mDriveSubsystem.zeroHeading();
       }
 
-      if(mControlBoard.driver.getController().getXButton()){
+      if (mControlBoard.driver.getController().getXButton()) {
         mDriveSubsystem.setX();
-      } else if(mControlBoard.driver.getLT()){
+      } else if (mControlBoard.driver.getLT()) {
         mDriveSubsystem.snapDrive(
-          -mControlBoard.driver.getLeftY(),
-          -mControlBoard.driver.getLeftX(),
-          0, true);
-      } else if(mControlBoard.driver.getRT()){
+            -mControlBoard.driver.getLeftY(),
+            -mControlBoard.driver.getLeftX(),
+            0, true);
+      } else if (mControlBoard.driver.getRT()) {
         mDriveSubsystem.snapDrive(
-          -mControlBoard.driver.getLeftY(),
-          -mControlBoard.driver.getLeftX(),
-          180, true);
+            -mControlBoard.driver.getLeftY(),
+            -mControlBoard.driver.getLeftX(),
+            180, true);
       } else {
         mDriveSubsystem.drive(
-          -mControlBoard.driver.getLeftY(),
-          -mControlBoard.driver.getLeftX(),
-          -mControlBoard.driver.getRightX(),
-          true);
+            -mControlBoard.driver.getLeftY(),
+            -mControlBoard.driver.getLeftX(),
+            -mControlBoard.driver.getRightX(),
+            true);
       }
-
 
     } catch (Throwable t) {
       throw t;
-  }
+    }
   }
 
   @Override
-  public void testInit() {}
+  public void testInit() {
+  }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 }
