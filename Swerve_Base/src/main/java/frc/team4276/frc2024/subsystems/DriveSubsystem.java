@@ -32,14 +32,6 @@ import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 
 public class DriveSubsystem extends Subsystem {
-
-  public enum DriveControlState {
-      FORCE_ORIENT,
-      OPEN_LOOP,
-      HEADING_CONTROL,
-      PATH_FOLLOWING,
-  }
-
   // Create MAXSwerveModules
   private MAXSwerveModule m_frontLeft;
   private MAXSwerveModule m_frontRight;
@@ -117,7 +109,7 @@ public class DriveSubsystem extends Subsystem {
 
       @Override
       public void onLoop(double timestamp) {
-        synchronized (this) {
+        synchronized (DriveSubsystem.this) {
           mOdometry.update(
               mPigeon.getYaw(),
               new SwerveModulePosition[] {
@@ -227,15 +219,6 @@ public class DriveSubsystem extends Subsystem {
    */
   public Rotation2d getHeading() {
     return mPigeon.getYaw();
-  }
-
-  /**
-   * Returns the turn rate of the robot.
-   *
-   * @return The turn rate of the robot, in degrees per second
-   */
-  public double getTurnRate() {
-    return mPigeon.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
   public Rotation2d getPitch() {
