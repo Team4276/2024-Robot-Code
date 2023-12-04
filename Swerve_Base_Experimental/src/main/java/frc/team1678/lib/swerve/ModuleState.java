@@ -23,10 +23,10 @@ public class ModuleState extends SwerveModulePosition {
         return new ModuleState(Double.NaN, angle, speedMetersPerSecond);
     }
 
-    public ModuleState optimize(Rotation2d currentAngle) {
-        double targetAngle = Util.placeInAppropriate0To360Scope(currentAngle.getDegrees(), this.angle.getDegrees());
-        double targetSpeed = this.speedMetersPerSecond;
-        double delta = targetAngle - currentAngle.getDegrees();
+    public static ModuleState optimize(Rotation2d desiredAngle, ModuleState currentState) {
+        double targetAngle = Util.placeInAppropriate0To360Scope(desiredAngle.getDegrees(), currentState.angle.getDegrees());
+        double targetSpeed = currentState.speedMetersPerSecond;
+        double delta = targetAngle - desiredAngle.getDegrees();
         if (Math.abs(delta) > 90){
             targetSpeed = -targetSpeed;
             targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
