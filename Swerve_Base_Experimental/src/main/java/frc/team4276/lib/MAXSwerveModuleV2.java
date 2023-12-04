@@ -118,16 +118,10 @@ public class MAXSwerveModuleV2 {
   public ModuleState getState() {
     // Apply chassis angular offset to the encoder position to get the position
     // relative to the chassis.
-    return new ModuleState(m_drivingEncoder.getVelocity(),
-        new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset));
-
-        new ModuleState(
-          m_drivingEncoder.getPosition(),
-          new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset),
-          Conversions.RPSToMPS(
-            m_drivingEncoder.getVelocity()/60, 
-            ModuleConstants.kWheelCircumferenceMeters, 
-            ModuleConstants.kDrivingMotorReduction));
+    return new ModuleState(
+      m_drivingEncoder.getPosition(),
+      new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset),
+      m_drivingEncoder.getVelocity());
   }
 
   /**
@@ -135,20 +129,19 @@ public class MAXSwerveModuleV2 {
    *
    * @param desiredState Desired state with speed and angle.
    */
-  public void setDesiredState(SwerveModuleState desiredState) {
+  public void setDesiredState(ModuleState desiredState) {
     if (Math.abs(desiredState.speedMetersPerSecond) < 0.001){
       stop();
       return;
   
     } else {
       // Apply chassis angular offset to the desired state.
-      SwerveModuleState correctedDesiredState = new SwerveModuleState();
+      ModuleState correctedDesiredState = new ModuleState();
       correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
       correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
 
       // Optimize the reference state to avoid spinning further than 90 degrees.
-      SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
-          new Rotation2d(m_turningEncoder.getPosition()));
+      ModuleState optimizedDesiredState = ModuleState.optimize(correctedDesiredState.angle, getState());
 
       // Command driving and turning SPARKS MAX towards their respective setpoints.
       m_drivingPIDController.setReference(optimizedDesiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
