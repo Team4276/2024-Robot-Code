@@ -154,6 +154,14 @@ public class DriveSubsystem extends Subsystem {
       return;
     }
 
+    int i = 0;
+
+    for (MAXSwerveModuleV2 module : mModules){
+      SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", module.getDriveSetpoint());
+      SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", module.getTurnSetpoint());
+      i++;
+    }
+
     SmartDashboard.putNumber("Robot X", mOdometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Robot Y", mOdometry.getPoseMeters().getY());
   }
