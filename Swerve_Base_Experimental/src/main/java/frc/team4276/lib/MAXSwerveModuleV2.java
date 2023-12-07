@@ -5,8 +5,12 @@
 package frc.team4276.lib;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Timer;
+import frc.team1678.lib.Conversions;
 import frc.team1678.lib.swerve.ModuleState;
 import frc.team4276.frc2024.Constants.ModuleConstants;
+import frc.team4276.frc2024.subsystems.Subsystem;
+import frc.team4276.frc2024.subsystems.DriveSubsystem.PeriodicIO;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -15,7 +19,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
-public class MAXSwerveModuleV2 {
+public class MAXSwerveModuleV2 extends Subsystem {
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;
 
@@ -27,6 +31,8 @@ public class MAXSwerveModuleV2 {
 
   private double m_chassisAngularOffset = 0;
   private ModuleState m_desiredState;
+
+  public mPeriodicIO mPeriodicIO = new mPeriodicIO();
 
   /**
    * Constructs a MAXSwerveModule and configures the driving and turning motor,
@@ -159,4 +165,57 @@ public class MAXSwerveModuleV2 {
     m_turningSparkMax.set(0);
 
   }
+
+  
+
+  public static class mPeriodicIO {
+    // Inputs
+    public double timestamp = 0.0;
+    public double targetVelocity = 0.0;
+    public double rotationPosition = 0.0;
+    public double drivePosition = 0.0;
+    public double velocity = 0.0;
+
+    // Outputs
+    public double rotationDemand;
+    public double driveDemand;
+  }
+
+  
+  // @Override
+  // public synchronized void readPeriodicInputs() {
+
+  //     mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+
+  //     mPeriodicIO.velocity = m_drivingEncoder.getVelocity();
+      
+  //     mPeriodicIO.rotationPosition = Math.toDegrees(m_turningEncoder.getPosition());
+
+  //     mPeriodicIO.drivePosition = m_drivingEncoder.getPosition();
+  // }
+
+  // @Override
+  // public synchronized void writePeriodicOutputs() {
+
+  //     double targetAngle = m_desiredState.angle.getDegrees();
+  //     Rotation2d currentAngle = Rotation2d.fromDegrees(mPeriodicIO.rotationPosition);
+  //     if (Util.shouldReverse(Rotation2d.fromDegrees(targetAngle), currentAngle)) {
+  //         mPeriodicIO.targetVelocity = -mPeriodicIO.targetVelocity;
+  //         targetAngle += 180.0;
+  //     }
+  //     targetAngle = Util.placeInAppropriate0To360Scope(getCurrentUnboundedDegrees(), targetAngle);
+
+  //     mPeriodicIO.rotationDemand = Conversions.degreesToFalcon(targetAngle,
+  //             Constants.SwerveConstants.angleGearRatio);
+
+  //     mAngleMotor.set(ControlMode.Position, mPeriodicIO.rotationDemand);
+  //     if (mPeriodicIO.driveControlMode == ControlMode.Velocity) {
+  //         mDriveMotor.setControl(new VelocityTorqueCurrentFOC(mPeriodicIO.driveDemand));
+  //     } else {
+  //         mDriveMotor.setControl(new DutyCycleOut(mPeriodicIO.driveDemand, true, false));
+  //     }
+  // }
+
+
+  
 }
