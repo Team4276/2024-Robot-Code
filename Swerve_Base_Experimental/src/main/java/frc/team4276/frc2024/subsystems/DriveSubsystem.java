@@ -267,6 +267,10 @@ public class DriveSubsystem extends Subsystem {
         prev_chassis_speeds.vyMetersPerSecond + dy * min_translational_scalar,
         prev_chassis_speeds.omegaRadiansPerSecond + domega * min_omega_scalar);
 
+    SmartDashboard.putNumber("Des X Speed: ", wanted_speeds.vxMetersPerSecond);
+    SmartDashboard.putNumber("Des Y Speed: ", wanted_speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("Des Rot Speed: ", wanted_speeds.omegaRadiansPerSecond);
+
     ModuleState[] real_module_setpoints = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
     mPeriodicIO.des_module_states = real_module_setpoints;
 
