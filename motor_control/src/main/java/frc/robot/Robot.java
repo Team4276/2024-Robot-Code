@@ -4,13 +4,14 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,25 +27,32 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
-  public double rpmSetPoint = 0.0;
-
   private TalonSRX motor775Pro;
+  private int canID_775Pro = 2;
 
-  private PIDController myPidController;
-  private final double kP = 1.0;
+  private final int kSensorCountsPerRotation_VersaPlanetaryEncoder = 1024;  
+  private final int kGearReduction_ToOne = 3;
+  private final double kGoButtonPercentPower = 0.1;
+
+  public double rpmSetPoint_outoutShaft_RPM = 100.0;  
+  public double rpmSetPoint_motor_RPM = rpmSetPoint_outoutShaft_RPM * kGearReduction_ToOne;  
+  public double setPoint_motor_CountsPer100ms = (rpmSetPoint_motor_RPM * kSensorCountsPerRotation_VersaPlanetaryEncoder) / (60.0*10.0);  
+
+  private final int kLoopIndex = 0;
+  private final int kTimeoutMs = 30;
+
+  private final double kP = 0.085;
   private final double kI = 0.0;
   private final double kD = 0.0;
-
-  private final int kSensorUnitsPerRotation_775Pro = 12;
-
+  private final double kF = 0.0;  // Feed Forward gain - always set to zero for this test
+  
   private final int DIO_GO_BUTTON = 0;
   private final int DIO_USE_PID_JUMPER = 5;
   private final int DIO_USE_PID_BRAKE = 6; // Normally brake mode, this will use PID to set RPM to zero - much faster
                                            // stop
+  private final int MAX_RPM = 1000;
 
-  private final int MAX_RPM = 120;
-
-  private double rpmMeasured = 0.0;
+  private double rpmMeasured_outputShaft = 0.0;
 
   private DigitalInput goButton;
   private DigitalInput usePidSwitch;
@@ -59,13 +67,33 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    motor775Pro = new TalonSRX(9);
-    TalonSRXConfiguration myConfig = new TalonSRXConfiguration();
-    motor775Pro.configAllSettings(myConfig); // set defaults
+    motor775Pro = new TalonSRX(canID_775Pro);
 
-    motor775Pro.setNeutralMode(NeutralMode.Brake);
+    /* Factory Default all hardware to prevent unexpected behaviour */
+    motor775Pro.configFactoryDefault();
 
-    myPidController = new PIDController(kP, kI, kD);
+    /* Config sensor used for Primary PID [Velocity] */
+    motor775Pro.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,
+                                      kLoopIndex, 
+                                      kTimeoutMs);
+    /**
+    * Phase sensor accordingly. 
+    * Positive Sensor Reading should match Green (blinking) Leds on Talon
+    */
+    motor775Pro.setSensorPhase(false);
+
+    /* Config the peak and nominal outputs */
+    motor775Pro.configNominalOutputForward(0, kTimeoutMs);
+    motor775Pro.configNominalOutputReverse(0, kTimeoutMs);
+    motor775Pro.configPeakOutputForward(1, kTimeoutMs);
+    motor775Pro.configPeakOutputReverse(-1, kTimeoutMs);
+
+    /* Config the Velocity closed loop gains in slot0 */
+    motor775Pro.config_kF(kLoopIndex, kF, kTimeoutMs);
+    motor775Pro.config_kP(kLoopIndex, kP, kTimeoutMs);
+    motor775Pro.config_kI(kLoopIndex, kI, kTimeoutMs);
+    motor775Pro.config_kD(kLoopIndex, kD, kTimeoutMs);
+
     goButton = new DigitalInput(DIO_GO_BUTTON);
     usePidSwitch = new DigitalInput(DIO_USE_PID_JUMPER);
   }
@@ -74,13 +102,15 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
 
     double rawSensorUnitsPer100ms = motor775Pro.getSelectedSensorVelocity();
-    rpmMeasured = (rawSensorUnitsPer100ms * (10.0/kSensorUnitsPerRotation_775Pro))  * 60.0;  // RPM
+    rpmMeasured_outputShaft = (rawSensorUnitsPer100ms * (10.0/kSensorCountsPerRotation_VersaPlanetaryEncoder))  * 60.0;  // Motor RPM
+    rpmMeasured_outputShaft /= kGearReduction_ToOne;  // Output RPM
+    rpmMeasured_outputShaft *= -1.0;  // So positive input power makes a positive velocity
+    
+    SmartDashboard.putNumber("rpmSetPoint", rpmSetPoint_outoutShaft_RPM);
+    SmartDashboard.putNumber("rpmMeasured", rpmMeasured_outputShaft);
 
-    SmartDashboard.putNumber("rpmSetPoint", rpmSetPoint);
-    SmartDashboard.putNumber("rpmMeasured", rpmMeasured);
-
-    if (rpmMeasured > MAX_RPM) {
-      safetySpinDown = true;
+    if (rpmMeasured_outputShaft > MAX_RPM) {
+       safetySpinDown = true;
     } else {
       if (goButton.get()) {
         safetySpinDown = false;
@@ -110,9 +140,9 @@ public class Robot extends TimedRobot {
         motor775Pro.set(TalonSRXControlMode.PercentOutput, 0.0);
       } else {
         if (usePidSwitch.get()) {
-          motor775Pro.set(TalonSRXControlMode.PercentOutput, myPidController.calculate(rpmMeasured, rpmSetPoint));
+          motor775Pro.set(ControlMode.Velocity, setPoint_motor_CountsPer100ms);
         } else {
-          motor775Pro.set(TalonSRXControlMode.PercentOutput, 0.8);
+          motor775Pro.set(TalonSRXControlMode.PercentOutput, kGoButtonPercentPower);
         }
       }
     }
