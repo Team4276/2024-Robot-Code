@@ -30,7 +30,7 @@ public class PPSwerveTrajectoryAction implements Action {
     @Override
     public boolean isFinished() {
         if (mCommand.isFinished()) {
-            mDriveSubsystem.stopModules();
+
             return true;
         } 
         return false;

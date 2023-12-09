@@ -41,13 +41,9 @@ import frc.team254.lib.util.Util;
 public class DriveSubsystem extends Subsystem {
 
   public enum DriveControlState {
-    FORCE_ORIENT,
     OPEN_LOOP,
-    HEADING_CONTROL,
-    PATH_FOLLOWING,
+    PATH_FOLLOWING
   }
-
-  public MAXSwerveModuleV2[] mModules;
 
   // The gyro sensor
   private Pigeon mPigeon;
@@ -56,11 +52,9 @@ public class DriveSubsystem extends Subsystem {
   private SwerveDriveOdometry mOdometry;
 
   private PeriodicIO mPeriodicIO = new PeriodicIO();
-  private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
+  private DriveControlState mControlState = DriveControlState.OPEN_LOOP;
 
   private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
-
-  private PIDController snapController;
 
   private static DriveSubsystem mInstance;
 
@@ -74,34 +68,9 @@ public class DriveSubsystem extends Subsystem {
 
   /** Creates a new DriveSubsystem. */
   private DriveSubsystem() {
-    mModules = new MAXSwerveModuleV2[] {
-        new MAXSwerveModuleV2(
-            DriveConstants.kFrontLeftDrivingCanId,
-            DriveConstants.kFrontLeftTurningCanId,
-            DriveConstants.kFrontLeftChassisAngularOffset),
-        new MAXSwerveModuleV2(
-            DriveConstants.kFrontRightDrivingCanId,
-            DriveConstants.kFrontRightTurningCanId,
-            DriveConstants.kFrontRightChassisAngularOffset),
-        new MAXSwerveModuleV2(
-            DriveConstants.kRearLeftDrivingCanId,
-            DriveConstants.kRearLeftTurningCanId,
-            DriveConstants.kBackLeftChassisAngularOffset),
-        new MAXSwerveModuleV2(
-            DriveConstants.kRearRightDrivingCanId,
-            DriveConstants.kRearRightTurningCanId,
-            DriveConstants.kBackRightChassisAngularOffset)
-    };
 
     mPigeon = Pigeon.getInstance();
     mPigeon.setYaw(0.0);
-
-    mOdometry = new SwerveDriveOdometry(
-        DriveConstants.kDriveKinematics,
-        getModuleStates());
-
-    snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
-    snapController.enableContinuousInput(0, 2 * Math.PI);
 
   }
 
@@ -133,9 +102,6 @@ public class DriveSubsystem extends Subsystem {
   // TODO: limit motor vel in class instead of subsystem method (guarantees that its limited if u forget to limit it later)
   @Override
   public void writePeriodicOutputs() {
-    for (int i = 0; i < mModules.length; i++) {
-      mModules[i].setDesiredState(mPeriodicIO.des_module_states[i]);
-    }
 
   }
 
@@ -155,14 +121,6 @@ public class DriveSubsystem extends Subsystem {
       return;
     }
 
-    int i = 0;
-
-    for (MAXSwerveModuleV2 module : mModules){
-      SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", module.getDriveSetpoint());
-      SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", module.getTurnSetpoint());
-      i++;
-    }
-
     SmartDashboard.putNumber("Robot X", mOdometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Robot Y", mOdometry.getPoseMeters().getY());
   }
@@ -180,19 +138,12 @@ public class DriveSubsystem extends Subsystem {
 
   public ModuleState[] getModuleStates() {
     ModuleState[] states = new ModuleState[4];
-    int i = 0;
-
-    for (MAXSwerveModuleV2 mod : mModules) {
-      states[i] = mod.getState();
-      i++;
-    }
 
     return states;
   }
 
   private void updateSetpoint() {
-    if (mControlState == DriveControlState.FORCE_ORIENT)
-      return;
+
 
     Pose2d robot_pose_vel = new Pose2d(mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt,
         mPeriodicIO.des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt,
@@ -284,13 +235,7 @@ public class DriveSubsystem extends Subsystem {
    */
   public void setModuleStates(ModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, mKinematicLimits.kMaxDriveVelocity);
-    int i = 0;
 
-    for (ModuleState state : desiredStates) {
-      mModules[i].setDesiredState(state);
-
-      i++;
-    }
   }
 
   public void setSwerveModuleStates(SwerveModuleState[] desiredStates) {
@@ -307,9 +252,7 @@ public class DriveSubsystem extends Subsystem {
 
   /** Resets the drive encoders to currently read a position of 0. */
   public void resetEncoders() {
-    for (MAXSwerveModuleV2 mod : mModules) {
-      mod.resetEncoders();
-    }
+
   }
 
   /** Zeroes the heading of the robot. */
@@ -374,58 +317,16 @@ public class DriveSubsystem extends Subsystem {
         })), path.getMarkers(), AutoEvents.eventMap);
   }
 
-  public void teleopDrive(double xSpeed, double ySpeed, double desiredRotDeg) {
+  public void teleopDrive(double xSpeed, double ySpeed) {
     if (mControlState != DriveControlState.OPEN_LOOP) {
       mControlState = DriveControlState.OPEN_LOOP;
     }
 
-    mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(xSpeed, ySpeed, desiredRotDeg);
-  }
-
-  /**
-   * @param desiredRotDeg Must be a value between 0 and 360
-   */
-  public void snapDrive(double xSpeed, double ySpeed, double desiredRotDeg) {
-    if (mControlState != DriveControlState.HEADING_CONTROL) {
-      mControlState = DriveControlState.HEADING_CONTROL;
-    }
-    double rot = snapController.calculate(Math.toRadians(mPigeon.getYaw().getDegrees()), Math.toRadians(desiredRotDeg));
-
-    SmartDashboard.putNumber("Snap output", rot);
-    teleopDrive(xSpeed, ySpeed, rot);
+    //mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(xSpeed, ySpeed, desiredRotDeg);
   }
 
   public void stop() {
-    for (MAXSwerveModuleV2 module : mModules) {
-      module.stop();
-    }
-  }
 
-  public synchronized void orientModules(List<Rotation2d> orientations) {
-    if (mControlState != DriveControlState.FORCE_ORIENT) {
-      mControlState = DriveControlState.FORCE_ORIENT;
-    }
-    for (int i = 0; i < mModules.length; ++i) {
-      mPeriodicIO.des_module_states[i] = ModuleState.fromSpeeds(orientations.get(i), 0.0);
-    }
   }
-
-  public void setX() {
-    orientModules(
-        List.of(
-            Rotation2d.fromDegrees(45),
-            Rotation2d.fromDegrees(-45),
-            Rotation2d.fromDegrees(-45),
-            Rotation2d.fromDegrees(45)));
-  }
-
-  // Stops drive without orienting modules
-  public synchronized void stopModules() {
-    List<Rotation2d> orientations = new ArrayList<>();
-    for (ModuleState moduleState : getModuleStates()) {
-        orientations.add(moduleState.angle);
-    }
-    orientModules(orientations);
-}
 
 }

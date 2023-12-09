@@ -186,28 +186,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     try {
-      if (mControlBoard.driver.getController().getAButtonPressed()) {
-        mDriveSubsystem.zeroHeading();
-      }
-
-      if (mControlBoard.driver.getController().getXButton()) {
-        mDriveSubsystem.setX();
-      } else if (mControlBoard.driver.getLT()) {
-        mDriveSubsystem.snapDrive(
-            -mControlBoard.driver.getLeftY(),
-            -mControlBoard.driver.getLeftX(),
-            0);
-      } else if (mControlBoard.driver.getRT()) {
-        mDriveSubsystem.snapDrive(
-            -mControlBoard.driver.getLeftY(),
-            -mControlBoard.driver.getLeftX(),
-            180);
-      } else {
-        mDriveSubsystem.teleopDrive(
-          -mControlBoard.driver.getLeftY(),
-          -mControlBoard.driver.getLeftX(),
-          -mControlBoard.driver.getRightX());
-      }
+      mDriveSubsystem.teleopDrive(
+        -mControlBoard.driver.getLeftY(),
+        -mControlBoard.driver.getRightY());
 
     } catch (Throwable t) {
       throw t;
