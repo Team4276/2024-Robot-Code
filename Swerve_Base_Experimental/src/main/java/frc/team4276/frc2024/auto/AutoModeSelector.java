@@ -11,6 +11,7 @@ import frc.team4276.frc2024.auto.modes.*;
 public class AutoModeSelector {
     public enum DesiredMode {
         DO_NOTHING, 
+        EXAMPLE
 
     }
 
@@ -25,6 +26,7 @@ public class AutoModeSelector {
 
     public AutoModeSelector() {
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
+        mModeChooser.addOption("Example", DesiredMode.EXAMPLE);
         SmartDashboard.putData("Auto Mode", mModeChooser);
 
         allianceChooser = new SendableChooser<Alliance>();
@@ -51,6 +53,8 @@ public class AutoModeSelector {
         switch (mode) {
         case DO_NOTHING:
             return Optional.of(new DoNothingMode());
+        case EXAMPLE:
+            return Optional.of(new ActionExample());
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

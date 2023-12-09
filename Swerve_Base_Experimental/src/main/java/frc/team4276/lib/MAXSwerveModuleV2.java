@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import frc.team1678.lib.Conversions;
 import frc.team1678.lib.swerve.ModuleState;
+import frc.team254.lib.util.Util;
 import frc.team4276.frc2024.Constants.ModuleConstants;
 import frc.team4276.frc2024.subsystems.Subsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.PeriodicIO;
@@ -141,13 +142,25 @@ public class MAXSwerveModuleV2 extends Subsystem {
   
     } else {
       // Apply chassis angular offset to the desired state.
-      ModuleState correctedDesiredState = new ModuleState();
+      ModuleState optimizedDesiredState = new ModuleState();
 
-      correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-      correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
+      optimizedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+      optimizedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
+
+      double targetAngle =  optimizedDesiredState.angle.getDegrees();
+      
+      if (Util.shouldReverse(
+        new frc.team254.lib.geometry.Rotation2d(targetAngle), 
+        new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(m_turningEncoder.getPosition())))) {
+        optimizedDesiredState.speedMetersPerSecond *= -1;
+        optimizedDesiredState.angle =  new Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
+      }
+
+      optimizedDesiredState.angle = new Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
+        Math.toDegrees(m_turningEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
 
       // Optimize the reference state to avoid spinning further than 90 degrees.
-      ModuleState optimizedDesiredState = ModuleState.optimize(correctedDesiredState.angle, getState());
+      //ModuleState optimizedDesiredState = ModuleState.optimize(correctedDesiredState.angle, getState());
 
       driveSetpoint = optimizedDesiredState.speedMetersPerSecond;
       turnSetpoint = optimizedDesiredState.angle.getRadians();

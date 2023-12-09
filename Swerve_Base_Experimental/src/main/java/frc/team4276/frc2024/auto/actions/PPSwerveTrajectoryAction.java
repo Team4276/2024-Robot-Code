@@ -18,12 +18,15 @@ public class PPSwerveTrajectoryAction implements Action {
 
     @Override
     public void start() {
+        System.out.println("Start");
+        mCommand.schedule();
         mCommand.initialize();
 
     }
 
     @Override
     public void update() {
+        System.out.println("Update");
         mCommand.execute();
     }
 
