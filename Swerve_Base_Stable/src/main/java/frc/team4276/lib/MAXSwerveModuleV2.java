@@ -5,9 +5,10 @@
 package frc.team4276.lib;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.team1678.lib.swerve.ModuleState;
+import frc.team254.lib.util.Util;
 import frc.team4276.frc2024.Constants.ModuleConstants;
+import frc.team4276.frc2024.subsystems.Subsystem;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -16,7 +17,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
-public class MAXSwerveModule {
+public class MAXSwerveModuleV2 extends Subsystem {
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;
 
@@ -27,7 +28,9 @@ public class MAXSwerveModule {
   private final SparkMaxPIDController m_turningPIDController;
 
   private double m_chassisAngularOffset = 0;
-  private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());
+  private ModuleState m_desiredState;
+
+  public mPeriodicIO mPeriodicIO = new mPeriodicIO();
 
   /**
    * Constructs a MAXSwerveModule and configures the driving and turning motor,
@@ -35,7 +38,7 @@ public class MAXSwerveModule {
    * MAXSwerve Module built with NEOs, SPARKS MAX, and a Through Bore
    * Encoder.
    */
-  public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
+  public MAXSwerveModuleV2(int drivingCANId, int turningCANId, double chassisAngularOffset) {
     m_drivingSparkMax = new CANSparkMax(drivingCANId, MotorType.kBrushless);
     m_turningSparkMax = new CANSparkMax(turningCANId, MotorType.kBrushless);
 
@@ -105,6 +108,7 @@ public class MAXSwerveModule {
     m_turningSparkMax.burnFlash();
 
     m_chassisAngularOffset = chassisAngularOffset;
+    m_desiredState = new ModuleState();
     m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
     m_drivingEncoder.setPosition(0);
   }
@@ -114,24 +118,13 @@ public class MAXSwerveModule {
    *
    * @return The current state of the module.
    */
-  public SwerveModuleState getState() {
+  public ModuleState getState() {
     // Apply chassis angular offset to the encoder position to get the position
     // relative to the chassis.
-    return new SwerveModuleState(m_drivingEncoder.getVelocity(),
-        new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset));
-  }
-
-  /**
-   * Returns the current position of the module.
-   *
-   * @return The current position of the module.
-   */
-  public SwerveModulePosition getPosition() {
-    // Apply chassis angular offset to the encoder position to get the position
-    // relative to the chassis.
-    return new SwerveModulePosition(
-        m_drivingEncoder.getPosition(),
-        new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset));
+    return new ModuleState(
+      m_drivingEncoder.getPosition(),
+      new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset),
+      m_drivingEncoder.getVelocity());
   }
 
   /**
@@ -139,20 +132,35 @@ public class MAXSwerveModule {
    *
    * @param desiredState Desired state with speed and angle.
    */
-  public void setDesiredState(SwerveModuleState desiredState) {
+  public void setDesiredState(ModuleState desiredState) {
     if (Math.abs(desiredState.speedMetersPerSecond) < 0.001){
       stop();
       return;
   
     } else {
       // Apply chassis angular offset to the desired state.
-      SwerveModuleState correctedDesiredState = new SwerveModuleState();
-      correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-      correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
+      ModuleState optimizedDesiredState = new ModuleState();
+
+      optimizedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+      optimizedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
+
+      double targetAngle =  optimizedDesiredState.angle.getDegrees();
+      
+      if (Util.shouldReverse(
+        new frc.team254.lib.geometry.Rotation2d(targetAngle), 
+        new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(m_turningEncoder.getPosition())))) {
+        optimizedDesiredState.speedMetersPerSecond *= -1;
+        optimizedDesiredState.angle =  new Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
+      }
+
+      optimizedDesiredState.angle = new Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
+        Math.toDegrees(m_turningEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
 
       // Optimize the reference state to avoid spinning further than 90 degrees.
-      SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
-          new Rotation2d(m_turningEncoder.getPosition()));
+      //ModuleState optimizedDesiredState = ModuleState.optimize(correctedDesiredState.angle, getState());
+
+      driveSetpoint = optimizedDesiredState.speedMetersPerSecond;
+      turnSetpoint = optimizedDesiredState.angle.getRadians();
 
       // Command driving and turning SPARKS MAX towards their respective setpoints.
       m_drivingPIDController.setReference(optimizedDesiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
@@ -160,6 +168,17 @@ public class MAXSwerveModule {
 
       m_desiredState = desiredState;
     }
+  }
+
+  private double driveSetpoint;
+  private double turnSetpoint;
+
+  public double getDriveSetpoint(){
+    return driveSetpoint;
+  }
+
+  public double getTurnSetpoint(){
+    return turnSetpoint;
   }
 
   /** Zeroes all the SwerveModule encoders. */
@@ -172,4 +191,57 @@ public class MAXSwerveModule {
     m_turningSparkMax.set(0);
 
   }
+
+  
+
+  public static class mPeriodicIO {
+    // Inputs
+    public double timestamp = 0.0;
+    public double targetVelocity = 0.0;
+    public double rotationPosition = 0.0;
+    public double drivePosition = 0.0;
+    public double velocity = 0.0;
+
+    // Outputs
+    public double rotationDemand;
+    public double driveDemand;
+  }
+
+  
+  // @Override
+  // public synchronized void readPeriodicInputs() {
+
+  //     mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+
+  //     mPeriodicIO.velocity = m_drivingEncoder.getVelocity();
+      
+  //     mPeriodicIO.rotationPosition = Math.toDegrees(m_turningEncoder.getPosition());
+
+  //     mPeriodicIO.drivePosition = m_drivingEncoder.getPosition();
+  // }
+
+  // @Override
+  // public synchronized void writePeriodicOutputs() {
+
+  //     double targetAngle = m_desiredState.angle.getDegrees();
+  //     Rotation2d currentAngle = Rotation2d.fromDegrees(mPeriodicIO.rotationPosition);
+  //     if (Util.shouldReverse(Rotation2d.fromDegrees(targetAngle), currentAngle)) {
+  //         mPeriodicIO.targetVelocity = -mPeriodicIO.targetVelocity;
+  //         targetAngle += 180.0;
+  //     }
+  //     targetAngle = Util.placeInAppropriate0To360Scope(getCurrentUnboundedDegrees(), targetAngle);
+
+  //     mPeriodicIO.rotationDemand = Conversions.degreesToFalcon(targetAngle,
+  //             Constants.SwerveConstants.angleGearRatio);
+
+  //     mAngleMotor.set(ControlMode.Position, mPeriodicIO.rotationDemand);
+  //     if (mPeriodicIO.driveControlMode == ControlMode.Velocity) {
+  //         mDriveMotor.setControl(new VelocityTorqueCurrentFOC(mPeriodicIO.driveDemand));
+  //     } else {
+  //         mDriveMotor.setControl(new DutyCycleOut(mPeriodicIO.driveDemand, true, false));
+  //     }
+  // }
+
+
+  
 }

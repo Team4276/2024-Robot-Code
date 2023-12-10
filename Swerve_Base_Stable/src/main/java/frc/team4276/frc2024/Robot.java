@@ -196,18 +196,17 @@ public class Robot extends TimedRobot {
         mDriveSubsystem.snapDrive(
             -mControlBoard.driver.getLeftY(),
             -mControlBoard.driver.getLeftX(),
-            0, true);
+            0);
       } else if (mControlBoard.driver.getRT()) {
         mDriveSubsystem.snapDrive(
             -mControlBoard.driver.getLeftY(),
             -mControlBoard.driver.getLeftX(),
-            180, true);
+            180);
       } else {
-        mDriveSubsystem.drive(
-            -mControlBoard.driver.getLeftY(),
-            -mControlBoard.driver.getLeftX(),
-            -mControlBoard.driver.getRightX(),
-            true);
+        mDriveSubsystem.teleopDrive(
+          -mControlBoard.driver.getLeftY(),
+          -mControlBoard.driver.getLeftX(),
+          -mControlBoard.driver.getRightX());
       }
 
     } catch (Throwable t) {

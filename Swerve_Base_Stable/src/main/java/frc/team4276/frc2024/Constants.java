@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import frc.team1678.lib.swerve.SwerveDriveKinematics;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -73,12 +73,6 @@ public final class Constants {
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-        public static final SwerveDriveKinematics kDriveKinematicsT = new SwerveDriveKinematics(
-          new Translation2d(kWheelBase / 2, kTrackWidth / 2),
-          new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
-          new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
-          new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
-
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
     public static final double kFrontRightChassisAngularOffset = 0;
@@ -87,14 +81,25 @@ public final class Constants {
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 13;
-    public static final int kRearLeftDrivingCanId = 8;
     public static final int kFrontRightDrivingCanId = 15;
+    public static final int kRearLeftDrivingCanId = 8;
     public static final int kRearRightDrivingCanId = 12;
 
     public static final int kFrontLeftTurningCanId = 7;
-    public static final int kRearLeftTurningCanId = 9;
     public static final int kFrontRightTurningCanId = 16;
+    public static final int kRearLeftTurningCanId = 9;
     public static final int kRearRightTurningCanId = 14;
+
+    public static final int[] kDriveTrainCanIds = {
+      kFrontLeftDrivingCanId,
+      kFrontRightDrivingCanId,
+      kRearLeftDrivingCanId,
+      kRearRightDrivingCanId,
+      kFrontLeftTurningCanId,
+      kFrontRightTurningCanId,
+      kRearLeftTurningCanId,
+      kRearRightTurningCanId
+    };
 
     public static final boolean kGyroReversed = false;
   }
@@ -179,9 +184,10 @@ public final class Constants {
   }
 
   public static final class SnapConstants{
-    public static final double kP = 0.1;
-    public static final double kI = 0;
-    public static final double kD = 0;
+    private static final double kCoefficient = 3;
+    public static final double kP = 0.06 * kCoefficient;
+    public static final double kI = 0.003 * kCoefficient;
+    public static final double kD = 0.004 * kCoefficient;
 
   }
 }
