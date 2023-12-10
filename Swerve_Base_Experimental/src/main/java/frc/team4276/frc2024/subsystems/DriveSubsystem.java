@@ -376,10 +376,8 @@ public class DriveSubsystem extends Subsystem {
             new PIDController(Constants.AutoConstants.kPThetaController, 0, 0),
             this::setSwerveModuleStates,
             false,
-            new EmptySubsystem()),
-        new InstantCommand(() -> {
-          stop();
-        })), path.getMarkers(), AutoEvents.eventMap);
+            new EmptySubsystem()
+        )), path.getMarkers(), AutoEvents.eventMap);
   }
 
   public void teleopDrive(double xSpeed, double ySpeed, double desiredRotDeg) {

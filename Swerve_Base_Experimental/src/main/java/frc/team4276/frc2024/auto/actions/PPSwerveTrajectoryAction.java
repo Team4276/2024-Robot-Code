@@ -12,14 +12,17 @@ public class PPSwerveTrajectoryAction implements Action {
 
     private final Command mCommand;
 
+    private boolean hasRun = false;
+
     public PPSwerveTrajectoryAction(PathPlannerTrajectory trajectory){
         mCommand = mDriveSubsystem.followPathCommand(trajectory);
+
+        hasRun = false;
     }
 
     @Override
     public void start() {
         System.out.println("Start");
-        mCommand.schedule();
         mCommand.initialize();
 
     }
@@ -32,7 +35,7 @@ public class PPSwerveTrajectoryAction implements Action {
 
     @Override
     public boolean isFinished() {
-        if (mCommand.isFinished()) {
+        if (mCommand.isFinished() && hasRun) {
             mDriveSubsystem.stopModules();
             return true;
         } 
