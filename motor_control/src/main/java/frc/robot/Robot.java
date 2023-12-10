@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   public final int MAX_RPM = 1000;
-  public double posSetPoint_flywheelDegrees = 360.0 * 5;  // 5 turns to get elevator to the top, bottom = 0.0 degrees
+  public double posSetPoint_flywheelDegrees = 360.0 * 5; // 5 turns to get elevator to the top, bottom = 0.0 degrees
   public final double kGoButtonPercentPower = 0.5;
 
   private TalonSRX motor775Pro;
@@ -40,9 +40,9 @@ public class Robot extends TimedRobot {
   private final int kLoopIndex = 0;
   private final int kTimeoutMs = 30;
 
-  private final double kP = 0.05;
+  private final double kP = 0.005;
   private final double kI = 0.0;
-  private final double kD = 0.0;
+  private final double kD = 0.01;
   private final double kF = 0.0; // Feed Forward gain - always set to zero for this test
 
   private final int DIO_GO_BUTTON = 0;
@@ -63,7 +63,8 @@ public class Robot extends TimedRobot {
   }
 
   private double rawUnits_to_degreesFlywheel(double rawUnits) {
-    double motorRevolutions = rawUnits / (4 * kSensorCountsPerRotation_VersaPlanetaryEncoder); // *4 Because quad encoder
+    double motorRevolutions = rawUnits / (4 * kSensorCountsPerRotation_VersaPlanetaryEncoder); // *4 Because quad
+                                                                                               // encoder
     double flywheelRevolutions = motorRevolutions * 360.0;
     return flywheelRevolutions / kGearReduction_ToOne;
   }
@@ -71,7 +72,7 @@ public class Robot extends TimedRobot {
   private double degreesFlywheel_to_rawUnits(double deg) {
     double motorDegrees = deg * kGearReduction_ToOne;
     double motorRevolutions = motorDegrees / 360.0;
-    return motorRevolutions * (4 * kSensorCountsPerRotation_VersaPlanetaryEncoder); 
+    return motorRevolutions * (4 * kSensorCountsPerRotation_VersaPlanetaryEncoder);
   }
 
   /**
@@ -129,6 +130,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("posSetPoint", posSetPoint_flywheelDegrees);
     SmartDashboard.putNumber("posFlywheelDegrees", posFlywheelDegrees);
 
+    SmartDashboard.putNumber("P", kP);
+    SmartDashboard.putNumber("I", kI);
+    SmartDashboard.putNumber("D", kD);
+
     if (rpmFlywheel > MAX_RPM) {
       safetySpinDown = true;
     } else {
@@ -156,20 +161,20 @@ public class Robot extends TimedRobot {
   private long elapsedTimeMillis = 0;
 
   private final int MAX_HISTORY = 50;
-  private int idx_history = MAX_HISTORY-1;
-  private double[] history = new double[MAX_HISTORY];  // about 1 second if called in robot loop at 20ms interval
-  
+  private int idx_history = MAX_HISTORY - 1;
+  private double[] history = new double[MAX_HISTORY]; // about 1 second if called in robot loop at 20ms interval
+
   private boolean isMoving() {
     idx_history++;
-    if(idx_history >= MAX_HISTORY) {
+    if (idx_history >= MAX_HISTORY) {
       idx_history = 0;
     }
     history[idx_history] = posFlywheelDegrees;
-    for(int i=0; i<MAX_HISTORY-2; i++){
-      if(history[i] != history[i+1]) {
+    for (int i = 0; i < MAX_HISTORY - 2; i++) {
+      if (history[i] != history[i + 1]) {
         return true;
-      }   
-    } 
+      }
+    }
     return false;
   }
 
@@ -178,27 +183,23 @@ public class Robot extends TimedRobot {
     if (safetySpinDown) {
       motor775Pro.set(TalonSRXControlMode.PercentOutput, 0.0);
     } else {
-      if(isMoving()){
+      if (isMoving()) {
         elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-        SmartDashboard.putNumber("Settling time (sec)", elapsedTimeMillis/1000.0);  
+        SmartDashboard.putNumber("Settling time (sec)", elapsedTimeMillis / 1000.0);
       } else {
         if (!goButton.get()) {
-          if(previousGoButton) {
+          if (previousGoButton) {
             // Just pushed GO while stopped
+            motor775Pro.setSelectedSensorPosition(0);
             elapsedTimeMillis = 0;
-            SmartDashboard.putNumber("Settling time (sec)", elapsedTimeMillis/1000.0);
+            SmartDashboard.putNumber("Settling time (sec)", elapsedTimeMillis / 1000.0);
             startTimeMillis = System.currentTimeMillis();
             idx_history = 0;
-            history[MAX_HISTORY-1]++;  // So !isMoving() won't immediately stop the test
+            history[MAX_HISTORY - 1]++; // So !isMoving() won't immediately stop the test
           }
         }
-      } 
-      if (goButton.get()) {
-        if (!previousGoButton) {
-          //motor775Pro.setSelectedSensorPosition(0);
-        }
-        motor775Pro.set(TalonSRXControlMode.PercentOutput, 0.0);
-      } else {
+      }
+      if (!goButton.get()) {
         if (usePidSwitch.get()) {
           if (previousGoButton) {
             motor775Pro.set(ControlMode.Position, setPoint_rawSensorUnits);
