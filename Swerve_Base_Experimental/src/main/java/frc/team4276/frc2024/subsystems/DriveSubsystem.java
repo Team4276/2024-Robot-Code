@@ -39,7 +39,7 @@ import frc.team1678.lib.swerve.SwerveDriveOdometry;
 import frc.team254.lib.util.Util;
 
 public class DriveSubsystem extends Subsystem {
-
+  //TODO: use % output for open loop and mps for everything else in SwerveModule class
   public enum DriveControlState {
     FORCE_ORIENT,
     OPEN_LOOP,
