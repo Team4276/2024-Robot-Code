@@ -130,7 +130,6 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
-  // TODO: limit motor vel in class instead of subsystem method (guarantees that its limited if u forget to limit it later)
   @Override
   public void writePeriodicOutputs() {
     for (int i = 0; i < mModules.length; i++) {
@@ -285,6 +284,7 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
+  // TODO: limit motor vel in class instead of subsystem method (guarantees that its limited if u forget to limit it later)
   /**
    * Sets the swerve ModuleStates.
    *
