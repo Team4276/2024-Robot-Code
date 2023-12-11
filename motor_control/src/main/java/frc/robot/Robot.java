@@ -40,10 +40,10 @@ public class Robot extends TimedRobot {
   private final int kLoopIndex = 0;
   private final int kTimeoutMs = 30;
 
-  private final double kP = 0.005;
-  private final double kI = 0.0;
-  private final double kD = 0.01;
-  private final double kF = 0.0; // Feed Forward gain - always set to zero for this test
+  private double kP = 0.0;
+  private double kI = 0.0;
+  private double kD = 0.0;
+  private double kF = 0.0; // Feed Forward gain - always set to zero for this test
 
   private final int DIO_GO_BUTTON = 0;
   private final int DIO_USE_PID_JUMPER = 5;
@@ -112,11 +112,15 @@ public class Robot extends TimedRobot {
     motor775Pro.config_kI(kLoopIndex, kI, kTimeoutMs);
     motor775Pro.config_kD(kLoopIndex, kD, kTimeoutMs);
 
-    motor775Pro.setNeutralMode(NeutralMode.Brake);
+    motor775Pro.setNeutralMode(NeutralMode.Coast);
 
     goButton = new DigitalInput(DIO_GO_BUTTON);
     usePidSwitch = new DigitalInput(DIO_USE_PID_JUMPER);
-  }
+  
+    SmartDashboard.putNumber("P", kP);
+    SmartDashboard.putNumber("I", kI);
+    SmartDashboard.putNumber("D", kD);
+}
 
   @Override
   public void robotPeriodic() {
@@ -129,10 +133,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("posSetPoint", posSetPoint_flywheelDegrees);
     SmartDashboard.putNumber("posFlywheelDegrees", posFlywheelDegrees);
-
-    SmartDashboard.putNumber("P", kP);
-    SmartDashboard.putNumber("I", kI);
-    SmartDashboard.putNumber("D", kD);
+    SmartDashboard.putNumber("rpmFlywheel", rpmFlywheel);
 
     if (rpmFlywheel > MAX_RPM) {
       safetySpinDown = true;
@@ -187,7 +188,9 @@ public class Robot extends TimedRobot {
         elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         SmartDashboard.putNumber("Settling time (sec)", elapsedTimeMillis / 1000.0);
       } else {
-        if (!goButton.get()) {
+        if (goButton.get()) {
+          motor775Pro.set(TalonSRXControlMode.PercentOutput, 0.0);
+        } else {
           if (previousGoButton) {
             // Just pushed GO while stopped
             motor775Pro.setSelectedSensorPosition(0);
@@ -219,7 +222,25 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     motor775Pro.set(TalonSRXControlMode.PercentOutput, 0.0);
-  }
+ 
+    double dTemp = SmartDashboard.getNumber("P", 0.0);
+    if(dTemp != kP) {
+      kP = dTemp;
+      motor775Pro.config_kP(kLoopIndex, kP, kTimeoutMs);
+    }
+  
+    dTemp = SmartDashboard.getNumber("I", 0.0);
+    if(dTemp != kI) {
+      kI = dTemp;
+      motor775Pro.config_kI(kLoopIndex, kI, kTimeoutMs);
+    }
+  
+    dTemp = SmartDashboard.getNumber("D", 0.0);
+    if(dTemp != kD) {
+      kD = dTemp;
+      motor775Pro.config_kD(kLoopIndex, kD, kTimeoutMs);
+    }
+ }
 
   @Override
   public void testInit() {
