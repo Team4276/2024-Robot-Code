@@ -17,7 +17,7 @@ public class Test extends Subsystem {
     }
 
     private Test(){
-        test = new MAXSkid(12, 15, false);
+        test = new MAXSkid(12, 15, true);
 
     }
 

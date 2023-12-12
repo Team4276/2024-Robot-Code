@@ -17,6 +17,7 @@ import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.Test;
+import frc.team4276.frc2024.subsystems.Test2;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -32,8 +33,9 @@ public class Robot extends TimedRobot {
   private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
   private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
-  private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
+  //private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   private final Test test = Test.getInstance();
+  private final Test2 test2 = new Test2();
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -53,7 +55,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     try {
       mSubsystemManager.setSubsystems(
-          mDriveSubsystem,
+          // mDriveSubsystem,
           test);
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -173,7 +175,7 @@ public class Robot extends TimedRobot {
     try {
       if (mAutoModeSelector.getAutoMode().isPresent()) {
         if (mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0) {
-          mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().getDegrees() + 180);
+          //mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().getDegrees() + 180);
         }
       }
 
@@ -189,11 +191,16 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     try {
-      mDriveSubsystem.teleopDrive(
-        -mControlBoard.driver.getLeftY(),
-        -mControlBoard.driver.getRightY());
+      // mDriveSubsystem.teleopDrive(
+      //   -mControlBoard.driver.getLeftY(),
+      //   -mControlBoard.driver.getRightY());
       
       test.set(mControlBoard.operator.getLeftY());
+
+      
+    test2.set(mControlBoard.operator.getRightY());
+
+
 
       
 

@@ -33,7 +33,6 @@ public class MAXSkid extends Subsystem{
         fMotor.setSmartCurrentLimit(SkidConstants.kCurrentLimit);
 
         lMotor.setInverted(isInverted);
-        //TODO: do i need to do this? CHECK IT AS SOON AS POSSIBLE
         fMotor.setInverted(isInverted);
 
         fMotor.follow(lMotor);
@@ -48,7 +47,7 @@ public class MAXSkid extends Subsystem{
         pidController.setI(SkidConstants.kDrivingI);
         pidController.setD(SkidConstants.kDrivingD);
         pidController.setFF(SkidConstants.kDrivingFF);
-        pidController.setOutputRange(-1,1);
+        pidController.setOutputRange(-0.5,0.5);
 
         lMotor.burnFlash();
         fMotor.burnFlash();
