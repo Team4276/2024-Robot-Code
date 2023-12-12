@@ -70,6 +70,10 @@ public class MAXSkid extends Subsystem{
         lMotor.set(0);
     }
 
+    public void set(double speed){
+        lMotor.set(speed);
+    }
+
     @Override
     public void readPeriodicInputs() {
         // ngl im overengineering the shit out of this :D

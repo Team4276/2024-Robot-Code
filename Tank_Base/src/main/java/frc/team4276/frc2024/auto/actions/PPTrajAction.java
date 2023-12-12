@@ -6,13 +6,13 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class PPSwerveTrajectoryAction implements Action {
+public class PPTrajAction implements Action {
 
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
     private final Command mCommand;
 
-    public PPSwerveTrajectoryAction(PathPlannerTrajectory trajectory){
+    public PPTrajAction(PathPlannerTrajectory trajectory){
         mCommand = mDriveSubsystem.followPathCommand(trajectory);
     }
 

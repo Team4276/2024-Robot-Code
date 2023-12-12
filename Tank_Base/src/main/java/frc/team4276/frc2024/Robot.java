@@ -16,6 +16,7 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.Test;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot {
   private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
+  private final Test test = Test.getInstance();
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -51,7 +53,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     try {
       mSubsystemManager.setSubsystems(
-          mDriveSubsystem);
+          mDriveSubsystem,
+          test);
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -189,6 +192,10 @@ public class Robot extends TimedRobot {
       mDriveSubsystem.teleopDrive(
         -mControlBoard.driver.getLeftY(),
         -mControlBoard.driver.getRightY());
+      
+      test.set(mControlBoard.operator.getLeftY());
+
+      
 
     } catch (Throwable t) {
       throw t;

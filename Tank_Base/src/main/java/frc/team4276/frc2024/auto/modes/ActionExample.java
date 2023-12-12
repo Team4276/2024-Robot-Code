@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
-import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
+import frc.team4276.frc2024.auto.actions.PPTrajAction;
 import frc.team4276.frc2024.auto.actions.ParallelAction;
 import frc.team4276.frc2024.auto.actions.WaitForEventAction;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -31,7 +31,7 @@ public class ActionExample extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         new ParallelAction(List.of(
-            new PPSwerveTrajectoryAction(traj1)
+            new PPTrajAction(traj1)
         ));
         new WaitForEventAction();
 
