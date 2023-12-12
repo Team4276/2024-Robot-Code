@@ -6,7 +6,6 @@ package frc.team4276.frc2024;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -58,9 +57,11 @@ public final class Constants {
             kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
     }
 
+    //TODO: fill 
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(25);
 
+    //TODO: fill IDs
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 13;
     public static final int kRearLeftDrivingCanId = 8;
@@ -71,6 +72,7 @@ public final class Constants {
   }
 
   public static final class SkidConstants {
+    //TODO: fill chassis constants
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
     public static final double kWheelCircumferenceMeters = 1 * Math.PI;
@@ -103,13 +105,6 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = 2 * Math.PI;
 
-    public static final double kDriveP = 1;
-    public static final double kDriveI = 0;
-    public static final double kDriveD = 0;
-
-    // Constraint for the motion profiled robot angle controller
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
   public static final class NeoMotorConstants {

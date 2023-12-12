@@ -1,6 +1,7 @@
 package frc.team4276.lib;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -15,6 +16,8 @@ public class MAXSkid extends Subsystem{
     private RelativeEncoder encoder;
 
     private SparkMaxPIDController pidController;
+
+    private double desSpeed;
 
     public MAXSkid(int id1, int id2, boolean isInverted){
         lMotor = new CANSparkMax(id1, MotorType.kBrushless);        
@@ -52,7 +55,7 @@ public class MAXSkid extends Subsystem{
     }
 
     public void setSpeed(double speedMetersPerSecond){
-
+        desSpeed = speedMetersPerSecond;
     }
 
     public double getPosition(){
@@ -62,6 +65,22 @@ public class MAXSkid extends Subsystem{
     public void resetEncoder(){
         encoder.setPosition(0);
     }
+
+    public void stop(){
+        lMotor.set(0);
+    }
+
+    @Override
+    public void readPeriodicInputs() {
+        // ngl im overengineering the shit out of this :D
+    }
+
+    @Override
+    public void writePeriodicOutputs() {
+        pidController.setReference(desSpeed, ControlType.kSmartVelocity);
+    }
+
+
 
 
 }
