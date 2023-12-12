@@ -39,7 +39,7 @@ import frc.team1678.lib.swerve.SwerveDriveOdometry;
 import frc.team254.lib.util.Util;
 
 public class DriveSubsystem extends Subsystem {
-
+  //TODO: use % output for open loop and mps for everything else in SwerveModule class
   public enum DriveControlState {
     FORCE_ORIENT,
     OPEN_LOOP,
@@ -130,7 +130,6 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
-  // TODO: limit motor vel in class instead of subsystem method (guarantees that its limited if u forget to limit it later)
   @Override
   public void writePeriodicOutputs() {
     for (int i = 0; i < mModules.length; i++) {
@@ -285,6 +284,7 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
+  // TODO: limit motor vel in class instead of subsystem method (guarantees that its limited if u forget to limit it later)
   /**
    * Sets the swerve ModuleStates.
    *
