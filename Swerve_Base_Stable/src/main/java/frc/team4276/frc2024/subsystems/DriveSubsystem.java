@@ -133,9 +133,13 @@ public class DriveSubsystem extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     for (int i = 0; i < mModules.length; i++) {
-      mModules[i].setDesiredState(mPeriodicIO.des_module_states[i]);
+      if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL){
+        mModules[i].setDesiredState(mPeriodicIO.des_module_states[i]);
+      } else if(mControlState == DriveControlState.PATH_FOLLOWING || mControlState == DriveControlState.FORCE_ORIENT){
+        mModules[i].setDesiredState(mPeriodicIO.des_module_states[i]);
+      }
     }
-
+    
   }
 
   @Override
@@ -309,7 +313,7 @@ public class DriveSubsystem extends Subsystem {
               state.speedMetersPerSecond)
       };
 
-      setModuleStates(convStates);
+      mPeriodicIO.des_module_states = convStates;
     }
   }
 
