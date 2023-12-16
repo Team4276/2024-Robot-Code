@@ -56,14 +56,12 @@ public class DriveSubsystem extends Subsystem {
 
   // Odometry class for tracking robot pose
   private SwerveDriveOdometry mOdometry;
-  private OdometryPhotonVision mOdometry_PV;
+  private OdometryPhotonVision mPhotonVisionOdometry;
 
   private PeriodicIO mPeriodicIO = new PeriodicIO();
   private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
   private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
-
-  private int nLogCounter = 0;
 
   private PIDController snapController;
 
@@ -108,6 +106,7 @@ public class DriveSubsystem extends Subsystem {
     snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
     snapController.enableContinuousInput(0, 2 * Math.PI);
 
+    Robot.m_testMonitor.enable(false);
   }
 
   @Override
@@ -126,19 +125,9 @@ public class DriveSubsystem extends Subsystem {
               mPigeon.getYaw(),
               getModuleStates());
               
-          mOdometry_PV.updateOdometry_PV();
-                          
-          double distance = mOdometry_PV.diffDistanceMeters(mOdometry.getPoseMeters());
-          double diffHeading = mOdometry_PV.diffHeadingDegrees(mOdometry.getPoseMeters());
-          boolean hasTargets = mOdometry_PV.hasTargets();
-
-          SmartDashboard.putNumber("Odometry distance from PV", distance);
-          SmartDashboard.putNumber("Odometry heading difference from PV", diffHeading);
-
-          nLogCounter++;
-          if (0 == nLogCounter % 1) {
-              String msg = String.format("%d, %f, %f, %b\n", Robot.m_testMonitor.getTicks(), distance, diffHeading, hasTargets);
-              Robot.m_testMonitor.logWrite(msg);
+          if(Robot.m_testMonitor.isTestMonitorEnabled()){
+            mPhotonVisionOdometry.updateOdometry_PV();
+            mPhotonVisionOdometry.logOutput(mOdometry.getPoseMeters());    
           }
         }
       }

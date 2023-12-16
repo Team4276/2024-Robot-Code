@@ -12,15 +12,13 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.swerve.SwerveDriveOdometry;
 import frc.team4276.frc2024.Constants.DriveConstants;
-
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Robot;
 
 public class OdometryPhotonVision {
@@ -32,32 +30,31 @@ public class OdometryPhotonVision {
   SwerveDriveOdometry m_odometry_PV;
 
   private PhotonCamera m_PVcamera = new PhotonCamera("Arducam_12MP");
-  private double camForwardMeters = 0.1404;
-  private double camSideMeters = -0.32;
-  private double camUpMeters = 0.14;
-  private double camPitchDegrees = 33.0;
-  private double camPitchRadians = (camPitchDegrees / 360.0) * (2 * Math.PI);
+  private double camPitchRadians = (Constants.PhotonVisionConstants.kPitchDegrees / 360.0) * (2 * Math.PI);
 
-  private Translation3d xlatCameraToRobot = new Translation3d(camForwardMeters, camSideMeters, camUpMeters);
+  private Translation3d xlatCameraToRobot = new Translation3d(Constants.PhotonVisionConstants.kForwardMeters,
+      Constants.PhotonVisionConstants.kSideMeters, Constants.PhotonVisionConstants.kUpMeters);
   private Rotation3d camRotation = new Rotation3d(0, camPitchRadians, 0); // cam facing forward, tilted up
   private Transform3d xformCamToRobot = new Transform3d(xlatCameraToRobot, camRotation);
 
-public OdometryPhotonVision() {
-  try {
-    aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+  private int nLogCounter = 0;
 
-    m_odometry_PV = new SwerveDriveOdometry(
-      DriveConstants.kDriveKinematics,
-      mDriveSubsystem.getModuleStates());
-  } catch (IOException e) {
-    // TODO Auto-generated catch block
-    e.printStackTrace();
+  public OdometryPhotonVision() {
+    try {
+      aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+
+      m_odometry_PV = new SwerveDriveOdometry(
+          DriveConstants.kDriveKinematics,
+          mDriveSubsystem.getModuleStates());
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
-}
 
   public double diffDistanceMeters(Pose2d otherPose2d) {
-      return m_odometry_PV.getPoseMeters().getTranslation().getDistance(m_odometry_PV.getPoseMeters().getTranslation());
-    }
+    return m_odometry_PV.getPoseMeters().getTranslation().getDistance(m_odometry_PV.getPoseMeters().getTranslation());
+  }
 
   public double diffHeadingDegrees(Pose2d otherPose2d) {
     return m_odometry_PV.getPoseMeters().getRotation().getDegrees() - mDriveSubsystem.getHeading().getDegrees();
@@ -92,5 +89,21 @@ public OdometryPhotonVision() {
           mDriveSubsystem.getHeading(),
           mDriveSubsystem.getModuleStates());
     }
+  }
+
+  public void logOutput(Pose2d otherPose) {
+    double distance = diffDistanceMeters(otherPose);
+    double diffHeading = diffHeadingDegrees(otherPose);
+    boolean hasTargets = hasTargets();
+
+    SmartDashboard.putNumber("Odometry distance from PV", distance);
+    SmartDashboard.putNumber("Odometry heading difference from PV", diffHeading);
+
+    nLogCounter++;
+    if (0 == nLogCounter % 1) {
+      String msg = String.format("%d, %f, %f, %b\n", Robot.m_testMonitor.getTicks(), distance, diffHeading, hasTargets);
+      Robot.m_testMonitor.logWrite(msg);
+    }
+
   }
 }

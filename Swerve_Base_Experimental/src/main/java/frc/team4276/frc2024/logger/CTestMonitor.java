@@ -97,6 +97,10 @@ public final class CTestMonitor {
         }
     }
 
+    public void enable(boolean isLoggingEnabled) {
+        m_isMonitorEnabled = isLoggingEnabled;
+    }
+
     private void limitMaxFiles() {
         File dir = new File(m_sLogFolder);
         int nFiles = dir.listFiles().length;
