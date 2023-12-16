@@ -34,7 +34,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxVel = 5.5; // meters per second
+    public static final double kMaxVel = 5.0; // meters per second
     public static final double kMaxAttainableVel = kMaxVel * 0.85;
 
     public static final double kMaxAngularVel = 2 * Math.PI; // radians per second
@@ -59,6 +59,14 @@ public final class Constants {
             kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
             kAutoLimits.kMaxAccel = Double.MAX_VALUE;
             kAutoLimits.kMaxAngularVelocity =  Double.MAX_VALUE; // Rad/Sec
+            kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+    }
+
+    public static final KinematicLimits kDemoLimits = new KinematicLimits();
+    static {
+            kAutoLimits.kMaxDriveVelocity = 2.0;
+            kAutoLimits.kMaxAccel = Double.MAX_VALUE;
+            kAutoLimits.kMaxAngularVelocity =  kMaxAngularVel / 4; // Rad/Sec
             kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
     }
 
@@ -151,7 +159,7 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 50; // amps
+    public static final int kDrivingMotorCurrentLimit = 40; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
   }
 

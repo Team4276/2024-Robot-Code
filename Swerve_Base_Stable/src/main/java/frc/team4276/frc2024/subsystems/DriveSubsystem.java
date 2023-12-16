@@ -39,7 +39,8 @@ import frc.team1678.lib.swerve.SwerveDriveOdometry;
 import frc.team254.lib.util.Util;
 
 public class DriveSubsystem extends Subsystem {
-  //TODO: use % output for open loop and mps for everything else in SwerveModule class
+  // TODO: use % output for open loop and mps for everything else in SwerveModule
+  // class
   public enum DriveControlState {
     FORCE_ORIENT,
     OPEN_LOOP,
@@ -133,13 +134,13 @@ public class DriveSubsystem extends Subsystem {
   @Override
   public void writePeriodicOutputs() {
     for (int i = 0; i < mModules.length; i++) {
-      if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL){
+      if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
         mModules[i].setDesiredState(mPeriodicIO.des_module_states[i]);
-      } else if(mControlState == DriveControlState.PATH_FOLLOWING || mControlState == DriveControlState.FORCE_ORIENT){
+      } else if (mControlState == DriveControlState.PATH_FOLLOWING || mControlState == DriveControlState.FORCE_ORIENT) {
         mModules[i].setDesiredState(mPeriodicIO.des_module_states[i]);
       }
     }
-    
+
   }
 
   @Override
@@ -160,7 +161,7 @@ public class DriveSubsystem extends Subsystem {
 
     int i = 0;
 
-    for (MAXSwerveModuleV2 module : mModules){
+    for (MAXSwerveModuleV2 module : mModules) {
       SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", module.getDriveSetpoint());
       SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", module.getTurnSetpoint());
       i++;
@@ -279,16 +280,17 @@ public class DriveSubsystem extends Subsystem {
     mPeriodicIO.des_module_states = real_module_setpoints;
 
     // for (int i = 0; i < 4; i++){
-      
-    //   SmartDashboard.putNumber(i + " Desmodule MPS", mPeriodicIO.des_module_states[i].speedMetersPerSecond);
-    //   SmartDashboard.putNumber(i + " Desmodule M", mPeriodicIO.des_module_states[i].distanceMeters);
-    //   SmartDashboard.putNumber(i + " Desmodule Rad", mPeriodicIO.des_module_states[i].angle.getRadians());
-    // }
 
+    // SmartDashboard.putNumber(i + " Desmodule MPS",
+    // mPeriodicIO.des_module_states[i].speedMetersPerSecond);
+    // SmartDashboard.putNumber(i + " Desmodule M",
+    // mPeriodicIO.des_module_states[i].distanceMeters);
+    // SmartDashboard.putNumber(i + " Desmodule Rad",
+    // mPeriodicIO.des_module_states[i].angle.getRadians());
+    // }
 
   }
 
-  // TODO: limit motor vel in class instead of subsystem method (guarantees that its limited if u forget to limit it later)
   /**
    * Sets the swerve ModuleStates.
    *
@@ -307,16 +309,16 @@ public class DriveSubsystem extends Subsystem {
 
   public void setSwerveModuleStates(SwerveModuleState[] desiredStates) {
     ModuleState[] convStates = {
-      new ModuleState(),
-      new ModuleState(),
-      new ModuleState(),
-      new ModuleState()
+        new ModuleState(),
+        new ModuleState(),
+        new ModuleState(),
+        new ModuleState()
     };
 
     for (int i = 0; i < desiredStates.length; i++) {
       convStates[i] = new ModuleState(0,
-        desiredStates[i].angle,
-        desiredStates[i].speedMetersPerSecond);
+          desiredStates[i].angle,
+          desiredStates[i].speedMetersPerSecond);
     }
 
     mPeriodicIO.des_module_states = convStates;
@@ -385,16 +387,24 @@ public class DriveSubsystem extends Subsystem {
             new PIDController(Constants.AutoConstants.kPThetaController, 0, 0),
             this::setSwerveModuleStates,
             false,
-            new EmptySubsystem()
-        )), path.getMarkers(), AutoEvents.eventMap);
+            new EmptySubsystem())),
+        path.getMarkers(), AutoEvents.eventMap);
   }
 
-  public void teleopDrive(double xSpeed, double ySpeed, double desiredRotDeg) {
+  public KinematicLimits getKinematicLimits() {
+    return this.mKinematicLimits;
+  }
+
+  public void setKinematicLimits(KinematicLimits kinematicLimits) {
+    this.mKinematicLimits = kinematicLimits;
+  }
+
+  public void teleopDrive(ChassisSpeeds speeds) {
     if (mControlState != DriveControlState.OPEN_LOOP) {
       mControlState = DriveControlState.OPEN_LOOP;
     }
 
-    mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, desiredRotDeg * DriveConstants.kMaxAngularVel, getHeading());
+    mPeriodicIO.des_chassis_speeds = speeds;
   }
 
   /**
@@ -407,7 +417,8 @@ public class DriveSubsystem extends Subsystem {
     double rot = snapController.calculate(Math.toRadians(mPigeon.getYaw().getDegrees()), Math.toRadians(desiredRotDeg));
 
     SmartDashboard.putNumber("Snap output", rot);
-    teleopDrive(xSpeed, ySpeed, rot);
+
+    teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
   }
 
   public void stop() {
@@ -438,9 +449,9 @@ public class DriveSubsystem extends Subsystem {
   public synchronized void stopModules() {
     List<Rotation2d> orientations = new ArrayList<>();
     for (ModuleState moduleState : getModuleStates()) {
-        orientations.add(moduleState.angle);
+      orientations.add(moduleState.angle);
     }
     orientModules(orientations);
-}
+  }
 
 }

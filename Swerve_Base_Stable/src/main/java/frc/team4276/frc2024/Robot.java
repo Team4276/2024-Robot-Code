@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.team1678.lib.loops.Looper;
+import frc.team1678.lib.swerve.ChassisSpeeds;
+import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -105,8 +107,8 @@ public class Robot extends TimedRobot {
     try {
       boolean alliance_changed = false;
 
-      if (DriverStation.isDSAttached()){
-        if(DriverStation.getAlliance() != prev_alliance){
+      if (DriverStation.isDSAttached()) {
+        if (DriverStation.getAlliance() != prev_alliance) {
           alliance_changed = true;
         }
       } else {
@@ -132,9 +134,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     try {
-      
-			mDisabledLooper.stop();
-      
+
+      mDisabledLooper.stop();
+
       Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
       if (autoMode.isPresent()) {
         mAutoModeExecutor.setAutoMode(autoMode.get());
@@ -191,10 +193,19 @@ public class Robot extends TimedRobot {
             -mControlBoard.driver.getLeftX(),
             180);
       } else {
-        mDriveSubsystem.teleopDrive(
-          -mControlBoard.driver.getLeftY(),
-          -mControlBoard.driver.getLeftX(),
-          -mControlBoard.driver.getRightX());
+        mDriveSubsystem.teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(
+            mControlBoard.getSwerveTranslation().x(),
+            mControlBoard.getSwerveTranslation().y(),
+            mControlBoard.getSwerveRotation(),
+            mDriveSubsystem.getHeading()));
+      }
+
+      if (mControlBoard.driver.getController().getRightBumperPressed()) {
+        mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
+      }
+
+      if (mControlBoard.driver.getController().getLeftBumperPressed()) {
+        mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
       }
 
     } catch (Throwable t) {
