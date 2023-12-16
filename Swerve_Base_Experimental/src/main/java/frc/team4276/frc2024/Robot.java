@@ -16,6 +16,7 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.logger.CTestMonitor;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -41,6 +42,8 @@ public class Robot extends TimedRobot {
   private AutoModeExecutor mAutoModeExecutor;
 
   public static boolean is_red_alliance = false;
+
+  public static CTestMonitor m_testMonitor = new CTestMonitor();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -86,6 +89,11 @@ public class Robot extends TimedRobot {
       mEnabledLooper.stop();
       mDisabledLooper.start();
 
+      if (Robot.m_testMonitor.isTestMonitorEnabled()) {
+        String msg = new String("disabledInit()\n");
+        Robot.m_testMonitor.logWrite(msg);
+      }
+  
     } catch (Throwable t) {
       throw t;
 
@@ -154,7 +162,10 @@ public class Robot extends TimedRobot {
 
       mEnabledLooper.start();
       mAutoModeExecutor.start();
-
+      if (Robot.m_testMonitor.isTestMonitorEnabled()) {
+        String msg = new String("autonomousInit()\n");
+        Robot.m_testMonitor.logWrite(msg);
+      }
     } catch (Throwable t) {
       throw t;
     }
@@ -176,7 +187,11 @@ public class Robot extends TimedRobot {
 
       mDisabledLooper.stop();
       mEnabledLooper.start();
-
+      
+      if (Robot.m_testMonitor.isTestMonitorEnabled()) {
+        String msg = new String("teleopInit()\n");
+        Robot.m_testMonitor.logWrite(msg);
+      }
     } catch (Throwable t) {
       throw t;
     }
@@ -216,7 +231,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-  }
+    if (Robot.m_testMonitor.isTestMonitorEnabled()) {
+      String msg = new String("testInit()\n");
+      Robot.m_testMonitor.logWrite(msg);
+    }
+}
 
   /** This function is called periodically during test mode. */
   @Override
