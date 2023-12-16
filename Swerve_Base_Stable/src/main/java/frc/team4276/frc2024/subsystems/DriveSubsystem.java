@@ -278,12 +278,12 @@ public class DriveSubsystem extends Subsystem {
     ModuleState[] real_module_setpoints = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
     mPeriodicIO.des_module_states = real_module_setpoints;
 
-    for (int i = 0; i < 4; i++){
+    // for (int i = 0; i < 4; i++){
       
-      SmartDashboard.putNumber(i + " Desmodule MPS", mPeriodicIO.des_module_states[i].speedMetersPerSecond);
-      SmartDashboard.putNumber(i + " Desmodule M", mPeriodicIO.des_module_states[i].distanceMeters);
-      SmartDashboard.putNumber(i + " Desmodule Rad", mPeriodicIO.des_module_states[i].angle.getRadians());
-    }
+    //   SmartDashboard.putNumber(i + " Desmodule MPS", mPeriodicIO.des_module_states[i].speedMetersPerSecond);
+    //   SmartDashboard.putNumber(i + " Desmodule M", mPeriodicIO.des_module_states[i].distanceMeters);
+    //   SmartDashboard.putNumber(i + " Desmodule Rad", mPeriodicIO.des_module_states[i].angle.getRadians());
+    // }
 
 
   }
@@ -306,15 +306,20 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void setSwerveModuleStates(SwerveModuleState[] desiredStates) {
-    for (SwerveModuleState state : desiredStates) {
-      ModuleState[] convStates = new ModuleState[] {
-          new ModuleState(0,
-              state.angle,
-              state.speedMetersPerSecond)
-      };
+    ModuleState[] convStates = {
+      new ModuleState(),
+      new ModuleState(),
+      new ModuleState(),
+      new ModuleState()
+    };
 
-      mPeriodicIO.des_module_states = convStates;
+    for (int i = 0; i < desiredStates.length; i++) {
+      convStates[i] = new ModuleState(0,
+        desiredStates[i].angle,
+        desiredStates[i].speedMetersPerSecond);
     }
+
+    mPeriodicIO.des_module_states = convStates;
   }
 
   /** Resets the drive encoders to currently read a position of 0. */

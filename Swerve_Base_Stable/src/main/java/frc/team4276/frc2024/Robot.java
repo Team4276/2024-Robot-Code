@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
 
   private AutoModeExecutor mAutoModeExecutor;
 
-  public static boolean is_red_alliance = false;
+  public static Alliance prev_alliance = Alliance.Invalid;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -103,23 +103,11 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     try {
-
       boolean alliance_changed = false;
-      if (DriverStation.isDSAttached()) {
-        if (DriverStation.getAlliance() == Alliance.Red) {
-          if (!is_red_alliance) {
-            alliance_changed = true;
-          } else {
-            alliance_changed = false;
-          }
-          is_red_alliance = true;
-        } else if (DriverStation.getAlliance() == Alliance.Blue) {
-          if (is_red_alliance) {
-            alliance_changed = true;
-          } else {
-            alliance_changed = false;
-          }
-          is_red_alliance = false;
+
+      if (DriverStation.isDSAttached()){
+        if(DriverStation.getAlliance() != prev_alliance){
+          alliance_changed = true;
         }
       } else {
         alliance_changed = true;

@@ -139,7 +139,7 @@ public class MAXSwerveModuleV3 extends Subsystem {
       double desSpeed;
 
       if(isOpenLoop){
-        
+        //desSpeed = desiredState.speedMetersPerSecond
       } else {
 
       }
