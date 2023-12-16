@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import frc.team4276.frc2024.Constants;
+import frc.team4276.frc2024.Robot;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
 import frc.team4276.frc2024.Constants.DriveConstants.KinematicLimits;
@@ -54,11 +55,14 @@ public class DriveSubsystem extends Subsystem {
 
   // Odometry class for tracking robot pose
   private SwerveDriveOdometry mOdometry;
+  private OdometryPhotonVision mOdometry_PV;
 
   private PeriodicIO mPeriodicIO = new PeriodicIO();
   private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
   private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
+
+  private int nLogCounter = 0;
 
   private PIDController snapController;
 
@@ -120,6 +124,21 @@ public class DriveSubsystem extends Subsystem {
           mOdometry.update(
               mPigeon.getYaw(),
               getModuleStates());
+              
+          mOdometry_PV.updateOdometry_PV();
+                          
+          double distance = mOdometry_PV.diffDistanceMeters(mOdometry.getPoseMeters());
+          double diffHeading = mOdometry_PV.diffHeadingDegrees(mOdometry.getPoseMeters());
+          boolean hasTargets = mOdometry_PV.hasTargets();
+
+          SmartDashboard.putNumber("Odometry distance from PV", distance);
+          SmartDashboard.putNumber("Odometry heading difference from PV", diffHeading);
+
+          nLogCounter++;
+          if (0 == nLogCounter % 1) {
+              String msg = String.format("%d, %f, %f, %b\n", Robot.m_testMonitor.getTicks(), distance, diffHeading, hasTargets);
+              Robot.m_testMonitor.logWrite(msg);
+          }
         }
       }
 
