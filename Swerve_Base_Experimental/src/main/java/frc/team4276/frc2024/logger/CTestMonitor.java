@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 public final class CTestMonitor {
 
     Boolean m_isPrintEnabled = false;
-    Boolean m_isMonitorEnabled = false;
+    Boolean m_isMonitorEnabled = true;
     int m_nMaxNumberOfFiles = 10;
     int m_nMaxFileSize = 5 * 1024 * 1024; // 5 MegaBytes;
 

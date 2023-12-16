@@ -7,6 +7,7 @@ package frc.team4276.lib;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.team1678.lib.swerve.ModuleState;
 import frc.team254.lib.util.Util;
+import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.ModuleConstants;
 import frc.team4276.frc2024.subsystems.Subsystem;
 
@@ -141,7 +142,7 @@ public class MAXSwerveModuleV2 extends Subsystem {
       // Apply chassis angular offset to the desired state.
       ModuleState optimizedDesiredState = new ModuleState();
 
-      optimizedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+      optimizedDesiredState.speedMetersPerSecond = Util.limit(desiredState.speedMetersPerSecond, DriveConstants.kMaxVel);
       optimizedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
 
       double targetAngle =  optimizedDesiredState.angle.getDegrees();

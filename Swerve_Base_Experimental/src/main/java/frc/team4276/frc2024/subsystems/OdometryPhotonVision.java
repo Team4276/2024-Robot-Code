@@ -29,9 +29,7 @@ public class OdometryPhotonVision {
 
   AprilTagFieldLayout aprilTagFieldLayout;
 
-  SwerveDriveOdometry m_odometry_PV = new SwerveDriveOdometry(
-      DriveConstants.kDriveKinematics,
-      mDriveSubsystem.getModuleStates());
+  SwerveDriveOdometry m_odometry_PV;
 
   private PhotonCamera m_PVcamera = new PhotonCamera("Arducam_12MP");
   private double camForwardMeters = 0.1404;
@@ -47,6 +45,10 @@ public class OdometryPhotonVision {
 public OdometryPhotonVision() {
   try {
     aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+
+    m_odometry_PV = new SwerveDriveOdometry(
+      DriveConstants.kDriveKinematics,
+      mDriveSubsystem.getModuleStates());
   } catch (IOException e) {
     // TODO Auto-generated catch block
     e.printStackTrace();
