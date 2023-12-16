@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
-import frc.team4276.frc2024.Constants.DriveConstants.KinematicLimits;
 import frc.team4276.frc2024.auto.AutoEvents;
 import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.MAXSwerveModuleV2;
@@ -36,11 +35,10 @@ import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team1678.lib.swerve.ModuleState;
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
 import frc.team1678.lib.swerve.SwerveDriveOdometry;
+
 import frc.team254.lib.util.Util;
 
 public class DriveSubsystem extends Subsystem {
-  // TODO: use % output for open loop and mps for everything else in SwerveModule
-  // class
   public enum DriveControlState {
     FORCE_ORIENT,
     OPEN_LOOP,
@@ -373,6 +371,13 @@ public class DriveSubsystem extends Subsystem {
     Rotation2d heading_setpoint = new Rotation2d();
   }
 
+  public static class KinematicLimits {
+    public double kMaxDriveVelocity = DriveConstants.kMaxVel; // m/s
+    public double kMaxAccel = Double.MAX_VALUE; // m/s^2
+    public double kMaxAngularVelocity = DriveConstants.kMaxAngularVel; // rad/s
+    public double kMaxAngularAccel = Double.MAX_VALUE; // rad/s^2
+} 
+
   public Command followPathCommand(PathPlannerTrajectory path) {
     return new FollowPathWithEvents(new SequentialCommandGroup(
         new InstantCommand(() -> {
@@ -392,7 +397,7 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public KinematicLimits getKinematicLimits() {
-    return this.mKinematicLimits;
+    return mKinematicLimits;
   }
 
   public void setKinematicLimits(KinematicLimits kinematicLimits) {

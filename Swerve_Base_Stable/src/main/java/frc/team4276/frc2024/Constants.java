@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
+import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -39,12 +40,7 @@ public final class Constants {
 
     public static final double kMaxAngularVel = 2 * Math.PI; // radians per second
 
-    public static class KinematicLimits {
-      public double kMaxDriveVelocity = kMaxVel; // m/s
-      public double kMaxAccel = Double.MAX_VALUE; // m/s^2
-      public double kMaxAngularVelocity = kMaxAngularVel; // rad/s
-      public double kMaxAngularAccel = Double.MAX_VALUE; // rad/s^2
-  } 
+    
 
     public static final KinematicLimits kUncappedLimits = new KinematicLimits();
     static {
