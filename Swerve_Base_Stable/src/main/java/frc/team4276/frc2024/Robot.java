@@ -6,7 +6,6 @@ package frc.team4276.frc2024;
 
 import java.util.Optional;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -42,7 +41,7 @@ public class Robot extends TimedRobot {
 
   private AutoModeExecutor mAutoModeExecutor;
 
-  public static Alliance prev_alliance = Alliance.Invalid;
+  public static Alliance alliance = Alliance.Invalid;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -61,8 +60,6 @@ public class Robot extends TimedRobot {
     } catch (Throwable t) {
       throw t;
     }
-
-    CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -107,12 +104,14 @@ public class Robot extends TimedRobot {
     try {
       boolean alliance_changed = false;
 
+      if (AutoModeSelector.mAllianceChooser.getSelected() != alliance){
+        alliance_changed = true;
+      }
+
       if (DriverStation.isDSAttached()) {
-        if (DriverStation.getAlliance() != prev_alliance) {
+        if (DriverStation.getAlliance() != alliance) {
           alliance_changed = true;
         }
-      } else {
-        alliance_changed = true;
       }
 
       mAutoModeSelector.updateModeCreator(alliance_changed);
