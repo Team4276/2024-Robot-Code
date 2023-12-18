@@ -60,10 +60,10 @@ public final class Constants {
 
     public static final KinematicLimits kDemoLimits = new KinematicLimits();
     static {
-            kAutoLimits.kMaxDriveVelocity = 2.0;
-            kAutoLimits.kMaxAccel = Double.MAX_VALUE;
-            kAutoLimits.kMaxAngularVelocity =  kMaxAngularVel / 4; // Rad/Sec
-            kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+            kDemoLimits.kMaxDriveVelocity = 2.0;
+            kDemoLimits.kMaxAccel = Double.MAX_VALUE;
+            kDemoLimits.kMaxAngularVelocity =  kMaxAngularVel / 4; // Rad/Sec
+            kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
     }
 
     // Chassis configuration
