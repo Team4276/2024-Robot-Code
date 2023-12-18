@@ -6,6 +6,7 @@ package frc.team4276.frc2024;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -159,7 +160,7 @@ public class Robot extends TimedRobot {
     try {
       if (mAutoModeSelector.getAutoMode().isPresent()) {
         if (mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0) {
-          mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().getDegrees() + 180);
+          mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().plus(new Rotation2d(Math.PI)).getDegrees());
         }
       }
 

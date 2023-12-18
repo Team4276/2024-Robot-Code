@@ -48,6 +48,7 @@ public final class Constants {
             kUncappedLimits.kMaxAccel = Double.MAX_VALUE;
             kUncappedLimits.kMaxAngularVelocity = kMaxAngularVel;
             kUncappedLimits.kMaxAngularAccel = Double.MAX_VALUE;
+            kUncappedLimits.kName = "Uncapped";
     }
 
     public static final KinematicLimits kAutoLimits = new KinematicLimits();
@@ -55,15 +56,18 @@ public final class Constants {
             kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
             kAutoLimits.kMaxAccel = Double.MAX_VALUE;
             kAutoLimits.kMaxAngularVelocity =  Double.MAX_VALUE; // Rad/Sec
-            kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+            kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI
+            kAutoLimits.kName = "Auto";
+
     }
 
     public static final KinematicLimits kDemoLimits = new KinematicLimits();
     static {
-            kDemoLimits.kMaxDriveVelocity = 2.0;
-            kDemoLimits.kMaxAccel = Double.MAX_VALUE;
+            kDemoLimits.kMaxDriveVelocity = 1.0;
+            kDemoLimits.kMaxAccel = 2;
             kDemoLimits.kMaxAngularVelocity =  kMaxAngularVel / 4; // Rad/Sec
-            kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+            kDemoLimits.kMaxAngularAccel = kMaxAngularVel / 2; // 2 * Math.PI;
+            kDemoLimits.kName = "Demo";
     }
 
     // Chassis configuration

@@ -109,11 +109,25 @@ public class DriveSubsystem extends Subsystem {
 
       @Override
       public void onStart(double timestamp) {
+        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds();
+        mControlState = DriveControlState.OPEN_LOOP;
       }
 
       @Override
       public void onLoop(double timestamp) {
         synchronized (this) {
+          switch (mControlState) {
+            case PATH_FOLLOWING:
+              break;
+            case HEADING_CONTROL:
+              break;
+            case OPEN_LOOP:
+            case FORCE_ORIENT:
+              break;
+            default:
+              stop();
+              break;
+          }
           updateSetpoint();
           mOdometry.update(
               mPigeon.getYaw(),
@@ -123,6 +137,8 @@ public class DriveSubsystem extends Subsystem {
 
       @Override
       public void onStop(double timestamp) {
+        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds();
+        mControlState = DriveControlState.OPEN_LOOP;
       }
     });
 
@@ -156,12 +172,9 @@ public class DriveSubsystem extends Subsystem {
       return;
     }
 
-    int i = 0;
-
-    for (MAXSwerveModuleV2 module : mModules) {
-      SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", module.getDriveSetpoint());
-      SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", module.getTurnSetpoint());
-      i++;
+    for (int i = 0; i < mModules.length; i++) {
+      SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", mModules[i].getDriveSetpoint());
+      SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", mModules[i].getTurnSetpoint());
     }
 
     SmartDashboard.putNumber("Robot X", mOdometry.getPoseMeters().getX());
@@ -192,8 +205,9 @@ public class DriveSubsystem extends Subsystem {
   }
 
   private void updateSetpoint() {
-    if (mControlState == DriveControlState.FORCE_ORIENT)
+    if (mControlState == DriveControlState.FORCE_ORIENT || mControlState == DriveControlState.PATH_FOLLOWING) {
       return;
+    }
 
     Pose2d robot_pose_vel = new Pose2d(mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt,
         mPeriodicIO.des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt,
@@ -300,8 +314,8 @@ public class DriveSubsystem extends Subsystem {
   public void setSwerveModuleStates(SwerveModuleState[] desiredStates) {
     for (int i = 0; i < desiredStates.length; i++) {
       mPeriodicIO.des_module_states[i] = ModuleState.fromSpeeds(
-        desiredStates[i].angle,
-        desiredStates[i].speedMetersPerSecond);
+          desiredStates[i].angle,
+          desiredStates[i].speedMetersPerSecond);
     }
   }
 
@@ -317,6 +331,7 @@ public class DriveSubsystem extends Subsystem {
     mPigeon.setYaw(0);
   }
 
+  /** Zeroes yaw with given degrees */
   public void zeroHeading(double reset) {
     mPigeon.setYaw(reset);
   }
@@ -359,7 +374,8 @@ public class DriveSubsystem extends Subsystem {
     public double kMaxAccel = Double.MAX_VALUE; // m/s^2
     public double kMaxAngularVelocity = DriveConstants.kMaxAngularVel; // rad/s
     public double kMaxAngularAccel = Double.MAX_VALUE; // rad/s^2
-} 
+    public String kName = "Default";
+  }
 
   public Command followPathCommand(PathPlannerTrajectory path) {
     return new FollowPathWithEvents(new SequentialCommandGroup(

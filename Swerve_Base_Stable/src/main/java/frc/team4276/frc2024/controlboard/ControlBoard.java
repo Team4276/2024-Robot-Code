@@ -40,8 +40,6 @@ public class ControlBoard {
             Rotation2d deadband_direction = new Rotation2d(tAxes.x(), tAxes.y(), true);
             Translation2d deadband_vector = Translation2d.fromPolar(deadband_direction, OIConstants.kJoystickDeadband);
 
-            SmartDashboard.putNumber("Translational Limit", DriveSubsystem.getInstance().getKinematicLimits().kMaxDriveVelocity);
-
             double scaled_x = Util.scaledDeadband(forwardAxis, 1.0, Math.abs(deadband_vector.x()));
             double scaled_y = Util.scaledDeadband(strafeAxis, 1.0, Math.abs(deadband_vector.y()));
             return new Translation2d(scaled_x, scaled_y)
