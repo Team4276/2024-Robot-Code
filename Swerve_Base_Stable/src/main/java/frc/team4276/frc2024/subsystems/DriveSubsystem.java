@@ -33,7 +33,6 @@ import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team1678.lib.swerve.ModuleState;
-import frc.team1678.lib.swerve.SwerveDriveKinematics;
 import frc.team1678.lib.swerve.SwerveDriveOdometry;
 
 import frc.team254.lib.util.Util;
@@ -133,9 +132,9 @@ public class DriveSubsystem extends Subsystem {
   public void writePeriodicOutputs() {
     for (int i = 0; i < mModules.length; i++) {
       if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
-        mModules[i].setDesiredState(mPeriodicIO.des_module_states[i]);
+        mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
       } else if (mControlState == DriveControlState.PATH_FOLLOWING || mControlState == DriveControlState.FORCE_ORIENT) {
-        mModules[i].setDesiredState(mPeriodicIO.des_module_states[i]);
+        mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
       }
     }
 
@@ -295,31 +294,15 @@ public class DriveSubsystem extends Subsystem {
    * @param desiredStates The desired SwerveModule states.
    */
   public void setModuleStates(ModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, mKinematicLimits.kMaxDriveVelocity);
-    int i = 0;
-
-    for (ModuleState state : desiredStates) {
-      mModules[i].setDesiredState(state);
-
-      i++;
-    }
+    mPeriodicIO.des_module_states = desiredStates;
   }
 
   public void setSwerveModuleStates(SwerveModuleState[] desiredStates) {
-    ModuleState[] convStates = {
-        new ModuleState(),
-        new ModuleState(),
-        new ModuleState(),
-        new ModuleState()
-    };
-
     for (int i = 0; i < desiredStates.length; i++) {
-      convStates[i] = new ModuleState(0,
-          desiredStates[i].angle,
-          desiredStates[i].speedMetersPerSecond);
+      mPeriodicIO.des_module_states[i] = ModuleState.fromSpeeds(
+        desiredStates[i].angle,
+        desiredStates[i].speedMetersPerSecond);
     }
-
-    mPeriodicIO.des_module_states = convStates;
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
