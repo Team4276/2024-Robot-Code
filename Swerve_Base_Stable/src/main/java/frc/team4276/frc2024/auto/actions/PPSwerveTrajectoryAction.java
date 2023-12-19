@@ -36,6 +36,7 @@ public class PPSwerveTrajectoryAction implements Action {
 
     @Override
     public void start() {
+        mDriveSubsystem.resetOdometry(traj.getInitialHolonomicPose());
         mCommand.initialize();
 
     }

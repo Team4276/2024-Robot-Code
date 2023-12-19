@@ -19,8 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
@@ -360,10 +358,7 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public Command followPathCommand(PathPlannerTrajectory path) {
-    return new FollowPathWithEvents(new SequentialCommandGroup(
-        new InstantCommand(() -> {
-          this.resetOdometry(path.getInitialHolonomicPose());
-        }),
+    return new FollowPathWithEvents(
         new PPSwerveControllerCommand(
             path,
             mOdometry::getPoseMeters,
@@ -373,7 +368,7 @@ public class DriveSubsystem extends Subsystem {
             new PIDController(Constants.AutoConstants.kPThetaController, 0, 0),
             this::setSwerveModuleStates,
             false,
-            new EmptySubsystem())),
+            new EmptySubsystem()),
         path.getMarkers(), AutoEvents.eventMap);
   }
 
@@ -400,11 +395,15 @@ public class DriveSubsystem extends Subsystem {
     if (mControlState != DriveControlState.HEADING_CONTROL) {
       mControlState = DriveControlState.HEADING_CONTROL;
     }
-    double rot = snapController.calculate(Math.toRadians(mPigeon.getYaw().getDegrees()), Math.toRadians(desiredRotDeg));
+    double rot = snapController.calculate(mPigeon.getYaw().getRadians(), Math.toRadians(desiredRotDeg));
 
     SmartDashboard.putNumber("Snap output", rot);
 
-    teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getHeading()));
+    teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, mPigeon.getYaw()));
+  }
+
+  public void resetSnapController(){
+    snapController.reset();
   }
 
   public void stop() {
