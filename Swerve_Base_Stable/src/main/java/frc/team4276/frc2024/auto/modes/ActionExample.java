@@ -1,7 +1,6 @@
 package frc.team4276.frc2024.auto.modes;
 
 import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,16 +11,17 @@ import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
 public class ActionExample extends AutoModeBase {
     private final String path1 = "Test1";
 
-    private final PathPlannerTrajectory traj1;
+    private PPSwerveTrajectoryAction traj1;
 
     public ActionExample(){
-        traj1 = PathPlanner.loadPath(path1, 2, 2);
+        traj1 = new PPSwerveTrajectoryAction(PathPlanner.loadPath(path1, 2, 2));
+
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
         SmartDashboard.putString("Auto Status", "Start");
-        runAction(new PPSwerveTrajectoryAction(traj1));
+        runAction(traj1);
         SmartDashboard.putString("Auto Status", "Finish");
 
         
@@ -29,6 +29,6 @@ public class ActionExample extends AutoModeBase {
 
     @Override
     public Pose2d getStartingPose() {
-        return traj1.getInitialHolonomicPose();
+        return traj1.getInitialPose();
     }
 }

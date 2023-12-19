@@ -40,8 +40,6 @@ public final class Constants {
 
     public static final double kMaxAngularVel = 2 * Math.PI; // radians per second
 
-    
-
     public static final KinematicLimits kUncappedLimits = new KinematicLimits();
     static {
             kUncappedLimits.kMaxDriveVelocity = kMaxVel;
@@ -64,9 +62,9 @@ public final class Constants {
     public static final KinematicLimits kDemoLimits = new KinematicLimits();
     static {
             kDemoLimits.kMaxDriveVelocity = 1.0;
-            kDemoLimits.kMaxAccel = 2;
+            kDemoLimits.kMaxAccel = Double.MAX_VALUE;
             kDemoLimits.kMaxAngularVelocity =  kMaxAngularVel / 4; // Rad/Sec
-            kDemoLimits.kMaxAngularAccel = kMaxAngularVel / 2; // 2 * Math.PI;
+            kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
             kDemoLimits.kName = "Demo";
     }
 

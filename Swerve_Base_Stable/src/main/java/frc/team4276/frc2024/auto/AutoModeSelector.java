@@ -40,11 +40,8 @@ public class AutoModeSelector {
         if (desiredMode == null) {
             desiredMode = DesiredMode.DO_NOTHING;
         }
-        if (mAllianceChooser.getSelected() == Alliance.Invalid){
-            mAutoMode = getAutoModeForParams(DesiredMode.DO_NOTHING);
-        }
         if (mCachedDesiredMode != desiredMode || force_regen) {
-            System.out.println("Auto selection changed, updating creator: desiredMode->" + desiredMode.name());
+            //System.out.println("Auto selection changed, updating creator: desiredMode->" + desiredMode.name());
             mAutoMode = getAutoModeForParams(desiredMode);
         }
         mCachedDesiredMode = desiredMode;

@@ -106,11 +106,13 @@ public class Robot extends TimedRobot {
       boolean alliance_changed = false;
 
       if (AutoModeSelector.mAllianceChooser.getSelected() != alliance){
+        alliance = AutoModeSelector.mAllianceChooser.getSelected();
         alliance_changed = true;
       }
 
       if (DriverStation.isDSAttached()) {
         if (DriverStation.getAlliance() != alliance) {
+          alliance = DriverStation.getAlliance();
           alliance_changed = true;
         }
       }

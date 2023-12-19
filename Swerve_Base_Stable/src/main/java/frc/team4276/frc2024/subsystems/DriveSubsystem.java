@@ -109,25 +109,11 @@ public class DriveSubsystem extends Subsystem {
 
       @Override
       public void onStart(double timestamp) {
-        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds();
-        mControlState = DriveControlState.OPEN_LOOP;
       }
 
       @Override
       public void onLoop(double timestamp) {
         synchronized (this) {
-          switch (mControlState) {
-            case PATH_FOLLOWING:
-              break;
-            case HEADING_CONTROL:
-              break;
-            case OPEN_LOOP:
-            case FORCE_ORIENT:
-              break;
-            default:
-              stop();
-              break;
-          }
           updateSetpoint();
           mOdometry.update(
               mPigeon.getYaw(),
@@ -137,8 +123,6 @@ public class DriveSubsystem extends Subsystem {
 
       @Override
       public void onStop(double timestamp) {
-        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds();
-        mControlState = DriveControlState.OPEN_LOOP;
       }
     });
 
@@ -153,6 +137,8 @@ public class DriveSubsystem extends Subsystem {
         mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
       }
     }
+
+    SmartDashboard.putString("Kinematic Limits", mKinematicLimits.kName);
 
   }
 
@@ -215,12 +201,6 @@ public class DriveSubsystem extends Subsystem {
     Twist2d twist_vel = new Pose2d().log(robot_pose_vel);
     ChassisSpeeds wanted_speeds = new ChassisSpeeds(
         twist_vel.dx / Constants.kLooperDt, twist_vel.dy / Constants.kLooperDt, twist_vel.dtheta / Constants.kLooperDt);
-
-    if (mControlState == DriveControlState.PATH_FOLLOWING) {
-      ModuleState[] real_module_setpoints = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
-      mPeriodicIO.des_module_states = real_module_setpoints;
-      return;
-    }
 
     // Limit rotational velocity
     wanted_speeds.omegaRadiansPerSecond = Math.signum(wanted_speeds.omegaRadiansPerSecond)
@@ -312,9 +292,11 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void setSwerveModuleStates(SwerveModuleState[] desiredStates) {
+    if (mControlState != DriveControlState.PATH_FOLLOWING){
+      mControlState = DriveControlState.PATH_FOLLOWING;
+    }
     for (int i = 0; i < desiredStates.length; i++) {
-      mPeriodicIO.des_module_states[i] = ModuleState.fromSpeeds(
-          desiredStates[i].angle,
+      mPeriodicIO.des_module_states[i] = new ModuleState(0, desiredStates[i].angle,
           desiredStates[i].speedMetersPerSecond);
     }
   }

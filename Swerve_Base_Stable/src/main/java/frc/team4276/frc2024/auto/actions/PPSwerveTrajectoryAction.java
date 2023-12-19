@@ -5,6 +5,8 @@ import frc.team4276.frc2024.subsystems.DriveSubsystem;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -14,11 +16,21 @@ public class PPSwerveTrajectoryAction implements Action {
 
     private final Command mCommand;
 
+    private PathPlannerTrajectory traj;
+
     public PPSwerveTrajectoryAction(PathPlannerTrajectory trajectory) {
+        this.traj = trajectory;
         mCommand = mDriveSubsystem.followPathCommand(
                 PathPlannerTrajectory.transformTrajectoryForAlliance(trajectory, Robot.alliance));
 
-        SmartDashboard.putString("Loaded path with alliance", Robot.alliance.name());
+        if (Robot.alliance == Alliance.Blue){
+            SmartDashboard.putString("Loaded path with alliance", "Blue");
+        } else if (Robot.alliance == Alliance.Red){
+            SmartDashboard.putString("Loaded path with alliance", "Red");
+        } else {
+            SmartDashboard.putString("Loaded path with alliance", "Invalid");
+        }
+
 
     }
 
@@ -44,5 +56,9 @@ public class PPSwerveTrajectoryAction implements Action {
 
     @Override
     public void done() {
+    }
+
+    public Pose2d getInitialPose(){
+        return traj.getInitialHolonomicPose();
     }
 }
