@@ -66,25 +66,19 @@ public class OdometryPhotonVision {
   }
 
   void updateOdometry_PV() {
-    SmartDashboard.putNumber("Robot X", m_odometry_PV.getPoseMeters().getX());
-    SmartDashboard.putNumber("Robot Y", m_odometry_PV.getPoseMeters().getY());
+    var result = m_PVcamera.getLatestResult();
+    boolean hasTargets = result.hasTargets();
+    if (hasTargets) {
+      PhotonTrackedTarget tgt = result.getBestTarget();
+      Transform3d xformCamToTarget = tgt.getBestCameraToTarget();
+      int tagID = tgt.getFiducialId();
+      Optional<Pose3d> opt = aprilTagFieldLayout.getTagPose(tagID);
+      Pose3d tagPose = opt.get();
 
-    if (Robot.m_testMonitor.isTestMonitorEnabled()) {
-
-      var result = m_PVcamera.getLatestResult();
-      boolean hasTargets = result.hasTargets();
-      if (hasTargets) {
-
-        PhotonTrackedTarget tgt = result.getBestTarget();
-        Transform3d xformCamToTarget = tgt.getBestCameraToTarget();
-        int tagID = tgt.getFiducialId();
-        Optional<Pose3d> opt = aprilTagFieldLayout.getTagPose(tagID);
-        Pose3d tagPose = opt.get();
-
-        Pose3d positionFix = PhotonUtils.estimateFieldToRobotAprilTag(xformCamToTarget, tagPose, xformCamToRobot);
-        m_odometry_PV.resetPosition(mDriveSubsystem.getModuleStates(), positionFix.toPose2d());
-      }
-
+      Pose3d positionFix = PhotonUtils.estimateFieldToRobotAprilTag(xformCamToTarget, tagPose, xformCamToRobot);
+      m_odometry_PV.resetPosition(mDriveSubsystem.getModuleStates(), positionFix.toPose2d());
+      
+    } else {
       m_odometry_PV.update(
           mDriveSubsystem.getHeading(),
           mDriveSubsystem.getModuleStates());
