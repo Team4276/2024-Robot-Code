@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
         alliance_changed = true;
       }
 
-      if (DriverStation.isDSAttached()) {
+      if (DriverStation.isDSAttached() && DriverStation.isFMSAttached()) {
         if (DriverStation.getAlliance() != alliance) {
           alliance = DriverStation.getAlliance();
           alliance_changed = true;
