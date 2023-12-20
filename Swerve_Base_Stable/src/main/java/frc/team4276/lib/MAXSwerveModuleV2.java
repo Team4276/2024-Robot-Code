@@ -206,43 +206,5 @@ public class MAXSwerveModuleV2 extends Subsystem {
     // Outputs
     public double rotationDemand;
     public double driveDemand;
-  }
-
-  
-  // @Override
-  // public synchronized void readPeriodicInputs() {
-
-  //     mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-
-  //     mPeriodicIO.velocity = m_drivingEncoder.getVelocity();
-      
-  //     mPeriodicIO.rotationPosition = Math.toDegrees(m_turningEncoder.getPosition());
-
-  //     mPeriodicIO.drivePosition = m_drivingEncoder.getPosition();
-  // }
-
-  // @Override
-  // public synchronized void writePeriodicOutputs() {
-
-  //     double targetAngle = m_desiredState.angle.getDegrees();
-  //     Rotation2d currentAngle = Rotation2d.fromDegrees(mPeriodicIO.rotationPosition);
-  //     if (Util.shouldReverse(Rotation2d.fromDegrees(targetAngle), currentAngle)) {
-  //         mPeriodicIO.targetVelocity = -mPeriodicIO.targetVelocity;
-  //         targetAngle += 180.0;
-  //     }
-  //     targetAngle = Util.placeInAppropriate0To360Scope(getCurrentUnboundedDegrees(), targetAngle);
-
-  //     mPeriodicIO.rotationDemand = Conversions.degreesToFalcon(targetAngle,
-  //             Constants.SwerveConstants.angleGearRatio);
-
-  //     mAngleMotor.set(ControlMode.Position, mPeriodicIO.rotationDemand);
-  //     if (mPeriodicIO.driveControlMode == ControlMode.Velocity) {
-  //         mDriveMotor.setControl(new VelocityTorqueCurrentFOC(mPeriodicIO.driveDemand));
-  //     } else {
-  //         mDriveMotor.setControl(new DutyCycleOut(mPeriodicIO.driveDemand, true, false));
-  //     }
-  // }
-
-
-  
+  }  
 }
