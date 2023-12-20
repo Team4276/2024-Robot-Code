@@ -267,17 +267,6 @@ public class DriveSubsystem extends Subsystem {
 
     ModuleState[] real_module_setpoints = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
     mPeriodicIO.des_module_states = real_module_setpoints;
-
-    // for (int i = 0; i < 4; i++){
-
-    // SmartDashboard.putNumber(i + " Desmodule MPS",
-    // mPeriodicIO.des_module_states[i].speedMetersPerSecond);
-    // SmartDashboard.putNumber(i + " Desmodule M",
-    // mPeriodicIO.des_module_states[i].distanceMeters);
-    // SmartDashboard.putNumber(i + " Desmodule Rad",
-    // mPeriodicIO.des_module_states[i].angle.getRadians());
-    // }
-
   }
 
   /**

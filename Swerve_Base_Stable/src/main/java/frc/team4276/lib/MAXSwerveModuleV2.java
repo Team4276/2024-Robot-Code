@@ -134,7 +134,7 @@ public class MAXSwerveModuleV2 extends Subsystem {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(ModuleState desiredState, boolean isOpenLoop) {
-    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001){
+    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001 && !isOpenLoop){
       stop();
       return;
   
