@@ -19,7 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
@@ -347,7 +348,8 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public Command followPathCommand(PathPlannerTrajectory path) {
-    return new FollowPathWithEvents(
+    return new FollowPathWithEvents(new SequentialCommandGroup(
+        new InstantCommand(() -> resetOdometry(path.getInitialHolonomicPose()), new EmptySubsystem()),
         new PPSwerveControllerCommand(
             path,
             mOdometry::getPoseMeters,
@@ -357,7 +359,7 @@ public class DriveSubsystem extends Subsystem {
             new PIDController(Constants.AutoConstants.kPThetaController, 0, 0),
             this::setSwerveModuleStates,
             false,
-            new EmptySubsystem()),
+            new EmptySubsystem())),
         path.getMarkers(), AutoEvents.eventMap);
   }
 

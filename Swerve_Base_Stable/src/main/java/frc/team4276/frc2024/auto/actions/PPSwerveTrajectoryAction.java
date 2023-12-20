@@ -21,7 +21,9 @@ public class PPSwerveTrajectoryAction implements Action {
     public PPSwerveTrajectoryAction(PathPlannerTrajectory trajectory) {
         this.traj = trajectory;
         mCommand = mDriveSubsystem.followPathCommand(
-                PathPlannerTrajectory.transformTrajectoryForAlliance(trajectory, Robot.alliance));
+            PathPlannerTrajectory.transformTrajectoryForAlliance(trajectory, Robot.alliance));
+
+            
 
         if (Robot.alliance == Alliance.Blue){
             SmartDashboard.putString("Loaded path with alliance", "Blue");
@@ -36,7 +38,6 @@ public class PPSwerveTrajectoryAction implements Action {
 
     @Override
     public void start() {
-        mDriveSubsystem.resetOdometry(traj.getInitialHolonomicPose());
         mCommand.initialize();
 
     }
