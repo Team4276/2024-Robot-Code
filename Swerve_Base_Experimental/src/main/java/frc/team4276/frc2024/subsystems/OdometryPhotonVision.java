@@ -47,7 +47,6 @@ public class OdometryPhotonVision {
           DriveConstants.kDriveKinematics,
           mDriveSubsystem.getModuleStates());
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
