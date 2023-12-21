@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
+import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -34,32 +35,37 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxVel = 5.5; // meters per second
+    public static final double kMaxVel = 5.0; // meters per second
     public static final double kMaxAttainableVel = kMaxVel * 0.85;
 
     public static final double kMaxAngularVel = 2 * Math.PI; // radians per second
 
-    public static class KinematicLimits {
-      public double kMaxDriveVelocity = kMaxVel; // m/s
-      public double kMaxAccel = Double.MAX_VALUE; // m/s^2
-      public double kMaxAngularVelocity = kMaxAngularVel; // rad/s
-      public double kMaxAngularAccel = Double.MAX_VALUE; // rad/s^2
-    }
-
     public static final KinematicLimits kUncappedLimits = new KinematicLimits();
     static {
-      kUncappedLimits.kMaxDriveVelocity = kMaxVel;
-      kUncappedLimits.kMaxAccel = Double.MAX_VALUE;
-      kUncappedLimits.kMaxAngularVelocity = kMaxAngularVel;
-      kUncappedLimits.kMaxAngularAccel = Double.MAX_VALUE;
+            kUncappedLimits.kMaxDriveVelocity = kMaxVel;
+            kUncappedLimits.kMaxAccel = Double.MAX_VALUE;
+            kUncappedLimits.kMaxAngularVelocity = kMaxAngularVel;
+            kUncappedLimits.kMaxAngularAccel = Double.MAX_VALUE;
+            kUncappedLimits.kName = "Uncapped";
     }
 
     public static final KinematicLimits kAutoLimits = new KinematicLimits();
     static {
-      kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
-      kAutoLimits.kMaxAccel = Double.MAX_VALUE;
-      kAutoLimits.kMaxAngularVelocity = Double.MAX_VALUE; // Rad/Sec
-      kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+            kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
+            kAutoLimits.kMaxAccel = Double.MAX_VALUE;
+            kAutoLimits.kMaxAngularVelocity =  Double.MAX_VALUE; // Rad/Sec
+            kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI
+            kAutoLimits.kName = "Auto";
+
+    }
+
+    public static final KinematicLimits kDemoLimits = new KinematicLimits();
+    static {
+            kDemoLimits.kMaxDriveVelocity = 1.0;
+            kDemoLimits.kMaxAccel = Double.MAX_VALUE;
+            kDemoLimits.kMaxAngularVelocity =  kMaxAngularVel / 4; // Rad/Sec
+            kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+            kDemoLimits.kName = "Demo";
     }
 
     // Chassis configuration
@@ -91,29 +97,26 @@ public final class Constants {
     public static final int kRearRightTurningCanId = 14;
 
     public static final int[] kDriveTrainCanIds = {
-        kFrontLeftDrivingCanId,
-        kFrontRightDrivingCanId,
-        kRearLeftDrivingCanId,
-        kRearRightDrivingCanId,
-        kFrontLeftTurningCanId,
-        kFrontRightTurningCanId,
-        kRearLeftTurningCanId,
-        kRearRightTurningCanId
+      kFrontLeftDrivingCanId,
+      kFrontRightDrivingCanId,
+      kRearLeftDrivingCanId,
+      kRearRightDrivingCanId,
+      kFrontLeftTurningCanId,
+      kFrontRightTurningCanId,
+      kRearLeftTurningCanId,
+      kRearRightTurningCanId
     };
 
     public static final boolean kGyroReversed = false;
   }
 
   public static final class ModuleConstants {
-    // The MAXSwerve module can be configured with one of three pinion gears: 12T,
-    // 13T, or 14T.
-    // This changes the drive speed of the module (a pinion gear with more teeth
-    // will result in a
+    // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
+    // This changes the drive speed of the module (a pinion gear with more teeth will result in a
     // robot that drives faster).
     public static final int kDrivingMotorPinionTeeth = 13;
 
-    // Invert the turning encoder, since the output shaft rotates in the opposite
-    // direction of
+    // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
     public static final boolean kTurningEncoderInverted = true;
 
@@ -121,8 +124,7 @@ public final class Constants {
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
     public static final double kWheelDiameterMeters = 0.0762;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
-    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
-    // teeth on the bevel pinion
+    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
         / kDrivingMotorReduction;
@@ -155,7 +157,7 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 50; // amps
+    public static final int kDrivingMotorCurrentLimit = 40; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
   }
 
@@ -187,7 +189,7 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
-  public static final class SnapConstants {
+  public static final class SnapConstants{
     private static final double kCoefficient = 3;
     public static final double kP = 0.06 * kCoefficient;
     public static final double kI = 0.003 * kCoefficient;

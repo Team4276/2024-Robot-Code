@@ -7,6 +7,7 @@ package frc.team4276.lib;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.team1678.lib.swerve.ModuleState;
 import frc.team254.lib.util.Util;
+import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.ModuleConstants;
 import frc.team4276.frc2024.subsystems.Subsystem;
 
@@ -67,7 +68,8 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_turningEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
     m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
 
-    // Invert the turning encoder, since the output shaft rotates in the opposite direction of
+    // Invert the turning encoder, since the output shaft rotates in the opposite
+    // direction of
     // the steering motor in the MAXSwerve Module.
     m_turningEncoder.setInverted(ModuleConstants.kTurningEncoderInverted);
 
@@ -79,7 +81,8 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_turningPIDController.setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
     m_turningPIDController.setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
 
-    // Set the PID gains for the driving motor. Note these are example gains, and you
+    // Set the PID gains for the driving motor. Note these are example gains, and
+    // you
     // may need to tune them for your own robot!
     m_drivingPIDController.setP(ModuleConstants.kDrivingP);
     m_drivingPIDController.setI(ModuleConstants.kDrivingI);
@@ -88,7 +91,8 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_drivingPIDController.setOutputRange(ModuleConstants.kDrivingMinOutput,
         ModuleConstants.kDrivingMaxOutput);
 
-    // Set the PID gains for the turning motor. Note these are example gains, and you
+    // Set the PID gains for the turning motor. Note these are example gains, and
+    // you
     // may need to tune them for your own robot!
     m_turningPIDController.setP(ModuleConstants.kTurningP);
     m_turningPIDController.setI(ModuleConstants.kTurningI);
@@ -122,9 +126,9 @@ public class MAXSwerveModuleV2 extends Subsystem {
     // Apply chassis angular offset to the encoder position to get the position
     // relative to the chassis.
     return new ModuleState(
-      m_drivingEncoder.getPosition(),
-      new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset),
-      m_drivingEncoder.getVelocity());
+        m_drivingEncoder.getPosition(),
+        new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset),
+        m_drivingEncoder.getVelocity());
   }
 
   /**
@@ -132,38 +136,41 @@ public class MAXSwerveModuleV2 extends Subsystem {
    *
    * @param desiredState Desired state with speed and angle.
    */
-  public void setDesiredState(ModuleState desiredState) {
-    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001){
+  public void setDesiredState(ModuleState desiredState, boolean isOpenLoop) {
+    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001 && !isOpenLoop) {
       stop();
       return;
-  
+
     } else {
       // Apply chassis angular offset to the desired state.
       ModuleState optimizedDesiredState = new ModuleState();
 
-      optimizedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+      optimizedDesiredState.speedMetersPerSecond = Util.limit(desiredState.speedMetersPerSecond,
+          DriveConstants.kMaxVel);
       optimizedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
 
-      double targetAngle =  optimizedDesiredState.angle.getDegrees();
-      
+      double targetAngle = optimizedDesiredState.angle.getDegrees();
+
       if (Util.shouldReverse(
-        new frc.team254.lib.geometry.Rotation2d(targetAngle), 
-        new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(m_turningEncoder.getPosition())))) {
+          new frc.team254.lib.geometry.Rotation2d(targetAngle),
+          new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(m_turningEncoder.getPosition())))) {
         optimizedDesiredState.speedMetersPerSecond *= -1;
-        optimizedDesiredState.angle =  new Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
+        optimizedDesiredState.angle = new Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
       }
 
       optimizedDesiredState.angle = new Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
-        Math.toDegrees(m_turningEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
+          Math.toDegrees(m_turningEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
 
       // Optimize the reference state to avoid spinning further than 90 degrees.
-      //ModuleState optimizedDesiredState = ModuleState.optimize(correctedDesiredState.angle, getState());
+      // ModuleState optimizedDesiredState =
+      // ModuleState.optimize(correctedDesiredState.angle, getState());
 
       driveSetpoint = optimizedDesiredState.speedMetersPerSecond;
       turnSetpoint = optimizedDesiredState.angle.getRadians();
 
       // Command driving and turning SPARKS MAX towards their respective setpoints.
-      m_drivingPIDController.setReference(optimizedDesiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
+      m_drivingPIDController.setReference(optimizedDesiredState.speedMetersPerSecond,
+          CANSparkMax.ControlType.kVelocity);
       m_turningPIDController.setReference(optimizedDesiredState.angle.getRadians(), CANSparkMax.ControlType.kPosition);
 
       m_desiredState = desiredState;
@@ -173,11 +180,11 @@ public class MAXSwerveModuleV2 extends Subsystem {
   private double driveSetpoint;
   private double turnSetpoint;
 
-  public double getDriveSetpoint(){
+  public double getDriveSetpoint() {
     return driveSetpoint;
   }
 
-  public double getTurnSetpoint(){
+  public double getTurnSetpoint() {
     return turnSetpoint;
   }
 
@@ -186,13 +193,11 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_drivingEncoder.setPosition(0);
   }
 
-  public void stop(){
+  public void stop() {
     m_drivingSparkMax.set(0);
     m_turningSparkMax.set(0);
 
   }
-
-  
 
   public static class mPeriodicIO {
     // Inputs
@@ -206,42 +211,4 @@ public class MAXSwerveModuleV2 extends Subsystem {
     public double rotationDemand;
     public double driveDemand;
   }
-
-  
-  // @Override
-  // public synchronized void readPeriodicInputs() {
-
-  //     mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-
-  //     mPeriodicIO.velocity = m_drivingEncoder.getVelocity();
-      
-  //     mPeriodicIO.rotationPosition = Math.toDegrees(m_turningEncoder.getPosition());
-
-  //     mPeriodicIO.drivePosition = m_drivingEncoder.getPosition();
-  // }
-
-  // @Override
-  // public synchronized void writePeriodicOutputs() {
-
-  //     double targetAngle = m_desiredState.angle.getDegrees();
-  //     Rotation2d currentAngle = Rotation2d.fromDegrees(mPeriodicIO.rotationPosition);
-  //     if (Util.shouldReverse(Rotation2d.fromDegrees(targetAngle), currentAngle)) {
-  //         mPeriodicIO.targetVelocity = -mPeriodicIO.targetVelocity;
-  //         targetAngle += 180.0;
-  //     }
-  //     targetAngle = Util.placeInAppropriate0To360Scope(getCurrentUnboundedDegrees(), targetAngle);
-
-  //     mPeriodicIO.rotationDemand = Conversions.degreesToFalcon(targetAngle,
-  //             Constants.SwerveConstants.angleGearRatio);
-
-  //     mAngleMotor.set(ControlMode.Position, mPeriodicIO.rotationDemand);
-  //     if (mPeriodicIO.driveControlMode == ControlMode.Velocity) {
-  //         mDriveMotor.setControl(new VelocityTorqueCurrentFOC(mPeriodicIO.driveDemand));
-  //     } else {
-  //         mDriveMotor.setControl(new DutyCycleOut(mPeriodicIO.driveDemand, true, false));
-  //     }
-  // }
-
-
-  
 }

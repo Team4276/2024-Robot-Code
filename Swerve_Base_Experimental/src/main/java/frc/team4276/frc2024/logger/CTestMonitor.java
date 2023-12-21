@@ -56,7 +56,9 @@ public final class CTestMonitor {
     BufferedWriter m_output;
 
     public CTestMonitor() {
-        init();
+        if(m_isMonitorEnabled){
+            init();
+        }
     }
 
     public void init() {

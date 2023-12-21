@@ -6,11 +6,14 @@ package frc.team4276.frc2024;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.team1678.lib.loops.Looper;
+import frc.team1678.lib.swerve.ChassisSpeeds;
+import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -41,7 +44,7 @@ public class Robot extends TimedRobot {
 
   private AutoModeExecutor mAutoModeExecutor;
 
-  public static boolean is_red_alliance = false;
+  public static Alliance alliance = Alliance.Invalid;
 
   public static CTestMonitor m_testMonitor = new CTestMonitor();
 
@@ -111,26 +114,18 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     try {
-
       boolean alliance_changed = false;
-      if (DriverStation.isDSAttached()) {
-        if (DriverStation.getAlliance() == Alliance.Red) {
-          if (!is_red_alliance) {
-            alliance_changed = true;
-          } else {
-            alliance_changed = false;
-          }
-          is_red_alliance = true;
-        } else if (DriverStation.getAlliance() == Alliance.Blue) {
-          if (is_red_alliance) {
-            alliance_changed = true;
-          } else {
-            alliance_changed = false;
-          }
-          is_red_alliance = false;
-        }
-      } else {
+
+      if (AutoModeSelector.mAllianceChooser.getSelected() != alliance){
+        alliance = AutoModeSelector.mAllianceChooser.getSelected();
         alliance_changed = true;
+      }
+
+      if (DriverStation.isDSAttached() && DriverStation.isFMSAttached()) {
+        if (DriverStation.getAlliance() != alliance) {
+          alliance = DriverStation.getAlliance();
+          alliance_changed = true;
+        }
       }
 
       mAutoModeSelector.updateModeCreator(alliance_changed);
@@ -152,9 +147,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     try {
-      
-			mDisabledLooper.stop();
-      
+
+      mDisabledLooper.stop();
+
       Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
       if (autoMode.isPresent()) {
         mAutoModeExecutor.setAutoMode(autoMode.get());
@@ -181,7 +176,7 @@ public class Robot extends TimedRobot {
     try {
       if (mAutoModeSelector.getAutoMode().isPresent()) {
         if (mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0) {
-          mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().getDegrees() + 180);
+          mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().plus(new Rotation2d(Math.PI)).getDegrees());
         }
       }
 
@@ -218,10 +213,19 @@ public class Robot extends TimedRobot {
             -mControlBoard.driver.getLeftX(),
             180);
       } else {
-        mDriveSubsystem.teleopDrive(
-          -mControlBoard.driver.getLeftY(),
-          -mControlBoard.driver.getLeftX(),
-          -mControlBoard.driver.getRightX());
+        mDriveSubsystem.teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(
+            mControlBoard.getSwerveTranslation().x(),
+            mControlBoard.getSwerveTranslation().y(),
+            mControlBoard.getSwerveRotation(),
+            mDriveSubsystem.getHeading()));
+      }
+
+      if (mControlBoard.driver.getController().getRightBumperPressed()) {
+        mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
+      }
+
+      if (mControlBoard.driver.getController().getLeftBumperPressed()) {
+        mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
       }
 
     } catch (Throwable t) {

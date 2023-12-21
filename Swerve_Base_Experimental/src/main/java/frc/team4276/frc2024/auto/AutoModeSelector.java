@@ -21,20 +21,18 @@ public class AutoModeSelector {
 
     private static SendableChooser<DesiredMode> mModeChooser = new SendableChooser<>();
 
-    public static Alliance alliance;
-    private SendableChooser<Alliance> allianceChooser;
+    public static SendableChooser<Alliance> mAllianceChooser  = new SendableChooser<>();
 
     public AutoModeSelector() {
+        mAllianceChooser.setDefaultOption("Unselected", Alliance.Invalid);
+        mAllianceChooser.addOption("Blue", Alliance.Blue);
+        mAllianceChooser.addOption("Red", Alliance.Red);
+        SmartDashboard.putData(mAllianceChooser);
+
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Example", DesiredMode.EXAMPLE);
         SmartDashboard.putData("Auto Mode", mModeChooser);
 
-        allianceChooser = new SendableChooser<Alliance>();
-        allianceChooser.setDefaultOption("Unselected", Alliance.Invalid);
-        allianceChooser.addOption("Blue", Alliance.Blue);
-        allianceChooser.addOption("Red", Alliance.Red);
-
-        SmartDashboard.putData(allianceChooser);
     }
 
     public void updateModeCreator(boolean force_regen) {
@@ -43,7 +41,7 @@ public class AutoModeSelector {
             desiredMode = DesiredMode.DO_NOTHING;
         }
         if (mCachedDesiredMode != desiredMode || force_regen) {
-            System.out.println("Auto selection changed, updating creator: desiredMode->" + desiredMode.name());
+            //System.out.println("Auto selection changed, updating creator: desiredMode->" + desiredMode.name());
             mAutoMode = getAutoModeForParams(desiredMode);
         }
         mCachedDesiredMode = desiredMode;
