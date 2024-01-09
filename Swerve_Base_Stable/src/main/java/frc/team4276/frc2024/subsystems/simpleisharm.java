@@ -50,8 +50,6 @@ public class simpleisharm extends Subsystem {
     private void update(){
         double des_vel = pidController.calculate(mPeriodicIO.position);
 
-        pidController.
-        
     }
 
     @Override
