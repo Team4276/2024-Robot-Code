@@ -18,6 +18,7 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.positionSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -77,6 +78,8 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     mSubsystemManager.outputToSmartDashboard();
     mEnabledLooper.outputToSmartDashboard();
+    positionSubsystem.findVisionPose();
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -159,6 +162,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    mDriveSubsystem.snapDrive(0.1, 0.1, 2);
     try {
       if (mAutoModeSelector.getAutoMode().isPresent()) {
         if (mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0) {
