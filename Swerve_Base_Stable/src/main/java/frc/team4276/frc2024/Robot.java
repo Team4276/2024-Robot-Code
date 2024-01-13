@@ -18,6 +18,7 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.positionSubsystem;
 
 /**
@@ -35,6 +36,7 @@ public class Robot extends TimedRobot {
   private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
+  private final LimeLight mLimeLight = LimeLight.getInstance();
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -54,7 +56,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     try {
       mSubsystemManager.setSubsystems(
-          mDriveSubsystem);
+          mDriveSubsystem,
+          mLimeLight);
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -162,7 +165,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    mDriveSubsystem.snapDrive(0.1, 0.1, 2);
     try {
       if (mAutoModeSelector.getAutoMode().isPresent()) {
         if (mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0) {
@@ -188,22 +190,16 @@ public class Robot extends TimedRobot {
 
       if (mControlBoard.driver.getController().getXButton()) {
         mDriveSubsystem.setX();
-      } else if (mControlBoard.driver.getLT()) {
-        mDriveSubsystem.snapDrive(
-            -mControlBoard.driver.getLeftY(),
-            -mControlBoard.driver.getLeftX(),
-            0);
-      } else if (mControlBoard.driver.getRT()) {
-        mDriveSubsystem.snapDrive(
-            -mControlBoard.driver.getLeftY(),
-            -mControlBoard.driver.getLeftX(),
-            180);
       } else {
         mDriveSubsystem.teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(
             mControlBoard.getSwerveTranslation().x(),
             mControlBoard.getSwerveTranslation().y(),
             mControlBoard.getSwerveRotation(),
             mDriveSubsystem.getHeading()));
+      }
+
+      if (mControlBoard.driver.getController().getYButtonPressed()){
+
       }
 
       if (mControlBoard.driver.getController().getRightBumperPressed()) {

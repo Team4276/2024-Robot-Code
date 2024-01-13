@@ -190,10 +190,16 @@ public final class Constants {
   }
 
   public static final class SnapConstants{
-    private static final double kCoefficient = 3;
-    public static final double kP = 0.06 * kCoefficient;
-    public static final double kI = 0.003 * kCoefficient;
-    public static final double kD = 0.004 * kCoefficient;
+    public static final double kP = 0.18;
+    public static final double kI = 0.009;
+    public static final double kD = 0.012;
 
+  }
+
+  public static final class LimelightConstants{
+    public static final int kImageCaptureLatency = 11;
+    public static final int kLimelightTransmissionTimeLatency = 0;
+
+    public static final double kMaxAcceptibleTargetDist = 10;
   }
 }

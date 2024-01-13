@@ -189,6 +189,9 @@ public class DriveSubsystem extends Subsystem {
     return states;
   }
 
+  //TODO: add theta X translation pathfollower (not for autos)
+  //TODO: add auto alighner within an area
+
   private void updateSetpoint() {
     if (mControlState == DriveControlState.FORCE_ORIENT || mControlState == DriveControlState.PATH_FOLLOWING) {
       return;
@@ -371,30 +374,31 @@ public class DriveSubsystem extends Subsystem {
     this.mKinematicLimits = kinematicLimits;
   }
 
-  public void teleopDrive(ChassisSpeeds speeds) {
-    if (mControlState != DriveControlState.OPEN_LOOP) {
-      mControlState = DriveControlState.OPEN_LOOP;
-    }
-
-    mPeriodicIO.des_chassis_speeds = speeds;
-  }
-
-  /**
-   * @param desiredRotDeg Must be a value between 0 and 360
-   */
-  public void snapDrive(double xSpeed, double ySpeed, double desiredRotDeg) {
+  public void setHeadingSetpoint(double desHeadingDeg){
     if (mControlState != DriveControlState.HEADING_CONTROL) {
       mControlState = DriveControlState.HEADING_CONTROL;
     }
-    double rot = snapController.calculate(mPigeon.getYaw().getRadians(), Math.toRadians(desiredRotDeg));
-
-    SmartDashboard.putNumber("Snap output", rot);
-
-    teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, mPigeon.getYaw()));
+    snapController.reset();
+    mPeriodicIO.heading_setpoint = Rotation2d.fromDegrees(desHeadingDeg);
   }
 
-  public void resetSnapController(){
-    snapController.reset();
+  public void teleopDrive(ChassisSpeeds speeds) {
+    if (mControlState != DriveControlState.OPEN_LOOP || mControlState != DriveControlState.HEADING_CONTROL) {
+      mControlState = DriveControlState.OPEN_LOOP;
+    }
+
+    if (mControlState == DriveControlState.HEADING_CONTROL){
+      if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
+        mControlState = DriveControlState.OPEN_LOOP;
+      } else {
+        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
+          speeds.vxMetersPerSecond, 
+          speeds.vyMetersPerSecond, 
+          snapController.calculate(mPigeon.getYaw().getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
+        return;
+      }
+    }
+    mPeriodicIO.des_chassis_speeds = speeds;
   }
 
   public void stop() {
