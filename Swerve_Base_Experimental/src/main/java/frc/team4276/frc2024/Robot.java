@@ -19,7 +19,10 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.LidarLiteV4LED;
 import frc.team4276.frc2024.logger.CTestMonitor;
+import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -48,6 +51,10 @@ public class Robot extends TimedRobot {
 
   public static CTestMonitor m_testMonitor = new CTestMonitor();
 
+  public static LidarLiteV4LED m_lidarLite = new LidarLiteV4LED(Port.kOnboard);
+  public static boolean g_isValidLidar = false;
+  public static int g_lidarDistanceCentimeters = 0;  // Max range 10m, accuracy 5cm
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -61,6 +68,8 @@ public class Robot extends TimedRobot {
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
+
+      m_lidarLite.start(10);
 
     } catch (Throwable t) {
       throw t;
@@ -83,6 +92,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     mSubsystemManager.outputToSmartDashboard();
     mEnabledLooper.outputToSmartDashboard();
+
+    SmartDashboard.putBoolean("LIDAR status", g_isValidLidar);
+    SmartDashboard.putNumber("LIDAR dist (cm)", g_lidarDistanceCentimeters);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
