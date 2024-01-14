@@ -10,8 +10,6 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import frc.team4276.lib.MAXSwerveModuleV2.mPeriodicIO;
 
 public class simpleisharm extends Subsystem {
     private CANSparkMax mLeader;
@@ -44,13 +42,20 @@ public class simpleisharm extends Subsystem {
         pidController.setPID(0, 0, 0);
         pidController.setIntegratorRange(0, 0);
         pidController.setTolerance(0, 0);
-        pidController.setConstraints(new TrapezoidProfile.Constraints(0, 0));
-    }
+        pidController.setConstraints(new TrapezoidProfile.Constraints(0, 0));}
+//         TrapezoidProfile.State previousProfiledReference = new TrapezoidProfile.State(initialReference, 0.0);
 
-    private void update(){
-        double des_vel = pidController.calculate(mPeriodicIO.position);
 
-    }
+//     }
+
+//     private void update(){
+//         TrapezoidProfile profile =
+//    new TrapezoidProfile(constraints, unprofiledReference, previousProfiledReference);
+//  previousProfiledReference = profile.calculate(timeSincePreviousUpdate);
+
+//         double des_vel = pidController.calculate(mPeriodicIO.position);
+
+//     }
 
     @Override
     public void writePeriodicOutputs() {
