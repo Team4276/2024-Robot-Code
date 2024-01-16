@@ -166,6 +166,10 @@ public class DriveSubsystem extends Subsystem {
     SmartDashboard.putNumber("Robot Y", mOdometry.getPoseMeters().getY());
   }
 
+  public Pose2d getOdometry(){
+    return mOdometry.getPoseMeters();
+  }
+
   /**
    * Resets the odometry to the specified pose.
    *
@@ -433,5 +437,7 @@ public class DriveSubsystem extends Subsystem {
     }
     orientModules(orientations);
   }
+
+
 
 }

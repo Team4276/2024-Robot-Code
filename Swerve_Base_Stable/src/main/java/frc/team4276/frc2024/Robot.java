@@ -150,6 +150,8 @@ public class Robot extends TimedRobot {
 
       mEnabledLooper.start();
       mAutoModeExecutor.start();
+      
+      RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
       throw t;
@@ -172,6 +174,8 @@ public class Robot extends TimedRobot {
 
       mDisabledLooper.stop();
       mEnabledLooper.start();
+
+      RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
       throw t;
@@ -197,7 +201,9 @@ public class Robot extends TimedRobot {
       }
 
       if (mControlBoard.driver.getController().getYButtonPressed()){
-
+        mDriveSubsystem.setHeadingSetpoint(0);
+      } else if (mControlBoard.driver.getController().getBButtonPressed()) {
+        mDriveSubsystem.setHeadingSetpoint(180);
       }
 
       if (mControlBoard.driver.getController().getRightBumperPressed()) {

@@ -11,6 +11,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
+import frc.team254.lib.geometry.Pose2d;
+import frc.team254.lib.geometry.Rotation2d;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 
 /**
@@ -201,5 +203,8 @@ public final class Constants {
     public static final int kLimelightTransmissionTimeLatency = 0;
 
     public static final double kMaxAcceptibleTargetDist = 10;
+
+    //TODO: approximates for last years chassis
+    public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.27, 0, new Rotation2d(0));
   }
 }
