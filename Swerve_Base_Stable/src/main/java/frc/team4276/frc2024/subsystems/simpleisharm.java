@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class simpleisharm extends Subsystem {
     private CANSparkMax mLeader;
+    private SparkMaxPIDController mPidController;
 
     private SparkMaxAbsoluteEncoder encoder;
 
@@ -42,7 +43,7 @@ public class simpleisharm extends Subsystem {
         pidController.setPID(0, 0, 0);
         pidController.setIntegratorRange(0, 0);
         pidController.setTolerance(0, 0);
-        pidController.setConstraints(new TrapezoidProfile.Constraints(0, 0));}
+//         pidController.setConstraints(new TrapezoidProfile.Constraints(0, 0));}
 //         TrapezoidProfile.State previousProfiledReference = new TrapezoidProfile.State(initialReference, 0.0);
 
 
@@ -55,7 +56,7 @@ public class simpleisharm extends Subsystem {
 
 //         double des_vel = pidController.calculate(mPeriodicIO.position);
 
-//     }
+    }
 
     @Override
     public void writePeriodicOutputs() {

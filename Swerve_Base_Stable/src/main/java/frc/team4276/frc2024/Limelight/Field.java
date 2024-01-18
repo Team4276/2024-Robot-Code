@@ -9,6 +9,7 @@ public class Field {
         public static final HashMap<Integer, AprilTag> kAprilTagMap = new HashMap<>();
 
         
+        
     }
 
     public static class Blue{
