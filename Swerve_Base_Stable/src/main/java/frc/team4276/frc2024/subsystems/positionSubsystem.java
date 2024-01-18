@@ -37,8 +37,4 @@ public class positionSubsystem extends Subsystem {
   */
 }
 
-  // Fortnite Battle Pass
 }
-
-// 1 make api call
-// 2 store result in a string (optional error handling, check if throw exception)

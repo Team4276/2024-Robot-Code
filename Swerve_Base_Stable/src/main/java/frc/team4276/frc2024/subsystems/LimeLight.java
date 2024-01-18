@@ -122,12 +122,14 @@ public class LimeLight extends Subsystem {
             mPeriodicIO.targetDistanceToRobot[1]);
 
         if (mPeriodicIO.seesTarget) {
-            // if (mTagMap.keySet().contains(tagId) && cameraToTarget != null) {
-            //     DriveSubsystem.getInstance().visionUpdate(
-            //             new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, tagId));
-            // } else {
-            //     DriveSubsystem.getInstance().visionUpdate(null);
-            // }
+             /*
+             if (mTagMap.keySet().contains(tagId) && cameraToTarget != null) {
+                 DriveSubsystem.getInstance().visionUpdate(
+                        new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, tagId));
+            } else {
+                DriveSubsystem.getInstance().visionUpdate(null);
+            }
+            */
             RobotState.getInstance().visionUpdate(
                 new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, mPeriodicIO.tagId));
         }
