@@ -1,7 +1,5 @@
 package frc.team4276.frc2024.auto.modes;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,7 +15,7 @@ public class ActionExample extends AutoModeBase {
     private PPSwerveTrajectoryAction traj1;
 
     public ActionExample(){
-        traj1 = new PPSwerveTrajectoryAction(PathPlannerPath.fromPathFile(path1).getTrajectory(new ChassisSpeeds(), new Rotation2d()));
+        traj1 = new PPSwerveTrajectoryAction(path1, new ChassisSpeeds(), new Rotation2d());
 
     }
 

@@ -152,6 +152,10 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
+  public edu.wpi.first.math.kinematics.ChassisSpeeds getMeasSpeeds(){
+    return new C
+  }
+
   @Override
   public void outputTelemetry() {
     if (Constants.disableExtraTelemetry) {
@@ -361,7 +365,10 @@ public class DriveSubsystem extends Subsystem {
         new PPHolonomicDriveController(
           new PIDConstants(Constants.AutoConstants.kPXController, 0, 0), 
           new PIDConstants(Constants.AutoConstants.kPThetaController, 0, 0),
-          ),
+          0.02,
+          DriveConstants.kMaxVel,
+          DriveConstants.kTrackWidth * Math.sqrt(2)
+          ))
         // new PPSwerveControllerCommand(
         //     path,
         //     mOdometry::getPoseMeters,
@@ -372,8 +379,10 @@ public class DriveSubsystem extends Subsystem {
         //     this::setSwerveModuleStates,
         //     false,
         //     new EmptySubsystem()),
-        path.getMarkers(), AutoEvents.eventMap);
+        ,path.getMarkers(), AutoEvents.eventMap);
   }
+
+  public Pose2d 
 
   public KinematicLimits getKinematicLimits() {
     return mKinematicLimits;
