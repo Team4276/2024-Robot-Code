@@ -1,23 +1,18 @@
 package frc.team4276.frc2024.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
 public class simpleisharm extends Subsystem {
     private CANSparkMax mLeader;
     private SparkMaxPIDController mPidController;
 
     private SparkMaxAbsoluteEncoder encoder;
-
-    private ProfiledPIDController pidController;
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();
 
@@ -38,11 +33,17 @@ public class simpleisharm extends Subsystem {
         encoder.setPositionConversionFactor(1);
         encoder.setVelocityConversionFactor(1);
         encoder.setZeroOffset(0);
-        
-        pidController.enableContinuousInput(0, 1);
-        pidController.setPID(0, 0, 0);
-        pidController.setIntegratorRange(0, 0);
-        pidController.setTolerance(0, 0);
+
+        mPidController = mLeader.getPIDController();
+        mPidController.setFeedbackDevice(encoder);
+        mPidController.setPositionPIDWrappingMaxInput(0);
+        mPidController.setPositionPIDWrappingMaxInput(1);
+        mPidController.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, 0);
+        mPidController.setSmartMotionAllowedClosedLoopError(0, 0);
+        mPidController.setSmartMotionMaxAccel(0, 0);
+        mPidController.setSmartMotionMaxVelocity(0, 0);
+        mPidController.setSmartMotionMinOutputVelocity(0, 0);
+
 //         pidController.setConstraints(new TrapezoidProfile.Constraints(0, 0));}
 //         TrapezoidProfile.State previousProfiledReference = new TrapezoidProfile.State(initialReference, 0.0);
 
