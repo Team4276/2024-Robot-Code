@@ -67,6 +67,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    mShooter.stopfeed();
+    mShooter.setSpeed(0);
+
     if (opController.getAButton()){
       mShooter.setSpeed(LauncherConstants.kLauncherSpeedLow);
     } else if (opController.getBButton()) {
@@ -77,6 +80,14 @@ public class Robot extends TimedRobot {
       mShooter.setSpeed(LauncherConstants.kLaunchFeederSpeed);
     } else {
       mShooter.setSpeed(0);
+    }
+
+    if (opController.getLeftTriggerAxis() > 0.1){
+      mShooter.feed();
+    } else if(opController.getXButton()) {
+      mShooter.refeed();
+    } else {
+      mShooter.stopfeed();
     }
   }
 
