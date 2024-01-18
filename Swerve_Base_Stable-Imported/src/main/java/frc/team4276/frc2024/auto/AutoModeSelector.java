@@ -23,7 +23,7 @@ public class AutoModeSelector {
 
     public static SendableChooser<Alliance> mAllianceChooser  = new SendableChooser<>();
 
-    public AutoModeSelector() {
+    public AutoModeSelector() {//TODO: fix auto modes
         // mAllianceChooser.setDefaultOption("Unselected", Alliance.);
         mAllianceChooser.addOption("Blue", Alliance.Blue);
         mAllianceChooser.addOption("Red", Alliance.Red);
