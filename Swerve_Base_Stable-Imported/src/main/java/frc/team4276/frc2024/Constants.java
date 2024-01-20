@@ -4,6 +4,7 @@
 
 package frc.team4276.frc2024;
 
+import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -181,6 +182,10 @@ public final class Constants {
     public static final double kDYController = 0;
     public static final double kPThetaController = 1;
     public static final double kDThetaController = 1;
+
+    public static final PIDConstants kTranslationPIDConstants = new PIDConstants(kPXController, 0, kDXController);
+    public static final PIDConstants kRotationPIDConstants = new PIDConstants(kPThetaController, 0, kDThetaController);
+
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

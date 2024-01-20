@@ -1,19 +1,19 @@
 package frc.team4276.frc2024.auto.actions;
 
 import frc.team4276.frc2024.Robot;
+import frc.team4276.frc2024.Constants.AutoConstants;
+import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.EmptySubsystem;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.pathplanner.lib.util.ReplanningConfig;
 
-import com.pathplanner.lib.commands.*;
-import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -23,25 +23,29 @@ public class PPSwerveTrajectoryAction implements Action {
 
     private final Command mCommand;
 
-    private PathPlannerTrajectory traj;
-    
-    private FollowPathCommand mCommand2;
+    private PathPlannerPath path;
 
-    private FollowPathHolonomic mCommand3;
+    private Alliance alliance = Alliance.Blue;
 
-    public PPSwerveTrajectoryAction(String name, ChassisSpeeds speeds, Rotation2d rot) {
-        this.traj = PathPlannerPath.fromPathFile(name).getTrajectory(speeds, rot);
+    public PPSwerveTrajectoryAction(String name, Rotation2d rot) {
+        path = PathPlannerPath.fromPathFile(name);
 
-        mCommand = mDriveSubsystem.followPathCommand(traj);
-        
-        mCommand2 = new FollowPathCommand(PathPlannerPath.fromPathFile(name), null, null, null, null, null, null, new EmptySubsystem())
+        alliance = Robot.alliance;
 
-        mCommand3 = new FollowPathHolonomic(
-            PathPlannerPath.fromPathFile(name), 
+        mCommand = new FollowPathHolonomic(
+            path, 
             mDriveSubsystem::getOdometry, 
-            mDriveSubsystem.get, null, null, null, 0, 0, null, null, null)
+            mDriveSubsystem::getWPIMeasSpeeds, 
+            mDriveSubsystem::setWPISpeeds, 
+            AutoConstants.kTranslationPIDConstants, 
+            AutoConstants.kRotationPIDConstants, 
+            DriveConstants.kMaxVel, 
+            DriveConstants.kTrackWidth * Math.sqrt(2), 
+            new ReplanningConfig(), 
+            () -> alliance == Alliance.Red, 
+            new EmptySubsystem());
 
-        SmartDashboard.putString("Loaded path with alliance", Robot.alliance.name());
+        SmartDashboard.putString("Loaded path with alliance", alliance.name());
     }
 
     @Override
@@ -69,6 +73,6 @@ public class PPSwerveTrajectoryAction implements Action {
     }
 
     public Pose2d getInitialPose(){
-        return traj.getInitialTargetHolonomicPose();
+        return path.getPreviewStartingHolonomicPose();
     }
 }

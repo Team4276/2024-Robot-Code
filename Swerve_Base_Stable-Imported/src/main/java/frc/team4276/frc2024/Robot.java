@@ -44,7 +44,6 @@ public class Robot extends TimedRobot {
 
   private AutoModeExecutor mAutoModeExecutor;
 
-  // public static Alliance alliance = Alliance.Invalid;
   public static Alliance alliance = Alliance.Blue;
 
   /**

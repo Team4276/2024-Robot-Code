@@ -7,11 +7,6 @@ package frc.team4276.frc2024.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,13 +14,9 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
-import frc.team4276.frc2024.auto.AutoEvents;
 import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.MAXSwerveModuleV2;
 
@@ -152,8 +143,12 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
-  public edu.wpi.first.math.kinematics.ChassisSpeeds getMeasSpeeds(){
-    return new C
+  public ChassisSpeeds getMeasSpeeds(){
+    return mPeriodicIO.meas_chassis_speeds;
+  }
+
+  public edu.wpi.first.math.kinematics.ChassisSpeeds getWPIMeasSpeeds(){
+    return getMeasSpeeds().toWPI();
   }
 
   @Override
@@ -359,30 +354,17 @@ public class DriveSubsystem extends Subsystem {
     public String kName = "Default";
   }
 
-  public Command followPathCommand(PathPlannerTrajectory path) {
-    return new FollowPathWithEvents(new SequentialCommandGroup(
-        new InstantCommand(() -> resetOdometry(path.getInitialTargetHolonomicPose()), new EmptySubsystem()),
-        new PPHolonomicDriveController(
-          new PIDConstants(Constants.AutoConstants.kPXController, 0, 0), 
-          new PIDConstants(Constants.AutoConstants.kPThetaController, 0, 0),
-          0.02,
-          DriveConstants.kMaxVel,
-          DriveConstants.kTrackWidth * Math.sqrt(2)
-          ))
-        // new PPSwerveControllerCommand(
-        //     path,
-        //     mOdometry::getPoseMeters,
-        //     DriveConstants.kDriveKinematics.toSwerveDriveKinematics(),
-        //     new PIDController(Constants.AutoConstants.kPXController, 0, 0),
-        //     new PIDController(Constants.AutoConstants.kPYController, 0, 0),
-        //     new PIDController(Constants.AutoConstants.kPThetaController, 0, 0),
-        //     this::setSwerveModuleStates,
-        //     false,
-        //     new EmptySubsystem()),
-        ,path.getMarkers(), AutoEvents.eventMap);
+  public void setSpeeds(ChassisSpeeds speeds){
+    if (mControlState != DriveControlState.PATH_FOLLOWING){
+      mControlState = DriveControlState.PATH_FOLLOWING;
+    }
+
+    mPeriodicIO.des_chassis_speeds = speeds;
   }
 
-  public Pose2d 
+  public void setWPISpeeds(edu.wpi.first.math.kinematics.ChassisSpeeds speeds){
+    setSpeeds(ChassisSpeeds.fromWPI(speeds));
+  }
 
   public KinematicLimits getKinematicLimits() {
     return mKinematicLimits;
