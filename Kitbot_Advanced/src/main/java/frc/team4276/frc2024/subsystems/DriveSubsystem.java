@@ -383,7 +383,7 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void teleopDrive(ChassisSpeeds speeds) {
-    if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL) {
+    if (mControlState != DriveControlState.OPEN_LOOP || mControlState != DriveControlState.HEADING_CONTROL) {
       mControlState = DriveControlState.OPEN_LOOP;
     }
 
