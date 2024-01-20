@@ -6,9 +6,9 @@ import frc.team254.lib.geometry.Pose2d;
 
 public class Field {
     public static class Red{
-        public static final HashMap<Integer, AprilTag> kAprilTagMap = new HashMap<>();
+        public static final HashMap<Integer, Apriltag> kAprilTagMap = new HashMap<>();
 
-        private static final AprilTag kAprilTag1 = new AprilTag(1, new Pose2d());
+        private static final Apriltag kAprilTag1 = new Apriltag(1, new Pose2d());
 
         static {
             kAprilTagMap.put(1, kAprilTag1);
@@ -17,7 +17,7 @@ public class Field {
     }
 
     public static class Blue{
-        public static final HashMap<Integer, AprilTag> kAprilTagMap = new HashMap<>();
+        public static final HashMap<Integer, Apriltag> kAprilTagMap = new HashMap<>();
     }
     
 }
