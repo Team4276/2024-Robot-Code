@@ -8,7 +8,6 @@ import frc.team4276.frc2024.subsystems.EmptySubsystem;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 
 import edu.wpi.first.math.geometry.Pose2d;
