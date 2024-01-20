@@ -219,7 +219,7 @@ public final class Constants {
     public static final int kFeederID = 18;
 
     // Current limit for launcher and feed wheels
-    public static final int kCurrentLimit = 40;
+    public static final int kCurrentLimit = 60;
 
     // Speeds for wheels when intaking and launching. Intake speeds are negative to run the wheels
     // in reverse

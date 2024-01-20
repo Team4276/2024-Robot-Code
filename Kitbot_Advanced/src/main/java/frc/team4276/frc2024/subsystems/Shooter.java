@@ -22,8 +22,8 @@ public class Shooter {
         mFlywheel.setSmartCurrentLimit(LauncherConstants.kCurrentLimit);
         mLauncher.setSmartCurrentLimit(LauncherConstants.kCurrentLimit);
 
-        mFlywheel.setIdleMode(IdleMode.kBrake);
-        mLauncher.setIdleMode(IdleMode.kBrake);
+        mFlywheel.setIdleMode(IdleMode.kCoast);
+        mLauncher.setIdleMode(IdleMode.kCoast);
 
         // mMotorController = mMotor.getPIDController();
         // mMotorController
