@@ -1,11 +1,19 @@
 package frc.team4276.frc2024.auto.actions;
 
 import frc.team4276.frc2024.Robot;
+import frc.team4276.frc2024.Constants.AutoConstants;
+import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.EmptySubsystem;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.ReplanningConfig;
+
+import com.pathplanner.lib.commands.FollowPathHolonomic;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -15,14 +23,29 @@ public class PPSwerveTrajectoryAction implements Action {
 
     private final Command mCommand;
 
-    private PathPlannerTrajectory traj;
+    private PathPlannerPath path;
 
-    public PPSwerveTrajectoryAction(PathPlannerTrajectory trajectory) {
-        this.traj = trajectory;
-        mCommand = mDriveSubsystem.followPathCommand(
-            PathPlannerTrajectory.transformTrajectoryForAlliance(trajectory, Robot.alliance));
+    private Alliance alliance = Alliance.Blue;
 
-        SmartDashboard.putString("Loaded path with alliance", Robot.alliance.name());
+    public PPSwerveTrajectoryAction(String name, Rotation2d rot) {
+        path = PathPlannerPath.fromPathFile(name);
+
+        alliance = Robot.alliance;
+
+        mCommand = new FollowPathHolonomic(
+            path, 
+            mDriveSubsystem::getOdometry, 
+            mDriveSubsystem::getWPIMeasSpeeds, 
+            mDriveSubsystem::setWPISpeeds, 
+            AutoConstants.kTranslationPIDConstants, 
+            AutoConstants.kRotationPIDConstants, 
+            DriveConstants.kMaxVel, 
+            DriveConstants.kTrackWidth * Math.sqrt(2), 
+            new ReplanningConfig(), 
+            () -> alliance == Alliance.Red, 
+            new EmptySubsystem());
+
+        SmartDashboard.putString("Loaded path with alliance", alliance.name());
     }
 
     @Override
@@ -50,6 +73,6 @@ public class PPSwerveTrajectoryAction implements Action {
     }
 
     public Pose2d getInitialPose(){
-        return traj.getInitialHolonomicPose();
+        return path.getPreviewStartingHolonomicPose();
     }
 }

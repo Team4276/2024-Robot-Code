@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 
   private AutoModeExecutor mAutoModeExecutor;
 
-  public static Alliance alliance = Alliance.Invalid;
+  public static Alliance alliance = Alliance.Blue;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -115,10 +115,13 @@ public class Robot extends TimedRobot {
       }
 
       if (DriverStation.isDSAttached() && DriverStation.isFMSAttached()) {
-        if (DriverStation.getAlliance() != alliance) {
-          alliance = DriverStation.getAlliance();
+        if (!DriverStation.getAlliance().isEmpty()){
+          if (DriverStation.getAlliance().get() != alliance) {
+          alliance = DriverStation.getAlliance().get();
           alliance_changed = true;
         }
+        }
+        
       }
 
       mAutoModeSelector.updateModeCreator(alliance_changed);
