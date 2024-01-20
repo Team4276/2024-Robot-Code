@@ -212,4 +212,25 @@ public final class Constants {
     //TODO: approximates for last years chassis
     public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.27, 0, new Rotation2d(0));
   }
+
+  public static class LauncherConstants {
+    // PWM ports/CAN IDs for motor controllers
+    public static final int kShooterID = 20;
+    public static final int kFeederID = 18;
+
+    // Current limit for launcher and feed wheels
+    public static final int kCurrentLimit = 40;
+
+    // Speeds for wheels when intaking and launching. Intake speeds are negative to run the wheels
+    // in reverse
+    public static final double kLauncherSpeedLow = -0.1;
+    public static final double kLauncherSpeedMid = -0.5;
+    public static final double kLauncherSpeedHigh = -1;
+
+    public static final double kLaunchFeederSpeed = 0.2;
+
+    public static final double kFeederSpeed = 1;
+    public static final double kReFeederSpeed = -0.2;
+    ;
+  }
 }

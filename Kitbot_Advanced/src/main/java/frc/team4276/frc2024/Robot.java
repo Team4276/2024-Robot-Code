@@ -13,12 +13,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team4276.frc2024.Constants.DriveConstants;
+import frc.team4276.frc2024.Constants.LauncherConstants;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
+import frc.team4276.frc2024.subsystems.Shooter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,6 +38,7 @@ public class Robot extends TimedRobot {
 
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   private final LimeLight mLimeLight = LimeLight.getInstance();
+  private final Shooter mShooter = Shooter.getInstance();
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -80,6 +83,8 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     mSubsystemManager.outputToSmartDashboard();
     mEnabledLooper.outputToSmartDashboard();
+
+    mShooter.update();
 
   }
 
@@ -215,6 +220,25 @@ public class Robot extends TimedRobot {
 
       if (mControlBoard.driver.getController().getLeftBumperPressed()) {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
+      }
+
+      mShooter.stopfeed();
+      mShooter.setSpeed(0);
+
+      if (mControlBoard.operator.getController().getAButton()){
+        mShooter.setSpeed(LauncherConstants.kLauncherSpeedLow);
+      } else if (mControlBoard.operator.getController().getBButton()) {
+        mShooter.setSpeed(LauncherConstants.kLauncherSpeedMid);
+      } else if (mControlBoard.operator.getController().getYButton()) {
+        mShooter.setSpeed(LauncherConstants.kLauncherSpeedHigh);
+      } else if (mControlBoard.operator.getController().getXButton()) {
+        mShooter.setSpeed(LauncherConstants.kLaunchFeederSpeed);
+      }
+
+      if (mControlBoard.operator.getController().getLeftTriggerAxis() > 0.1){
+        mShooter.feed();
+      } else if(mControlBoard.operator.getController().getXButton()) {
+        mShooter.refeed();
       }
 
     } catch (Throwable t) {
