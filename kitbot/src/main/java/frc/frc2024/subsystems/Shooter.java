@@ -18,7 +18,7 @@ public class Shooter {
     private double des_f_speed = 0;
     
     private Shooter(){
-        mFlywheel = new CANSparkMax(LauncherConstants.kShooterID, MotorType.kBrushless);
+        mFlywheel = new CANSparkMax(LauncherConstants.kShooterID, MotorType.kBrushed);
         mLauncher = new CANSparkMax(LauncherConstants.kFeederID, MotorType.kBrushed);
 
         mFlywheel.setSmartCurrentLimit(LauncherConstants.kCurrentLimit);
