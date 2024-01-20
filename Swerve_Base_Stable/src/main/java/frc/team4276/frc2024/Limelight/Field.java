@@ -36,6 +36,8 @@ public class Field {
             kAprilTagMap.put(9, kAprilTag9);
             kAprilTagMap.put(10, kAprilTag10);
             kAprilTagMap.put(14, kAprilTag14);
+            kAprilTagMap.put(15, kAprilTag15);
+            kAprilTagMap.put(16, kAprilTag16);
         }
     }
 
@@ -50,6 +52,8 @@ public class Field {
             kAprilTagMap.put(5, kAprilTag5);
             kAprilTagMap.put(9, kAprilTag9);
             kAprilTagMap.put(10, kAprilTag10);
+            kAprilTagMap.put(11, kAprilTag11);
+            kAprilTagMap.put(12, kAprilTag12);
             kAprilTagMap.put(13, kAprilTag13);
         }
 

@@ -31,8 +31,6 @@ public class MAXSwerveModuleV2 extends Subsystem {
   private double m_chassisAngularOffset = 0;
   private ModuleState m_desiredState;
 
-  public mPeriodicIO mPeriodicIO = new mPeriodicIO();
-
   /**
    * Constructs a MAXSwerveModule and configures the driving and turning motor,
    * encoder, and PID controller. This configuration is specific to the REV

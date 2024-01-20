@@ -1,6 +1,7 @@
 package frc.team4276.frc2024.subsystems;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
@@ -18,27 +19,36 @@ import frc.team254.lib.geometry.Translation2d;
 
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.LimelightConstants;
+import frc.team4276.frc2024.Limelight.Field;
+import frc.team4276.frc2024.Limelight.Apriltag;
 
 public class LimeLight extends Subsystem {
     private final NetworkTable mNetworkTable;
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();
     private int mListenerId = -1;
+    
+    private static HashMap<Integer, Apriltag> mTagMap = Field.Red.kAprilTagMap;
 
     private boolean mDisableProcessing = false;
 
     private static LimeLight mInstance;
 
-    public static LimeLight getInstance(){
-        if (mInstance == null){
+    public static LimeLight getInstance() {
+        if (mInstance == null) {
             mInstance = new LimeLight();
         }
         return mInstance;
     }
 
+    private LimeLight() {
+        mNetworkTable = NetworkTableInstance.getDefault().getTable("limelight");
+    }
+
     /**
      * Represents a Class to Store a Vision Update
-     * Allows us to maintain the timestamp of a vision capture along with the corresponding 2d Translation from Camera to Goal
+     * Allows us to maintain the timestamp of a vision capture along with the
+     * corresponding 2d Translation from Camera to Goal
      */
     public static class VisionUpdate {
         private double timestamp;
@@ -49,23 +59,28 @@ public class LimeLight extends Subsystem {
         public VisionUpdate(double timestamp, Translation2d cameraToTarget, int tagId) {
             this.timestamp = timestamp;
             this.cameraToTarget = cameraToTarget;
-            //this.fieldToTag = mTagMap.get(tagId).getFieldToTag();
+            this.fieldToTag = mTagMap.get(tagId).getTagInField();
         }
 
         public double getTimestamp() {
             return timestamp;
         }
 
-        public Translation2d getCameraToTag()  {
+        public Translation2d getCameraToTag() {
             return cameraToTarget;
         }
-        // public Pose2d getFieldToTag() {
-        //     return fieldToTag;
-        // }
+
+        public Pose2d getTagInField() {
+            return fieldToTag;
+        }
 
         public int getTagId() {
             return tagId;
         }
+    }
+
+    public void setRedTagMap() {
+        mTagMap = Field.Red.kAprilTagMap;
     }
 
     public synchronized void setDisableProcessing(boolean disableLimelight) {
@@ -76,11 +91,9 @@ public class LimeLight extends Subsystem {
         return mDisableProcessing;
     }
 
-    private LimeLight(){
-        mNetworkTable = NetworkTableInstance.getDefault().getTable("limelight");
-    }
+    
 
-    private class PeriodicIO{
+    private class PeriodicIO {
         // Inputs
         public double latency;
         public int givenLedMode;
@@ -109,36 +122,35 @@ public class LimeLight extends Subsystem {
 
     public void readInputsAndAddVisionUpdate() {
         final double timestamp = Timer.getFPGATimestamp();
-        mPeriodicIO.imageCaptureLatency = mNetworkTable.getEntry("cl").getDouble(LimelightConstants.kImageCaptureLatency);
-        mPeriodicIO.latency = mNetworkTable.getEntry("tl").getDouble(0) / 1000.0 + mPeriodicIO.imageCaptureLatency / 1000.0
+        mPeriodicIO.imageCaptureLatency = mNetworkTable.getEntry("cl")
+                .getDouble(LimelightConstants.kImageCaptureLatency);
+        mPeriodicIO.latency = mNetworkTable.getEntry("tl").getDouble(0) / 1000.0
+                + mPeriodicIO.imageCaptureLatency / 1000.0
                 + LimelightConstants.kLimelightTransmissionTimeLatency;
         mPeriodicIO.givenPipeline = (int) mNetworkTable.getEntry("getpipe").getDouble(0);
         mPeriodicIO.seesTarget = mNetworkTable.getEntry("tv").getDouble(0) == 1.0;
         mPeriodicIO.tagId = (int) mNetworkTable.getEntry("tid").getNumber(-1).doubleValue();
         mPeriodicIO.givenLedMode = (int) mNetworkTable.getEntry("ledMode").getDouble(1.0);
-        mPeriodicIO.targetDistanceToRobot = mNetworkTable.getEntry("targetpose_cameraspace").getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 });
+        mPeriodicIO.targetDistanceToRobot = mNetworkTable.getEntry("targetpose_cameraspace")
+                .getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 });
         Translation2d cameraToTarget = new Translation2d(
-            mPeriodicIO.targetDistanceToRobot[0], 
-            mPeriodicIO.targetDistanceToRobot[1]);
+                mPeriodicIO.targetDistanceToRobot[0],
+                mPeriodicIO.targetDistanceToRobot[1]);
 
         if (mPeriodicIO.seesTarget) {
-             /*
-             if (mTagMap.keySet().contains(tagId) && cameraToTarget != null) {
-                 DriveSubsystem.getInstance().visionUpdate(
-                        new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, tagId));
+            if (mTagMap.keySet().contains(mPeriodicIO.tagId) && cameraToTarget != null) {
+                RobotState.getInstance().visionUpdate(
+                        new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, mPeriodicIO.tagId));
             } else {
-                DriveSubsystem.getInstance().visionUpdate(null);
+                RobotState.getInstance().visionUpdate(null);
             }
-            */
-            RobotState.getInstance().visionUpdate(
-                new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, mPeriodicIO.tagId));
         }
-
 
     }
 
     @Override
-    public void readPeriodicInputs() {}
+    public void readPeriodicInputs() {
+    }
 
     @Override
     public void writePeriodicOutputs() {
@@ -178,13 +190,8 @@ public class LimeLight extends Subsystem {
         }
     }
 
-
     @Override
-    public void stop() { }
-
-    
-
-
-
+    public void stop() {
+    }
 
 }
