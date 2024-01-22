@@ -4,13 +4,16 @@
 
 package frc.team4276.frc2024;
 
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.pathplanner.lib.util.PIDConstants;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
+import frc.team254.lib.geometry.Pose2d;
+import frc.team254.lib.geometry.Rotation2d;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 
 /**
@@ -180,6 +183,10 @@ public final class Constants {
     public static final double kPThetaController = 1;
     public static final double kDThetaController = 1;
 
+    public static final PIDConstants kTranslationPIDConstants = new PIDConstants(kPXController, 0, kDXController);
+    public static final PIDConstants kRotationPIDConstants = new PIDConstants(kPThetaController, 0, kDThetaController);
+
+
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
@@ -190,10 +197,19 @@ public final class Constants {
   }
 
   public static final class SnapConstants{
-    private static final double kCoefficient = 3;
-    public static final double kP = 0.06 * kCoefficient;
-    public static final double kI = 0.003 * kCoefficient;
-    public static final double kD = 0.004 * kCoefficient;
+    public static final double kP = 0.18;
+    public static final double kI = 0.009;
+    public static final double kD = 0.012;
 
+  }
+
+  public static final class LimelightConstants{
+    public static final int kImageCaptureLatency = 11;
+    public static final int kLimelightTransmissionTimeLatency = 0;
+
+    public static final double kMaxAcceptibleTargetDist = 10;
+
+    //TODO: approximates for last years chassis
+    public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.27, 0, new Rotation2d(0));
   }
 }

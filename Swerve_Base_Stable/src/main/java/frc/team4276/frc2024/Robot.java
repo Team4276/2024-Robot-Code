@@ -18,6 +18,7 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.LimeLight;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,6 +35,7 @@ public class Robot extends TimedRobot {
   private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
+  private final LimeLight mLimeLight = LimeLight.getInstance();
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -42,7 +44,7 @@ public class Robot extends TimedRobot {
 
   private AutoModeExecutor mAutoModeExecutor;
 
-  public static Alliance alliance = Alliance.Invalid;
+  public static Alliance alliance = Alliance.Blue;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -53,7 +55,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     try {
       mSubsystemManager.setSubsystems(
-          mDriveSubsystem);
+          mDriveSubsystem,
+          mLimeLight);
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -77,6 +80,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     mSubsystemManager.outputToSmartDashboard();
     mEnabledLooper.outputToSmartDashboard();
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -111,10 +115,13 @@ public class Robot extends TimedRobot {
       }
 
       if (DriverStation.isDSAttached() && DriverStation.isFMSAttached()) {
-        if (DriverStation.getAlliance() != alliance) {
-          alliance = DriverStation.getAlliance();
+        if (!DriverStation.getAlliance().isEmpty()){
+          if (DriverStation.getAlliance().get() != alliance) {
+          alliance = DriverStation.getAlliance().get();
           alliance_changed = true;
         }
+        }
+        
       }
 
       mAutoModeSelector.updateModeCreator(alliance_changed);
@@ -146,6 +153,8 @@ public class Robot extends TimedRobot {
 
       mEnabledLooper.start();
       mAutoModeExecutor.start();
+      
+      RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
       throw t;
@@ -169,6 +178,8 @@ public class Robot extends TimedRobot {
       mDisabledLooper.stop();
       mEnabledLooper.start();
 
+      RobotState.getInstance().setHasBeenEnabled(true);
+
     } catch (Throwable t) {
       throw t;
     }
@@ -184,22 +195,18 @@ public class Robot extends TimedRobot {
 
       if (mControlBoard.driver.getController().getXButton()) {
         mDriveSubsystem.setX();
-      } else if (mControlBoard.driver.getLT()) {
-        mDriveSubsystem.snapDrive(
-            -mControlBoard.driver.getLeftY(),
-            -mControlBoard.driver.getLeftX(),
-            0);
-      } else if (mControlBoard.driver.getRT()) {
-        mDriveSubsystem.snapDrive(
-            -mControlBoard.driver.getLeftY(),
-            -mControlBoard.driver.getLeftX(),
-            180);
       } else {
         mDriveSubsystem.teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(
             mControlBoard.getSwerveTranslation().x(),
             mControlBoard.getSwerveTranslation().y(),
             mControlBoard.getSwerveRotation(),
             mDriveSubsystem.getHeading()));
+      }
+
+      if (mControlBoard.driver.getController().getYButtonPressed()){
+        mDriveSubsystem.setHeadingSetpoint(0);
+      } else if (mControlBoard.driver.getController().getBButtonPressed()) {
+        mDriveSubsystem.setHeadingSetpoint(180);
       }
 
       if (mControlBoard.driver.getController().getRightBumperPressed()) {

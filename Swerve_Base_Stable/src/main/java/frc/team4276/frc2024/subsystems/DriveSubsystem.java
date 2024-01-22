@@ -7,10 +7,6 @@ package frc.team4276.frc2024.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,13 +14,9 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
-import frc.team4276.frc2024.auto.AutoEvents;
 import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.MAXSwerveModuleV2;
 
@@ -151,6 +143,14 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
+  public ChassisSpeeds getMeasSpeeds(){
+    return mPeriodicIO.meas_chassis_speeds;
+  }
+
+  public edu.wpi.first.math.kinematics.ChassisSpeeds getWPIMeasSpeeds(){
+    return getMeasSpeeds().toWPI();
+  }
+
   @Override
   public void outputTelemetry() {
     if (Constants.disableExtraTelemetry) {
@@ -164,6 +164,10 @@ public class DriveSubsystem extends Subsystem {
 
     SmartDashboard.putNumber("Robot X", mOdometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Robot Y", mOdometry.getPoseMeters().getY());
+  }
+
+  public Pose2d getOdometry(){
+    return mOdometry.getPoseMeters();
   }
 
   /**
@@ -188,6 +192,9 @@ public class DriveSubsystem extends Subsystem {
 
     return states;
   }
+
+  //TODO: add theta X translation pathfollower (not for autos)
+  //TODO: add auto alighner within an area
 
   private void updateSetpoint() {
     if (mControlState == DriveControlState.FORCE_ORIENT || mControlState == DriveControlState.PATH_FOLLOWING) {
@@ -347,20 +354,16 @@ public class DriveSubsystem extends Subsystem {
     public String kName = "Default";
   }
 
-  public Command followPathCommand(PathPlannerTrajectory path) {
-    return new FollowPathWithEvents(new SequentialCommandGroup(
-        new InstantCommand(() -> resetOdometry(path.getInitialHolonomicPose()), new EmptySubsystem()),
-        new PPSwerveControllerCommand(
-            path,
-            mOdometry::getPoseMeters,
-            DriveConstants.kDriveKinematics.toSwerveDriveKinematics(),
-            new PIDController(Constants.AutoConstants.kPXController, 0, 0),
-            new PIDController(Constants.AutoConstants.kPYController, 0, 0),
-            new PIDController(Constants.AutoConstants.kPThetaController, 0, 0),
-            this::setSwerveModuleStates,
-            false,
-            new EmptySubsystem())),
-        path.getMarkers(), AutoEvents.eventMap);
+  public void setSpeeds(ChassisSpeeds speeds){
+    if (mControlState != DriveControlState.PATH_FOLLOWING){
+      mControlState = DriveControlState.PATH_FOLLOWING;
+    }
+
+    mPeriodicIO.des_chassis_speeds = speeds;
+  }
+
+  public void setWPISpeeds(edu.wpi.first.math.kinematics.ChassisSpeeds speeds){
+    setSpeeds(ChassisSpeeds.fromWPI(speeds));
   }
 
   public KinematicLimits getKinematicLimits() {
@@ -371,30 +374,31 @@ public class DriveSubsystem extends Subsystem {
     this.mKinematicLimits = kinematicLimits;
   }
 
-  public void teleopDrive(ChassisSpeeds speeds) {
-    if (mControlState != DriveControlState.OPEN_LOOP) {
-      mControlState = DriveControlState.OPEN_LOOP;
-    }
-
-    mPeriodicIO.des_chassis_speeds = speeds;
-  }
-
-  /**
-   * @param desiredRotDeg Must be a value between 0 and 360
-   */
-  public void snapDrive(double xSpeed, double ySpeed, double desiredRotDeg) {
+  public void setHeadingSetpoint(double desHeadingDeg){
     if (mControlState != DriveControlState.HEADING_CONTROL) {
       mControlState = DriveControlState.HEADING_CONTROL;
     }
-    double rot = snapController.calculate(mPigeon.getYaw().getRadians(), Math.toRadians(desiredRotDeg));
-
-    SmartDashboard.putNumber("Snap output", rot);
-
-    teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, mPigeon.getYaw()));
+    snapController.reset();
+    mPeriodicIO.heading_setpoint = Rotation2d.fromDegrees(desHeadingDeg);
   }
 
-  public void resetSnapController(){
-    snapController.reset();
+  public void teleopDrive(ChassisSpeeds speeds) {
+    if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL) {
+      mControlState = DriveControlState.OPEN_LOOP;
+    }
+
+    if (mControlState == DriveControlState.HEADING_CONTROL){
+      if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
+        mControlState = DriveControlState.OPEN_LOOP;
+      } else {
+        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
+          speeds.vxMetersPerSecond, 
+          speeds.vyMetersPerSecond, 
+          snapController.calculate(mPigeon.getYaw().getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
+        return;
+      }
+    }
+    mPeriodicIO.des_chassis_speeds = speeds;
   }
 
   public void stop() {
@@ -429,5 +433,7 @@ public class DriveSubsystem extends Subsystem {
     }
     orientModules(orientations);
   }
+
+
 
 }
