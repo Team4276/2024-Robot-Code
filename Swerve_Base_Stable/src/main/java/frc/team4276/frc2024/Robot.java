@@ -153,7 +153,7 @@ public class Robot extends TimedRobot {
 
       mEnabledLooper.start();
       mAutoModeExecutor.start();
-      
+  
       RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
 
       mDisabledLooper.stop();
       mEnabledLooper.start();
-
+      
       RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
