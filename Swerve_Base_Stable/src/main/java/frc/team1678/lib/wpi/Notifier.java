@@ -37,12 +37,6 @@ public class Notifier implements AutoCloseable {
     private double m_period;
 
     @Override
-    @SuppressWarnings("NoFinalizer")
-    protected void finalize() {
-        close();
-    }
-
-    @Override
     public void close() {
         int handle = m_notifier.getAndSet(0);
         if (handle == 0) {

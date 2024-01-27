@@ -75,7 +75,7 @@ public class Pigeon {
     }
 
     public Rotation2d getUnadjustedYaw() {
-        return Rotation2d.fromDegrees(mGyro.getAngle());
+        return Rotation2d.fromDegrees(mGyro.getAngle(null));
     }
 
     public Rotation2d getUnadjustedPitch() {
