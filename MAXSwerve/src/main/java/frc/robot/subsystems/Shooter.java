@@ -13,4 +13,16 @@ public class Shooter
         shooterFeeder = new CANSparkMax(18, MotorType.kBrushless);
     }
 
+    public void shoot (){
+    }
+    
+
+    public void intake (){
+        shooterFeeder.set(-0.2);
+        launcherMotor.set(-0.2);
+    }
+     public void stop (){
+        shooterFeeder.set(0);
+        launcherMotor.set(0);
+    }
 }
