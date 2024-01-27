@@ -1,8 +1,16 @@
+package frc.robot.subsystems;
+
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 public class Shooter 
 {
-    public static void main(String []args)
-    {
-    System.out.println("Hello World");    
+    private CANSparkMax launcherMotor;
+    private CANSparkMax shooterFeeder;
+
+    public Shooter (){
+        launcherMotor = new CANSparkMax(20, MotorType.kBrushless);
+        shooterFeeder = new CANSparkMax(18, MotorType.kBrushless);
     }
-};
+
+}
