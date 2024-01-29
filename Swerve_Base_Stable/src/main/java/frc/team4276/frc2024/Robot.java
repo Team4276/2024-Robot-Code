@@ -6,6 +6,7 @@ package frc.team4276.frc2024;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -19,6 +20,7 @@ import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
+import frc.team4276.frc2024.subsystems.RobotStateEstimator;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,6 +38,7 @@ public class Robot extends TimedRobot {
 
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   private final LimeLight mLimeLight = LimeLight.getInstance();
+  private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -56,10 +59,14 @@ public class Robot extends TimedRobot {
     try {
       mSubsystemManager.setSubsystems(
           mDriveSubsystem,
-          mLimeLight);
+          mLimeLight,
+          mRobotStateEstimator);
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
+      mRobotStateEstimator.registerEnabledLoops(mDisabledLooper);
+      mRobotStateEstimator.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180)));
+      RobotState.getInstance().resetKalmanFilters();
 
     } catch (Throwable t) {
       throw t;
@@ -89,6 +96,9 @@ public class Robot extends TimedRobot {
     try {
       mEnabledLooper.stop();
       mDisabledLooper.start();
+      mLimeLight.start();
+      mLimeLight.setDisableProcessing(true);
+      //TODO: set true before competition
 
     } catch (Throwable t) {
       throw t;
@@ -108,6 +118,14 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     try {
       boolean alliance_changed = false;
+
+      if (DriverStation.getAlliance().isPresent()){
+        if (DriverStation.getAlliance().get() == Alliance.Red){
+          mLimeLight.setRedTagMap();
+        } else {
+          mLimeLight.setBlueTagMap();
+        }
+      }
 
       if (AutoModeSelector.mAllianceChooser.getSelected() != alliance){
         alliance = AutoModeSelector.mAllianceChooser.getSelected();
@@ -153,7 +171,10 @@ public class Robot extends TimedRobot {
 
       mEnabledLooper.start();
       mAutoModeExecutor.start();
-  
+      
+      mRobotStateEstimator.resetOdometry(new Pose2d(0, 0, new Rotation2d(180)));
+
+      mLimeLight.setDisableProcessing(true);
       RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
@@ -178,6 +199,9 @@ public class Robot extends TimedRobot {
       mDisabledLooper.stop();
       mEnabledLooper.start();
       
+      //TODO: set false during comp
+      mLimeLight.setDisableProcessing(true);
+      
       RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
@@ -191,6 +215,7 @@ public class Robot extends TimedRobot {
     try {
       if (mControlBoard.driver.getController().getAButtonPressed()) {
         mDriveSubsystem.zeroHeading();
+        RobotState.getInstance().reset();
       }
 
       if (mControlBoard.driver.getController().getXButton()) {

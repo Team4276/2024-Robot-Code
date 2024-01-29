@@ -82,6 +82,9 @@ public class LimeLight extends Subsystem {
     public void setRedTagMap() {
         mTagMap = Field.Red.kAprilTagMap;
     }
+    public void setBlueTagMap() {
+        mTagMap = Field.Blue.kAprilTagMap;
+    }
 
     public synchronized void setDisableProcessing(boolean disableLimelight) {
         mDisableProcessing = disableLimelight;

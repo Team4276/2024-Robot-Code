@@ -7,7 +7,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
-
+import edu.wpi.first.wpilibj.Timer;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.util.InterpolatingDouble;
@@ -194,6 +194,10 @@ public class RobotState {
             DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
         }
         addOdomToVehicleObservation(timestamp, odom_to_robot);
+    }
+
+    public synchronized void reset() {
+        reset(Timer.getFPGATimestamp(), Pose2d.identity());
     }
 
 
