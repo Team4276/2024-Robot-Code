@@ -15,7 +15,7 @@ import frc.team254.lib.util.InterpolatingTreeMap;
 
 import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.Constants.RobotStateConstants;
-import frc.team4276.frc2024.Limelight.VisionPoseAcceptor;
+import frc.team4276.frc2024.limelight.VisionPoseAcceptor;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight.VisionUpdate;
 
@@ -172,7 +172,22 @@ public class RobotState {
         return getFieldToOdom(field_to_odom_.lastKey().value);
     }
 
-    
+    public synchronized Pose2d getFieldToVehicle(double timestamp) {
+        Pose2d odomToVehicle = getOdomToVehicle(timestamp);
+
+        Translation2d fieldToOdom = getFieldToOdom(timestamp);
+        return new Pose2d(fieldToOdom.translateBy(odomToVehicle.getTranslation()), odomToVehicle.getRotation());
+
+    }
+
+    public synchronized Pose2d getCurrentFieldToVehicle(){
+        return getFieldToVehicle(Timer.getFPGATimestamp());
+    }
+
+    public synchronized edu.wpi.first.math.geometry.Pose2d getWPICurrentFieldToVehicle(){
+        return Pose2d.toWPI(getCurrentFieldToVehicle());
+    }
+
     /**
      * Returns the robot's position on the field at a certain time. Linearly
      * interpolates between stored robot positions

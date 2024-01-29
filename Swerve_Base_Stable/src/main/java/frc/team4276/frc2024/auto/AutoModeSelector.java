@@ -1,6 +1,5 @@
 package frc.team4276.frc2024.auto;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,14 +20,7 @@ public class AutoModeSelector {
 
     private static SendableChooser<DesiredMode> mModeChooser = new SendableChooser<>();
 
-    public static SendableChooser<Alliance> mAllianceChooser  = new SendableChooser<>();
-
-    public AutoModeSelector() {//TODO: fix auto modes
-        // mAllianceChooser.setDefaultOption("Unselected", Alliance.);
-        mAllianceChooser.addOption("Blue", Alliance.Blue);
-        mAllianceChooser.addOption("Red", Alliance.Red);
-        SmartDashboard.putData(mAllianceChooser);
-
+    public AutoModeSelector() {
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Example", DesiredMode.EXAMPLE);
         SmartDashboard.putData("Auto Mode", mModeChooser);

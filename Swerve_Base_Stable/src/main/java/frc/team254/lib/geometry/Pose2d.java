@@ -47,8 +47,12 @@ public class Pose2d implements IPose2d<Pose2d> {
         return new Pose2d(new Translation2d(), rotation);
     }
 
-    public static Pose2d fromWPIPose2d(edu.wpi.first.math.geometry.Pose2d pose){
-        return new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromWPIRotation2d(pose.getRotation()));
+    public static Pose2d fromWPI(edu.wpi.first.math.geometry.Pose2d pose){
+        return new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromWPI(pose.getRotation()));
+    }
+
+    public static edu.wpi.first.math.geometry.Pose2d toWPI(Pose2d pose){
+        return new edu.wpi.first.math.geometry.Pose2d(pose.getTranslation().x(), pose.getTranslation().y(), Rotation2d.toWPI(pose.getRotation()));
     }
 
     /**

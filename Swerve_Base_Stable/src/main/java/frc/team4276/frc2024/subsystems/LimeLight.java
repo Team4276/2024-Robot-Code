@@ -19,8 +19,8 @@ import frc.team254.lib.geometry.Translation2d;
 
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.LimelightConstants;
-import frc.team4276.frc2024.Limelight.Field;
-import frc.team4276.frc2024.Limelight.Apriltag;
+import frc.team4276.frc2024.field.Apriltag;
+import frc.team4276.frc2024.field.Field;
 
 public class LimeLight extends Subsystem {
     private final NetworkTable mNetworkTable;
@@ -99,17 +99,10 @@ public class LimeLight extends Subsystem {
     private class PeriodicIO {
         // Inputs
         public double latency;
-        public int givenLedMode;
-        public int givenPipeline;
         public boolean seesTarget;
         public int tagId;
         public double imageCaptureLatency;
         public double[] targetDistanceToRobot;
-
-        // Outputs
-        public int ledMode = 0; // 0 - use pipeline mode, 1 - off, 2 - blink, 3 - on
-        public int camMode = 0; // 0 - vision processing, 1 - driver camera
-        public int pipeline = 0; // 0 - 9
     }
 
     private class Listener implements TableEventListener {
@@ -130,10 +123,8 @@ public class LimeLight extends Subsystem {
         mPeriodicIO.latency = mNetworkTable.getEntry("tl").getDouble(0) / 1000.0
                 + mPeriodicIO.imageCaptureLatency / 1000.0
                 + LimelightConstants.kLimelightTransmissionTimeLatency;
-        mPeriodicIO.givenPipeline = (int) mNetworkTable.getEntry("getpipe").getDouble(0);
         mPeriodicIO.seesTarget = mNetworkTable.getEntry("tv").getDouble(0) == 1.0;
         mPeriodicIO.tagId = (int) mNetworkTable.getEntry("tid").getNumber(-1).doubleValue();
-        mPeriodicIO.givenLedMode = (int) mNetworkTable.getEntry("ledMode").getDouble(1.0);
         mPeriodicIO.targetDistanceToRobot = mNetworkTable.getEntry("targetpose_cameraspace")
                 .getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 });
         Translation2d cameraToTarget = new Translation2d(

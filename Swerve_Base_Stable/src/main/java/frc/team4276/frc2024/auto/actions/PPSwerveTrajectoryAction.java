@@ -1,10 +1,11 @@
 package frc.team4276.frc2024.auto.actions;
 
-import frc.team4276.frc2024.Robot;
 import frc.team4276.frc2024.Constants.AutoConstants;
 import frc.team4276.frc2024.Constants.DriveConstants;
+import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.EmptySubsystem;
+import frc.team4276.frc2024.RobotState;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -17,29 +18,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class PPSwerveTrajectoryAction implements Action {
-
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
+    private RobotState mRobotState = RobotState.getInstance();
 
-    private final Command mCommand;
+    private Command mCommand;
 
     private PathPlannerPath path;
-
-    private Alliance alliance = Alliance.Blue;
 
     public PPSwerveTrajectoryAction(String name, Rotation2d rot) {
         path = PathPlannerPath.fromPathFile(name);
 
-        alliance = Robot.alliance;
+        Alliance alliance = AllianceChooser.getInstance().getAlliance();
 
         mCommand = new FollowPathHolonomic(
             path, 
-            mDriveSubsystem::getOdometry, 
+            mRobotState::getWPICurrentFieldToVehicle, 
             mDriveSubsystem::getWPIMeasSpeeds, 
             mDriveSubsystem::setWPISpeeds, 
             AutoConstants.kTranslationPIDConstants, 
             AutoConstants.kRotationPIDConstants, 
             DriveConstants.kMaxVel, 
-            DriveConstants.kTrackWidth * Math.sqrt(2), 
+            DriveConstants.kTrackWidth * Math.sqrt(2) / 2, 
             new ReplanningConfig(), 
             () -> alliance == Alliance.Red, 
             new EmptySubsystem());

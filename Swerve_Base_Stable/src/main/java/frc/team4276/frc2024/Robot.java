@@ -8,16 +8,17 @@ import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team4276.frc2024.Constants.DriveConstants;
+import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
+import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.RobotStateEstimator;
@@ -44,10 +45,9 @@ public class Robot extends TimedRobot {
   private final Looper mDisabledLooper = new Looper();
 
   private final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
-
   private AutoModeExecutor mAutoModeExecutor;
 
-  public static Alliance alliance = Alliance.Blue;
+  private final AllianceChooser mAllianceChooser = AllianceChooser.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -98,7 +98,6 @@ public class Robot extends TimedRobot {
       mDisabledLooper.start();
       mLimeLight.start();
       mLimeLight.setDisableProcessing(true);
-      //TODO: set true before competition
 
     } catch (Throwable t) {
       throw t;
@@ -117,32 +116,13 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     try {
-      boolean alliance_changed = false;
-
-      if (DriverStation.getAlliance().isPresent()){
-        if (DriverStation.getAlliance().get() == Alliance.Red){
-          mLimeLight.setRedTagMap();
-        } else {
-          mLimeLight.setBlueTagMap();
-        }
+      if (mAllianceChooser.getAlliance() == Alliance.Red){
+        mLimeLight.setRedTagMap();
+      } else {
+        mLimeLight.setBlueTagMap();
       }
 
-      if (AutoModeSelector.mAllianceChooser.getSelected() != alliance){
-        alliance = AutoModeSelector.mAllianceChooser.getSelected();
-        alliance_changed = true;
-      }
-
-      if (DriverStation.isDSAttached() && DriverStation.isFMSAttached()) {
-        if (!DriverStation.getAlliance().isEmpty()){
-          if (DriverStation.getAlliance().get() != alliance) {
-          alliance = DriverStation.getAlliance().get();
-          alliance_changed = true;
-        }
-        }
-        
-      }
-
-      mAutoModeSelector.updateModeCreator(alliance_changed);
+      mAutoModeSelector.updateModeCreator(mAllianceChooser.isAllianceChanged());
       Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
       if (autoMode.isPresent()) {
         mAutoModeExecutor.setAutoMode(autoMode.get());
@@ -199,8 +179,7 @@ public class Robot extends TimedRobot {
       mDisabledLooper.stop();
       mEnabledLooper.start();
       
-      //TODO: set false during comp
-      mLimeLight.setDisableProcessing(true);
+      mLimeLight.setDisableProcessing(LimelightConstants.disableAfterTeleop);
       
       RobotState.getInstance().setHasBeenEnabled(true);
 
@@ -214,7 +193,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     try {
       if (mControlBoard.driver.getController().getAButtonPressed()) {
-        mDriveSubsystem.zeroHeading();
+        mDriveSubsystem.zeroHeading(0);
         RobotState.getInstance().reset();
       }
 

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.team4276.lib;
+package frc.team4276.lib.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.team1678.lib.swerve.ModuleState;
@@ -18,6 +18,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+//TODO: actually implement this as a subsystem too lazy to rn :p
 public class MAXSwerveModuleV2 extends Subsystem {
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;
@@ -195,18 +196,5 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_drivingSparkMax.set(0);
     m_turningSparkMax.set(0);
 
-  }
-
-  public static class mPeriodicIO {
-    // Inputs
-    public double timestamp = 0.0;
-    public double targetVelocity = 0.0;
-    public double rotationPosition = 0.0;
-    public double drivePosition = 0.0;
-    public double velocity = 0.0;
-
-    // Outputs
-    public double rotationDemand;
-    public double driveDemand;
-  }
+  } 
 }

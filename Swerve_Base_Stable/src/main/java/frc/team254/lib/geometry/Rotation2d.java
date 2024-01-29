@@ -70,8 +70,12 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
         return new Rotation2d(angle_degrees);
     }
 
-    public static Rotation2d fromWPIRotation2d(edu.wpi.first.math.geometry.Rotation2d rotation){
+    public static Rotation2d fromWPI(edu.wpi.first.math.geometry.Rotation2d rotation){
         return new Rotation2d(rotation.getDegrees());
+    }
+
+    public static edu.wpi.first.math.geometry.Rotation2d toWPI(Rotation2d rotation){
+        return new edu.wpi.first.math.geometry.Rotation2d(rotation.getRadians());
     }
 
     public double cos() {

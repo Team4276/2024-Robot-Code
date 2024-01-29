@@ -33,6 +33,8 @@ import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final boolean isComp = false;
+
   public static final double kLooperDt = 0.02;
 
   // Enables extra SmartDashboard Debugs
@@ -42,7 +44,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxVel = 5.0; // meters per second
+    public static final double kMaxVel = 4.8; // meters per second
     public static final double kMaxAttainableVel = kMaxVel * 0.85;
 
     public static final double kMaxAngularVel = 2 * Math.PI; // radians per second
@@ -201,10 +203,14 @@ public final class Constants {
   }
 
   public static final class SnapConstants{
+    //Radians
+
     public static final double kP = 0.18;
     public static final double kI = 0.009;
     public static final double kD = 0.012;
 
+    public static final double kPositionTolerance = 0.1;
+    public static final double kAngularVelocityTolerance = 0.1;
   }
 
   public static final class LimelightConstants{
@@ -213,7 +219,8 @@ public final class Constants {
 
     public static final double kMaxAcceptibleTargetDist = 10;
 
-    //TODO: approximates for last years chassis
+    public static final boolean disableAfterTeleop = !isComp;
+    
     public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.27, 0, new Rotation2d(0));
   }
 

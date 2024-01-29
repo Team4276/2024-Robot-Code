@@ -18,13 +18,11 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
 import frc.team4276.lib.drivers.Pigeon;
-import frc.team4276.lib.MAXSwerveModuleV2;
-
+import frc.team4276.lib.swerve.MAXSwerveModuleV2;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team1678.lib.swerve.ModuleState;
-import frc.team1678.lib.swerve.SwerveDriveOdometry;
 
 import frc.team254.lib.util.Util;
 
@@ -40,9 +38,6 @@ public class DriveSubsystem extends Subsystem {
 
   // The gyro sensor
   private Pigeon mPigeon;
-
-  // Odometry class for tracking robot pose
-  private SwerveDriveOdometry mOdometry;
 
   private PeriodicIO mPeriodicIO = new PeriodicIO();
   private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
@@ -85,12 +80,9 @@ public class DriveSubsystem extends Subsystem {
     mPigeon = Pigeon.getInstance();
     mPigeon.setYaw(0.0);
 
-    mOdometry = new SwerveDriveOdometry(
-        DriveConstants.kDriveKinematics,
-        getModuleStates());
-
     snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
     snapController.enableContinuousInput(0, 2 * Math.PI);
+    snapController.setTolerance(SnapConstants.kPositionTolerance, SnapConstants.kAngularVelocityTolerance);
 
   }
 
@@ -106,9 +98,6 @@ public class DriveSubsystem extends Subsystem {
       public void onLoop(double timestamp) {
         synchronized (this) {
           updateSetpoint();
-          mOdometry.update(
-              mPigeon.getYaw(),
-              getModuleStates());
         }
       }
 
@@ -161,24 +150,6 @@ public class DriveSubsystem extends Subsystem {
       SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", mModules[i].getDriveSetpoint());
       SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", mModules[i].getTurnSetpoint());
     }
-
-    SmartDashboard.putNumber("Robot X", mOdometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("Robot Y", mOdometry.getPoseMeters().getY());
-  }
-
-  public Pose2d getOdometry(){
-    return mOdometry.getPoseMeters();
-  }
-
-  /**
-   * Resets the odometry to the specified pose.
-   *
-   * @param pose The pose to which to set the odometry.
-   */
-  public void resetOdometry(Pose2d pose) {
-    mOdometry.resetPosition(
-        getModuleStates(),
-        pose);
   }
 
   public ModuleState[] getModuleStates() {
@@ -197,13 +168,15 @@ public class DriveSubsystem extends Subsystem {
   //TODO: add auto alighner within an area
 
   private void updateSetpoint() {
-    if (mControlState == DriveControlState.FORCE_ORIENT || mControlState == DriveControlState.PATH_FOLLOWING) {
+    if (mControlState == DriveControlState.FORCE_ORIENT) {
       return;
     }
 
-    Pose2d robot_pose_vel = new Pose2d(mPeriodicIO.des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt,
-        mPeriodicIO.des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt,
-        Rotation2d.fromRadians(mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond * Constants.kLooperDt));
+    ChassisSpeeds des_chassis_speeds = mPeriodicIO.des_chassis_speeds;
+
+    Pose2d robot_pose_vel = new Pose2d(des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt,
+        des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt,
+        Rotation2d.fromRadians(des_chassis_speeds.omegaRadiansPerSecond * Constants.kLooperDt));
     Twist2d twist_vel = new Pose2d().log(robot_pose_vel);
     ChassisSpeeds wanted_speeds = new ChassisSpeeds(
         twist_vel.dx / Constants.kLooperDt, twist_vel.dy / Constants.kLooperDt, twist_vel.dtheta / Constants.kLooperDt);
@@ -213,8 +186,8 @@ public class DriveSubsystem extends Subsystem {
         * Math.min(mKinematicLimits.kMaxAngularVelocity, Math.abs(wanted_speeds.omegaRadiansPerSecond));
 
     // Limit translational velocity
-    double velocity_magnitude = Math.hypot(mPeriodicIO.des_chassis_speeds.vxMetersPerSecond,
-        mPeriodicIO.des_chassis_speeds.vyMetersPerSecond);
+    double velocity_magnitude = Math.hypot(des_chassis_speeds.vxMetersPerSecond,
+        des_chassis_speeds.vyMetersPerSecond);
     if (velocity_magnitude > mKinematicLimits.kMaxDriveVelocity) {
       wanted_speeds.vxMetersPerSecond = (wanted_speeds.vxMetersPerSecond / velocity_magnitude)
           * mKinematicLimits.kMaxDriveVelocity;
@@ -303,11 +276,6 @@ public class DriveSubsystem extends Subsystem {
     }
   }
 
-  /** Zeroes the heading of the robot. */
-  public void zeroHeading() {
-    mPigeon.setYaw(0);
-  }
-
   /** Zeroes yaw with given degrees */
   public void zeroHeading(double reset) {
     mPigeon.setYaw(reset);
@@ -388,7 +356,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     if (mControlState == DriveControlState.HEADING_CONTROL){
-      if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
+      if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0 || snapController.atSetpoint()) {
         mControlState = DriveControlState.OPEN_LOOP;
       } else {
         mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
