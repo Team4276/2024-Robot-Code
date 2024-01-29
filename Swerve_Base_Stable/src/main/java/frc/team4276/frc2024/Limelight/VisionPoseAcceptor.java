@@ -1,4 +1,4 @@
-package frc.team4276.frc2024.limelight;
+package frc.team4276.frc2024.Limelight;
 
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team254.lib.geometry.Pose2d;

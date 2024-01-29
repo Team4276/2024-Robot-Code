@@ -8,6 +8,7 @@ import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.util.InterpolatingDouble;
@@ -15,7 +16,7 @@ import frc.team254.lib.util.InterpolatingTreeMap;
 
 import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.Constants.RobotStateConstants;
-import frc.team4276.frc2024.limelight.VisionPoseAcceptor;
+import frc.team4276.frc2024.Limelight.VisionPoseAcceptor;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight.VisionUpdate;
 
@@ -121,8 +122,14 @@ public class RobotState {
             } else if (DriverStation.isEnabled()) {
                 var field_to_odom = visionFieldToVehicle.getTranslation()
                         .translateBy(odomToVehicle.getTranslation().inverse());
+                
+                SmartDashboard.putNumber("Last Vision X Correction", 
+                    visionFieldToVehicle.getTranslation().x() - odomToVehicle.getTranslation().x());
+                SmartDashboard.putNumber("Last Vision Y Correction", 
+                    visionFieldToVehicle.getTranslation().y() - odomToVehicle.getTranslation().y());
+
                 if (DriverStation.isAutonomous()) {
-                    final double kMaxDistanceToAccept = 2.0;
+                    final double kMaxDistanceToAccept = 5.0;
                     if (field_to_odom.inverse().translateBy(field_to_odom_.lastEntry().getValue())
                             .norm() > kMaxDistanceToAccept) {
                         System.out.println("Invalid vision update!");

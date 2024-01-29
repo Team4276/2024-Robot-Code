@@ -10,6 +10,7 @@ import frc.team1678.lib.swerve.SwerveDriveOdometry;
 import frc.team254.lib.geometry.Pose2d;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotStateEstimator extends Subsystem {
   // Odometry class for tracking robot pose
@@ -52,6 +53,12 @@ public class RobotStateEstimator extends Subsystem {
             public void onStop(double timestamp) {
             }
         });
+    }
+
+    @Override
+    public void outputTelemetry(){
+        SmartDashboard.putNumber("Robot X", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().x());
+        SmartDashboard.putNumber("Robot Y", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().y());
     }
 
     public void resetOdometry(edu.wpi.first.math.geometry.Pose2d initialPose) {
