@@ -9,7 +9,7 @@ import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
 
 public class ActionExample extends AutoModeBase {
-    private final String path1 = "Test1";
+    private final String path1 = "Example";
 
     private PPSwerveTrajectoryAction traj1;
 
