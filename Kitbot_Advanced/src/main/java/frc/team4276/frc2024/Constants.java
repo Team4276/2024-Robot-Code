@@ -227,10 +227,10 @@ public final class Constants {
     public static final double kLauncherSpeedMid = -0.5;
     public static final double kLauncherSpeedHigh = -1;
 
-    public static final double kLaunchFeederSpeed = 0.2;
+    public static final double kLaunchFeederSpeed = 0.4;
 
     public static final double kFeederSpeed = 1;
-    public static final double kReFeederSpeed = -0.2;
+    public static final double kReFeederSpeed = -0.4;
     ;
   }
 }

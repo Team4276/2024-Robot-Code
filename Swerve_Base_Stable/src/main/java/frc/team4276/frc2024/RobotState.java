@@ -146,7 +146,7 @@ public class RobotState {
                                     new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1)))
                                     .getTranslation());
                 } catch (Exception e) {
-                    DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
+                    //DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
                 }
             } else {
                 // mDisplayVisionPose = null;

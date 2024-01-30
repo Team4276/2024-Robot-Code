@@ -39,7 +39,7 @@ public final class Constants {
 
   // Enables extra SmartDashboard Debugs
   // Don't use during competition
-  public static final boolean disableExtraTelemetry = true;
+  public static final boolean disableExtraTelemetry = false;
 
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
@@ -221,7 +221,7 @@ public final class Constants {
 
     public static final boolean disableAfterTeleop = !isComp;
     
-    public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.27, 0, new Rotation2d(0));
+    public static final Pose2d kLimeLightRobotOffset = new Pose2d(-0.27, 0, new Rotation2d(0));
   }
 
   public static final class RobotStateConstants{

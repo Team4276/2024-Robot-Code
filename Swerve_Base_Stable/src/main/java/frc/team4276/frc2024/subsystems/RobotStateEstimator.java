@@ -61,6 +61,8 @@ public class RobotStateEstimator extends Subsystem {
         SmartDashboard.putNumber("Robot Y", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().y());
     }
 
+    
+
     public void resetOdometry(edu.wpi.first.math.geometry.Pose2d initialPose) {
         synchronized(RobotStateEstimator.this) {
             mOdometry.resetPosition(

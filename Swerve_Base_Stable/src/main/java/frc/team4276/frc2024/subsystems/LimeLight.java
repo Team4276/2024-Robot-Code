@@ -102,14 +102,14 @@ public class LimeLight extends Subsystem {
         public boolean seesTarget;
         public int tagId;
         public double imageCaptureLatency;
-        public double[] targetDistanceToRobot;
+        public double[] targetDistanceToRobot = new double[6];
     }
 
     private class Listener implements TableEventListener {
         @Override
         public void accept(NetworkTable table, String key, NetworkTableEvent event) {
             if (key.equals("json")) {
-                if (!mDisableProcessing) {
+                if (mDisableProcessing) {
                     readInputsAndAddVisionUpdate();
                 }
             }
