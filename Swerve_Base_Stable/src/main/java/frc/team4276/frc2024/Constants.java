@@ -226,6 +226,22 @@ public final class Constants {
 
   public static final class RobotStateConstants{
     public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.04, 1), Math.pow(0.04, 1));
-     public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.01, 1), Math.pow(0.01, 1));
+    public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.01, 1), Math.pow(0.01, 1));
+  }
+
+  public static final class AutoAlignConstants{
+    public static final double kTranslationP = 0.0;
+    public static final double kTranslationI = 0.0;
+    public static final double kTranslationD = 0.0;
+
+    public static final double kMaxTransAccel = 0.0;
+    public static final double kMaxTransVel = 0.0;
+
+    public static final double kThetaP = 0.0;
+    public static final double kThetaI = 0.0;
+    public static final double kThetaD = 0.0;
+
+    public static final double kMaxThetaAccel = 0.0;
+    public static final double kMaxThetaVel = 0.0;
   }
 }

@@ -45,7 +45,7 @@ public class RobotStateEstimator extends Subsystem {
                     DriveSubsystem.getInstance().getHeading(),
                     DriveSubsystem.getInstance().getModuleStates()
                 );
-                RobotState.getInstance().addOdomToVehicleObservation(
+                RobotState.getInstance().addOdomObservations(
                     timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
             }
 
