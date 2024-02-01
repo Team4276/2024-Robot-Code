@@ -27,7 +27,7 @@ public class LimeLight extends Subsystem {
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();
     private int mListenerId = -1;
-    
+
     private static HashMap<Integer, Apriltag> mTagMap = Field.Red.kAprilTagMap;
 
     private boolean mDisableProcessing = false;
@@ -82,6 +82,7 @@ public class LimeLight extends Subsystem {
     public void setRedTagMap() {
         mTagMap = Field.Red.kAprilTagMap;
     }
+
     public void setBlueTagMap() {
         mTagMap = Field.Blue.kAprilTagMap;
     }
@@ -93,8 +94,6 @@ public class LimeLight extends Subsystem {
     public synchronized boolean getIsDisabled() {
         return mDisableProcessing;
     }
-
-    
 
     private class PeriodicIO {
         // Inputs
@@ -127,14 +126,15 @@ public class LimeLight extends Subsystem {
         mPeriodicIO.tagId = (int) mNetworkTable.getEntry("tid").getNumber(-1).doubleValue();
         mPeriodicIO.targetDistanceToRobot = mNetworkTable.getEntry("targetpose_cameraspace")
                 .getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 });
-        Translation2d cameraToTarget = new Translation2d(
-                mPeriodicIO.targetDistanceToRobot[0],
-                mPeriodicIO.targetDistanceToRobot[1]);
 
         if (mPeriodicIO.seesTarget) {
-            if (mTagMap.keySet().contains(mPeriodicIO.tagId) && cameraToTarget != null) {
+            if (mTagMap.keySet().contains(mPeriodicIO.tagId) && mPeriodicIO.targetDistanceToRobot != null) {
                 RobotState.getInstance().visionUpdate(
-                        new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, mPeriodicIO.tagId));
+                        new VisionUpdate(timestamp - mPeriodicIO.latency,
+                                new Translation2d(
+                                        mPeriodicIO.targetDistanceToRobot[0],
+                                        mPeriodicIO.targetDistanceToRobot[1]),
+                                mPeriodicIO.tagId));
             } else {
                 RobotState.getInstance().visionUpdate(null);
             }
