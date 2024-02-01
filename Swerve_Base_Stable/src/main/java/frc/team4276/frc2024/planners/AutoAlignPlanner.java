@@ -31,6 +31,8 @@ public class AutoAlignPlanner {
     private State prevGoalX;
     private State prevGoalY;
     private State prevGoalTheta;
+
+    private boolean atGoal = false;
     
     public AutoAlignPlanner(){
         mXConstraints = new Constraints(AutoAlignConstants.kMaxTransVel, AutoAlignConstants.kMaxTransAccel);
@@ -48,6 +50,10 @@ public class AutoAlignPlanner {
     }
 
     public ChassisSpeeds update(double timeStamp, Pose2d currentPose, Twist2d currentVel){
+        if (atGoal){
+            return new ChassisSpeeds();
+        }
+
         State XState = mXProfile.calculate(timeStamp, new State(currentPose.getTranslation().x(), currentVel.dx), goalX);
         State YState = mYProfile.calculate(timeStamp, new State(currentPose.getTranslation().y(), currentVel.dy), goalY);
         State ThetaState = mThetaProfile.calculate(timeStamp, new State(currentPose.getRotation().getRadians(), currentVel.dtheta), goalTheta);
@@ -55,9 +61,16 @@ public class AutoAlignPlanner {
         return new ChassisSpeeds();
     }
 
+    public void reset(){
+        atGoal = false;
+    }
+
     public void setAlignment(Pose2d goal){
-        goalX = new State(goal.getTranslation().x(), 0);
-        goalY = new State(goal.getTranslation().y(), 0);
-        goalTheta = new State(goal.getRotation().getRadians(), 0);
+        if (Math.abs(Math.hypot(goalX.position, goalY.position) - goal.getTranslation().norm()) > AutoAlignConstants.kTranslationTolerance ||
+                Math.abs(goalTheta.position - goal.getRotation().getRadians()) > AutoAlignConstants.kThetaTolerance){
+            goalX = new State(goal.getTranslation().x(), 0);
+            goalY = new State(goal.getTranslation().y(), 0);
+            goalTheta = new State(goal.getRotation().getRadians(), 0);
+        }
     }
 }

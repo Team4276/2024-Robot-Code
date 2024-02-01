@@ -243,5 +243,10 @@ public final class Constants {
 
     public static final double kMaxThetaAccel = 0.0;
     public static final double kMaxThetaVel = 0.0;
+
+    // Metres 
+    public static final double kTranslationTolerance = 0.05;
+
+    public static final double kThetaTolerance = Math.PI / 50;
   }
 }
