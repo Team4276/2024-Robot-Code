@@ -1,14 +1,15 @@
 package frc.team4276.frc2024.planners;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+
 import frc.team1678.lib.swerve.ChassisSpeeds;
 
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Twist2d;
+
 import frc.team4276.frc2024.Constants.AutoAlignConstants;
 
 public class AutoAlignPlanner {
@@ -26,6 +27,10 @@ public class AutoAlignPlanner {
     private State goalX;
     private State goalY;
     private State goalTheta;
+
+    private State prevGoalX;
+    private State prevGoalY;
+    private State prevGoalTheta;
     
     public AutoAlignPlanner(){
         mXConstraints = new Constraints(AutoAlignConstants.kMaxTransVel, AutoAlignConstants.kMaxTransAccel);
