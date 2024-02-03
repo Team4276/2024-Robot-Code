@@ -222,7 +222,7 @@ public final class Constants {
 
     public static final boolean disableAfterTeleop = !isComp;
     
-    public static final Pose2d kLimeLightRobotOffset = new Pose2d(-0.27, 0, new Rotation2d(0));
+    public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.25, 0, new Rotation2d(0));
   }
 
   public static final class RobotStateConstants{

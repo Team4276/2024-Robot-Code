@@ -291,6 +291,8 @@ public class DriveSubsystem extends Subsystem {
     return mPigeon.getPitch();
   }
 
+  //TODO: use identity static factory to save heap space
+
   public static class PeriodicIO {
     // Inputs/Desired States
     double timestamp;

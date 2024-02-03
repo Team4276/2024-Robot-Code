@@ -1,13 +1,17 @@
 package frc.team4276.frc2024.subsystems;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTable.TableEventListener;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -16,8 +20,9 @@ import frc.team1678.lib.loops.Loop;
 
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Translation2d;
-
+import frc.team254.lib.vision.TargetInfo;
 import frc.team4276.frc2024.RobotState;
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.field.Apriltag;
 import frc.team4276.frc2024.field.Field;
@@ -101,7 +106,16 @@ public class LimeLight extends Subsystem {
         public boolean seesTarget;
         public int tagId;
         public double imageCaptureLatency;
-        public double[] targetDistanceToRobot = new double[6];
+        public double[] targetDistanceToRobot;
+        public Number[] corners;
+    }
+
+    /**
+     * Returns the Tag Id
+     * @return
+     */
+    public int getTagId() {
+        return mPeriodicIO.tagId;
     }
 
     private class Listener implements TableEventListener {
@@ -126,6 +140,11 @@ public class LimeLight extends Subsystem {
         mPeriodicIO.tagId = (int) mNetworkTable.getEntry("tid").getNumber(-1).doubleValue();
         mPeriodicIO.targetDistanceToRobot = mNetworkTable.getEntry("targetpose_cameraspace")
                 .getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 });
+        mPeriodicIO.corners = mNetworkTable.getEntry("tcornxy").getNumberArray(new Number[] { 0, 0, 0, 0, 0 });
+
+        for (int i = 0; i < mPeriodicIO.corners.length; i++) {
+            SmartDashboard.putNumber("Corner " + i, mPeriodicIO.corners[i].doubleValue());
+        }
 
         if (mPeriodicIO.seesTarget) {
             if (mTagMap.keySet().contains(mPeriodicIO.tagId) && mPeriodicIO.targetDistanceToRobot != null) {
@@ -135,6 +154,9 @@ public class LimeLight extends Subsystem {
                                         mPeriodicIO.targetDistanceToRobot[0],
                                         mPeriodicIO.targetDistanceToRobot[1]),
                                 mPeriodicIO.tagId));
+
+                SmartDashboard.putNumber("Distance to camera X", mPeriodicIO.targetDistanceToRobot[0]);
+                SmartDashboard.putNumber("Distance to camera Y", mPeriodicIO.targetDistanceToRobot[1]);
             } else {
                 RobotState.getInstance().visionUpdate(null);
             }
@@ -172,6 +194,92 @@ public class LimeLight extends Subsystem {
             }
         });
     }
+
+    // private static final Comparator<Translation2d> ySort = Comparator.comparingDouble(Translation2d::y);
+
+    // /**
+    //  * Get the Normalized Corners
+    //  * @return
+    //  */
+    // public List<TargetInfo> getTarget() {
+    //     // Get corners
+    //     List<Translation2d> corners = getCorners(mPeriodicIO.corners);
+
+    //     if (corners.size() < 4 || !mTagMap.containsKey(mPeriodicIO.tagId)) {
+    //         return null;
+    //     }
+
+    //     // Sort by y, list will have "highest in image" corner first
+    //     corners.sort(ySort);
+    //     ArrayList<TargetInfo> targetInfos = new ArrayList<>();
+
+    //     for (Translation2d corner : corners) {
+    //         targetInfos.add(getRawTargetInfo(new Translation2d(corner.x(), corner.y()), getTagId()));
+
+    //     }
+
+
+    //     return targetInfos;
+    // }
+
+    // /**
+    //  * Returns Normalized Undistorted View Plane Coordinate
+    //  * @param desiredTargetPixel Raw Pixel Value
+    //  * @param tagId Tag ID
+    //  * @return Normalized Target Info ready for Pinhole Calculations
+    //  */
+    // public synchronized TargetInfo getRawTargetInfo(Translation2d desiredTargetPixel, int tagId) {
+    //     if (desiredTargetPixel == null) {
+    //         return null;
+    //     } else {
+    //         double[] undistortedNormalizedPixelValues;
+    //         UndistortMap undistortMap = Constants.kLimelightConstants.getUndistortMap();
+    //         if (undistortMap == null) {
+    //             try {
+    //                 undistortedNormalizedPixelValues = undistortFromOpenCV(new double[]{desiredTargetPixel.x() / Constants.kResolutionWidth, desiredTargetPixel.y() / Constants.kResolutionHeight});
+    //             } catch (Exception e) {
+    //                 DriverStation.reportError("Undistorting Point Throwing Error!", false);
+    //                 return null;
+    //             }
+    //         } else {
+    //             undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
+    //         }
+
+    //         double y_pixels = undistortedNormalizedPixelValues[0];
+    //         double z_pixels = undistortedNormalizedPixelValues[1];
+
+
+    //         //Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
+    //         //OpenCV: Positive Downward and Right
+    //         //Robot: Positive Upward and Left
+    //         double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
+    //         double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
+
+    //         double y = nY / mCameraMatrix.get(0, 0)[0];
+    //         double z = nZ / mCameraMatrix.get(1, 1)[0];
+
+    //         return new TargetInfo(y, z, tagId);
+    //     }
+    // }
+
+    // /**
+    //  * Stores each Corner received by LL as a Translation2d for further processing
+    //  * @param tcornxy array from LL with Pixel Coordinate
+    //  * @return List of Corners
+    //  */
+    // private static List<Translation2d> getCorners(Number[] tcornxy) {
+    //     // Check if there is a non even number of corners
+    //     if (tcornxy.length % 2 != 0) {
+    //         return List.of();
+    //     }
+
+    //     ArrayList<Translation2d> corners = new ArrayList<>(tcornxy.length / 2);
+    //     for (int i = 0; i < tcornxy.length; i += 2) {
+    //         corners.add(new Translation2d(tcornxy[i].doubleValue(), tcornxy[i + 1].doubleValue()));
+    //     }
+
+    //     return corners;
+    // }
 
     /**
      * Starts the Listener
