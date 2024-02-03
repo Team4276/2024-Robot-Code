@@ -19,6 +19,7 @@ import frc.team1678.lib.swerve.SwerveDriveKinematics;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
+import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -230,23 +231,38 @@ public final class Constants {
   }
 
   public static final class AutoAlignConstants{
-    public static final double kTranslationP = 0.0;
-    public static final double kTranslationI = 0.0;
-    public static final double kTranslationD = 0.0;
+
+    public static final ProfileFollowerConstants kTranslationConstants = new ProfileFollowerConstants();
+    static {
+      double kP = 0.0;
+      double kI = 0.0;
+      double kV = 0.0;
+      double kFFV = 0.0;
+      double kFFA = 0.0;
+      double kFFS = 0.0;
+    }
 
     public static final double kMaxTransAccel = 0.0;
     public static final double kMaxTransVel = 0.0;
 
-    public static final double kThetaP = 0.0;
-    public static final double kThetaI = 0.0;
-    public static final double kThetaD = 0.0;
+    public static final ProfileFollowerConstants kThetaConstants = new ProfileFollowerConstants();
+    static {
+      double kP = 0.0;
+      double kI = 0.0;
+      double kV = 0.0;
+      double kFFV = 0.0;
+      double kFFA = 0.0;
+      double kFFS = 0.0;
+    }
 
     public static final double kMaxThetaAccel = 0.0;
     public static final double kMaxThetaVel = 0.0;
 
     // Metres 
     public static final double kTranslationTolerance = 0.05;
+    public static final double kTranslationUpdateTolerance = 0.05;
 
     public static final double kThetaTolerance = Math.PI / 50;
+    public static final double kThetaUpdateTolerance = Math.PI / 50;
   }
 }

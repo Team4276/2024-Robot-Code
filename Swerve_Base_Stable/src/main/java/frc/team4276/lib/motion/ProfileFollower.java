@@ -1,5 +1,7 @@
 package frc.team4276.lib.motion;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+
 public class ProfileFollower{
     private double mKp;
     private double mKi;
@@ -12,13 +14,22 @@ public class ProfileFollower{
     private double kMinInput;
     private double kMaxInput;
 
-    public ProfileFollower(double kP, double kI, double kV, double kFFV, double kFFA, double kFFS){
-        this.mKp = kP;
-        this.mKi = kI;
-        this.mKv = kV;
-        this.mKffv = kFFV;
-        this.mKffa = kFFA;
-        this.mKffs = kFFS;
+    public static class ProfileFollowerConstants {
+        double kP;
+        double kI;
+        double kV;
+        double kFFV;
+        double kFFA;
+        double kFFS;
+    }
+
+    public ProfileFollower(ProfileFollowerConstants constants){
+        this.mKp = constants.kP;
+        this.mKi = constants.kI;
+        this.mKv = constants.kV;
+        this.mKffv = constants.kFFV;
+        this.mKffa = constants.kFFA;
+        this.mKffs = constants.kFFS;
     }
 
     public void reset(){
@@ -46,6 +57,14 @@ public class ProfileFollower{
 
         this.kMinInput = kMinInput;
         this.kMaxInput = kMaxInput;
+    }
+
+    public double calculate(State des_state, State curr_state){
+        double output = 0;
+
+
+        return output;
+
     }
 
 

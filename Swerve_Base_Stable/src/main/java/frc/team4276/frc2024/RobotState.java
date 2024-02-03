@@ -8,7 +8,6 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Translation2d;
@@ -123,12 +122,6 @@ public class RobotState {
             } else if (DriverStation.isEnabled()) {
                 var field_to_odom = visionFieldToVehicle.getTranslation()
                         .translateBy(odomToVehicle.getTranslation().inverse());
-                
-                SmartDashboard.putNumber("Last Vision X Correction", 
-                    visionFieldToVehicle.getTranslation().x() - odomToVehicle.getTranslation().x());
-                SmartDashboard.putNumber("Last Vision Y Correction", 
-                    visionFieldToVehicle.getTranslation().y() - odomToVehicle.getTranslation().y());
-
                 if (DriverStation.isAutonomous()) {
                     final double kMaxDistanceToAccept = 5.0;
                     if (field_to_odom.inverse().translateBy(field_to_odom_.lastEntry().getValue())
@@ -142,11 +135,13 @@ public class RobotState {
                 try {
                     mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0),
                             VecBuilder.fill(field_to_odom.getTranslation().x(), field_to_odom.getTranslation().y()));
+
                     field_to_odom_.put(new InterpolatingDouble(visionTimestamp),
                             Pose2d.fromTranslation(
                                     new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1)))
                                     .getTranslation());
                 } catch (Exception e) {
+                    throw e;
                     //DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
                 }
             } else {
@@ -188,8 +183,13 @@ public class RobotState {
 
     }
 
+    public synchronized Pose2d getFieldToVehicleAbsolute(double timestamp) {        
+        var field_to_odom = initial_field_to_odom_.orElse(Translation2d.identity());
+        return Pose2d.fromTranslation(field_to_odom).transformBy(getFieldToVehicle(timestamp));
+    }
+
     public synchronized Pose2d getCurrentFieldToVehicle(){
-        return getFieldToVehicle(Timer.getFPGATimestamp());
+        return getFieldToVehicleAbsolute(Timer.getFPGATimestamp());
     }
 
     public synchronized edu.wpi.first.math.geometry.Pose2d getWPICurrentFieldToVehicle(){
@@ -214,7 +214,9 @@ public class RobotState {
         try {
             mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), Constants.kLooperDt);
         } catch (Exception e) {
-            DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
+            throw e;
+
+            //TODO: look into throwables and error catching
         }
         addOdomToVehicleObservation(timestamp, odom_to_robot);
     }

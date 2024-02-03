@@ -151,8 +151,6 @@ public class LimeLight extends Subsystem {
         SmartDashboard.putNumber("imageCaptureLatency", mPeriodicIO.imageCaptureLatency);
         SmartDashboard.putNumber("latency", mPeriodicIO.latency);
 
-        SmartDashboard.putNumber("Limelight X", mPeriodicIO.targetDistanceToRobot[0]);
-        SmartDashboard.putNumber("Limelight Y", mPeriodicIO.targetDistanceToRobot[1]);
 
     }
 
