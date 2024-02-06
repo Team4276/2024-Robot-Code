@@ -5,12 +5,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 import frc.team4276.frc2024.auto.modes.*;
 
 public class AutoModeSelector {
     public enum DesiredMode {
         DO_NOTHING, 
-        EXAMPLE
+        EXAMPLE,
+        SPIN_TEST
 
     }
 
@@ -23,6 +26,7 @@ public class AutoModeSelector {
     public AutoModeSelector() {
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Example", DesiredMode.EXAMPLE);
+        mModeChooser.addOption("Spin test", DesiredMode.SPIN_TEST);
         SmartDashboard.putData("Auto Mode", mModeChooser);
 
     }
@@ -45,6 +49,8 @@ public class AutoModeSelector {
             return Optional.of(new DoNothingMode());
         case EXAMPLE:
             return Optional.of(new ActionExample());
+        case SPIN_TEST:
+            return Optional.of(new SpinTest());
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

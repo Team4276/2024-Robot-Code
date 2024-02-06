@@ -6,6 +6,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class ModuleState extends SwerveModulePosition {
+    protected static final ModuleState kIdentity = new ModuleState();
+
+    public static ModuleState identity(){
+        return kIdentity;
+    }
 
     public double speedMetersPerSecond;
 

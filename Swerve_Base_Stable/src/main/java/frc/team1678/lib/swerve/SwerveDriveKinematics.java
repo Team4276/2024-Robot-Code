@@ -80,7 +80,7 @@ public class SwerveDriveKinematics {
     m_numModules = wheelsMeters.length;
     m_modules = Arrays.copyOf(wheelsMeters, m_numModules);
     m_moduleStates = new ModuleState[m_numModules];
-    Arrays.fill(m_moduleStates, new ModuleState());
+    Arrays.fill(m_moduleStates, ModuleState.identity());
     m_inverseKinematics = new SimpleMatrix(m_numModules * 2, 3);
 
     for (int i = 0; i < m_numModules; i++) {

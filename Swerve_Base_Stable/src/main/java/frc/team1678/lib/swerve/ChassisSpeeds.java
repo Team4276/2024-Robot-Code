@@ -27,6 +27,11 @@ import edu.wpi.first.math.geometry.Twist2d;
  */
 @SuppressWarnings("MemberName")
 public class ChassisSpeeds {
+    protected static final ChassisSpeeds kIdentity = new ChassisSpeeds();
+
+    public static ChassisSpeeds identity() {
+        return kIdentity;
+    }
     /**
      * Represents forward velocity w.r.t the robot frame of reference. (Fwd is +)
      */

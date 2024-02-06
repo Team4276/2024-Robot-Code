@@ -18,8 +18,12 @@ import edu.wpi.first.math.util.Units;
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
+import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
+
+//TODO: fix the class structure here
+//TODO: create limelight static factory
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -223,6 +227,14 @@ public final class Constants {
     public static final boolean disableAfterTeleop = !isComp;
     
     public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.25, 0, new Rotation2d(0));
+    public static final Rotation2d kLimeLightTilt = new Rotation2d(20);
+
+    //TODO: get the actual lens height
+    public static final double kLensHeight = 1.3;
+
+    public static final double kResolutionWidth = 1280;
+    public static final double kResolutionHeight = 960;
+    public static final frc.team254.lib.limelight.LimelightConstants kLimelightConstants = LimelightConstantsFactory.getConstantsForId("test");
   }
 
   public static final class RobotStateConstants{
@@ -234,12 +246,15 @@ public final class Constants {
 
     public static final ProfileFollowerConstants kTranslationConstants = new ProfileFollowerConstants();
     static {
-      double kP = 0.0;
-      double kI = 0.0;
-      double kV = 0.0;
-      double kFFV = 0.0;
-      double kFFA = 0.0;
-      double kFFS = 0.0;
+      kTranslationConstants.kP = 0.0;
+      kTranslationConstants.kI = 0.0;
+      kTranslationConstants.kV = 0.0;
+      kTranslationConstants.kFFV = 0.0;
+      kTranslationConstants.kFFA = 0.0;
+      kTranslationConstants.kFFS = 0.0;
+      kTranslationConstants.kTol = 0.05;
+      kTranslationConstants.kXTol = 0.05;
+      kTranslationConstants.kDxTol = 0.05;
     }
 
     public static final double kMaxTransAccel = 0.0;
@@ -247,12 +262,15 @@ public final class Constants {
 
     public static final ProfileFollowerConstants kThetaConstants = new ProfileFollowerConstants();
     static {
-      double kP = 0.0;
-      double kI = 0.0;
-      double kV = 0.0;
-      double kFFV = 0.0;
-      double kFFA = 0.0;
-      double kFFS = 0.0;
+      kThetaConstants.kP = 0.0;
+      kThetaConstants.kI = 0.0;
+      kThetaConstants.kV = 0.0;
+      kThetaConstants.kFFV = 0.0;
+      kThetaConstants.kFFA = 0.0;
+      kThetaConstants.kFFS = 0.0;
+      kThetaConstants.kTol = Math.PI / 50;
+      kThetaConstants.kXTol = Math.PI / 50;
+      kThetaConstants.kDxTol = Math.PI / 50;
     }
 
     public static final double kMaxThetaAccel = 0.0;

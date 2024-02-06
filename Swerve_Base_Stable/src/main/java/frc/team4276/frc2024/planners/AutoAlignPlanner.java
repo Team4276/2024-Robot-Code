@@ -7,8 +7,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 
 import frc.team254.lib.geometry.Pose2d;
-import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.geometry.Twist2d;
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.AutoAlignConstants;
 import frc.team4276.lib.motion.ProfileFollower;
 
@@ -33,8 +33,8 @@ public class AutoAlignPlanner {
     private State prevGoalStateTheta;
 
     private boolean atGoal = false;
-    
-    public AutoAlignPlanner(){
+
+    public AutoAlignPlanner() {
         mXConstraints = new Constraints(AutoAlignConstants.kMaxTransVel, AutoAlignConstants.kMaxTransAccel);
         mYConstraints = new Constraints(AutoAlignConstants.kMaxTransVel, AutoAlignConstants.kMaxTransAccel);
         mThetaConstraints = new Constraints(AutoAlignConstants.kMaxThetaVel, AutoAlignConstants.kMaxThetaAccel);
@@ -46,16 +46,18 @@ public class AutoAlignPlanner {
         mXController = new ProfileFollower(AutoAlignConstants.kTranslationConstants);
         mYController = new ProfileFollower(AutoAlignConstants.kTranslationConstants);
         mThetaController = new ProfileFollower(AutoAlignConstants.kThetaConstants);
-        
 
     }
 
-    //TODO: write another class for the motion profile itself nvm hold off on that idk anymore
-    //TODO: fix this thing bc its stupid
+    // TODO: fix this thing bc its stupid
 
-    public ChassisSpeeds update(double timeStamp, Pose2d currentPose, Twist2d currentVel){
-        if (atGoal){
-            return new ChassisSpeeds();
+    public ChassisSpeeds update(double timeStamp, Pose2d currentPose, Twist2d currentVel) {
+        if (Math.abs(currentPose.getTranslation().norm() - Math.hypot(goalX.position, goalY.position)) 
+                > AutoAlignConstants.kTranslationTolerance &&
+                Math.abs(goalTheta.position - currentPose.getRotation().getRadians()) 
+                > AutoAlignConstants.kThetaTolerance) {
+            atGoal = true;
+            return ChassisSpeeds.identity();
         }
 
         State curr_state_x = new State(currentPose.getTranslation().x(), currentVel.dx);
@@ -66,37 +68,31 @@ public class AutoAlignPlanner {
         State YState = mYProfile.calculate(timeStamp, curr_state_y, goalY);
         State ThetaState = mThetaProfile.calculate(timeStamp, curr_state_theta, goalTheta);
 
-        Translation2d des_translation = new Translation2d(XState.position, YState.position);
+        double dx = mXController.calculate(timeStamp + Constants.kLooperDt, XState, curr_state_x, prevGoalStateX);
+        double dy = mYController.calculate(timeStamp + Constants.kLooperDt, YState, curr_state_y, prevGoalStateY);
+        double dtheta = mThetaController.calculate(timeStamp + Constants.kLooperDt, ThetaState, curr_state_theta, prevGoalStateTheta);
 
-        if (des_translation.distance(currentPose.getTranslation()) > AutoAlignConstants.kTranslationTolerance){
-            
-        }
-
-
-
-        double dx = mXController.calculate(XState, curr_state_x);
-        double dy = mYController.calculate(YState, curr_state_y);
-        double dtheta = mThetaController.calculate(ThetaState, curr_state_theta);
+        prevGoalStateX = XState;
+        prevGoalStateY = YState;
+        prevGoalStateTheta = ThetaState;
 
         return new ChassisSpeeds(dx, dy, dtheta);
     }
 
-    public void reset(){
+    public void reset() {
         atGoal = false;
     }
 
-    public synchronized void setAlignment(Pose2d goal){
-        if (Math.abs(Math.hypot(goalX.position, goalY.position) - goal.getTranslation().norm()) > AutoAlignConstants.kTranslationTolerance ||
-                Math.abs(goalTheta.position - goal.getRotation().getRadians()) > AutoAlignConstants.kThetaTolerance){
-            goalX = new State(goal.getTranslation().x(), 0);
-            goalY = new State(goal.getTranslation().y(), 0);
-            goalTheta = new State(goal.getRotation().getRadians(), 0);
-        }
+    public synchronized void setAlignment(Pose2d goal) {
+        goalX = new State(goal.getTranslation().x(), 0);
+        goalY = new State(goal.getTranslation().y(), 0);
+        goalTheta = new State(goal.getRotation().getRadians(), 0);
+
+        atGoal = false;
     }
 
-    public boolean atGoal(){
+    public boolean atGoal() {
         return atGoal;
     }
-
 
 }

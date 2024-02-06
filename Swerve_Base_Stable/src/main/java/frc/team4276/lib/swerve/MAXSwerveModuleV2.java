@@ -111,7 +111,7 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_turningSparkMax.burnFlash();
 
     m_chassisAngularOffset = chassisAngularOffset;
-    m_desiredState = new ModuleState();
+    m_desiredState = ModuleState.identity();
     m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
     m_drivingEncoder.setPosition(0);
   }
@@ -142,7 +142,7 @@ public class MAXSwerveModuleV2 extends Subsystem {
 
     } else {
       // Apply chassis angular offset to the desired state.
-      ModuleState optimizedDesiredState = new ModuleState();
+      ModuleState optimizedDesiredState = ModuleState.identity();
 
       optimizedDesiredState.speedMetersPerSecond = Util.limit(desiredState.speedMetersPerSecond,
           DriveConstants.kMaxVel);

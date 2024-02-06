@@ -201,7 +201,7 @@ public class DriveSubsystem extends Subsystem {
     ChassisSpeeds prev_chassis_speeds = DriveConstants.kDriveKinematics.toChassisSpeeds(prev_module_states);
     ModuleState[] target_module_states = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
 
-    if (wanted_speeds.epsilonEquals(new ChassisSpeeds(), Util.kEpsilon)) {
+    if (wanted_speeds.epsilonEquals(ChassisSpeeds.identity(), Util.kEpsilon)) {
       for (int i = 0; i < target_module_states.length; i++) {
         target_module_states[i].speedMetersPerSecond = 0.0;
         target_module_states[i].angle = prev_module_states[i].angle;
@@ -296,23 +296,23 @@ public class DriveSubsystem extends Subsystem {
   public static class PeriodicIO {
     // Inputs/Desired States
     double timestamp;
-    ChassisSpeeds des_chassis_speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-    ChassisSpeeds meas_chassis_speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+    ChassisSpeeds des_chassis_speeds = ChassisSpeeds.identity();
+    ChassisSpeeds meas_chassis_speeds = ChassisSpeeds.identity();
     ModuleState[] meas_module_states = new ModuleState[] {
-        new ModuleState(),
-        new ModuleState(),
-        new ModuleState(),
-        new ModuleState()
+        ModuleState.identity(),
+        ModuleState.identity(),
+        ModuleState.identity(),
+        ModuleState.identity()
     };
     Rotation2d heading = new Rotation2d();
     Rotation2d pitch = new Rotation2d();
 
     // Outputs
     ModuleState[] des_module_states = new ModuleState[] {
-        new ModuleState(),
-        new ModuleState(),
-        new ModuleState(),
-        new ModuleState()
+        ModuleState.identity(),
+        ModuleState.identity(),
+        ModuleState.identity(),
+        ModuleState.identity()
     };
     Pose2d path_setpoint = new Pose2d();
     Rotation2d heading_setpoint = new Rotation2d();
