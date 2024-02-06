@@ -41,12 +41,12 @@ public class shooter {
         p1.setOutputRange(-1, 1);
         p2.setOutputRange(-1, 1);
 
-        p1.setP(0.01);
+        p1.setP(0.1);
         p1.setI(0.0);
-        p1.setD(0.001);
-        p2.setP(0.01);
+        p1.setD(0.01);
+        p2.setP(0.1);
         p2.setI(0.0);
-        p2.setD(0.001);
+        p2.setD(0.01);
 
         m1.burnFlash();
         m2.burnFlash();
