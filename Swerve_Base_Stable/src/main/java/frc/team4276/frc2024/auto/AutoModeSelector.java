@@ -5,8 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
 import frc.team4276.frc2024.auto.modes.*;
 
 public class AutoModeSelector {
