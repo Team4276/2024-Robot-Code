@@ -6,18 +6,17 @@ import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
 
-public class SpinTest extends AutoModeBase {
-    private String path1 = "Spin test";
-
+public class PPTest extends AutoModeBase {
     private PPSwerveTrajectoryAction traj1;
 
-    public SpinTest(){
-        traj1 = new PPSwerveTrajectoryAction(path1, new Rotation2d(0));
+    public PPTest(String name, Rotation2d start_rot){
+        traj1 = new PPSwerveTrajectoryAction(name, start_rot);
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
         runAction(traj1);
+        
     }
 
     @Override

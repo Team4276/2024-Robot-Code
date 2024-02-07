@@ -1,5 +1,6 @@
 package frc.team4276.frc2024.auto;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -11,7 +12,9 @@ public class AutoModeSelector {
     public enum DesiredMode {
         DO_NOTHING, 
         EXAMPLE,
-        SPIN_TEST
+        SPIN_TEST,
+        STRESS_TEST,
+        MID_3PIECE_STAGE
 
     }
 
@@ -25,6 +28,8 @@ public class AutoModeSelector {
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Example", DesiredMode.EXAMPLE);
         mModeChooser.addOption("Spin test", DesiredMode.SPIN_TEST);
+        mModeChooser.addOption("Stress test", DesiredMode.STRESS_TEST);
+        mModeChooser.addOption("Mid 3 Piece Stage", DesiredMode.MID_3PIECE_STAGE);
         SmartDashboard.putData("Auto Mode", mModeChooser);
 
     }
@@ -48,7 +53,11 @@ public class AutoModeSelector {
         case EXAMPLE:
             return Optional.of(new ActionExample());
         case SPIN_TEST:
-            return Optional.of(new SpinTest());
+            return Optional.of(new PPTest("Spin test", new Rotation2d()));
+        case STRESS_TEST:
+            return Optional.of(new PPTest("Stress Test", new Rotation2d(180)));
+        case MID_3PIECE_STAGE:
+            return Optional.of(new PPTest("Mid3PieceStage", new Rotation2d(180)));
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;
