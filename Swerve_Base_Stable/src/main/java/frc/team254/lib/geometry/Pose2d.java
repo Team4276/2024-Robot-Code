@@ -21,7 +21,7 @@ public class Pose2d implements IPose2d<Pose2d> {
 
     public Pose2d() {
         translation_ = new Translation2d();
-        rotation_ = new Rotation2d();
+        rotation_ = Rotation2d.identity();
     }
 
     public Pose2d(double x, double y, final Rotation2d rotation) {
@@ -40,7 +40,7 @@ public class Pose2d implements IPose2d<Pose2d> {
     }
 
     public static Pose2d fromTranslation(final Translation2d translation) {
-        return new Pose2d(translation, new Rotation2d());
+        return new Pose2d(translation, Rotation2d.identity());
     }
 
     public static Pose2d fromRotation(final Rotation2d rotation) {
@@ -51,8 +51,8 @@ public class Pose2d implements IPose2d<Pose2d> {
         return new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromWPI(pose.getRotation()));
     }
 
-    public static edu.wpi.first.math.geometry.Pose2d toWPI(Pose2d pose){
-        return new edu.wpi.first.math.geometry.Pose2d(pose.getTranslation().x(), pose.getTranslation().y(), Rotation2d.toWPI(pose.getRotation()));
+    public edu.wpi.first.math.geometry.Pose2d toWPI(){
+        return new edu.wpi.first.math.geometry.Pose2d(translation_.x_, translation_.y_, rotation_.getRotation().toWPI());
     }
 
     /**

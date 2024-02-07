@@ -23,7 +23,6 @@ import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
 
 //TODO: fix the class structure here
-//TODO: create limelight static factory
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide

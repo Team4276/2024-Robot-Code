@@ -8,14 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Twist2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.Constants;
+import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
 import frc.team4276.lib.drivers.Pigeon;
@@ -27,6 +24,9 @@ import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team1678.lib.swerve.ModuleState;
 
 import frc.team254.lib.util.Util;
+import frc.team254.lib.geometry.Rotation2d;
+import frc.team254.lib.geometry.Pose2d;
+import frc.team254.lib.geometry.Twist2d;
 
 public class DriveSubsystem extends Subsystem {
   public enum DriveControlState {
@@ -179,7 +179,7 @@ public class DriveSubsystem extends Subsystem {
     Pose2d robot_pose_vel = new Pose2d(des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt,
         des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt,
         Rotation2d.fromRadians(des_chassis_speeds.omegaRadiansPerSecond * Constants.kLooperDt));
-    Twist2d twist_vel = new Pose2d().log(robot_pose_vel);
+    Twist2d twist_vel = Pose2d.log(robot_pose_vel);
     ChassisSpeeds wanted_speeds = new ChassisSpeeds(
         twist_vel.dx / Constants.kLooperDt, twist_vel.dy / Constants.kLooperDt, twist_vel.dtheta / Constants.kLooperDt);
 
@@ -261,16 +261,6 @@ public class DriveSubsystem extends Subsystem {
     mPeriodicIO.des_module_states = desiredStates;
   }
 
-  public void setSwerveModuleStates(SwerveModuleState[] desiredStates) {
-    if (mControlState != DriveControlState.PATH_FOLLOWING){
-      mControlState = DriveControlState.PATH_FOLLOWING;
-    }
-    for (int i = 0; i < desiredStates.length; i++) {
-      mPeriodicIO.des_module_states[i] = new ModuleState(0, desiredStates[i].angle,
-          desiredStates[i].speedMetersPerSecond);
-    }
-  }
-
   /** Resets the drive encoders to currently read a position of 0. */
   public void resetEncoders() {
     for (MAXSwerveModuleV2 mod : mModules) {
@@ -281,17 +271,24 @@ public class DriveSubsystem extends Subsystem {
   /** Zeroes yaw with given degrees */
   public void zeroHeading(double reset) {
     mPigeon.setYaw(reset);
+    RobotState.getInstance().reset();
+  }
+
+  public void flipHeading(){
+    zeroHeading(180 + mPigeon.getYaw().getDegrees());
   }
 
   public Rotation2d getHeading() {
     return mPigeon.getYaw();
   }
 
+  public edu.wpi.first.math.geometry.Rotation2d getWPIHeading() {
+    return getHeading().toWPI();
+  }
+
   public Rotation2d getPitch() {
     return mPigeon.getPitch();
   }
-
-  //TODO: use identity static factory to save heap space
 
   public static class PeriodicIO {
     // Inputs/Desired States
@@ -304,8 +301,8 @@ public class DriveSubsystem extends Subsystem {
         ModuleState.identity(),
         ModuleState.identity()
     };
-    Rotation2d heading = new Rotation2d();
-    Rotation2d pitch = new Rotation2d();
+    Rotation2d heading = Rotation2d.identity();
+    Rotation2d pitch = Rotation2d.identity();
 
     // Outputs
     ModuleState[] des_module_states = new ModuleState[] {
@@ -314,8 +311,8 @@ public class DriveSubsystem extends Subsystem {
         ModuleState.identity(),
         ModuleState.identity()
     };
-    Pose2d path_setpoint = new Pose2d();
-    Rotation2d heading_setpoint = new Rotation2d();
+    Pose2d path_setpoint = Pose2d.identity();
+    Rotation2d heading_setpoint = Rotation2d.identity();
   }
 
   public static class KinematicLimits {
@@ -384,7 +381,7 @@ public class DriveSubsystem extends Subsystem {
       mControlState = DriveControlState.FORCE_ORIENT;
     }
     for (int i = 0; i < mModules.length; ++i) {
-      mPeriodicIO.des_module_states[i] = ModuleState.fromSpeeds(orientations.get(i), 0.0);
+      mPeriodicIO.des_module_states[i] = ModuleState.fromSpeeds(orientations.get(i).toWPI(), 0.0);
     }
   }
 
@@ -401,7 +398,7 @@ public class DriveSubsystem extends Subsystem {
   public synchronized void stopModules() {
     List<Rotation2d> orientations = new ArrayList<>();
     for (ModuleState moduleState : getModuleStates()) {
-      orientations.add(moduleState.angle);
+      orientations.add(Rotation2d.fromWPI(moduleState.angle));
     }
     orientModules(orientations);
   }

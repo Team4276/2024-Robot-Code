@@ -88,14 +88,10 @@ public final class Discretization {
     M.assignBlock(states, 0, new Matrix<>(new SimpleMatrix(states, states)));
     M.assignBlock(states, states, contA.transpose());
 
-    // ϕ = eᴹᵀ = [−A_d  A_d⁻¹Q_d]
-    //           [ 0      A_dᵀ  ]
     final var phi = M.times(dtSeconds).exp();
 
-    // ϕ₁₂ = A_d⁻¹Q_d
     final Matrix<States, States> phi12 = phi.block(states, states, 0, states);
 
-    // ϕ₂₂ = A_dᵀ
     final Matrix<States, States> phi22 = phi.block(states, states, states, states);
 
     final var discA = phi22.transpose();
@@ -130,48 +126,12 @@ public final class Discretization {
   public static <States extends Num>
       Pair<Matrix<States, States>, Matrix<States, States>> discretizeAQTaylor(
           Matrix<States, States> contA, Matrix<States, States> contQ, double dtSeconds) {
-    //       T
-    // Q_d = ∫ e^(Aτ) Q e^(Aᵀτ) dτ
-    //       0
-    //
-    // M = [−A  Q ]
-    //     [ 0  Aᵀ]
-    // ϕ = eᴹᵀ
-    // ϕ₁₂ = A_d⁻¹Q_d
-    //
-    // Taylor series of ϕ:
-    //
-    //   ϕ = eᴹᵀ = I + MT + 1/2 M²T² + 1/6 M³T³ + …
-    //   ϕ = eᴹᵀ = I + MT + 1/2 T²M² + 1/6 T³M³ + …
-    //
-    // Taylor series of ϕ expanded for ϕ₁₂:
-    //
-    //   ϕ₁₂ = 0 + QT + 1/2 T² (−AQ + QAᵀ) + 1/6 T³ (−A lastTerm + Q Aᵀ²) + …
-    //
-    // ```
-    // lastTerm = Q
-    // lastCoeff = T
-    // ATn = Aᵀ
-    // ϕ₁₂ = lastTerm lastCoeff = QT
-    //
-    // for i in range(2, 6):
-    //   // i = 2
-    //   lastTerm = −A lastTerm + Q ATn = −AQ + QAᵀ
-    //   lastCoeff *= T/i → lastCoeff *= T/2 = 1/2 T²
-    //   ATn *= Aᵀ = Aᵀ²
-    //
-    //   // i = 3
-    //   lastTerm = −A lastTerm + Q ATn = −A (−AQ + QAᵀ) + QAᵀ² = …
-    //   …
-    // ```
 
-    // Make continuous Q symmetric if it isn't already
     Matrix<States, States> Q = contQ.plus(contQ.transpose()).div(2.0);
 
     Matrix<States, States> lastTerm = Q.copy();
     double lastCoeff = dtSeconds;
 
-    // Aᵀⁿ
     Matrix<States, States> ATn = contA.transpose();
 
     Matrix<States, States> phi12 = lastTerm.times(lastCoeff);

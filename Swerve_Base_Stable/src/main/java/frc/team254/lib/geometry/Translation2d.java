@@ -231,7 +231,7 @@ public class Translation2d implements ITranslation2d<Translation2d> {
     public static Rotation2d getAngle(final Translation2d a, final Translation2d b) {
         double cos_angle = dot(a, b) / (a.norm() * b.norm());
         if (Double.isNaN(cos_angle)) {
-            return new Rotation2d();
+            return Rotation2d.identity();
         }
         return Rotation2d.fromRadians(Math.acos(Math.min(1.0, Math.max(cos_angle, -1.0))));
     }

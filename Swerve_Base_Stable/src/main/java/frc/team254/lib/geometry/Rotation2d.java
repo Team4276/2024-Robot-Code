@@ -74,8 +74,8 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
         return new Rotation2d(rotation.getDegrees());
     }
 
-    public static edu.wpi.first.math.geometry.Rotation2d toWPI(Rotation2d rotation){
-        return new edu.wpi.first.math.geometry.Rotation2d(rotation.getRadians());
+    public edu.wpi.first.math.geometry.Rotation2d toWPI(){
+        return new edu.wpi.first.math.geometry.Rotation2d(theta_radians);
     }
 
     public double cos() {

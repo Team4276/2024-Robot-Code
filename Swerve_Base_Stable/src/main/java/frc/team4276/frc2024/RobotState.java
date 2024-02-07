@@ -193,7 +193,7 @@ public class RobotState {
     }
 
     public synchronized edu.wpi.first.math.geometry.Pose2d getWPICurrentFieldToVehicle(){
-        return Pose2d.toWPI(getCurrentFieldToVehicle());
+        return getCurrentFieldToVehicle().toWPI();
     }
 
     /**

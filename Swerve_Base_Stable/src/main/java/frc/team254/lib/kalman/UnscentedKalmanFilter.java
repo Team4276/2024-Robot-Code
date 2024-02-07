@@ -486,7 +486,6 @@ public class UnscentedKalmanFilter<States extends Num, Inputs extends Num, Outpu
             .solveFullPivHouseholderQr(Sy.solveFullPivHouseholderQr(Pxy.transpose()))
             .transpose();
 
-    // x̂ₖ₊₁⁺ = x̂ₖ₊₁⁻ + K(y − ŷ)
     m_xHat = addFuncX.apply(m_xHat, K.times(residualFuncY.apply(y, yHat)));
 
     Matrix<States, R> U = K.times(Sy);

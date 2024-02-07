@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
 
   private final AllianceChooser mAllianceChooser = AllianceChooser.getInstance();
 
-  //TODO: add identity static factories to save on heap space
+  //TODO: implement custom objects for as many things as possible
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -172,12 +172,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     try {
-      if (mAutoModeSelector.getAutoMode().isPresent()) {
-        if (mAutoModeSelector.getAutoMode().get().getStartingPose().getRotation().getDegrees() != 0) {
-          mDriveSubsystem.zeroHeading(mDriveSubsystem.getHeading().plus(new Rotation2d(Math.PI)).getDegrees());
-        }
-      }
-
       mDisabledLooper.stop();
       mEnabledLooper.start();
       
@@ -190,13 +184,18 @@ public class Robot extends TimedRobot {
     }
   }
 
+  //TODO: check if need to flip heading
+
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     try {
       if (mControlBoard.driver.getController().getAButtonPressed()) {
         mDriveSubsystem.zeroHeading(0);
-        RobotState.getInstance().reset();
+      }
+
+      if (mControlBoard.driver.getController().getRightStickButtonPressed()){
+        mDriveSubsystem.flipHeading();
       }
 
       if (mControlBoard.driver.getController().getXButton()) {
@@ -206,7 +205,7 @@ public class Robot extends TimedRobot {
             mControlBoard.getSwerveTranslation().x(),
             mControlBoard.getSwerveTranslation().y(),
             mControlBoard.getSwerveRotation(),
-            mDriveSubsystem.getHeading()));
+            mDriveSubsystem.getWPIHeading()));
       }
 
       if (mControlBoard.driver.getController().getYButtonPressed()){
