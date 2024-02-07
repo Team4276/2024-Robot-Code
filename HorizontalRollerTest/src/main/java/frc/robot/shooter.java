@@ -19,6 +19,8 @@ public class shooter {
     private RelativeEncoder r1;
     private RelativeEncoder r2;
 
+    //TODO: get static value
+
     public shooter(){
         m1 = new CANSparkMax(20, MotorType.kBrushless);
         m2 = new CANSparkMax(18, MotorType.kBrushless);
@@ -43,18 +45,22 @@ public class shooter {
 
         p1.setP(0.1);
         p1.setI(0.0);
-        p1.setD(0.01);
+        p1.setD(0.0);
         p2.setP(0.1);
         p2.setI(0.0);
-        p2.setD(0.01);
+        p2.setD(0.0);
 
         m1.burnFlash();
         m2.burnFlash();
     }
 
+    private double last_des_rpm = 0;
+
     public void setReference(int rpm){
-        p1.setReference(rpm, ControlType.kSmartVelocity);
-        p2.setReference(-rpm, ControlType.kSmartVelocity);
+        last_des_rpm = rpm;
+
+        p1.setReference(rpm, ControlType.kVelocity);
+        p2.setReference(-rpm, ControlType.kVelocity);
     }
 
     public void setSpeed(double speed){
@@ -63,12 +69,14 @@ public class shooter {
     }
 
     public boolean atSetpoint(){
-        return r1.getVelocity() - r2.getVelocity() < 10;
+        return Math.abs(r1.getVelocity() - r2.getVelocity()) < 50 
+            && Math.abs(r1.getVelocity() - last_des_rpm) < 30;
     }
 
     public void outputVelocities(){
         SmartDashboard.putNumber("R1", r1.getVelocity());
         SmartDashboard.putNumber("R2", r2.getVelocity());
+        SmartDashboard.putBoolean("Let it rip!!!!!", atSetpoint());
     }
 
 
