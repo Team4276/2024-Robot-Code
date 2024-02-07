@@ -190,15 +190,15 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     try {
-      if (mControlBoard.driver.getController().getAButtonPressed()) {
+      if (mControlBoard.driver.getAButtonPressed()) {
         mDriveSubsystem.zeroHeading(0);
       }
 
-      if (mControlBoard.driver.getController().getRightStickButtonPressed()){
+      if (mControlBoard.driver.getRightStickButtonPressed()){
         mDriveSubsystem.flipHeading();
       }
 
-      if (mControlBoard.driver.getController().getXButton()) {
+      if (mControlBoard.driver.getXButton()) {
         mDriveSubsystem.setX();
       } else {
         mDriveSubsystem.teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -208,17 +208,17 @@ public class Robot extends TimedRobot {
             mDriveSubsystem.getWPIHeading()));
       }
 
-      if (mControlBoard.driver.getController().getYButtonPressed()){
+      if (mControlBoard.driver.getYButtonPressed()){
         mDriveSubsystem.setHeadingSetpoint(0);
-      } else if (mControlBoard.driver.getController().getBButtonPressed()) {
+      } else if (mControlBoard.driver.getBButtonPressed()) {
         mDriveSubsystem.setHeadingSetpoint(180);
       }
 
-      if (mControlBoard.driver.getController().getRightBumperPressed()) {
+      if (mControlBoard.driver.getRightBumperPressed()) {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
       }
 
-      if (mControlBoard.driver.getController().getLeftBumperPressed()) {
+      if (mControlBoard.driver.getLeftBumperPressed()) {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
       }
 

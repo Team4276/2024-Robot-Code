@@ -15,6 +15,7 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
+import frc.team4276.frc2024.planners.AutoAlignPlanner;
 import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.swerve.MAXSwerveModuleV2;
 
@@ -46,7 +47,9 @@ public class DriveSubsystem extends Subsystem {
 
   private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
 
-  private PIDController snapController;
+  private PIDController mSnapController;
+
+  private AutoAlignPlanner mAutoAlignPlanner;
 
   private static DriveSubsystem mInstance;
 
@@ -82,9 +85,11 @@ public class DriveSubsystem extends Subsystem {
     mPigeon = Pigeon.getInstance();
     mPigeon.setYaw(0.0);
 
-    snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
-    snapController.enableContinuousInput(0, 2 * Math.PI);
-    snapController.setTolerance(SnapConstants.kPositionTolerance, SnapConstants.kAngularVelocityTolerance);
+    mSnapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
+    mSnapController.enableContinuousInput(0, 2 * Math.PI);
+    mSnapController.setTolerance(SnapConstants.kPositionTolerance, SnapConstants.kAngularVelocityTolerance);
+
+    mAutoAlignPlanner = new AutoAlignPlanner();
 
   }
 
@@ -99,6 +104,20 @@ public class DriveSubsystem extends Subsystem {
       @Override
       public void onLoop(double timestamp) {
         synchronized (this) {
+          switch (mControlState) {
+            case OPEN_LOOP:
+              break;
+            case FORCE_ORIENT:
+              break;
+            case HEADING_CONTROL:
+              break;
+            case PATH_FOLLOWING:
+              break;
+          
+            default:
+              break;
+          }
+
           updateSetpoint();
         }
       }
@@ -347,7 +366,7 @@ public class DriveSubsystem extends Subsystem {
     if (mControlState != DriveControlState.HEADING_CONTROL) {
       mControlState = DriveControlState.HEADING_CONTROL;
     }
-    snapController.reset();
+    mSnapController.reset();
     mPeriodicIO.heading_setpoint = Rotation2d.fromDegrees(desHeadingDeg);
   }
 
@@ -357,13 +376,13 @@ public class DriveSubsystem extends Subsystem {
     }
 
     if (mControlState == DriveControlState.HEADING_CONTROL){
-      if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0 || snapController.atSetpoint()) {
+      if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0 || mSnapController.atSetpoint()) {
         mControlState = DriveControlState.OPEN_LOOP;
       } else {
         mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
           speeds.vxMetersPerSecond, 
           speeds.vyMetersPerSecond, 
-          snapController.calculate(mPigeon.getYaw().getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
+          mSnapController.calculate(mPigeon.getYaw().getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
         return;
       }
     }
@@ -397,8 +416,8 @@ public class DriveSubsystem extends Subsystem {
   // Stops drive without orienting modules
   public synchronized void stopModules() {
     List<Rotation2d> orientations = new ArrayList<>();
-    for (ModuleState moduleState : getModuleStates()) {
-      orientations.add(Rotation2d.fromWPI(moduleState.angle));
+    for (MAXSwerveModuleV2 module : mModules) {
+      orientations.add(Rotation2d.fromWPI(module.getState().angle));
     }
     orientModules(orientations);
   }

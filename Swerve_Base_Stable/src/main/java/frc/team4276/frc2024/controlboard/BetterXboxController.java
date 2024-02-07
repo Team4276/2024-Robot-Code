@@ -4,15 +4,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.team4276.frc2024.Constants.OIConstants;
 
-public class BetterXboxController {
-    private XboxController mController;
-
+public class BetterXboxController extends XboxController {
     public BetterXboxController(int port){
-        mController = new XboxController(port);
+        super(port);
     }
 
     public boolean isPOVUPPressed(){
-        if (mController.getPOV() == 0){
+        if (getPOV() == 0){
             return true;
         } else {
             return false;
@@ -20,7 +18,7 @@ public class BetterXboxController {
     }
 
     public boolean isPOVRIGHTPressed(){
-        if (mController.getPOV() == 90){
+        if (getPOV() == 90){
             return true;
         } else {
             return false;
@@ -28,7 +26,7 @@ public class BetterXboxController {
     }
 
     public boolean isPOVDOWNPressed(){
-        if (mController.getPOV() == 180){
+        if (getPOV() == 180){
             return true;
         } else {
             return false;
@@ -36,7 +34,7 @@ public class BetterXboxController {
     }
 
     public boolean isPOVLEFTPressed(){
-        if (mController.getPOV() == 270){
+        if (getPOV() == 270){
             return true;
         } else {
             return false;
@@ -44,7 +42,7 @@ public class BetterXboxController {
     }
 
     public boolean getLT(){
-        if (mController.getLeftTriggerAxis() > OIConstants.kJoystickDeadband){
+        if (getLeftTriggerAxis() > OIConstants.kJoystickDeadband){
             return true;
         } else {
             return false;
@@ -52,7 +50,7 @@ public class BetterXboxController {
     }
 
     public boolean getRT(){
-        if (mController.getRightTriggerAxis() > OIConstants.kJoystickDeadband){
+        if (getRightTriggerAxis() > OIConstants.kJoystickDeadband){
             return true;
         } else {
             return false;
@@ -60,31 +58,27 @@ public class BetterXboxController {
     }
 
     public boolean leftYIsPushed(){
-        if (Math.abs(mController.getLeftY()) > OIConstants.kJoystickDeadband){
+        if (Math.abs(getLeftY()) > OIConstants.kJoystickDeadband){
             return true;
         } else {
             return false;
         }
     }
 
-    public XboxController getController() {
-        return mController;
+    public double getLeftYDeadband(){
+        return MathUtil.applyDeadband(getLeftY(), OIConstants.kJoystickDeadband);
     }
 
-    public double getLeftY(){
-        return MathUtil.applyDeadband(mController.getLeftY(), OIConstants.kJoystickDeadband);
+    public double getLeftXDeadband(){
+        return MathUtil.applyDeadband(getLeftX(), OIConstants.kJoystickDeadband);
     }
 
-    public double getLeftX(){
-        return MathUtil.applyDeadband(mController.getLeftX(), OIConstants.kJoystickDeadband);
+    public double getRightYDeadband(){
+        return MathUtil.applyDeadband(getRightY(), OIConstants.kJoystickDeadband);
     }
 
-    public double getRightY(){
-        return MathUtil.applyDeadband(mController.getRightY(), OIConstants.kJoystickDeadband);
-    }
-
-    public double getRightX(){
-        return MathUtil.applyDeadband(mController.getRightX(), OIConstants.kJoystickDeadband);
+    public double getRightXDeadband(){
+        return MathUtil.applyDeadband(getRightX(), OIConstants.kJoystickDeadband);
     }
 
 }

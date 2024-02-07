@@ -26,8 +26,8 @@ public class ControlBoard {
     }
 
     public Translation2d getSwerveTranslation() {
-        double forwardAxis = -driver.getController().getLeftY();
-        double strafeAxis = -driver.getController().getLeftX();
+        double forwardAxis = -driver.getLeftY();
+        double strafeAxis = -driver.getLeftX();
 
         SmartDashboard.putNumber("Raw Y", forwardAxis);
         SmartDashboard.putNumber("Raw X", strafeAxis);

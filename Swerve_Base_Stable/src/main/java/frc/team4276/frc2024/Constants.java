@@ -22,8 +22,6 @@ import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
 
-//TODO: fix the class structure here
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -181,8 +179,6 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 1;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = 2 * Math.PI;
 
