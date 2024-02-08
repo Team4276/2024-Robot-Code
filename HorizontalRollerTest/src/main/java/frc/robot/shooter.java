@@ -24,18 +24,24 @@ public class shooter {
     public shooter(){
         m1 = new CANSparkMax(20, MotorType.kBrushless);
         m2 = new CANSparkMax(18, MotorType.kBrushless);
-        
-        m1.setIdleMode(IdleMode.kCoast);
-        m2.setIdleMode(IdleMode.kCoast);
 
-        m1.setSmartCurrentLimit(40);
-        m2.setSmartCurrentLimit(40);
+        m1.restoreFactoryDefaults();
+        m2.restoreFactoryDefaults();
+        
+        m1.setIdleMode(IdleMode.kBrake);
+        m2.setIdleMode(IdleMode.kBrake);
+
+        m1.setSmartCurrentLimit(60);
+        m2.setSmartCurrentLimit(60);
 
         p1 = m1.getPIDController();
         p2 = m2.getPIDController();
 
         r1 = m1.getEncoder();
         r2 = m2.getEncoder();
+
+        r1.setVelocityConversionFactor(1);
+        r2.setVelocityConversionFactor(1);
 
         p1.setFeedbackDevice(r1);
         p2.setFeedbackDevice(r2);
@@ -69,8 +75,8 @@ public class shooter {
     }
 
     public boolean atSetpoint(){
-        return Math.abs(r1.getVelocity() - r2.getVelocity()) < 50 
-            && Math.abs(r1.getVelocity() - last_des_rpm) < 30;
+        return Math.abs(r1.getVelocity()) - Math.abs(r2.getVelocity()) < 50 
+            && (last_des_rpm == 0 ? true : Math.abs(r1.getVelocity() - last_des_rpm) < 30);
     }
 
     public void outputVelocities(){
