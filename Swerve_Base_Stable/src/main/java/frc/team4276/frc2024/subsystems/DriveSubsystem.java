@@ -35,6 +35,7 @@ public class DriveSubsystem extends Subsystem {
     OPEN_LOOP,
     HEADING_CONTROL,
     PATH_FOLLOWING,
+    AUTO_ALIGN,
   }
 
   public MAXSwerveModuleV2[] mModules;
@@ -112,6 +113,10 @@ public class DriveSubsystem extends Subsystem {
             case HEADING_CONTROL:
               break;
             case PATH_FOLLOWING:
+              break;
+            case AUTO_ALIGN:
+              mAutoAlignPlanner.update(timestamp, 
+                RobotState.getInstance().getFieldToVehicleAbsolute(timestamp), Twist2d.toWPI(getMeasSpeeds().toTwist2d()));
               break;
           
             default:

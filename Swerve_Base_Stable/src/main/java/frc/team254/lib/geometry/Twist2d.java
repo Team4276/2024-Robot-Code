@@ -44,6 +44,10 @@ public class Twist2d {
         return dtheta / norm();
     }
 
+    public static Twist2d toWPI(edu.wpi.first.math.geometry.Twist2d other){
+        return new Twist2d(other.dx, other.dy, other.dtheta);
+    }
+
     @Override
     public String toString() {
         final DecimalFormat fmt = new DecimalFormat("#0.000");

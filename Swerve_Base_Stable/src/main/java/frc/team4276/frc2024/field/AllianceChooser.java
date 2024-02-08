@@ -3,6 +3,7 @@ package frc.team4276.frc2024.field;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AllianceChooser {
     // unnecessary abstraction FTW
@@ -26,10 +27,12 @@ public class AllianceChooser {
         
         mChooser.setDefaultOption("Blue", Alliance.Blue);
         mChooser.addOption("Red", Alliance.Red);
+
+        SmartDashboard.putData(mChooser);
     }
 
     public Alliance getAlliance(){
-        if (DriverStation.isDSAttached() && DriverStation.getAlliance().isPresent()){
+        if (DriverStation.isFMSAttached() && DriverStation.getAlliance().isPresent()){
             return DriverStation.getAlliance().get();
         }
 
