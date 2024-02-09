@@ -4,7 +4,7 @@ import frc.team4276.frc2024.Constants.AutoConstants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
-import frc.team4276.frc2024.subsystems.EmptySubsystem;
+import frc.team4276.lib.drivers.EmptySubsystem;
 import frc.team4276.frc2024.RobotState;
 
 import com.pathplanner.lib.path.PathPlannerPath;
