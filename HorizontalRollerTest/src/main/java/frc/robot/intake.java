@@ -18,7 +18,7 @@ public class intake {
     }
 
     public intake(){
-        m1 = new CANSparkMax(0, MotorType.kBrushless);
+        m1 = new CANSparkMax(19, MotorType.kBrushless);
 
         m1.restoreFactoryDefaults();
 

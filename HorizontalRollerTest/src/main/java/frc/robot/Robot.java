@@ -120,7 +120,13 @@ public class Robot extends TimedRobot {
 
     if (xboxController.getRT()){
       mIntake.runIntake(SmartDashboard.getNumber("Intake Power", 0));
+    } else if (xboxController.getRightBumper()){
+      mIntake.runIntake(-0.5);
+    } else {
+      mIntake.runIntake(0);
     }
+
+    
 
     shooter.outputVelocities();
   }
