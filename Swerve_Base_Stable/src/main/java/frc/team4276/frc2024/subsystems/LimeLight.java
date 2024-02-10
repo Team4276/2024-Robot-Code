@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -43,8 +44,8 @@ public class LimeLight extends Subsystem {
     private PeriodicIO mPeriodicIO = new PeriodicIO();
     private int mListenerId = -1;
 
-    private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
-    private Mat mDistortionCoeffients = new Mat(1, 5, CV_64FC1);
+    private Mat mCameraMatrix;
+    private Mat mDistortionCoeffients;
 
     private static HashMap<Integer, Apriltag> mTagMap = Field.Red.kAprilTagMap;
 
@@ -61,6 +62,11 @@ public class LimeLight extends Subsystem {
 
     private LimeLight() {
         mNetworkTable = NetworkTableInstance.getDefault().getTable("limelight");
+
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+        mCameraMatrix = new Mat(3, 3, CV_64FC1);
+        mDistortionCoeffients = new Mat(1, 5, CV_64FC1);
     }
 
     /**

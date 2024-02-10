@@ -80,9 +80,9 @@ public final class Constants {
     }
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(25);
+    public static final double kTrackWidth = Units.inchesToMeters(27);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(25);
+    public static final double kWheelBase = Units.inchesToMeters(27);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -97,15 +97,15 @@ public final class Constants {
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
     // SPARK MAX CAN IDs
-    public static final int kFrontLeftDrivingCanId = 13;
-    public static final int kFrontRightDrivingCanId = 15;
-    public static final int kRearLeftDrivingCanId = 8;
-    public static final int kRearRightDrivingCanId = 12;
+    public static final int kFrontLeftDrivingCanId = 1;
+    public static final int kFrontRightDrivingCanId = 3;
+    public static final int kRearLeftDrivingCanId = 7;
+    public static final int kRearRightDrivingCanId = 5;
 
-    public static final int kFrontLeftTurningCanId = 7;
-    public static final int kFrontRightTurningCanId = 16;
-    public static final int kRearLeftTurningCanId = 9;
-    public static final int kRearRightTurningCanId = 14;
+    public static final int kFrontLeftTurningCanId = 2;
+    public static final int kFrontRightTurningCanId = 4;
+    public static final int kRearLeftTurningCanId = 6;
+    public static final int kRearRightTurningCanId = 8;
 
     public static final int[] kDriveTrainCanIds = {
       kFrontLeftDrivingCanId,
