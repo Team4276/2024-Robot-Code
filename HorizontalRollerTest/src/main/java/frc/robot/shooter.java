@@ -27,8 +27,14 @@ public class shooter {
     private boolean isPID = false;
 
     public shooter(){
-        m1 = new CANSparkMax(20, MotorType.kBrushless);
-        m2 = new CANSparkMax(18, MotorType.kBrushless);
+        m1 = new CANSparkMax(18, MotorType.kBrushless);
+        m2 = new CANSparkMax(20, MotorType.kBrushless);
+
+        p1 = m1.getPIDController();
+        p2 = m2.getPIDController();
+
+        r1 = m1.getEncoder();
+        r2 = m2.getEncoder();
 
         m1.restoreFactoryDefaults();
         m2.restoreFactoryDefaults();
@@ -47,12 +53,6 @@ public class shooter {
 
         r1.setMeasurementPeriod(10);
         r2.setMeasurementPeriod(10);
-
-        p1 = m1.getPIDController();
-        p2 = m2.getPIDController();
-
-        r1 = m1.getEncoder();
-        r2 = m2.getEncoder();
 
         r1.setVelocityConversionFactor(1);
         r2.setVelocityConversionFactor(1);
@@ -109,8 +109,6 @@ public class shooter {
         SmartDashboard.putNumber("R1", r1.getVelocity());
         SmartDashboard.putNumber("R2", r2.getVelocity());
         SmartDashboard.putBoolean("Let it rip!!!!!", atSetpoint());
-
-        SmartDashboard.putBoolean("Top Temp: ", isPID);
     }
 
 
