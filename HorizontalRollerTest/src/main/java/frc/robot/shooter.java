@@ -6,8 +6,11 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.ShooterConstants;
 
 public class shooter {
     private CANSparkMax m1;
@@ -19,7 +22,9 @@ public class shooter {
     private RelativeEncoder r1;
     private RelativeEncoder r2;
 
-    //TODO: get static value
+    private SimpleMotorFeedforward ff;
+
+    private boolean isPID = false;
 
     public shooter(){
         m1 = new CANSparkMax(20, MotorType.kBrushless);
@@ -34,6 +39,15 @@ public class shooter {
         m1.setSmartCurrentLimit(60);
         m2.setSmartCurrentLimit(60);
 
+        m1.enableVoltageCompensation(12);
+        m2.enableVoltageCompensation(12);
+
+        r1.setAverageDepth(2);
+        r2.setAverageDepth(2);
+
+        r1.setMeasurementPeriod(10);
+        r2.setMeasurementPeriod(10);
+
         p1 = m1.getPIDController();
         p2 = m2.getPIDController();
 
@@ -46,43 +60,57 @@ public class shooter {
         p1.setFeedbackDevice(r1);
         p2.setFeedbackDevice(r2);
 
-        p1.setOutputRange(-1, 1);
-        p2.setOutputRange(-1, 1);
-
-        p1.setP(0.1);
-        p1.setI(0.0);
-        p1.setD(0.0);
-        p2.setP(0.1);
-        p2.setI(0.0);
-        p2.setD(0.0);
+        p1.setP(ShooterConstants.kP);
+        p1.setI(ShooterConstants.kI);
+        p1.setD(ShooterConstants.kD);
+        p2.setP(ShooterConstants.kP);
+        p2.setI(ShooterConstants.kI);
+        p2.setD(ShooterConstants.kD);
 
         m1.burnFlash();
         m2.burnFlash();
+
+        ff = new SimpleMotorFeedforward(ShooterConstants.kS,ShooterConstants.kV,ShooterConstants.kA);
     }
 
-    private double last_des_rpm = 0;
+    private double last_des_rpm_t = 0;
+    private double last_des_rpm_b = 0;
 
-    public void setReference(int rpm){
-        last_des_rpm = rpm;
+    public void setReference(double t_rpm, double b_rpm){
+        isPID = true;
 
-        p1.setReference(rpm, ControlType.kVelocity);
-        p2.setReference(-rpm, ControlType.kVelocity);
+        last_des_rpm_t = t_rpm;
+        last_des_rpm_b = b_rpm;
+
+
+        p1.setReference(t_rpm, ControlType.kVelocity, 0, ff.calculate(t_rpm), ArbFFUnits.kVoltage);
+        p2.setReference(b_rpm, ControlType.kVelocity, 0, ff.calculate(b_rpm), ArbFFUnits.kVoltage);
     }
 
     public void setSpeed(double speed){
+        isPID = false;
+
         m1.set(speed);
         m2.set(-speed);
     }
 
     public boolean atSetpoint(){
-        return Math.abs(r1.getVelocity()) - Math.abs(r2.getVelocity()) < 50 
-            && (last_des_rpm == 0 ? true : Math.abs(r1.getVelocity() - last_des_rpm) < 30);
+        double vel_diff = Math.abs(r1.getVelocity()) - Math.abs(r2.getVelocity());
+
+        //TRYNDAMERE
+        double top_diff = Math.abs(r1.getVelocity() - last_des_rpm_t);
+
+        double bot_diff = Math.abs(r2.getVelocity() - last_des_rpm_b);
+        
+        return isPID ? (top_diff < 30 && bot_diff < 30) : vel_diff < 50;
     }
 
     public void outputVelocities(){
         SmartDashboard.putNumber("R1", r1.getVelocity());
         SmartDashboard.putNumber("R2", r2.getVelocity());
         SmartDashboard.putBoolean("Let it rip!!!!!", atSetpoint());
+
+        SmartDashboard.putBoolean("Top Temp: ", isPID);
     }
 
 
