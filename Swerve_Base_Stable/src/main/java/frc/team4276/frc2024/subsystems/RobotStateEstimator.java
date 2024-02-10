@@ -1,6 +1,7 @@
 package frc.team4276.frc2024.subsystems;
 
 import frc.team4276.frc2024.Constants.DriveConstants;
+import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.frc2024.RobotState;
 
 import frc.team1678.lib.loops.ILooper;
