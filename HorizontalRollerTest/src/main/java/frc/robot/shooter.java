@@ -151,5 +151,9 @@ public class shooter {
         m2.set(staticCalc);
     }
 
+    public void feed(){
+        
+    }
+
 
 }

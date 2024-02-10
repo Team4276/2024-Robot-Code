@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -21,6 +23,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private final shooter shooter = new shooter();
+
+  private final intake mIntake = intake.getInstance();
 
   private final BetterXboxController xboxController = new BetterXboxController(0);
 
@@ -36,6 +40,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Top RPM", 0);
     SmartDashboard.putNumber("Bottom RPM", 0);
+    SmartDashboard.putNumber("Intake Power", 0);
   }
 
   /**
@@ -111,6 +116,10 @@ public class Robot extends TimedRobot {
 
     if (xboxController.getLT()){
       shooter.staticCalc();
+    }
+
+    if (xboxController.getRT()){
+      mIntake.runIntake(SmartDashboard.getNumber("Intake Power", 0));
     }
 
     shooter.outputVelocities();
