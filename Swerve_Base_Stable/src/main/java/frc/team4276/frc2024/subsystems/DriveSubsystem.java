@@ -18,7 +18,7 @@ import frc.team4276.frc2024.Constants.SnapConstants;
 import frc.team4276.frc2024.planners.AutoAlignPlanner;
 import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.drivers.Subsystem;
-import frc.team4276.lib.swerve.MAXSwerveModuleV2;
+import frc.team4276.lib.drivers.MAXSwerveModuleV2;
 
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
