@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -23,7 +22,7 @@ public class Robot extends TimedRobot {
 
   private final shooter shooter = new shooter();
 
-  private final XboxController xboxController = new XboxController(0);
+  private final BetterXboxController xboxController = new BetterXboxController(0);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -34,6 +33,9 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    SmartDashboard.putNumber("Top Speed", 0);
+    SmartDashboard.putNumber("Bottom Speed", 0);
   }
 
   /**
@@ -87,23 +89,27 @@ public class Robot extends TimedRobot {
     if (Math.abs(xboxController.getLeftY()) > 0.1){
       shooter.setSpeed(xboxController.getLeftY());
     } else if (xboxController.getAButton()){
-      shooter.setReference(500);
+      shooter.setReference(500, -500);
     } else if (xboxController.getXButton()) {
-      shooter.setReference(1000);
+      shooter.setReference(1000, -1000);
     } else if (xboxController.getYButton()) {
-      shooter.setReference(2500);
+      shooter.setReference(2500, -2500);
     } else if (xboxController.getBButton()) {
-      shooter.setReference(4000);
-    }
-
-    if (xboxController.getLeftBumper()){
+      shooter.setReference(4000, -4000);
+    } else if (xboxController.getRT()){
+      shooter.setReference(1000, -500);
+    } else if (xboxController.getLT()) {
+      shooter.setReference(-1000, 500);
+    } else if (xboxController.isPOVUPPressed()){
+      shooter.setReference(
+        SmartDashboard.getNumber("Top RPM", 0),
+        SmartDashboard.getNumber("Bottom RPM", 0)
+      );
+    } else {
       shooter.setSpeed(0);
     }
 
     shooter.outputVelocities();
-
-    
-    
   }
 
   /** This function is called once when the robot is disabled. */
