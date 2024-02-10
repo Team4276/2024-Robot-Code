@@ -34,8 +34,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    SmartDashboard.putNumber("Top Speed", 0);
-    SmartDashboard.putNumber("Bottom Speed", 0);
+    SmartDashboard.putNumber("Top RPM", 0);
+    SmartDashboard.putNumber("Bottom RPM", 0);
   }
 
   /**
@@ -88,25 +88,29 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if (Math.abs(xboxController.getLeftY()) > 0.1){
       shooter.setSpeed(xboxController.getLeftY());
-    } else if (xboxController.getAButton()){
-      shooter.setReference(500, -500);
-    } else if (xboxController.getXButton()) {
-      shooter.setReference(1000, -1000);
-    } else if (xboxController.getYButton()) {
-      shooter.setReference(2500, -2500);
-    } else if (xboxController.getBButton()) {
-      shooter.setReference(4000, -4000);
-    } else if (xboxController.getRT()){
-      shooter.setReference(1000, -500);
-    } else if (xboxController.getLT()) {
-      shooter.setReference(-1000, 500);
     } else if (xboxController.isPOVUPPressed()){
       shooter.setReference(
         SmartDashboard.getNumber("Top RPM", 0),
         SmartDashboard.getNumber("Bottom RPM", 0)
       );
+    } else if (xboxController.isPOVLEFTPressed()) {
+      shooter.decreaseStaticCalc();
+    } else if (xboxController.isPOVRIGHTPressed()){
+      shooter.increaseStaticCalc();
+    } else if (xboxController.getAButton()){
+      shooter.setReference(-500, 4000);
+    } else if (xboxController.getBButton()){
+      shooter.what_the_flip(-1000, 4000);
+    } else if (xboxController.isPOVDOWNPressed()){
+      shooter.what_the_flip(
+        SmartDashboard.getNumber("Top RPM", 0),
+        SmartDashboard.getNumber("Bottom RPM", 0));
     } else {
       shooter.setSpeed(0);
+    }
+
+    if (xboxController.getLT()){
+      shooter.staticCalc();
     }
 
     shooter.outputVelocities();

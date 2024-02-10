@@ -22,13 +22,17 @@ public class shooter {
     private RelativeEncoder r1;
     private RelativeEncoder r2;
 
-    private SimpleMotorFeedforward ff;
+    private SimpleMotorFeedforward ff_top;
+    private SimpleMotorFeedforward ff_bottom;
 
     private boolean isPID = false;
 
     public shooter(){
         m1 = new CANSparkMax(18, MotorType.kBrushless);
         m2 = new CANSparkMax(20, MotorType.kBrushless);
+
+        m1.setInverted(true);
+        m2.setInverted(true);
 
         p1 = m1.getPIDController();
         p2 = m2.getPIDController();
@@ -70,7 +74,8 @@ public class shooter {
         m1.burnFlash();
         m2.burnFlash();
 
-        ff = new SimpleMotorFeedforward(ShooterConstants.kS,ShooterConstants.kV,ShooterConstants.kA);
+        ff_top = new SimpleMotorFeedforward(ShooterConstants.kS_Top,ShooterConstants.kV,ShooterConstants.kA);
+        ff_bottom = new SimpleMotorFeedforward(ShooterConstants.kS_Bottom,ShooterConstants.kV,ShooterConstants.kA);
     }
 
     private double last_des_rpm_t = 0;
@@ -83,8 +88,27 @@ public class shooter {
         last_des_rpm_b = b_rpm;
 
 
-        p1.setReference(t_rpm, ControlType.kVelocity, 0, ff.calculate(t_rpm), ArbFFUnits.kVoltage);
-        p2.setReference(b_rpm, ControlType.kVelocity, 0, ff.calculate(b_rpm), ArbFFUnits.kVoltage);
+        p1.setReference(t_rpm, ControlType.kVelocity, 0, -ff_top.calculate(t_rpm), ArbFFUnits.kVoltage);
+        p2.setReference(b_rpm, ControlType.kVelocity, 0, -ff_bottom.calculate(b_rpm), ArbFFUnits.kVoltage);
+    }
+
+    public void what_the_flip(double t_rpm, double b_rpm){
+        isPID = true;
+
+        double top = t_rpm;
+        double bottom = b_rpm;
+
+        if (Math.abs(r1.getVelocity()) < 50){
+            m1.set(0);
+            p2.setReference(bottom, ControlType.kVelocity, 0, -ff_bottom.calculate(b_rpm), ArbFFUnits.kVoltage);
+            return;
+        }
+
+        last_des_rpm_t = top;
+        last_des_rpm_b = bottom;
+
+        p1.setReference(top, ControlType.kVelocity, 0, -ff_top.calculate(t_rpm), ArbFFUnits.kVoltage);
+        p2.setReference(bottom, ControlType.kVelocity, 0, -ff_bottom.calculate(b_rpm), ArbFFUnits.kVoltage);
     }
 
     public void setSpeed(double speed){
@@ -109,6 +133,22 @@ public class shooter {
         SmartDashboard.putNumber("R1", r1.getVelocity());
         SmartDashboard.putNumber("R2", r2.getVelocity());
         SmartDashboard.putBoolean("Let it rip!!!!!", atSetpoint());
+        SmartDashboard.putNumber("Static Calc", staticCalc);
+    }
+
+    private static double staticCalc = 0;
+
+    public void decreaseStaticCalc(){
+        staticCalc -= 0.0001;
+    }
+
+    public void increaseStaticCalc(){
+        staticCalc += 0.0001;
+    }
+
+    public void staticCalc(){
+        m1.set(staticCalc);
+        m2.set(staticCalc);
     }
 
 
