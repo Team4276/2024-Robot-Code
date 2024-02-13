@@ -1,7 +1,5 @@
 package frc.team4276.lib.drivers;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-
 // Omit acceleration b/c I'm lazy :p
 public class FourBarFeedForward {
     private double kV; // V / Radian
@@ -18,8 +16,10 @@ public class FourBarFeedForward {
     public double kTopCOMToMotorSupport; // Metres
     public double kRotationToArmCOM;
 
-    private ArmFeedforward ff;
-
+    //TODO: add units to everything
+    //TODO: add comments to everything
+    //TODO: check math
+    
     /**
      * Look at definition for specifics
      */
@@ -55,10 +55,6 @@ public class FourBarFeedForward {
         this.kArmWeight = constants.kArmWeight;
         this.kTopCOMToMotorSupport = constants.kTopCOMToMotorSupport;
         this.kRotationToArmCOM = constants.kRotationToArmCOM;
-
-        ff = new ArmFeedforward(kS, kS, kV);
-
-        ff.calculate(kV, kS);
     }
 
     /**
@@ -86,16 +82,15 @@ public class FourBarFeedForward {
 
         double phi1 = kArmLength * Math.sin(complement) / t1 ;
 
-        //TODO: continue checking here
         double ta1 = findAngle(kTopLength, kSupportLength, t1);
 
         double phi2 = kTopLength * Math.sin(ta1) / t1;
 
         double theta2 = phi1 + phi2;
-
+ 
         double Fn1 = ((kTopCOMToMotorSupport * Math.cos(des_position)) 
             + (kTopLength - kTopCOMToMotorSupport) * Math.cos(theta2)) 
-            / (kTopLength - kTopCOMToMotorSupport) * Math.cos(theta2) * 9.81 * kTopWeight;
+            / ((kTopLength - kTopCOMToMotorSupport) * Math.cos(theta2) * 9.81 * kTopWeight);
 
         double Fn2 = (9.81 * kTopWeight) - Fn1;
 
@@ -103,11 +98,11 @@ public class FourBarFeedForward {
 
         double Fg2 = applyNormal(Fn2, theta2);
 
-        double armNewtons = Fg1 + Fg2;
+        double endNewtons = Fg1 + Fg2;
 
-        double COMDistance = ((kArmLength * armNewtons) + (kRotationToArmCOM * kArmWeight)) / (armNewtons + kArmWeight);
+        double COMDistance = ((kArmLength * endNewtons) + (kRotationToArmCOM * (kArmWeight * 9.81))) / (endNewtons + (kArmWeight * 9.81));
 
-        return 12 * COMDistance * kEfficiency * armNewtons / kTotalStallTorque;
+        return 12 * COMDistance * kEfficiency * endNewtons / kTotalStallTorque;
     }
 
     /** Function to find the length of a side in a triangle using the Law of Cosines
