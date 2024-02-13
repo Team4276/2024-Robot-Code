@@ -9,8 +9,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-
 // Subsystem class for NEO v1.1 Brushless motors
 
 public class ServoMotorSubsystem extends Subsystem {
@@ -20,7 +18,6 @@ public class ServoMotorSubsystem extends Subsystem {
     private AbsoluteEncoder mEncoder;
 
     private SparkPIDController mController;
-    private ArmFeedforward mFeedforward;
 
     public class ServoMotorConstants {
         public int id;

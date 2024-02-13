@@ -176,6 +176,8 @@ public class DriveSubsystem extends Subsystem {
     for (int i = 0; i < mModules.length; i++) {
       SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", mModules[i].getDriveSetpoint());
       SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", mModules[i].getTurnSetpoint());
+
+      SmartDashboard.putNumber("Motor " + i + " Drive RPM: ", mModules[i].getMotorSpeed());
     }
   }
 
