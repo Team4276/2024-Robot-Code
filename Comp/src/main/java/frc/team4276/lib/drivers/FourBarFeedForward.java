@@ -43,7 +43,7 @@ public class FourBarFeedForward {
 
     public FourBarFeedForward(FourBarFeedForwardConstants constants){
         this.kS = constants.kS;
-        this.kV = 2 * Math.PI * (12 / (constants.kMotorFreeSpeed / constants.kGearRatio));
+        this.kV = (12 / (constants.kMotorFreeSpeed / constants.kGearRatio)) * 60 / (2 * Math.PI); 
         this.kTotalStallTorque = constants.kStallTorque * constants.kMotorAmnt * constants.kGearRatio;
         this.kEfficiency = constants.kEfficiency;
 
@@ -62,12 +62,13 @@ public class FourBarFeedForward {
     }
 
     /**
-     * rad & rad/s^2
+     * @param des_position radians; x+ is in the forward facing direction of the robot
+     * @param des_velocity radians/s;
      * @return Volts
      */
     public double calculate(double des_position, double des_velocity){
         // Velocity Gain
-        double vel = kV * des_position;
+        double vel = kV * des_velocity;
 
         // Gravity Gain
         double gravity = getkG(des_position) * Math.cos(des_position);
@@ -85,6 +86,7 @@ public class FourBarFeedForward {
 
         double phi1 = kArmLength * Math.sin(complement) / t1 ;
 
+        //TODO: continue checking here
         double ta1 = findAngle(kTopLength, kSupportLength, t1);
 
         double phi2 = kTopLength * Math.sin(ta1) / t1;
@@ -116,6 +118,8 @@ public class FourBarFeedForward {
     }
 
     /** Function to find the angle opposite to the given side in a triangle using the Law of Cosines
+     * @param side1
+     * @param side2
      * @param side3 opposite side
      */ 
     private double findAngle(double side1, double side2, double side3) {        
