@@ -94,6 +94,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mMaster.burnFlash();
     }
 
+    //TODO: check if control state breaks when called mid cycle for read/loop/write
     public enum ControlState {
         OPEN_LOOP,
         SPARK_PID,
@@ -101,19 +102,19 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         FOUR_BAR_FF
     }
 
-    public void setOpenLoop(double volts) {
+    public synchronized void setOpenLoop(double volts) {
         if (mControlState != ControlState.OPEN_LOOP) {
             mControlState = ControlState.OPEN_LOOP;
         }
     }
 
     //TODO: look into S curve
-    public void setFourBarFFSetpoint(double position_rad) {
-        mPeriodicIO.fourbar_setpoint = new State(position_rad, 0);
-
+    public synchronized void setFourBarFFSetpoint(double position_rad) {
         if (mControlState != ControlState.FOUR_BAR_FF) {
             mControlState = ControlState.FOUR_BAR_FF;
         }
+
+        mPeriodicIO.fourbar_setpoint = new State(position_rad, 0);
     }
 
     private class PeriodicIO{
