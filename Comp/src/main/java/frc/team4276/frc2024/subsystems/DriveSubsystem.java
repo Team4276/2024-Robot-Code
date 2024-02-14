@@ -30,6 +30,8 @@ import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Twist2d;
 
+//TODO: fix periodicIO class and acutually use it
+
 public class DriveSubsystem extends Subsystem {
   public enum DriveControlState {
     FORCE_ORIENT,
@@ -317,7 +319,7 @@ public class DriveSubsystem extends Subsystem {
     return mPigeon.getPitch();
   }
 
-  public static class PeriodicIO {
+  private class PeriodicIO {
     // Inputs/Desired States
     double timestamp;
     ChassisSpeeds des_chassis_speeds = ChassisSpeeds.identity();
