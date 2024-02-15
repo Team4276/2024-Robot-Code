@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Timer;
+// import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.Constants;
@@ -29,8 +29,6 @@ import frc.team254.lib.util.Util;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Twist2d;
-
-//TODO: fix periodicIO class and acutually use it
 
 public class DriveSubsystem extends Subsystem {
   public enum DriveControlState {
@@ -153,8 +151,12 @@ public class DriveSubsystem extends Subsystem {
 
   @Override
   public void readPeriodicInputs() {
-    mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-    mPeriodicIO.meas_module_states = getModuleStates();
+    // mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+
+    for(int i = 0; i < mPeriodicIO.meas_module_states.length; i++){
+      mPeriodicIO.meas_module_states[i] = mModules[i].getState();
+    }
+
     mPeriodicIO.meas_chassis_speeds = DriveConstants.kDriveKinematics.toChassisSpeeds(mPeriodicIO.meas_module_states);
     mPeriodicIO.heading = mPigeon.getYaw();
     mPeriodicIO.pitch = mPigeon.getPitch();
@@ -184,15 +186,7 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public ModuleState[] getModuleStates() {
-    ModuleState[] states = new ModuleState[4];
-    int i = 0;
-
-    for (MAXSwerveModuleV2 mod : mModules) {
-      states[i] = mod.getState();
-      i++;
-    }
-
-    return states;
+    return mPeriodicIO.meas_module_states;
   }
 
   //TODO: add theta X translation pathfollower (not for autos)
@@ -304,11 +298,11 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void flipHeading(){
-    zeroHeading(180 + mPigeon.getYaw().getDegrees());
+    zeroHeading(180 + mPeriodicIO.heading.getDegrees());
   }
 
   public Rotation2d getHeading() {
-    return mPigeon.getYaw();
+    return mPeriodicIO.heading;
   }
 
   public edu.wpi.first.math.geometry.Rotation2d getWPIHeading() {
@@ -316,12 +310,12 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public Rotation2d getPitch() {
-    return mPigeon.getPitch();
+    return mPeriodicIO.pitch;
   }
 
   private class PeriodicIO {
     // Inputs/Desired States
-    double timestamp;
+    // double timestamp;
     ChassisSpeeds des_chassis_speeds = ChassisSpeeds.identity();
     ChassisSpeeds meas_chassis_speeds = ChassisSpeeds.identity();
     ModuleState[] meas_module_states = new ModuleState[] {
@@ -425,8 +419,8 @@ public class DriveSubsystem extends Subsystem {
   // Stops drive without orienting modules
   public synchronized void stopModules() {
     List<Rotation2d> orientations = new ArrayList<>();
-    for (MAXSwerveModuleV2 module : mModules) {
-      orientations.add(Rotation2d.fromWPI(module.getState().angle));
+    for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
+      orientations.add(Rotation2d.fromWPI(mPeriodicIO.meas_module_states[i].angle));
     }
     orientModules(orientations);
   }

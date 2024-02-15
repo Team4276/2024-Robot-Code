@@ -9,7 +9,6 @@ import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.swerve.SwerveDriveOdometry;
 
 import frc.team254.lib.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -58,10 +57,8 @@ public class RobotStateEstimator extends Subsystem {
 
     @Override
     public void outputTelemetry(){
-        if(DriverStation.isEnabled()){
-            SmartDashboard.putNumber("Robot X", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().x());
-            SmartDashboard.putNumber("Robot Y", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().y());
-        }
+        SmartDashboard.putNumber("Robot X", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().x());
+        SmartDashboard.putNumber("Robot Y", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().y());
     }
 
     

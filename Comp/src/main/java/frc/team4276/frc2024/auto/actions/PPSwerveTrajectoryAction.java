@@ -14,7 +14,6 @@ import com.pathplanner.lib.commands.FollowPathHolonomic;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class PPSwerveTrajectoryAction implements Action {
@@ -43,7 +42,7 @@ public class PPSwerveTrajectoryAction implements Action {
             () -> alliance == Alliance.Red, 
             new EmptySubsystem());
 
-        SmartDashboard.putString("Loaded path with alliance", alliance.name());
+        System.out.println("Loaded path with alliance" + alliance.name());
     }
 
     @Override

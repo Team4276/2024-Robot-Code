@@ -19,7 +19,7 @@ import edu.wpi.first.networktables.NetworkTable.TableEventListener;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
@@ -162,9 +162,9 @@ public class LimeLight extends Subsystem {
                 .getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 });
         mPeriodicIO.corners = mNetworkTable.getEntry("tcornxy").getNumberArray(new Number[] { 0, 0, 0, 0, 0});
 
-        for (int i = 0; i < mPeriodicIO.corners.length; i++) {
-            SmartDashboard.putNumber("Corner " + i, mPeriodicIO.corners[i].doubleValue());
-        }
+        // for (int i = 0; i < mPeriodicIO.corners.length; i++) {
+        //     SmartDashboard.putNumber("Corner " + i, mPeriodicIO.corners[i].doubleValue());
+        // }
 
         if (mPeriodicIO.seesTarget) {
             if (mTagMap.keySet().contains(mPeriodicIO.tagId) && mPeriodicIO.targetDistanceToRobot != null) {
@@ -173,8 +173,8 @@ public class LimeLight extends Subsystem {
                                 getTargetDistance().inverse(),
                                 mPeriodicIO.tagId));
 
-                SmartDashboard.putNumber("Distance to camera X", mPeriodicIO.targetDistanceToRobot[2]);
-                SmartDashboard.putNumber("Distance to camera Y", mPeriodicIO.targetDistanceToRobot[0]);
+                // SmartDashboard.putNumber("Distance to camera X", mPeriodicIO.targetDistanceToRobot[2]);
+                // SmartDashboard.putNumber("Distance to camera Y", mPeriodicIO.targetDistanceToRobot[0]);
             } else {
                 RobotState.getInstance().visionUpdate(null);
             }
@@ -188,8 +188,8 @@ public class LimeLight extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        SmartDashboard.putNumber("imageCaptureLatency", mPeriodicIO.imageCaptureLatency);
-        SmartDashboard.putNumber("latency", mPeriodicIO.latency);
+        // SmartDashboard.putNumber("imageCaptureLatency", mPeriodicIO.imageCaptureLatency);
+        // SmartDashboard.putNumber("latency", mPeriodicIO.latency);
 
 
     }

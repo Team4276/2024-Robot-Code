@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+// import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -73,6 +74,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mMaster.enableVoltageCompensation(constants.kVoltageCompensation);
         mMaster.setSmartCurrentLimit(constants.kSmartCurrentLimit);
         mMaster.setIdleMode(constants.kIdleMode);
+        // mMaster.setCANTimeout(10);
+        // mMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
 
         mFollowers = new CANSparkMax[constants.kFollowerConstants.length];
 

@@ -53,8 +53,6 @@ public class Robot extends TimedRobot {
 
   private PowerDistribution mPowerDistribution = new PowerDistribution();
 
-  //TODO: implement custom objects for as many things as possible
-
   /**
    * This function is run when the robot is first started up and should be used
    * for any

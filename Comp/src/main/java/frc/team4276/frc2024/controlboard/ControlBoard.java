@@ -2,7 +2,6 @@ package frc.team4276.frc2024.controlboard;
 
 import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
 import frc.team1678.lib.Util;
@@ -28,9 +27,6 @@ public class ControlBoard {
     public Translation2d getSwerveTranslation() {
         double forwardAxis = -driver.getLeftY();
         double strafeAxis = -driver.getLeftX();
-
-        SmartDashboard.putNumber("Raw Y", forwardAxis);
-        SmartDashboard.putNumber("Raw X", strafeAxis);
 
         Translation2d tAxes = new Translation2d(forwardAxis, strafeAxis);
 
