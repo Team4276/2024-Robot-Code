@@ -175,12 +175,12 @@ public class DriveSubsystem extends Subsystem {
       return;
     }
 
-    for (int i = 0; i < mModules.length; i++) {
-      SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", mModules[i].getDriveSetpoint());
-      SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", mModules[i].getTurnSetpoint());
+    // for (int i = 0; i < mModules.length; i++) {
+    //   SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", mModules[i].getDriveSetpoint());
+    //   SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", mModules[i].getTurnSetpoint());
 
-      SmartDashboard.putNumber("Motor " + i + " Drive RPM: ", mModules[i].getMotorSpeed());
-    }
+    //   SmartDashboard.putNumber("Motor " + i + " Drive RPM: ", mModules[i].getMotorSpeed());
+    // }
   }
 
   public ModuleState[] getModuleStates() {
@@ -340,7 +340,6 @@ public class DriveSubsystem extends Subsystem {
         ModuleState.identity(),
         ModuleState.identity()
     };
-    Pose2d path_setpoint = Pose2d.identity();
     Rotation2d heading_setpoint = Rotation2d.identity();
   }
 
@@ -392,7 +391,7 @@ public class DriveSubsystem extends Subsystem {
         mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
           speeds.vxMetersPerSecond, 
           speeds.vyMetersPerSecond, 
-          mSnapController.calculate(mPigeon.getYaw().getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
+          mSnapController.calculate(mPeriodicIO.heading.getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
         return;
       }
     }

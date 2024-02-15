@@ -8,8 +8,10 @@ import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team4276.frc2024.Constants.DriveConstants;
@@ -49,6 +51,8 @@ public class Robot extends TimedRobot {
 
   private final AllianceChooser mAllianceChooser = AllianceChooser.getInstance();
 
+  private PowerDistribution mPowerDistribution = new PowerDistribution();
+
   //TODO: implement custom objects for as many things as possible
 
   /**
@@ -59,10 +63,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     try {
+      // Set subsystems 
       mSubsystemManager.setSubsystems(
           mDriveSubsystem,
-          mLimeLight,
-          mRobotStateEstimator);
+          mRobotStateEstimator,
+          mLimeLight
+          );
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -89,6 +95,8 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     mSubsystemManager.outputToSmartDashboard();
     mEnabledLooper.outputToSmartDashboard();
+
+    SmartDashboard.putBoolean("Ruh Roh Raggy", mPowerDistribution.getVoltage() > 12.3);
 
   }
 

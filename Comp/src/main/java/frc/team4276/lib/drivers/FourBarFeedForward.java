@@ -23,7 +23,7 @@ public class FourBarFeedForward {
     /**
      * Look at definition for specifics
      */
-    public class FourBarFeedForwardConstants {
+    public static class FourBarFeedForwardConstants {
         public double kS; // Find experimentally
         public double kMotorFreeSpeed; // RPM
         public double kGearRatio; // Rotations of motor per rotation of structure
@@ -67,7 +67,7 @@ public class FourBarFeedForward {
         double vel = kV * des_velocity;
 
         // Gravity Gain
-        double gravity = getkG(des_position) * Math.cos(des_position);
+        double gravity = getkG(des_position) * Math.abs(Math.cos(des_position));
 
         double output = Math.signum(des_velocity) * kS + vel + gravity;
 
