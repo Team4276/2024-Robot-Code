@@ -48,6 +48,10 @@ public final class Constants {
   // Don't use during competition
   public static final boolean disableExtraTelemetry = false;
 
+  public static final class DebugConstants {
+    public static final boolean writeSwerveErrors = true;
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds

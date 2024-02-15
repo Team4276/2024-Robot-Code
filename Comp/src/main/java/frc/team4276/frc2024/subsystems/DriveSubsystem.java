@@ -373,7 +373,7 @@ public class DriveSubsystem extends Subsystem {
     mPeriodicIO.heading_setpoint = Rotation2d.fromDegrees(desHeadingDeg);
   }
 
-  public void teleopDrive(ChassisSpeeds speeds) {
+  public synchronized void teleopDrive(ChassisSpeeds speeds) {
     if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL) {
       mControlState = DriveControlState.OPEN_LOOP;
     }

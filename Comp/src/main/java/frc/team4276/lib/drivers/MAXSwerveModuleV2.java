@@ -4,11 +4,16 @@
 
 package frc.team4276.lib.drivers;
 
-import frc.team1678.lib.swerve.ModuleState;
-import frc.team254.lib.util.Util;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Timer;
+
+import frc.team254.lib.util.Util;
+
+import frc.team1678.lib.swerve.ModuleState;
+
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.ModuleConstants;
+import frc.team4276.frc2024.Constants.DebugConstants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -16,8 +21,8 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.REVLibError;
 
-//TODO: actually implement this as a subsystem too lazy to rn :p
 public class MAXSwerveModuleV2 extends Subsystem {
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;
@@ -28,8 +33,8 @@ public class MAXSwerveModuleV2 extends Subsystem {
   private final SparkPIDController m_drivingPIDController;
   private final SparkPIDController m_turningPIDController;
 
-  private double m_chassisAngularOffset = 0;
-  private ModuleState m_desiredState;
+  private final int kDrivingCANId;
+  private final int kTurningCANId;
 
   //TODO: look into sampling depth
   //TODO: look into error initiallization
@@ -46,6 +51,9 @@ public class MAXSwerveModuleV2 extends Subsystem {
   public MAXSwerveModuleV2(int drivingCANId, int turningCANId, double chassisAngularOffset) {
     m_drivingSparkMax = new CANSparkMax(drivingCANId, MotorType.kBrushless);
     m_turningSparkMax = new CANSparkMax(turningCANId, MotorType.kBrushless);
+
+    kDrivingCANId = drivingCANId;
+    kTurningCANId = turningCANId;
 
     // Factory reset, so we get the SPARKS MAX to a known state before configuring
     // them. This is useful in case a SPARK MAX is swapped out.
@@ -110,15 +118,13 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_drivingSparkMax.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
     m_turningSparkMax.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
 
+    m_drivingEncoder.setPosition(0);
+    m_turningEncoder.setZeroOffset(chassisAngularOffset);
+
     // Save the SPARK MAX configurations. If a SPARK MAX browns out during
     // operation, it will maintain the above configurations.
     m_drivingSparkMax.burnFlash();
     m_turningSparkMax.burnFlash();
-
-    m_chassisAngularOffset = chassisAngularOffset;
-    m_desiredState = ModuleState.identity();
-    m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
-    m_drivingEncoder.setPosition(0);
   }
 
   /**
@@ -131,7 +137,7 @@ public class MAXSwerveModuleV2 extends Subsystem {
     // relative to the chassis.
     return new ModuleState(
         m_drivingEncoder.getPosition(),
-        new Rotation2d(m_turningEncoder.getPosition() - m_chassisAngularOffset),
+        new Rotation2d(m_turningEncoder.getPosition()),
         m_drivingEncoder.getVelocity());
   }
 
@@ -145,51 +151,39 @@ public class MAXSwerveModuleV2 extends Subsystem {
       stop();
       return;
 
-    } else {
-      // Apply chassis angular offset to the desired state.
-      ModuleState optimizedDesiredState = ModuleState.identity();
-
-      optimizedDesiredState.speedMetersPerSecond = Util.limit(desiredState.speedMetersPerSecond,
-          DriveConstants.kMaxVel);
-      optimizedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
-
-      double targetAngle = optimizedDesiredState.angle.getDegrees();
-
-      if (Util.shouldReverse(
-          new frc.team254.lib.geometry.Rotation2d(targetAngle),
-          new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(m_turningEncoder.getPosition())))) {
-        optimizedDesiredState.speedMetersPerSecond *= -1;
-        optimizedDesiredState.angle = new Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
-      }
-
-      optimizedDesiredState.angle = new Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
-          Math.toDegrees(m_turningEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
-
-      // Optimize the reference state to avoid spinning further than 90 degrees.
-      // ModuleState optimizedDesiredState =
-      // ModuleState.optimize(correctedDesiredState.angle, getState());
-
-      driveSetpoint = optimizedDesiredState.speedMetersPerSecond;
-      turnSetpoint = optimizedDesiredState.angle.getRadians();
-
-      // Command driving and turning SPARKS MAX towards their respective setpoints.
-      m_drivingPIDController.setReference(optimizedDesiredState.speedMetersPerSecond,
-          CANSparkMax.ControlType.kVelocity);
-      m_turningPIDController.setReference(optimizedDesiredState.angle.getRadians(), CANSparkMax.ControlType.kPosition);
-
-      m_desiredState = desiredState;
     }
+
+    double speed = desiredState.speedMetersPerSecond;
+    Rotation2d angle = desiredState.angle;
+
+    if (Util.shouldReverse(frc.team254.lib.geometry.Rotation2d.fromWPI(desiredState.angle),
+      frc.team254.lib.geometry.Rotation2d.fromRadians(m_turningEncoder.getPosition()))) {
+      speed *= -1;
+      angle.rotateBy(new Rotation2d(Math.PI));
+    }
+
+    if (DebugConstants.writeSwerveErrors) {
+      double timestamp = Timer.getFPGATimestamp();
+      REVLibError e1 = m_drivingPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+      REVLibError e2 = m_turningPIDController.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition);
+
+      checkMotorCommands(e1, e2, timestamp);
+      return;
+    }
+
+    m_drivingPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+    m_turningPIDController.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition);
   }
 
-  private double driveSetpoint;
-  private double turnSetpoint;
+  private void checkMotorCommands(REVLibError e1, REVLibError e2, double timestamp) {
+    if(e1 == REVLibError.kOk && e2 == REVLibError.kOk){
+      return;
+    }
 
-  public double getDriveSetpoint() {
-    return driveSetpoint;
-  }
-
-  public double getTurnSetpoint() {
-    return turnSetpoint;
+    System.out.println("Driving Motor ID:" + kDrivingCANId + 
+      " returned " + e1.toString() + " at " + timestamp);
+    System.out.println("Turning Motor ID:" + kTurningCANId + 
+      " returned " + e2.toString() + " at " + timestamp);
   }
 
   /** Zeroes all the SwerveModule encoders. */
@@ -200,10 +194,5 @@ public class MAXSwerveModuleV2 extends Subsystem {
   public void stop() {
     m_drivingSparkMax.set(0);
     m_turningSparkMax.set(0);
-
-  } 
-
-  public double getMotorSpeed(){
-    return m_drivingEncoder.getVelocity();
   }
 }
