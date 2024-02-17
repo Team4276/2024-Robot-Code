@@ -326,6 +326,7 @@ public final class Constants {
       kFourBarFFConstants.kTopCOMToMotorSupport = 0.0; // Metres
       kFourBarFFConstants.kRotationToArmCOM = 0.0; // Metres
     }
+
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
     static {
       kFourBarConstants.kMasterConstants = new ServoMotorConstants();
@@ -355,6 +356,14 @@ public final class Constants {
       kFourBarConstants.kVoltageCompensation = 12.0;
     }
 
+  }
+
+  public static class FlywheelConstants{
+    public static double kS_Top = 0.137;
+    public static double kS_Bottom = 0.1275;
+    // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel 
+    public static double kV = 0.0020614125023555073743193198053;
+    public static double kA = 0;
   }
 
 }
