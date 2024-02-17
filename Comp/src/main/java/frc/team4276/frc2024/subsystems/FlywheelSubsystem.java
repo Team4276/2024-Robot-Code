@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team4276.frc2024.Constants.FlywheelConstants;
@@ -28,11 +27,8 @@ public class FlywheelSubsystem extends Subsystem {
     private DesiredMode mDesiredMode = DesiredMode.VOLTAGE;
 
     private boolean topIdleFlip = true;
-    private boolean useEncoder = false;
+    private boolean useEncoder = true;
     private double flipDelay = 0.0;
-
-    private double des_top_RPM = 0;
-    private double des_bottom_RPM = 0;
 
     private static FlywheelSubsystem mInstance;
 
@@ -106,13 +102,16 @@ public class FlywheelSubsystem extends Subsystem {
         }
     }
 
-    public void setFlip(boolean top, boolean useEncoder, double delay){
+    public void setFlip(boolean topIdleFlip, boolean useEncoder, double flipDelay){
         if (mDesiredMode != DesiredMode.WHAT_THE_FLIP) {
             mDesiredMode = DesiredMode.WHAT_THE_FLIP;
         }
-        
 
+        this.topIdleFlip = topIdleFlip;
+        this.useEncoder = useEncoder;
+        this.flipDelay = flipDelay;
 
+        mPeriodicIO.flipTime = -1;
     }
 
     public boolean atSetpoint(){
@@ -132,6 +131,8 @@ public class FlywheelSubsystem extends Subsystem {
         double des_bottom_RPM;
         double curr_top_RPM;
         double curr_bottom_RPM;
+        boolean flipping;
+        double flipTime;
 
         // Outputs
         double des_top_voltage;
@@ -163,7 +164,7 @@ public class FlywheelSubsystem extends Subsystem {
                     case DEFEEDING:
                         break;
                     case WHAT_THE_FLIP:
-                        break;
+                        mPeriodicIO.flipping = shouldFlip(timestamp);
                     default:
                         break;
                 }
@@ -185,10 +186,10 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     private void updateRPM(){
-        mPeriodicIO.des_top_voltage = mTopFF.calculate(des_top_RPM);
-        mPeriodicIO.des_bottom_voltage = mBottomFF.calculate(des_bottom_RPM);
+        mPeriodicIO.des_top_voltage = mTopFF.calculate(mPeriodicIO.des_top_RPM);
+        mPeriodicIO.des_bottom_voltage = mBottomFF.calculate(mPeriodicIO.des_bottom_RPM);
 
-        if (mDesiredMode == DesiredMode.WHAT_THE_FLIP) {
+        if (mDesiredMode == DesiredMode.WHAT_THE_FLIP && !mPeriodicIO.flipping) {
             if (topIdleFlip) {
                 mPeriodicIO.des_top_voltage = 0.0;
             } else {
@@ -196,5 +197,37 @@ public class FlywheelSubsystem extends Subsystem {
             }
         }
 
+    }
+
+    private boolean shouldFlip(double timestamp){
+        boolean ready;
+
+        if (useEncoder){
+            if (topIdleFlip) {
+                ready = Math.abs(mPeriodicIO.curr_top_RPM) > FlywheelConstants.kFlywheelAllowableError;
+            } else {
+                ready = Math.abs(mPeriodicIO.curr_bottom_RPM) > FlywheelConstants.kFlywheelAllowableError;
+            }
+        } else {
+            ready = true;
+        }
+
+        if (!ready){
+            return false;
+        }
+
+        delay(timestamp);
+
+        if (mPeriodicIO.flipTime > timestamp){
+            return false;
+        }
+
+        return ready;
+    }
+
+    private void delay(double timestamp){
+        if (mPeriodicIO.flipTime == -1) {
+            mPeriodicIO.flipTime = timestamp + flipDelay;
+        }
     }
 }

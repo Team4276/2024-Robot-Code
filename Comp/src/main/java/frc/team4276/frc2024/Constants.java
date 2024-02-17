@@ -22,8 +22,6 @@ import frc.team254.lib.geometry.Rotation2d;
 import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 import frc.team4276.lib.drivers.FourBarFeedForward.FourBarFeedForwardConstants;
-import frc.team4276.lib.drivers.ServoMotorSubsystem.ControlState;
-import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorConstants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
 
@@ -329,21 +327,18 @@ public final class Constants {
 
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
     static {
-      kFourBarConstants.kMasterConstants = new ServoMotorConstants();
-      kFourBarConstants.kFollowerConstants = new ServoMotorConstants[0];
+      kFourBarConstants.kMasterConstants.id = 30;
+      kFourBarConstants.kMasterConstants.isInverted = false;
 
       kFourBarConstants.kIsInverted = false;
-      kFourBarConstants.kIsCircular = false;
-      kFourBarConstants.kUnitsPerRotation = 1.0; // Overall Rotation
-      kFourBarConstants.kGearRatio = 1.0; // Motor Rotations to Overall Rotations
+      kFourBarConstants.kIsCircular = true;
+      kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
+      kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
       kFourBarConstants.kOffset = 0.0; // Set in hardware client
       kFourBarConstants.kHomePosition = 0.0;
       kFourBarConstants.kMinPosition = Double.NEGATIVE_INFINITY;
       kFourBarConstants.kMaxPosition = Double.POSITIVE_INFINITY;
-      kFourBarConstants.kAbsoluteEncoderAvgSamplingDepth = 2;
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
-
-      kFourBarConstants.kControlState = ControlState.OPEN_LOOP;
 
       // TODO: add PID placeholders here
 
@@ -364,6 +359,8 @@ public final class Constants {
     // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel 
     public static double kV = 0.0020614125023555073743193198053;
     public static double kA = 0;
+
+    public static double kFlywheelAllowableError = 50;
   }
 
 }

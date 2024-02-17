@@ -16,6 +16,7 @@ import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.LimelightConstants;
+import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -24,6 +25,7 @@ import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.RobotStateEstimator;
+import frc.team4276.frc2024.subsystems.Superstructure;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,6 +44,7 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   private final LimeLight mLimeLight = LimeLight.getInstance();
   private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
+  private final Superstructure mSuperstructure = Superstructure.getInstance();
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -65,6 +68,7 @@ public class Robot extends TimedRobot {
       mSubsystemManager.setSubsystems(
           mDriveSubsystem,
           mRobotStateEstimator,
+          mSuperstructure,
           mLimeLight
           );
 
@@ -226,6 +230,10 @@ public class Robot extends TimedRobot {
 
       if (mControlBoard.driver.getLeftBumperPressed()) {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
+      }
+
+      if (mControlBoard.operator.getRightY() > OIConstants.kJoystickDeadband){
+        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 3);
       }
 
     } catch (Throwable t) {

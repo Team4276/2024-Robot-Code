@@ -51,10 +51,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public double kHomePosition = 0.0;
         public double kMinPosition = Double.NEGATIVE_INFINITY;
         public double kMaxPosition = Double.POSITIVE_INFINITY;
-        public int kAbsoluteEncoderAvgSamplingDepth = 2;
+        // public int kAbsoluteEncoderAvgSamplingDepth = 2;
         public int kRelativeEncoderAvgSamplingDepth = 2;
-
-        public ControlState kControlState = ControlState.OPEN_LOOP;
 
         // TODO: add PID placeholders here
 
@@ -92,7 +90,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mAbsoluteEncoder.setInverted(constants.kIsInverted);
         mAbsoluteEncoder.setPositionConversionFactor(constants.kUnitsPerRotation);
         mAbsoluteEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation / 60.0);
-        mAbsoluteEncoder.setAverageDepth(constants.kAbsoluteEncoderAvgSamplingDepth);
+        // mAbsoluteEncoder.setAverageDepth(constants.kAbsoluteEncoderAvgSamplingDepth);
         mAbsoluteEncoder.setZeroOffset(constants.kOffset);
 
         mRelativeEncoder = mMaster.getEncoder();
@@ -101,8 +99,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mRelativeEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation / (60.0 * constants.kGearRatio));
         mRelativeEncoder.setAverageDepth(constants.kRelativeEncoderAvgSamplingDepth);
         mRelativeEncoder.setPosition(constants.kOffset / constants.kGearRatio);
-        
-        mControlState = constants.kControlState;
 
         mFourBarFF = new FourBarFeedForward(constants.kFourBarFFConstants);
         mTrapezoidProfile = new TrapezoidProfile(constants.kFourBarProfileContraints);
@@ -117,12 +113,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         FOUR_BAR_FF
     }
 
-    public synchronized void setVolts(double volts) {
+    public synchronized void setVoltage(double voltage) {
         if (mControlState != ControlState.OPEN_LOOP) {
             mControlState = ControlState.OPEN_LOOP;
         }
 
-        mPeriodicIO.demand = volts;
+        mPeriodicIO.demand = voltage;
     }
 
     //TODO: look into S curve

@@ -17,9 +17,4 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
     private FourBarSubsystem(){
         super(SuperstructureConstants.kFourBarConstants);
     }
-    
-    
-
-    
-
 }
