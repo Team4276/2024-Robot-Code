@@ -44,7 +44,7 @@ public class DriveSubsystem extends Subsystem {
   // The gyro sensor
   private Pigeon mPigeon;
 
-  private PeriodicIO mPeriodicIO = new PeriodicIO();
+  private PeriodicIO mPeriodicIO;
   private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
   private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
@@ -92,6 +92,8 @@ public class DriveSubsystem extends Subsystem {
     mSnapController.setTolerance(SnapConstants.kPositionTolerance, SnapConstants.kAngularVelocityTolerance);
 
     mAutoAlignPlanner = new AutoAlignPlanner();
+
+    mPeriodicIO = new PeriodicIO();
 
   }
 

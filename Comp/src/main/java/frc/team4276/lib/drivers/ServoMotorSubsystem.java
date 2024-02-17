@@ -139,8 +139,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         double timestamp;
         double position_units;
         double velocity_units;
-        double internal_position_units;
-        double internal_velocity_units;
+        // double internal_position_units;
+        // double internal_velocity_units;
 
         State fourbar_setpoint = new State();
 
@@ -154,8 +154,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
         mPeriodicIO.position_units = mAbsoluteEncoder.getPosition();
         mPeriodicIO.velocity_units = mAbsoluteEncoder.getVelocity();
-        mPeriodicIO.internal_position_units = mRelativeEncoder.getPosition();
-        mPeriodicIO.internal_velocity_units = mRelativeEncoder.getVelocity();
+        // mPeriodicIO.internal_position_units = mRelativeEncoder.getPosition();
+        // mPeriodicIO.internal_velocity_units = mRelativeEncoder.getVelocity();
     }
 
     @Override
