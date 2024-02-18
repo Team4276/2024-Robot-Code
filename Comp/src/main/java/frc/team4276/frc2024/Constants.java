@@ -327,10 +327,9 @@ public final class Constants {
 
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
     static {
-      kFourBarConstants.kMasterConstants.id = 30;
+      kFourBarConstants.kMasterConstants.id = 9;
       kFourBarConstants.kMasterConstants.isInverted = false;
 
-      kFourBarConstants.kIsInverted = false;
       kFourBarConstants.kIsCircular = true;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
       kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
@@ -345,7 +344,7 @@ public final class Constants {
       kFourBarConstants.kFourBarFFConstants = kFourBarFFConstants;
       kFourBarConstants.kFourBarProfileContraints = new Constraints(0, 0);
 
-      kFourBarConstants.kIdleMode = IdleMode.kCoast;
+      kFourBarConstants.kIdleMode = IdleMode.kBrake;
 
       kFourBarConstants.kSmartCurrentLimit = 40;
       kFourBarConstants.kVoltageCompensation = 12.0;
@@ -354,10 +353,11 @@ public final class Constants {
   }
 
   public static class FlywheelConstants{
-    public static double kS_Top = 0.137;
-    public static double kS_Bottom = 0.1275;
+    public static double kS_Top = 0.188;
+    public static double kS_Bottom = 0.166;
     // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel 
-    public static double kV = 0.0020614125023555073743193198053;
+    public static double kV_Top = 0.0020014125023555073743193198053;
+    public static double kV_Bottom = 0.0020614125023555073743193198053;
     public static double kA = 0;
 
     public static double kFlywheelAllowableError = 50;

@@ -43,7 +43,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public ServoMotorConstants kMasterConstants = new ServoMotorConstants();
         public ServoMotorConstants[] kFollowerConstants = new ServoMotorConstants[0];
 
-        public boolean kIsInverted = false;
         public boolean kIsCircular = false;
         public double kUnitsPerRotation = 1.0; // Overall Rotation
         public double kGearRatio = 1.0; // Motor Rotations to Overall Rotations
@@ -87,14 +86,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         }
 
         mAbsoluteEncoder = mMaster.getAbsoluteEncoder(Type.kDutyCycle);
-        mAbsoluteEncoder.setInverted(constants.kIsInverted);
         mAbsoluteEncoder.setPositionConversionFactor(constants.kUnitsPerRotation);
         mAbsoluteEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation / 60.0);
         // mAbsoluteEncoder.setAverageDepth(constants.kAbsoluteEncoderAvgSamplingDepth);
         mAbsoluteEncoder.setZeroOffset(constants.kOffset);
 
         mRelativeEncoder = mMaster.getEncoder();
-        mRelativeEncoder.setInverted(constants.kIsInverted);
         mRelativeEncoder.setPositionConversionFactor(constants.kUnitsPerRotation / constants.kGearRatio);
         mRelativeEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation / (60.0 * constants.kGearRatio));
         mRelativeEncoder.setAverageDepth(constants.kRelativeEncoderAvgSamplingDepth);

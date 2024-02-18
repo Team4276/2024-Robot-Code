@@ -8,10 +8,8 @@ import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team4276.frc2024.Constants.DriveConstants;
@@ -23,9 +21,14 @@ import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
+import frc.team4276.frc2024.subsystems.FourBarSubsystem;
+import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.RobotStateEstimator;
 import frc.team4276.frc2024.subsystems.Superstructure;
+import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
+import frc.team4276.frc2024.statemachines.FlywheelState;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -44,7 +47,11 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   private final LimeLight mLimeLight = LimeLight.getInstance();
   private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
+  private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
+  private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
+  private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
   private final Superstructure mSuperstructure = Superstructure.getInstance();
+  
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -53,8 +60,6 @@ public class Robot extends TimedRobot {
   private AutoModeExecutor mAutoModeExecutor;
 
   private final AllianceChooser mAllianceChooser = AllianceChooser.getInstance();
-
-  private PowerDistribution mPowerDistribution = new PowerDistribution();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -69,6 +74,9 @@ public class Robot extends TimedRobot {
           mDriveSubsystem,
           mRobotStateEstimator,
           mSuperstructure,
+          mFourBarSubsystem,
+          mIntakeSubsystem,
+          mFlywheelSubsystem,
           mLimeLight
           );
 
@@ -97,8 +105,6 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     mSubsystemManager.outputToSmartDashboard();
     mEnabledLooper.outputToSmartDashboard();
-
-    SmartDashboard.putBoolean("Ruh Roh Raggy", mPowerDistribution.getVoltage() > 12.3);
 
   }
 
@@ -232,10 +238,32 @@ public class Robot extends TimedRobot {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
       }
 
-      if (mControlBoard.operator.getRightY() > OIConstants.kJoystickDeadband){
+      if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband){
         mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 3);
+      } else {
+        mSuperstructure.setFourBarVoltage(0.0);
       }
 
+      if(mControlBoard.operator.getLT()) {
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
+      } else if(mControlBoard.operator.getBButton()){
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -4000));
+      } else if(mControlBoard.operator.getAButton()){
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, 0.01, 0.01));
+      } else {
+        mSuperstructure.setFlywheelState(new FlywheelState());
+      }
+
+      if(mControlBoard.operator.getRT()) {
+        mIntakeSubsystem.reverse(mControlBoard.operator.getRightTriggerAxis());
+      } else if(mControlBoard.driver.getRT()) {
+        mIntakeSubsystem.intake();
+      } else {
+        mIntakeSubsystem.stop();
+      }
+
+
+      
     } catch (Throwable t) {
       throw t;
     }

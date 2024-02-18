@@ -2,13 +2,15 @@ package frc.team4276.frc2024.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1678.lib.Util;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+
 import frc.team4276.frc2024.Constants.FlywheelConstants;
 import frc.team4276.lib.drivers.Subsystem;
 
@@ -24,7 +26,7 @@ public class FlywheelSubsystem extends Subsystem {
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();
 
-    private DesiredMode mDesiredMode = DesiredMode.VOLTAGE;
+    private DesiredFlywheelMode mDesiredMode = DesiredFlywheelMode.VOLTAGE;
 
     private boolean topIdleFlip = true;
     private boolean useEncoder = true;
@@ -41,8 +43,8 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     private FlywheelSubsystem(){
-        mTopMotor = new CANSparkMax(18, MotorType.kBrushless);
-        mBottomMotor = new CANSparkMax(20, MotorType.kBrushless);
+        mTopMotor = new CANSparkMax(10, MotorType.kBrushless);
+        mBottomMotor = new CANSparkMax(11, MotorType.kBrushless);
 
         mTopMotor.setInverted(false);
         mBottomMotor.setInverted(false);
@@ -74,13 +76,13 @@ public class FlywheelSubsystem extends Subsystem {
         mTopMotor.burnFlash();
         mBottomMotor.burnFlash();
 
-        mTopFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Top,FlywheelConstants.kV,FlywheelConstants.kA);
-        mBottomFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Bottom,FlywheelConstants.kV,FlywheelConstants.kA);
+        mTopFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Top,FlywheelConstants.kV_Top,FlywheelConstants.kA);
+        mBottomFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Bottom,FlywheelConstants.kV_Bottom,FlywheelConstants.kA);
     }
 
     public void setVoltage(double des_top_voltage, double des_bottom_voltage){
-        if (mDesiredMode != DesiredMode.VOLTAGE) {
-            mDesiredMode = DesiredMode.VOLTAGE;
+        if (mDesiredMode != DesiredFlywheelMode.VOLTAGE) {
+            mDesiredMode = DesiredFlywheelMode.VOLTAGE;
         }
 
         mPeriodicIO.des_top_voltage = des_top_voltage;
@@ -88,8 +90,8 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public void setTargetRPM(double des_top_RPM, double des_bottom_RPM){
-        if (mDesiredMode != DesiredMode.RPM) {
-            mDesiredMode = DesiredMode.RPM;
+        if (mDesiredMode != DesiredFlywheelMode.RPM) {
+            mDesiredMode = DesiredFlywheelMode.RPM;
         }
 
         mPeriodicIO.des_top_RPM = des_top_RPM;
@@ -97,14 +99,26 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public void setDefeeding() {
-        if (mDesiredMode != DesiredMode.DEFEEDING) {
-            mDesiredMode = DesiredMode.DEFEEDING;
+        if (mDesiredMode != DesiredFlywheelMode.DEFEEDING) {
+            mDesiredMode = DesiredFlywheelMode.DEFEEDING;
         }
     }
 
+    public void setFlip(){
+        if (mDesiredMode != DesiredFlywheelMode.WHAT_THE_FLIP) {
+            mDesiredMode = DesiredFlywheelMode.WHAT_THE_FLIP;
+        }
+
+        this.topIdleFlip = true;
+        this.useEncoder = true;
+        this.flipDelay = 0.0;
+
+        mPeriodicIO.flipTime = -1;
+    }
+
     public void setFlip(boolean topIdleFlip, boolean useEncoder, double flipDelay){
-        if (mDesiredMode != DesiredMode.WHAT_THE_FLIP) {
-            mDesiredMode = DesiredMode.WHAT_THE_FLIP;
+        if (mDesiredMode != DesiredFlywheelMode.WHAT_THE_FLIP) {
+            mDesiredMode = DesiredFlywheelMode.WHAT_THE_FLIP;
         }
 
         this.topIdleFlip = topIdleFlip;
@@ -115,10 +129,10 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public boolean atSetpoint(){
-        return false;
+        return mPeriodicIO.atSetpoint;
     }
 
-    private enum DesiredMode {
+    public enum DesiredFlywheelMode {
         VOLTAGE,
         RPM,
         DEFEEDING,
@@ -129,10 +143,11 @@ public class FlywheelSubsystem extends Subsystem {
         // Inputs
         double des_top_RPM;
         double des_bottom_RPM;
-        double curr_top_RPM;
-        double curr_bottom_RPM;
-        boolean flipping;
+        double curr_top_RPM = 0.0;
+        double curr_bottom_RPM = 0.0;
+        boolean flipping = false;
         double flipTime;
+        boolean atSetpoint;
 
         // Outputs
         double des_top_voltage;
@@ -144,6 +159,9 @@ public class FlywheelSubsystem extends Subsystem {
     public void readPeriodicInputs() {
         mPeriodicIO.curr_top_RPM = mTopEncoder.getVelocity();
         mPeriodicIO.curr_bottom_RPM = mBottomEncoder.getVelocity();
+        mPeriodicIO.atSetpoint = (mPeriodicIO.flipping) || 
+            (Util.epsilonEquals(mPeriodicIO.curr_top_RPM, mPeriodicIO.des_top_RPM, FlywheelConstants.kFlywheelAllowableError) 
+            && Util.epsilonEquals(mPeriodicIO.curr_bottom_RPM, mPeriodicIO.des_bottom_RPM, FlywheelConstants.kFlywheelAllowableError));
     }
 
     @Override
@@ -189,14 +207,13 @@ public class FlywheelSubsystem extends Subsystem {
         mPeriodicIO.des_top_voltage = mTopFF.calculate(mPeriodicIO.des_top_RPM);
         mPeriodicIO.des_bottom_voltage = mBottomFF.calculate(mPeriodicIO.des_bottom_RPM);
 
-        if (mDesiredMode == DesiredMode.WHAT_THE_FLIP && !mPeriodicIO.flipping) {
+        if (mDesiredMode == DesiredFlywheelMode.WHAT_THE_FLIP && !mPeriodicIO.flipping) {
             if (topIdleFlip) {
                 mPeriodicIO.des_top_voltage = 0.0;
             } else {
                 mPeriodicIO.des_bottom_voltage = 0.0;
             }
         }
-
     }
 
     private boolean shouldFlip(double timestamp){
@@ -204,9 +221,9 @@ public class FlywheelSubsystem extends Subsystem {
 
         if (useEncoder){
             if (topIdleFlip) {
-                ready = Math.abs(mPeriodicIO.curr_top_RPM) > FlywheelConstants.kFlywheelAllowableError;
+                ready = Math.abs(mPeriodicIO.curr_bottom_RPM - mPeriodicIO.des_bottom_RPM) < FlywheelConstants.kFlywheelAllowableError;
             } else {
-                ready = Math.abs(mPeriodicIO.curr_bottom_RPM) > FlywheelConstants.kFlywheelAllowableError;
+                ready = Math.abs(mPeriodicIO.curr_top_RPM - mPeriodicIO.des_top_RPM) < FlywheelConstants.kFlywheelAllowableError;
             }
         } else {
             ready = true;
@@ -229,5 +246,11 @@ public class FlywheelSubsystem extends Subsystem {
         if (mPeriodicIO.flipTime == -1) {
             mPeriodicIO.flipTime = timestamp + flipDelay;
         }
+    }
+
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putNumber("Top RPM", mPeriodicIO.curr_top_RPM);
+        SmartDashboard.putNumber("Bottom RPM", mPeriodicIO.curr_bottom_RPM);
     }
 }

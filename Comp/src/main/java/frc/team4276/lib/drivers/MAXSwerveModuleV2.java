@@ -35,6 +35,8 @@ public class MAXSwerveModuleV2 extends Subsystem {
   private final int kDrivingCANId;
   private final int kTurningCANId;
 
+  private double mChassisAngularOffset = 0.0;
+
   //TODO: look into sampling depth
   //TODO: look into error initiallization
   //TODO: look into peridic frame period
@@ -118,7 +120,7 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_turningSparkMax.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
 
     m_drivingEncoder.setPosition(0);
-    m_turningEncoder.setZeroOffset(chassisAngularOffset);
+    mChassisAngularOffset = chassisAngularOffset;
 
     // Save the SPARK MAX configurations. If a SPARK MAX browns out during
     // operation, it will maintain the above configurations.
@@ -136,7 +138,7 @@ public class MAXSwerveModuleV2 extends Subsystem {
     // relative to the chassis.
     return new ModuleState(
         m_drivingEncoder.getPosition(),
-        new Rotation2d(m_turningEncoder.getPosition()),
+        new Rotation2d(m_turningEncoder.getPosition() - mChassisAngularOffset),
         m_drivingEncoder.getVelocity());
   }
 
@@ -153,7 +155,7 @@ public class MAXSwerveModuleV2 extends Subsystem {
     }
 
     double speed = desiredState.speedMetersPerSecond;
-    Rotation2d angle = desiredState.angle;
+    Rotation2d angle = desiredState.angle.rotateBy(new Rotation2d(mChassisAngularOffset));
 
     if (Util.shouldReverse(frc.team254.lib.geometry.Rotation2d.fromWPI(desiredState.angle),
       frc.team254.lib.geometry.Rotation2d.fromRadians(m_turningEncoder.getPosition()))) {

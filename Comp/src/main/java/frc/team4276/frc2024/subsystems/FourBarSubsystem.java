@@ -14,6 +14,8 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
         return mInstance;
     }
 
+    // -1 = forward; 1 = backward (on the robot)
+
     private FourBarSubsystem(){
         super(SuperstructureConstants.kFourBarConstants);
     }
