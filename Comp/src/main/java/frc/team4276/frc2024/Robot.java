@@ -239,7 +239,7 @@ public class Robot extends TimedRobot {
       }
 
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband){
-        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 3);
+        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 4.2);
       } else {
         mSuperstructure.setFourBarVoltage(0.0);
       }
