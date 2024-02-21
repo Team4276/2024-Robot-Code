@@ -5,6 +5,8 @@ import frc.team4276.lib.util.Util;
 import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.geometry.Rotation2d;
 
+//TODO: make signs consistent with model
+
 public class FixedFourBarFeedForward {
     // Constants
     private final double kS; // Volts
@@ -26,6 +28,11 @@ public class FixedFourBarFeedForward {
     private final double kTopLength;
     private final double kSupportLegLength;
 
+    // Kg
+    private final double kMotorLegMass;
+    private final double kTopMass;
+    private final double kSupportLegMass;
+
     /*
      * Lay the line between the rotating points on the X AXIS
      * (if y value = 0 then Com is on the line between the two points of rotation)
@@ -36,7 +43,7 @@ public class FixedFourBarFeedForward {
     private final Translation2d kSupportToCom;
 
     // Dynamics
-    
+
     // Angles on the INSIDE of the quadrilateral (always positive)
     private double motor_inside_angle_;
     private double motor_leg_to_top_inside_angle_;
@@ -52,10 +59,10 @@ public class FixedFourBarFeedForward {
      * to the RIGHT of the support leg and measure from there
      */
 
-    private double motor_to_leg_Com_x;
-    private double support_to_leg_Com_x;
+    private double motor_to_leg_com_x;
+    private double support_to_leg_com_x;
 
-    private double motor_leg_to_top_Com_x;
+    private double motor_leg_to_top_com_x;
 
     public class FixedFourBarFeedForwardConstants {
         public double kS;
@@ -70,6 +77,10 @@ public class FixedFourBarFeedForward {
         public double kMotorLegLength;
         public double kTopLength;
         public double kSupportLegLength;
+
+        public double kMotorLegMass;
+        public double kTopMass;
+        public double kSupportLegMass;
 
         public Translation2d kMotorToCom;
         public Translation2d kMotorLegToTopCom;
@@ -91,10 +102,13 @@ public class FixedFourBarFeedForward {
         this.kTopLength = constants.kTopLength;
         this.kSupportLegLength = constants.kSupportLegLength;
 
+        this.kMotorLegMass = constants.kMotorLegMass;
+        this.kTopMass = constants.kTopMass;
+        this.kSupportLegMass = constants.kSupportLegMass;
+
         this.kMotorToCom = constants.kMotorToCom;
         this.kMotorLegToTopCom = constants.kMotorLegToTopCom;
         this.kSupportToCom = constants.kSupportToCom;
-
     }
 
     /**
@@ -106,16 +120,16 @@ public class FixedFourBarFeedForward {
         return calcGravityVoltage(position_setpoint) + kS * Math.signum(velocity_setpoint) + kV * velocity_setpoint;
     }
 
-    private double calcGravityVoltage(position_setpoint) {
-        updateInsideAngles(position);
+    private double calcGravityVoltage(double position_setpoint) {
+        updateInsideAngles(position_setpoint);
         updateRelevantAngles();
         updateComs();
-        
+
         // desired torque * max volts / max torque
         return calcGravityTorque() * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
     }
 
-    private void updateInsideAngles(double position){
+    private void updateInsideAngles(double position) {
         motor_inside_angle_ = position;
 
         double top_left_to_bottom_right = Util.LoCLength(kBottomLength, kMotorLegLength, motor_inside_angle_);
@@ -123,10 +137,10 @@ public class FixedFourBarFeedForward {
         support_leg_to_top_inside_angle_ = Util.LoCAngle(kTopLength, kSupportLegLength, top_left_to_bottom_right);
 
         motor_leg_to_top_inside_angle_ = Util.LoSAngle(top_left_to_bottom_right, motor_inside_angle_, kBottomLength)
-            + Util.LoSAngle(top_left_to_bottom_right, support_leg_to_top_inside_angle_, kSupportLegLength);
+                + Util.LoSAngle(top_left_to_bottom_right, support_leg_to_top_inside_angle_, kSupportLegLength);
 
         support_inside_angle_ = Util.LoSAngle(top_left_to_bottom_right, motor_inside_angle_, kMotorLegLength)
-            + Util.LoSAngle(top_left_to_bottom_right, support_leg_to_top_inside_angle_, kTopLength);
+                + Util.LoSAngle(top_left_to_bottom_right, support_leg_to_top_inside_angle_, kTopLength);
 
     }
 
@@ -135,52 +149,49 @@ public class FixedFourBarFeedForward {
 
         bottom_to_support_leg_radians_ = Math.PI - support_inside_angle_;
 
-        bottom_to_top_radians_ = motor_leg_to_top_inside_angle_ - (bottom_to_motor_leg_radians_ + 90);
+        bottom_to_top_radians_ = motor_leg_to_top_inside_angle_ - (bottom_to_motor_leg_radians_ + Math.PI);
     }
 
     private void updateComs() {
-        motor_to_leg_C5om_x = kMotorToCom.rotateBy(Rotation2d.fromRadians(
-            bottom_to_motor_leg_radians_)).x_;
+        motor_to_leg_com_x = kMotorToCom.rotateBy(Rotation2d.fromRadians(
+                bottom_to_motor_leg_radians_)).x();
 
-        motor_leg_to_top_Com_x
+        motor_leg_to_top_com_x = kMotorLegToTopCom.rotateBy(Rotation2d.fromRadians(bottom_to_top_radians_)).x();
 
-        
-
-        
+        support_to_leg_com_x = kSupportToCom.rotateBy(Rotation2d.fromRadians(bottom_to_support_leg_radians_)).x();
 
     }
 
     private double calcGravityTorque() {
-        return 0.0;
+        double transfered_force = calcSupportLegTorque() / (kSupportLegLength * Math.sin(support_leg_to_top_inside_angle_));
+
+        //TODO: check this
+
+        return calcMotorLegTorque(); //+ (transfered_force * Math.sin(motor_inside_angle_ > ));
     }
 
     private double calcMotorLegTorque() {
-        return 0.0;
+        return (kMotorLegMass * 9.81 * motor_to_leg_com_x) + calcShooterToMotorLeg();
     }
 
     private double calcSupportLegTorque() {
-        return 0.0;
-    }
-
-    private double calcShooterToMotorLeg() {
-        return 0.0;
-    }
-
-    private double calcShooterToSupportLeg() {
-        return 0.0;
-    }
-
-    private double calcTorque(double force, double distance, double radians) {
-        return force * distance * Math.cos(radians);
+        return (kSupportLegMass * 9.81 * support_to_leg_com_x) + calcShooterToSupportLeg();
     }
 
     /**
-     * @param angle_radians from dynamics
-     * @param x_            from constants
-     * @param y_            from constants
+     * Returns force of top on motor leg
      */
-    private double calcComOnLine(double angle_radians, double x_, double y_) {
-        return 0.0;
+    private double calcShooterToMotorLeg() {
+        double gravity_torque = kTopMass * 9.81 * (Math.abs(kTopLength * Math.cos(bottom_to_top_radians_)) - motor_leg_to_top_com_x);
+        return gravity_torque / Math.abs(kTopLength * Math.cos(bottom_to_top_radians_));
+    }
+
+    /**
+     * Returns force of top on support leg
+     */
+    private double calcShooterToSupportLeg() {
+        double gravity_torque = kTopMass * 9.81 * motor_leg_to_top_com_x;
+        return gravity_torque / Math.abs(kTopLength * Math.cos(bottom_to_top_radians_));
     }
 
 }
