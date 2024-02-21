@@ -2,6 +2,9 @@ package frc.team4276.lib.drivers;
 
 import frc.team4276.lib.util.Util;
 
+import frc.team254.lib.geometry.Translation2d;
+import frc.team254.lib.geometry.Rotation2d;
+
 public class FixedFourBarFeedForward {
     // Constants
     private final double kS; // Volts
@@ -28,12 +31,9 @@ public class FixedFourBarFeedForward {
      * (if y value = 0 then Com is on the line between the two points of rotation)
      * The STATIC POINT should be on the origin.
      */
-    private final double kMotorToCom_X;
-    private final double kMotorToCom_Y;
-    private final double kMotorLegToTopCom_X;
-    private final double kMotorLegToTopCom_Y;
-    private final double kSupportToCom_X;
-    private final double kSupportToCom_Y;
+    private final Translation2d kMotorToCom;
+    private final Translation2d kMotorLegToTopCom;
+    private final Translation2d kSupportToCom;
 
     // Dynamics
     
@@ -52,10 +52,10 @@ public class FixedFourBarFeedForward {
      * to the RIGHT of the support leg and measure from there
      */
 
-    private double motor_to_leg_Com;
-    private double support_to_leg_Com;
+    private double motor_to_leg_Com_x;
+    private double support_to_leg_Com_x;
 
-    private double motor_leg_to_top_Com;
+    private double motor_leg_to_top_Com_x;
 
     public class FixedFourBarFeedForwardConstants {
         public double kS;
@@ -71,12 +71,9 @@ public class FixedFourBarFeedForward {
         public double kTopLength;
         public double kSupportLegLength;
 
-        private double kMotorToCom_X;
-        private double kMotorToCom_Y;
-        private double kMotorLegToTopCom_X;
-        private double kMotorLegToTopCom_Y;
-        private double kSupportToCom_X;
-        private double kSupportToCom_Y;
+        public Translation2d kMotorToCom;
+        public Translation2d kMotorLegToTopCom;
+        public Translation2d kSupportToCom;
     }
 
     public FixedFourBarFeedForward(FixedFourBarFeedForwardConstants constants) {
@@ -94,12 +91,10 @@ public class FixedFourBarFeedForward {
         this.kTopLength = constants.kTopLength;
         this.kSupportLegLength = constants.kSupportLegLength;
 
-        this.kMotorToCom_X = constants.kMotorToCom_X;
-        this.kMotorToCom_Y = constants.kMotorToCom_Y;
-        this.kMotorLegToTopCom_X = constants.kMotorLegToTopCom_X;
-        this.kMotorLegToTopCom_Y = constants.kMotorLegToTopCom_Y;
-        this.kSupportToCom_X = constants.kSupportToCom_X;
-        this.kSupportToCom_Y = constants.kSupportToCom_Y;
+        this.kMotorToCom = constants.kMotorToCom;
+        this.kMotorLegToTopCom = constants.kMotorLegToTopCom;
+        this.kSupportToCom = constants.kSupportToCom;
+
     }
 
     /**
@@ -108,15 +103,16 @@ public class FixedFourBarFeedForward {
      * @return
      */
     public double calculate(double position_setpoint, double velocity_setpoint) {
-        updateReadings(position_setpoint);
-
-        return calcGravityVoltage() + kS * Math.signum(velocity_setpoint) + kV * velocity_setpoint;
+        return calcGravityVoltage(position_setpoint) + kS * Math.signum(velocity_setpoint) + kV * velocity_setpoint;
     }
 
-    private void updateReadings(double position) {
+    private double calcGravityVoltage(position_setpoint) {
         updateInsideAngles(position);
         updateRelevantAngles();
         updateComs();
+        
+        // desired torque * max volts / max torque
+        return calcGravityTorque() * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
     }
 
     private void updateInsideAngles(double position){
@@ -139,18 +135,19 @@ public class FixedFourBarFeedForward {
 
         bottom_to_support_leg_radians_ = Math.PI - support_inside_angle_;
 
-        bottom_to_top_radians_ = 0.0;
-        bottom_to_support_leg_radians_ = 0.0;
-
+        bottom_to_top_radians_ = motor_leg_to_top_inside_angle_ - (bottom_to_motor_leg_radians_ + 90);
     }
 
     private void updateComs() {
+        motor_to_leg_C5om_x = kMotorToCom.rotateBy(Rotation2d.fromRadians(
+            bottom_to_motor_leg_radians_)).x_;
 
-    }
+        motor_leg_to_top_Com_x
 
-    private double calcGravityVoltage() {
-        // desired torque * max volts / max torque
-        return calcGravityTorque() * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
+        
+
+        
+
     }
 
     private double calcGravityTorque() {
