@@ -27,12 +27,15 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     private final AbsoluteEncoder mAbsoluteEncoder;
     private final RelativeEncoder mRelativeEncoder;
 
-    private ControlState mControlState;
-    private final FourBarFeedForward mFourBarFF;
-
     private PeriodicIO mPeriodicIO = new PeriodicIO();
 
+    private ControlState mControlState;
+
+    private final FourBarFeedForward mFourBarFF;
     private TrapezoidProfile mTrapezoidProfile;
+
+    private double mProfileStartTime = 0.0;
+    
 
     public static class ServoMotorConstants {
         public int id;
@@ -50,7 +53,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public double kHomePosition = 0.0;
         public double kMinPosition = Double.NEGATIVE_INFINITY;
         public double kMaxPosition = Double.POSITIVE_INFINITY;
-        // public int kAbsoluteEncoderAvgSamplingDepth = 2;
         public int kRelativeEncoderAvgSamplingDepth = 2;
 
         // TODO: add PID placeholders here
@@ -88,7 +90,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mAbsoluteEncoder = mMaster.getAbsoluteEncoder(Type.kDutyCycle);
         mAbsoluteEncoder.setPositionConversionFactor(constants.kUnitsPerRotation);
         mAbsoluteEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation / 60.0);
-        // mAbsoluteEncoder.setAverageDepth(constants.kAbsoluteEncoderAvgSamplingDepth);
         mAbsoluteEncoder.setZeroOffset(constants.kOffset);
 
         mRelativeEncoder = mMaster.getEncoder();
@@ -124,7 +125,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             mControlState = ControlState.FOUR_BAR_FF;
         }
 
-        mPeriodicIO.fourbar_setpoint = new State(position_rad, 0);
+        mPeriodicIO.position_setpoint_units = position_rad;
+        mPeriodicIO.velocity_setpoint_units = 0.0;
+        
+        mProfileStartTime = mPeriodicIO.timestamp;
     }
 
     private class PeriodicIO{
@@ -135,7 +139,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         // double internal_position_units;
         // double internal_velocity_units;
 
-        State fourbar_setpoint = new State();
+        double position_setpoint_units;
+        double velocity_setpoint_units;
 
         // Outputs
         double demand;
@@ -195,7 +200,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     }
     
     private void updateFourBarSetpoint(){
-        State state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp, new State(mPeriodicIO.position_units, mPeriodicIO.velocity_units), mPeriodicIO.fourbar_setpoint);
+        double t = mPeriodicIO.timestamp - mProfileStartTime;
+        State currState = new State(mPeriodicIO.position_units, mPeriodicIO.velocity_units);
+        State desState = new State(mPeriodicIO.position_setpoint_units, mPeriodicIO.velocity_setpoint_units);
+        State state = mTrapezoidProfile.calculate(t, currState, desState);
 
         mPeriodicIO.feed_forward = mFourBarFF.calculate(state.position, state.velocity);
     }

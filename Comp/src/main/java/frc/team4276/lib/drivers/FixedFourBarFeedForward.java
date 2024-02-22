@@ -6,6 +6,7 @@ import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.geometry.Rotation2d;
 
 //TODO: make signs consistent with model
+//TODO: math ready to check
 
 public class FixedFourBarFeedForward {
     // Constants
@@ -165,9 +166,7 @@ public class FixedFourBarFeedForward {
     private double calcGravityTorque() {
         double transfered_force = calcSupportLegTorque() / (kSupportLegLength * Math.sin(support_leg_to_top_inside_angle_));
 
-        //TODO: check this
-
-        return calcMotorLegTorque(); //+ (transfered_force * Math.sin(motor_inside_angle_ > ));
+        return calcMotorLegTorque() + (transfered_force * Math.sin(motor_inside_angle_ > Math.PI / 4 ? Math.PI - motor_inside_angle_ : motor_inside_angle_));
     }
 
     private double calcMotorLegTorque() {
