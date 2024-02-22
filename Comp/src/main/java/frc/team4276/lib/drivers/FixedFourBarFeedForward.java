@@ -58,7 +58,6 @@ public class FixedFourBarFeedForward {
      * for bottom_to_support_leg_radians_ imagine the bottom support extends
      * to the RIGHT of the support leg and measure from there
      */
-
     private double motor_to_leg_com_x;
     private double support_to_leg_com_x;
 
@@ -86,7 +85,6 @@ public class FixedFourBarFeedForward {
         public Translation2d kMotorLegToTopCom;
         public Translation2d kSupportToCom;
     }
-
     public FixedFourBarFeedForward(FixedFourBarFeedForwardConstants constants) {
         this.kS = constants.kS;
         // max voltage / max speed RPM converted to radians per second

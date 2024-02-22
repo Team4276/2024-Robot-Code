@@ -14,9 +14,9 @@ import frc.team4276.lib.drivers.Subsystem;
  * etc).
  */
 public class Superstructure extends Subsystem {
-    private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
+    public final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
     private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
-
+    
     private double mDesiredVoltage = 0.0;
     private double mCommandedVoltage = 0.0;
     private boolean isFourBarVoltageControl = true;
@@ -25,6 +25,7 @@ public class Superstructure extends Subsystem {
     private FlywheelState mCommandedFlywheelState = new FlywheelState();
 
     private static Superstructure mInstance;
+    
 
     public static Superstructure getInstance() {
         if (mInstance == null) {

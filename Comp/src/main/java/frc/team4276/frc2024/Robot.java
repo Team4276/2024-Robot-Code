@@ -9,6 +9,7 @@ import java.util.Optional;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
@@ -29,7 +30,8 @@ import frc.team4276.frc2024.subsystems.RobotStateEstimator;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.statemachines.FlywheelState;
-
+import frc.team4276.lib.drivers.FourBarFeedForwardSimple;
+import frc.team4276.lib.drivers.FeederSequence;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -51,7 +53,8 @@ public class Robot extends TimedRobot {
   private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
   private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
   private final Superstructure mSuperstructure = Superstructure.getInstance();
-  
+  static DigitalInput input = new DigitalInput(0);
+
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -103,6 +106,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    FourBarFeedForwardSimple.motorSetpoint(0);
     mSubsystemManager.outputToSmartDashboard();
     mEnabledLooper.outputToSmartDashboard();
 
@@ -253,8 +257,10 @@ public class Robot extends TimedRobot {
       } else {
         mSuperstructure.setFlywheelState(new FlywheelState());
       }
-
-      if(mControlBoard.operator.getRT()) {
+      if(!input.get()){
+        FeederSequence.feederSequence(mIntakeSubsystem, input);
+      }
+      else if(mControlBoard.operator.getRT()) {
         mIntakeSubsystem.reverse(mControlBoard.operator.getRightTriggerAxis());
       } else if(mControlBoard.driver.getRT()) {
         mIntakeSubsystem.intake();

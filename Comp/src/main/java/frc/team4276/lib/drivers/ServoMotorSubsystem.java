@@ -21,7 +21,7 @@ import frc.team4276.lib.drivers.FourBarFeedForward.FourBarFeedForwardConstants;
 //TODO: add soft limits to everything;
 
 public abstract class ServoMotorSubsystem extends Subsystem {
-    private final CANSparkMax mMaster;
+    public final CANSparkMax mMaster;
     private final CANSparkMax[] mFollowers;
 
     private final AbsoluteEncoder mAbsoluteEncoder;
