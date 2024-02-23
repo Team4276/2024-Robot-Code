@@ -3,26 +3,29 @@ package frc.team4276.frc2024.subsystems;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team4276.frc2024.statemachines.FlywheelState;
+import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.lib.drivers.Subsystem;
-
-//TODO: writeperiodic outputs
 
 /**
  * Use for ServoMotorSubsystems.
  * <p>
- * This architecture isn't necessary if it only uses one ControlState (PID, FF,
- * etc).
+ * This architecture is only necessary for subsystems with Control States.
  */
 public class Superstructure extends Subsystem {
-    private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
-    private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
+    private final FourBarSubsystem mFourBarSubsystem;
+    private final FlywheelSubsystem mFlywheelSubsystem;
+    private final IntakeSubsystem mIntakeSubsystem;
 
-    private double mDesiredVoltage = 0.0;
-    private double mCommandedVoltage = 0.0;
+    private double mDesiredFourBarVoltage = 0.0;
+    private double mCommandedFourBarVoltage = 0.0;
     private boolean isFourBarVoltageControl = true;
 
     private FlywheelState mDesiredFlywheelState = new FlywheelState();
     private FlywheelState mCommandedFlywheelState = new FlywheelState();
+
+    private IntakeState mDesiredIntakeState = IntakeState.IDLE;
+    private double mDesiredIntakeVoltage = 0.0;
+    private IntakeState mCommandedIntakeState = IntakeState.IDLE;
 
     private static Superstructure mInstance;
 
@@ -34,32 +37,47 @@ public class Superstructure extends Subsystem {
         return mInstance;
     }
 
-    public void setFourBarVoltage(double des_voltage) {
-        mDesiredVoltage = des_voltage;
+    private Superstructure(){
+        mFourBarSubsystem = FourBarSubsystem.getInstance();
+        mFlywheelSubsystem = FlywheelSubsystem.getInstance();
+        mIntakeSubsystem = IntakeSubsystem.getInstance();
+    }
+
+    public void setFourBarVoltage(double voltage) {
+        mDesiredFourBarVoltage = voltage;
     }
 
     public void setFlywheelState(FlywheelState state) {
         mDesiredFlywheelState = state;
     }
 
+    public void setIntakeState(IntakeState state){
+        mDesiredIntakeState = state;
+    }
+
+    public void setIntakeVoltage(double voltage){
+        mDesiredIntakeState = IntakeState.VOLTAGE;
+        mDesiredIntakeVoltage = voltage;
+    }
+
     // Only place we take inputs from controlboard (other than drive subsystem);
     @Override
     public void readPeriodicInputs() {
-        mCommandedVoltage = mDesiredVoltage;
+        mCommandedFourBarVoltage = mDesiredFourBarVoltage;
         mCommandedFlywheelState = mDesiredFlywheelState;
+        mCommandedIntakeState = mDesiredIntakeState;
     }
 
     @Override
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
-            public void onStart(double timestamp) {
-            }
+            public void onStart(double timestamp) {}
 
             @Override
             public void onLoop(double timestamp) {
                 if (isFourBarVoltageControl) {
-                    mFourBarSubsystem.setVoltage(mCommandedVoltage);
+                    mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
                 }
 
                 switch (mCommandedFlywheelState.desired_mode) {
@@ -81,15 +99,19 @@ public class Superstructure extends Subsystem {
                     default:
                         break;
                 }
+
+                if (mCommandedIntakeState == IntakeState.VOLTAGE){
+                    mIntakeSubsystem.setVoltage(mDesiredIntakeVoltage);
+                } else {
+                    mIntakeSubsystem.setState(mCommandedIntakeState);
+                }
             }
 
             @Override
-            public void onStop(double timestamp) {
-            }
+            public void onStop(double timestamp) {}
         });
     }
 
     @Override
-    public void writePeriodicOutputs() {
-    }
+    public void writePeriodicOutputs() {}
 }

@@ -28,6 +28,7 @@ import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.RobotStateEstimator;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
+import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 
 /**
@@ -253,13 +254,17 @@ public class Robot extends TimedRobot {
       } else {
         mSuperstructure.setFlywheelState(new FlywheelState());
       }
-
+      
       if(mControlBoard.operator.getRT()) {
-        mIntakeSubsystem.reverse(mControlBoard.operator.getRightTriggerAxis());
+        mSuperstructure.setIntakeVoltage(mControlBoard.operator.getRightTriggerAxis() * 12);
+      } else if(mControlBoard.operator.getAButton()){
+        mSuperstructure.setIntakeState(IntakeState.FOOT);
+      } else if(mControlBoard.driver.getRightBumper()){
+        mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
       } else if(mControlBoard.driver.getRT()) {
-        mIntakeSubsystem.intake();
+        mSuperstructure.setIntakeState(IntakeState.FASTAKE);
       } else {
-        mIntakeSubsystem.stop();
+        mSuperstructure.setIntakeState(IntakeState.IDLE);
       }
 
 
