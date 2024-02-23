@@ -42,7 +42,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public boolean isInverted; // TODO: check if relative to the master
     }
 
-    public static class ServoMotorSubsystemConstants {// TODO: look into avg depth sampling
+    public static class ServoMotorSubsystemConstants {
         public ServoMotorConstants kMasterConstants = new ServoMotorConstants();
         public ServoMotorConstants[] kFollowerConstants = new ServoMotorConstants[0];
 

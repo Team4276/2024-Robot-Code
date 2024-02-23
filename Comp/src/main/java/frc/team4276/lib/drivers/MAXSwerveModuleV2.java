@@ -31,12 +31,6 @@ public class MAXSwerveModuleV2 extends Subsystem {
   private double m_chassisAngularOffset = 0;
   private ModuleState m_desiredState;
 
-  //TODO: look into sampling depth
-  //TODO: look into error initiallization
-  //TODO: look into peridic frame period
-  //TODO: look into control frame period
-  //TODO: look into CANTimeout
-
   /**
    * Constructs a MAXSwerveModule and configures the driving and turning motor,
    * encoder, and PID controller. This configuration is specific to the REV

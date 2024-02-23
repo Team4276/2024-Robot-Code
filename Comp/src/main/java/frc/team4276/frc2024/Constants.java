@@ -234,7 +234,6 @@ public final class Constants {
     public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.25, 0, new Rotation2d(0));
     public static final Rotation2d kLimeLightTilt = new Rotation2d(20);
 
-    // TODO: get the actual lens height use limelight documentation
     public static final double kLensHeight = 0.2;
 
     public static final double kResolutionWidth = 1280;
