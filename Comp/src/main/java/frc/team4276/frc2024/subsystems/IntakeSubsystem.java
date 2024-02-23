@@ -74,10 +74,6 @@ public class IntakeSubsystem extends Subsystem {
         mPeriodicIO.voltage = voltage;
     }
 
-    public boolean hasNote() {
-        return mPeriodicIO.front_sensor_tripped;
-    }
-
     public IntakeState getState() {
         return mIntakeState;
     }
@@ -126,7 +122,7 @@ public class IntakeSubsystem extends Subsystem {
                         mPeriodicIO.voltage = mIntakeState.voltage;
 
                         // TODO: check how long it takes for current to get to normal amps
-                        if (mStateStartTime < 0.5 || mPeriodicIO.current_current <= 40) break;
+                        if (mStateStartTime < 0.2 || mPeriodicIO.current_current <= 40) break;
 
                         mIntakeState = IntakeState.SLOW_FEED;
 
@@ -148,8 +144,8 @@ public class IntakeSubsystem extends Subsystem {
                         mStateStartTime = mPeriodicIO.timestamp;
 
                     case DEFEED:
-                        //TODO: add another sensor or find how long it takes for note to stop
-                        if(!mPeriodicIO.front_sensor_tripped && mPeriodicIO.timestamp > mStateStartTime + 0.25){
+                        //TODO: add another sensor or find how long it takes for note to stop (preferably another sensor)
+                        if(mPeriodicIO.front_sensor_tripped && mPeriodicIO.timestamp > mStateStartTime + 0.2){
                             mIntakeState = IntakeState.IDLE;
                         }
 
