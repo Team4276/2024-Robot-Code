@@ -2,7 +2,9 @@ package frc.team4276.frc2024.subsystems;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
+import frc.team4276.frc2024.statemachines.SuperstructureState;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.lib.drivers.Subsystem;
 
@@ -16,6 +18,11 @@ public class Superstructure extends Subsystem {
     private final FlywheelSubsystem mFlywheelSubsystem;
     private final IntakeSubsystem mIntakeSubsystem;
 
+    private SuperstructureState mMeasuredState;
+    private SuperstructureState mCommandedState;
+    private GoalState mGoalState;
+    private GoalState mLatestGoalState;
+
     private double mDesiredFourBarVoltage = 0.0;
     private double mCommandedFourBarVoltage = 0.0;
     private boolean isFourBarVoltageControl = true;
@@ -26,6 +33,20 @@ public class Superstructure extends Subsystem {
     private IntakeState mDesiredIntakeState = IntakeState.IDLE;
     private double mDesiredIntakeVoltage = 0.0;
     private IntakeState mCommandedIntakeState = IntakeState.IDLE;
+
+    public enum GoalState{
+        STOW(SuperstructureConstants.kSuperstructureStowState),
+        INTAKE(SuperstructureConstants.kSuperstructureIntakeState),
+        SPEAKER_CLOSE_FRONT(SuperstructureConstants.kSuperstructureSpeakerCloseFrontState),
+        SPEAKER_CLOSE_SIDE(SuperstructureConstants.kSuperstructureSpeakerCloseSideState),
+        READY_MIDDLE(SuperstructureConstants.kSuperstructureReadyMiddleState);
+
+        public SuperstructureState state;
+
+        GoalState(SuperstructureState state){
+            this.state = state;
+        }
+    } 
 
     private static Superstructure mInstance;
 
@@ -41,6 +62,12 @@ public class Superstructure extends Subsystem {
         mFourBarSubsystem = FourBarSubsystem.getInstance();
         mFlywheelSubsystem = FlywheelSubsystem.getInstance();
         mIntakeSubsystem = IntakeSubsystem.getInstance();
+    }
+
+    public void setState(GoalState state){
+        if(mLatestGoalState == null) mLatestGoalState = state;
+
+        mGoalState = state;
     }
 
     public void setFourBarVoltage(double voltage) {
@@ -63,6 +90,10 @@ public class Superstructure extends Subsystem {
     // Only place we take inputs from controlboard (other than drive subsystem);
     @Override
     public void readPeriodicInputs() {
+        if (mGoalState != null) {
+            mCommandedState = mGoalState.state;
+        }
+
         mCommandedFourBarVoltage = mDesiredFourBarVoltage;
         mCommandedFlywheelState = mDesiredFlywheelState;
         mCommandedIntakeState = mDesiredIntakeState;

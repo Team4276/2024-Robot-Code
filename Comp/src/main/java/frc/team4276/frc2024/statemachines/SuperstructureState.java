@@ -1,76 +1,86 @@
 package frc.team4276.frc2024.statemachines;
 
 import frc.team254.lib.util.Util;
+
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
+import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 
 public class SuperstructureState {
-    public double armAngle = SuperstructureConstants.kFourBarConstants.kHomePosition;
-    public double flyWheelRPM = 0.0;
-    public double feederRPM = 0.0;
-    public double intakeRPM = 0.0;
-    public double armAllowableError = SuperstructureConstants.kLiberalArmAllowableError;
-    public double flyWheelAllowableError = SuperstructureConstants.kLiberalFlyWheelAllowableError;
-    public double feederAllowableError = SuperstructureConstants.kLiberalFeederAllowableError;
-    public double intakeAllowableError = SuperstructureConstants.kLiberalIntakeAllowableError;
+    public double fourbar_angle = SuperstructureConstants.kFourBarConstants.kHomePosition;
+    public FlywheelState flywheel_state = new FlywheelState();
+    public IntakeState intake_state = IntakeState.IDLE;
 
-    public SuperstructureState(double armAngle, double flyWheelRPM, double feederRPM, double intakeRPM, 
-        double armAllowableError, double flyWheelAllowableError, double feederAllowableError, double intakeAllowableError) {
+    public FourbarSpeed fourbar_speed = FourbarSpeed.SLOW;
+    public FourbarTolerance fourbar_tolerance = FourbarTolerance.LIBERAL;
+    public FlywheelTolerance flywheel_tolerance = FlywheelTolerance.LIBERAL;
 
-        this.armAngle = armAngle;
-        this.flyWheelRPM = flyWheelRPM;
-        this.feederRPM = feederRPM;
-        this.intakeRPM = armAngle;
-        this.armAllowableError = armAllowableError;
-        this.flyWheelAllowableError = flyWheelAllowableError;
-        this.feederAllowableError = feederAllowableError;
-        this.intakeAllowableError = intakeAllowableError;
+    public enum FourbarSpeed{
+        SLOW(SuperstructureConstants.kSlowFourbarSpeed),
+        MEDIUM(SuperstructureConstants.kMediumFourbarSpeed),
+        SONIC(SuperstructureConstants.kSonicFourbarSpeed);
+
+        public double max_speed;
+
+        FourbarSpeed(double max_speed){
+            this.max_speed = max_speed;
+        }
     }
 
-    public double getArmAngle() {
-        return Util.limit(armAngle, SuperstructureConstants.kFourBarConstants.kMinPosition, SuperstructureConstants.kFourBarConstants.kMaxPosition);
+    public enum FourbarTolerance{
+        LIBERAL(SuperstructureConstants.kLiberalFourbarTolerance),
+        MODERATE(SuperstructureConstants.kModerateFourbarTolerance),
+        CONSERVATIVE(SuperstructureConstants.kConservativeFourbarTolerance);
+
+        public double tol;
+
+        FourbarTolerance(double tol){
+            this.tol = tol;
+        }
+    }
+
+    public enum FlywheelTolerance{
+        LIBERAL(SuperstructureConstants.kLiberalFlywheelTolerance),
+        MODERATE(SuperstructureConstants.kModerateFlywheelTolerance),
+        CONSERVATIVE(SuperstructureConstants.kConservativeFlywheelTolerance);
+
+        public double tol;
+
+        FlywheelTolerance(double tol){
+            this.tol = tol;
+        }
     }
     
-    public double getFlyWheelRPM() {
-        return Util.limit(flyWheelRPM, SuperstructureConstants.kFourBarConstants.kMinPosition, SuperstructureConstants.kFourBarConstants.kMaxPosition);
-    }
-    
-    public double getFeederRPM() {
-        return Util.limit(feederRPM, SuperstructureConstants.kFourBarConstants.kMinPosition, SuperstructureConstants.kFourBarConstants.kMaxPosition);
-    }
-
-    public double getIntakeRPM() {
-        return Util.limit(intakeRPM, SuperstructureConstants.kFourBarConstants.kMinPosition, SuperstructureConstants.kFourBarConstants.kMaxPosition);
-    }
-
-    public boolean isArmInRange(SuperstructureState other) {
-        return isArmInRange(other, Math.min(this.armAllowableError, other.armAllowableError));
-    }
-
-    public boolean isFlyWheelInRange(SuperstructureState other) {
-        return isFlyWheelInRange(other, Math.min(this.flyWheelAllowableError, other.flyWheelAllowableError));
+    /**
+     * Constructs a superstructure goal state
+     * @param fourbar_angle degrees
+     * @param flywheel_state
+     * @param intake_state
+     * @param fourbar_speed
+     * @param fourbar_tolerance
+     * @param flywheel_tolerance
+     */
+    public SuperstructureState(double fourbar_angle, FlywheelState flywheel_state, IntakeState intake_state, FourbarSpeed fourbar_speed, FourbarTolerance fourbar_tolerance, FlywheelTolerance flywheel_tolerance){
+        this.fourbar_angle = Math.toRadians(fourbar_angle);
+        this.flywheel_state = flywheel_state;
+        this.intake_state = intake_state;
+        this.fourbar_speed = fourbar_speed;
+        this.fourbar_tolerance = fourbar_tolerance;
+        this.flywheel_tolerance = flywheel_tolerance;
     }
 
-    public boolean isFeederInRange(SuperstructureState other) {
-        return isFeederInRange(other, Math.min(this.feederAllowableError, other.feederAllowableError));
+    /**
+     * Use for measured states
+     * @param fourbar_angle radians
+     */
+    public SuperstructureState(double fourbar_angle, FlywheelState flywheel_state, IntakeState intake_state){
+        this.fourbar_angle = fourbar_angle;
+        this.flywheel_state = flywheel_state;
+        this.intake_state = intake_state;
     }
 
-    public boolean isIntakeInRange(SuperstructureState other) {
-        return isIntakeInRange(other, Math.min(this.intakeAllowableError, other.intakeAllowableError));
+    public boolean isFourbarInRange(SuperstructureState other){
+        return Util.epsilonEquals(fourbar_angle, other.fourbar_angle, fourbar_tolerance.tol);
     }
 
-    public boolean isArmInRange(SuperstructureState other, double armAllowableError) {
-        return Util.epsilonEquals(this.getArmAngle(), other.getArmAngle(), armAllowableError);
-    }
 
-    public boolean isFlyWheelInRange(SuperstructureState other, double flyWheelAllowableError) {
-        return Util.epsilonEquals(this.getFlyWheelRPM(), other.getFlyWheelRPM(), flyWheelAllowableError);
-    }
-
-    public boolean isFeederInRange(SuperstructureState other, double feederAllowableError) {
-        return Util.epsilonEquals(this.getFeederRPM(), other.getFeederRPM(), feederAllowableError);
-    }
-
-    public boolean isIntakeInRange(SuperstructureState other, double intakeAllowableError) {
-        return Util.epsilonEquals(this.getIntakeRPM(), other.getIntakeRPM(), intakeAllowableError);
-    }
 }

@@ -9,8 +9,7 @@ public class FlywheelState {
     public double des_top_voltage = 0.0;
     public double des_bottom_voltage = 0.0;
 
-    public FlywheelState() {
-    }
+    public FlywheelState() {}
 
     public FlywheelState(DesiredFlywheelMode desired_mode, double des_top_RPM,
             double des_bottom_RPM, double des_top_voltage, double des_bottom_voltage) {
@@ -27,6 +26,4 @@ public class FlywheelState {
         this.des_top_RPM = des_top_RPM;
         this.des_bottom_RPM = des_bottom_RPM;
     }
-
-    
 }

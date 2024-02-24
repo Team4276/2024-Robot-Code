@@ -20,7 +20,13 @@ import frc.team1678.lib.swerve.SwerveDriveKinematics;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
+import frc.team4276.frc2024.statemachines.FlywheelState;
+import frc.team4276.frc2024.statemachines.SuperstructureState;
+import frc.team4276.frc2024.statemachines.SuperstructureState.FlywheelTolerance;
+import frc.team4276.frc2024.statemachines.SuperstructureState.FourbarSpeed;
+import frc.team4276.frc2024.statemachines.SuperstructureState.FourbarTolerance;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
+import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.lib.drivers.FourBarFeedForward.FourBarFeedForwardConstants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
@@ -290,38 +296,28 @@ public final class Constants {
   }
 
   public static final class SuperstructureConstants {
-    public static final double kLiberalArmAllowableError = 0.0;
-    public static final double kLiberalFlyWheelAllowableError = 0.0;
-    public static final double kLiberalFeederAllowableError = 0.0;
-    public static final double kLiberalIntakeAllowableError = 0.0;
-
-    public static final double kModerateArmAllowableError = 0.0;
-    public static final double kModerateFlyWheelAllowableError = 0.0;
-    public static final double kModerateFeederAllowableError = 0.0;
-    public static final double kModerateIntakeAllowableError = 0.0;
-
-    public static final double kConservativeArmAllowableError = 0.0;
-    public static final double kConservativeFlyWheelAllowableError = 0.0;
-    public static final double kConservativeFeederAllowableError = 0.0;
-    public static final double kConservativeIntakeAllowableError = 0.0;
-
-    public static final FourBarFeedForwardConstants kFourBarFFConstants = new FourBarFeedForwardConstants();
+    public static final FourBarFeedForwardConstants kFourbarFFConstants = new FourBarFeedForwardConstants();
     static {
-      kFourBarFFConstants.kS = 0.0; // Find experimentally
-      kFourBarFFConstants.kMotorFreeSpeed = 0.0; // RPM
-      kFourBarFFConstants.kGearRatio = 0.0; // Rotations of motor per rotation of structure
-      kFourBarFFConstants.kStallTorque = 0.0;
-      kFourBarFFConstants.kEfficiency = 0.0; // Value between 0.0 and 1.0
-      kFourBarFFConstants.kMotorAmnt = 0;
+      kFourbarFFConstants.kS = 0.0;
 
-      kFourBarFFConstants.kTopLength = 0.0; // Metres
-      kFourBarFFConstants.kBottomLength = 0.0; // Metres
-      kFourBarFFConstants.kArmLength = 0.0; // Metres; powered directly by motor
-      kFourBarFFConstants.kSupportLength = 0.0; // Metres; not directly powered by motor
-      kFourBarFFConstants.kTopWeight = 0.0; // Kg
-      kFourBarFFConstants.kArmWeight = 0.0; // Kg
-      kFourBarFFConstants.kTopCOMToMotorSupport = 0.0; // Metres
-      kFourBarFFConstants.kRotationToArmCOM = 0.0; // Metres
+      kFourbarFFConstants.kMotorFreeSpeedRpm = 5880.0;
+      kFourbarFFConstants.kGearRatio = 330.0;
+      kFourbarFFConstants.kStallTorque = 3.28;
+      kFourbarFFConstants.kMotorAmnt = 1;
+      kFourbarFFConstants.kEfficiency = 0.8;
+
+      kFourbarFFConstants.kBottomLength = 0.0;
+      kFourbarFFConstants.kMotorLegLength = 0.0;
+      kFourbarFFConstants.kTopLength = 0.0;
+      kFourbarFFConstants.kSupportLegLength = 0.0;
+
+      kFourbarFFConstants.kMotorLegMass = 0.0;
+      kFourbarFFConstants.kTopMass = 0.0;
+      kFourbarFFConstants.kSupportLegMass = 0.0;
+
+      kFourbarFFConstants.kMotorToCom = frc.team254.lib.geometry.Translation2d.identity();
+      kFourbarFFConstants.kMotorLegToTopCom = frc.team254.lib.geometry.Translation2d.identity();
+      kFourbarFFConstants.kSupportToCom = frc.team254.lib.geometry.Translation2d.identity();
     }
 
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
@@ -340,8 +336,8 @@ public final class Constants {
 
       // TODO: add PID placeholders here
 
-      kFourBarConstants.kFourBarFFConstants = kFourBarFFConstants;
-      kFourBarConstants.kFourBarProfileContraints = new Constraints(0, 0);
+      kFourBarConstants.kFourBarFFConstants = kFourbarFFConstants;
+      kFourBarConstants.kFourBarProfileContraints = new Constraints(Math.PI / 8, Math.PI / 8);
 
       kFourBarConstants.kIdleMode = IdleMode.kBrake;
 
@@ -349,12 +345,30 @@ public final class Constants {
       kFourBarConstants.kVoltageCompensation = 12.0;
     }
 
+    public static final double kSlowFourbarSpeed = 0.0; // radians / second
+    public static final double kMediumFourbarSpeed = 0.0;
+    public static final double kSonicFourbarSpeed = 0.0;
+
+    public static final double kLiberalFourbarTolerance = 0.0; // radians
+    public static final double kLiberalFlywheelTolerance = 0.0; // RPM
+
+    public static final double kModerateFourbarTolerance = 0.0;
+    public static final double kModerateFlywheelTolerance = 0.0;
+
+    public static final double kConservativeFourbarTolerance = 0.0;
+    public static final double kConservativeFlywheelTolerance = 0.0;
+
+    public static final SuperstructureState kSuperstructureStowState = new SuperstructureState(0.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL);
+    public static final SuperstructureState kSuperstructureIntakeState = new SuperstructureState(0.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL);
+    public static final SuperstructureState kSuperstructureSpeakerCloseFrontState = new SuperstructureState(0.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL);
+    public static final SuperstructureState kSuperstructureSpeakerCloseSideState = new SuperstructureState(0.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL);
+    public static final SuperstructureState kSuperstructureReadyMiddleState = new SuperstructureState(0.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL);
   }
 
-  public static class FlywheelConstants{
+  public static class FlywheelConstants {
     public static double kS_Top = 0.188;
     public static double kS_Bottom = 0.166;
-    // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel 
+    // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel
     public static double kV_Top = 0.0020014125023555073743193198053;
     public static double kV_Bottom = 0.0020614125023555073743193198053;
     public static double kA = 0;

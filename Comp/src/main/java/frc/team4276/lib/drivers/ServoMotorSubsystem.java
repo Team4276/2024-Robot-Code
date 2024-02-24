@@ -111,6 +111,17 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         FOUR_BAR_FF
     }
 
+    //TODO: properly implement brake mode
+    public synchronized void setIdleMode(IdleMode idleMode) {
+        if(mMaster.getIdleMode() == idleMode) return;
+
+        mMaster.setIdleMode(idleMode);
+        
+        for (CANSparkMax follwer : mFollowers) {
+            follwer.setIdleMode(idleMode);
+        }
+    }
+
     public synchronized void setVoltage(double voltage) {
         if (mControlState != ControlState.OPEN_LOOP) {
             mControlState = ControlState.OPEN_LOOP;
