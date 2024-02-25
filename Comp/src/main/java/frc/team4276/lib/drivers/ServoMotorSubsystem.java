@@ -4,22 +4,23 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 // import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.AccelStrategy;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+
 import frc.team254.lib.util.Util;
+
 import frc.team4276.lib.drivers.FourBarFeedForward.FourBarFeedForwardConstants;
 
 // Subsystem class for NEO v1.1 Brushless motors
@@ -33,7 +34,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     private final AbsoluteEncoder mAbsoluteEncoder;
     private final RelativeEncoder mRelativeEncoder;
 
-    private PeriodicIO mPeriodicIO = new PeriodicIO();
+    private PeriodicIO mPeriodicIO;
 
     private ControlState mControlState;
 
@@ -42,8 +43,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     private final FourBarFeedForward mFourBarFF;
     private TrapezoidProfile mTrapezoidProfile;
 
-    private double mProfileStartTime = 0.0;
-    
+    private State mStateSetpoint;
+    private double mProfileStartTime;
 
     public static class ServoMotorConstants {
         public int id;
@@ -54,7 +55,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public ServoMotorConstants kMasterConstants = new ServoMotorConstants();
         public ServoMotorConstants[] kFollowerConstants = new ServoMotorConstants[0];
 
-        public boolean kIsInverted = false;
+        public boolean kIsInverted = false; // Encoder
         public boolean kIsCircular = false;
         public double kUnitsPerRotation = 1.0; // Overall Rotation
         public double kGearRatio = 1.0; // Motor Rotations to Overall Rotations
@@ -68,13 +69,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public double kI = 0.0;
         public double kD = 0.0;
 
-        // TODO: add PID placeholders here
-
         public double kMaxSpeed = 0.0; // Radians
         public double kMaxAccel = 0.0; // Radians
 
         public FourBarFeedForwardConstants kFourBarFFConstants;
-
 
         public IdleMode kIdleMode = IdleMode.kCoast;
 
@@ -105,7 +103,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
         mAbsoluteEncoder = mMaster.getAbsoluteEncoder(Type.kDutyCycle);
         mAbsoluteEncoder.setPositionConversionFactor(constants.kUnitsPerRotation);
-        mAbsoluteEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation / 60.0);
+        mAbsoluteEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation);
         mAbsoluteEncoder.setInverted(constants.kIsInverted);
         mAbsoluteEncoder.setZeroOffset(constants.kOffset);
 
@@ -119,13 +117,13 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mTrapezoidProfile = new TrapezoidProfile(new Constraints(constants.kMaxSpeed, constants.kMaxAccel));
 
         mPIDController = mMaster.getPIDController();
-        mPIDController.setFeedbackDevice(mAbsoluteEncoder);
+        // mPIDController.setFeedbackDevice(mAbsoluteEncoder);
         mPIDController.setPositionPIDWrappingEnabled(constants.kIsCircular);
         mPIDController.setPositionPIDWrappingMaxInput(constants.kMaxPosition);
         mPIDController.setPositionPIDWrappingMinInput(constants.kMinPosition);
-        mPIDController.setP(mProfileStartTime);
-        mPIDController.setI(mProfileStartTime);
-        mPIDController.setD(mProfileStartTime);
+        mPIDController.setP(constants.kP);
+        mPIDController.setI(constants.kI);
+        mPIDController.setD(constants.kD);
         mPIDController.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, 0);
         // mPIDController.setSmartMotionAllowedClosedLoopError(constants.k);
         mPIDController.setSmartMotionMaxAccel(constants.kMaxAccel * constants.kGearRatio , 0);
@@ -133,7 +131,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
         mMaster.burnFlash();
 
-        SmartDashboard.putNumber("Fourbar Vel", 0.0);
+        mPeriodicIO = new PeriodicIO();
     }
 
     public enum ControlState {
@@ -141,7 +139,14 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         SPARK_PID,
         SPARK_PID_FF,
         FOUR_BAR_FF,
-        PROFILED
+        PROFILED,
+        TEST
+    }
+
+    public enum TrapezoidProfileConfig {
+        SLOW,
+        MEDIUM,
+        SONIC
     }
 
     //TODO: properly implement brake mode
@@ -159,6 +164,18 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         return mMaster.getIdleMode();
     }
 
+    public double getMeasPosition(){
+        return mPeriodicIO.meas_position_units;
+    }
+
+    public double getMeasVelocity(){
+        return mPeriodicIO.meas_velocity_units;
+    }
+
+    public double getAppliedVoltage(){
+        return mPeriodicIO.meas_applied_voltage;
+    }
+
     public synchronized void setVoltage(double voltage) {
         if (mControlState != ControlState.OPEN_LOOP) {
             mControlState = ControlState.OPEN_LOOP;
@@ -173,34 +190,32 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             mControlState = ControlState.FOUR_BAR_FF;
         }
 
-        mPeriodicIO.position_setpoint_units = position_rad;
-        mPeriodicIO.velocity_setpoint_units = 0.0;
+        mStateSetpoint = new State(position_rad, 0.0);
         
         mProfileStartTime = mPeriodicIO.timestamp;
     }
 
-    public synchronized void setFourbarProfiledSetpoint(double position_rad){
-        if(mControlState != ControlState.PROFILED){
-            mControlState = ControlState.PROFILED;
+    public synchronized void setFourBarFFSetpointTEST(double position_rad) {
+        if (mControlState != ControlState.FOUR_BAR_FF) {
+            mControlState = ControlState.FOUR_BAR_FF;
         }
 
-        mPeriodicIO.position_setpoint_units = position_rad;
+        mStateSetpoint = new State(position_rad, 0.0);
+        
+        mProfileStartTime = mPeriodicIO.timestamp;
     }
 
-    public synchronized void updateFourbarFFConfigs(){
-    }
+    public synchronized void updateFourbarFFConfigs(){}
 
     private class PeriodicIO{
         // Inputs
         double timestamp;
-        double position_units;
-        double velocity_units;
-        // double internal_position_units;
-        // double internal_velocity_units;
-        double applied_output;
-
-        double position_setpoint_units;
-        double velocity_setpoint_units;
+        double meas_position_units;
+        double meas_velocity_units;
+        // double meas_internal_position_units;
+        // double meas_internal_velocity_units;
+        double meas_applied_voltage;
+        State meas_state;
 
         // Outputs
         double demand;
@@ -210,11 +225,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     @Override
     public synchronized void readPeriodicInputs() {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-        mPeriodicIO.position_units = mAbsoluteEncoder.getPosition();
-        mPeriodicIO.velocity_units = mAbsoluteEncoder.getVelocity();
+        mPeriodicIO.meas_position_units = mAbsoluteEncoder.getPosition();
+        mPeriodicIO.meas_velocity_units = mAbsoluteEncoder.getVelocity();
         // mPeriodicIO.internal_position_units = mRelativeEncoder.getPosition();
         // mPeriodicIO.internal_velocity_units = mRelativeEncoder.getVelocity();
-        mPeriodicIO.applied_output = mMaster.getAppliedOutput();
+        mPeriodicIO.meas_applied_voltage = mMaster.getAppliedOutput() * 12.0;
+        mPeriodicIO.meas_state = new State(mPeriodicIO.meas_position_units, mPeriodicIO.meas_velocity_units);
 
     }
 
@@ -222,31 +238,15 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
-            public void onStart(double timestamp) {
-            }
+            public void onStart(double timestamp) {}
 
             @Override
             public void onLoop(double timestamp) {
-                synchronized (this) {
-                    switch (mControlState) {
-                        case OPEN_LOOP:
-                            break;
-                        case SPARK_PID:
-                            break;
-                        case SPARK_PID_FF:
-                            break;
-                        case FOUR_BAR_FF:
-                            updateFourBarSetpoint();
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                synchronized (this) {}
             }
 
             @Override
-            public void onStop(double timestamp) {
-            }
+            public void onStop(double timestamp) {}
         });
     }
 
@@ -254,36 +254,21 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     public synchronized void writePeriodicOutputs() {
         if (mControlState == ControlState.OPEN_LOOP) {
             mMaster.setVoltage(mPeriodicIO.demand);
-            SmartDashboard.putNumber("Fourbar Open Loop Voltage", mPeriodicIO.demand);
-        } else if (mControlState == ControlState.SPARK_PID || mControlState == ControlState.SPARK_PID_FF) {
-            // WEEEEEEEEEEEEEEEE
         } else if (mControlState == ControlState.FOUR_BAR_FF) {
-            mMaster.setVoltage(Util.limit(mPeriodicIO.feed_forward, 4.8));
+            State state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp - mProfileStartTime, mPeriodicIO.meas_state, mStateSetpoint);
+            mPeriodicIO.feed_forward = Util.limit(mFourBarFF.calculate(state.position, state.velocity), 4.8);
+
+            mMaster.setVoltage(mPeriodicIO.feed_forward);
             SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
-        } else if (mControlState == ControlState.PROFILED) {
-            mPIDController.setReference(mPeriodicIO.position_setpoint_units, ControlType.kSmartMotion, 0, 
-                0.15, ArbFFUnits.kVoltage);
+        } else if (mControlState == ControlState.TEST) {
+            State state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp - mProfileStartTime, mPeriodicIO.meas_state, mStateSetpoint);
+            mPeriodicIO.feed_forward = Util.limit(mFourBarFF.calculate(state.position, state.velocity), 4.8) + SmartDashboard.getNumber("kS Calibration", 0.0);
+
+            mMaster.setVoltage(mPeriodicIO.feed_forward);
+            SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
         }
-    }
-    
-    private void updateFourBarSetpoint(){
-        double t = mPeriodicIO.timestamp - mProfileStartTime;
-        State currState = new State(mPeriodicIO.position_units, mPeriodicIO.velocity_units);
-        State desState = new State(mPeriodicIO.position_setpoint_units, mPeriodicIO.velocity_setpoint_units);
-        State state = mTrapezoidProfile.calculate(t, currState, desState);
-
-        SmartDashboard.putNumber("Fourbar Des State Position", state.position);
-        SmartDashboard.putNumber("Fourbar Des State Velocity", state.velocity);
-
-        mPeriodicIO.feed_forward = mFourBarFF.calculate(state.position, state.velocity);
     }
 
     @Override
-    public void outputTelemetry() {
-        SmartDashboard.putNumber("Fourbar Applied output", mPeriodicIO.applied_output);
-        SmartDashboard.putNumber("Encoder Position", mPeriodicIO.position_units);
-        SmartDashboard.putNumber("Encoder Position Degrees", Math.toDegrees(mPeriodicIO.position_units));
-        SmartDashboard.putNumber("Calced FourbarFF output", mFourBarFF.calculate(mPeriodicIO.position_setpoint_units, SmartDashboard.getNumber("Fourbar Vel", 0.0)));
-        SmartDashboard.putNumber("Fourbar Setpoint Position", mPeriodicIO.position_setpoint_units);
-    }
+    public void outputTelemetry() {}
 }

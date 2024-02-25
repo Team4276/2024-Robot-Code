@@ -55,7 +55,6 @@ public class Robot extends TimedRobot {
   private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
   private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
   private final Superstructure mSuperstructure = Superstructure.getInstance();
-  
 
   private final Looper mEnabledLooper = new Looper();
   private final Looper mDisabledLooper = new Looper();
@@ -73,7 +72,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     try {
-      // Set subsystems 
+      // Set subsystems
       mSubsystemManager.setSubsystems(
           mDriveSubsystem,
           mRobotStateEstimator,
@@ -81,8 +80,7 @@ public class Robot extends TimedRobot {
           mFourBarSubsystem,
           mIntakeSubsystem,
           mFlywheelSubsystem,
-          mLimeLight
-          );
+          mLimeLight);
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -140,7 +138,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     try {
-      if (mAllianceChooser.getAlliance() == Alliance.Red){
+      if (mAllianceChooser.getAlliance() == Alliance.Red) {
         mLimeLight.setRedTagMap();
       } else {
         mLimeLight.setBlueTagMap();
@@ -175,7 +173,7 @@ public class Robot extends TimedRobot {
 
       mEnabledLooper.start();
       mAutoModeExecutor.start();
-      
+
       mRobotStateEstimator.resetOdometry(new Pose2d(0, 0, new Rotation2d(180)));
 
       mLimeLight.setDisableProcessing(true);
@@ -196,9 +194,9 @@ public class Robot extends TimedRobot {
     try {
       mDisabledLooper.stop();
       mEnabledLooper.start();
-      
+
       mLimeLight.setDisableProcessing(LimelightConstants.disableAfterTeleop);
-      
+
       RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
@@ -206,7 +204,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  //TODO: check if need to flip heading
+  // TODO: check if need to flip heading
 
   /** This function is called periodically during operator control. */
   @Override
@@ -216,8 +214,10 @@ public class Robot extends TimedRobot {
         mDriveSubsystem.zeroHeading(0);
       }
 
-      if (mControlBoard.driver.getRightStickButtonPressed()){
-        mDriveSubsystem.flipHeading();
+      if (mControlBoard.driver.getYButtonPressed()) {
+        mDriveSubsystem.setHeadingSetpoint(0);
+      } else if (mControlBoard.driver.getBButtonPressed()) {
+        mDriveSubsystem.setHeadingSetpoint(180);
       }
 
       if (mControlBoard.driver.getXButton()) {
@@ -230,60 +230,55 @@ public class Robot extends TimedRobot {
             mDriveSubsystem.getWPIHeading()));
       }
 
-      if (mControlBoard.driver.getYButtonPressed()){
-        mDriveSubsystem.setHeadingSetpoint(0);
-      } else if (mControlBoard.driver.getBButtonPressed()) {
-        mDriveSubsystem.setHeadingSetpoint(180);
-      }
+      if (mControlBoard.driver.getLeftBumperPressed()) {
+        if (mDriveSubsystem.getKinematicLimits() == DriveConstants.kDemoLimits) {
+          mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
 
-      if (mControlBoard.driver.getRightStickButtonPressed()) {
-        mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
-      }
-
-      if (mControlBoard.driver.getLeftStickButtonPressed()) {
+          return;
+        }
         mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
+
       }
 
-      if(mControlBoard.operator.getLT()) {
+      if (mControlBoard.operator.getLT()) {
         mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
       } else {
         mSuperstructure.setFlywheelState(new FlywheelState());
       }
-      
-      if(mControlBoard.operator.getRT()) {
-        mSuperstructure.setIntakeVoltage(mControlBoard.operator.getRightTriggerAxis() * 12);
-      } else if(mControlBoard.driver.getRightBumper()){
-        mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
-      } else if(mControlBoard.driver.getRT()) {
-        mSuperstructure.setIntakeState(IntakeState.FASTAKE);
+
+      if (mControlBoard.driver.getRightBumper()) {
+        mSuperstructure.setGoalState(GoalState.SLOWTAKE);
+
+      } else if (mControlBoard.driver.getRT()) {
+        mSuperstructure.setGoalState(GoalState.FASTAKE);
+
+      } else if (mControlBoard.operator.isPOVUPPressed()) {
+        mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
+
+      } else if (mControlBoard.operator.getRT()) {
+        mSuperstructure.setIntakeState(IntakeState.FOOT);
+
       } else {
         mSuperstructure.setIntakeState(IntakeState.IDLE);
+        
       }
 
-      if(mControlBoard.operator.getYButtonPressed()){
+      if (mControlBoard.operator.getRightStickButtonPressed()) {
         mSuperstructure.toggleBrakeModeOnFourbar();
       }
 
-      if(mControlBoard.operator.getAButtonPressed()){
+      if (mControlBoard.operator.getAButtonPressed()) {
         mSuperstructure.toggleFourbarVoltageMode();
       }
 
-      if(mControlBoard.operator.getBButtonPressed()){
-        mSuperstructure.setState(GoalState.INTAKE);
-      } else if(mControlBoard.operator.isPOVUPPressed()){
-        mSuperstructure.setState(GoalState.READY_MIDDLE);
-      }
-
-      if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband){
+      if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
         mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
-      } else if(mControlBoard.operator.getXButton()){
+      } else if (mControlBoard.operator.getXButton()) {
         mSuperstructure.setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));
       } else {
         mSuperstructure.setFourBarVoltage(0.0);
       }
 
-
-      
     } catch (Throwable t) {
       throw t;
     }

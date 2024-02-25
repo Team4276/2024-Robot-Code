@@ -6,9 +6,6 @@ import frc.team254.lib.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team254.lib.geometry.Rotation2d;
 
-//TODO: make signs consistent with model
-//TODO: math ready to check
-
 public class FourBarFeedForward {
     // Constants
     private final double kS; // Volts
@@ -180,19 +177,13 @@ public class FourBarFeedForward {
     }
 
     private double calcMotorLegTorque() {
-        double output = ((kMotorLegMass * 9.81 * motor_to_leg_com_x) + 
-            (calcShooterToMotorLeg() * Math.cos(bottom_to_motor_leg_radians_)));
-
-        SmartDashboard.putNumber("Motor leg torque", output);
-        return output;
+        return (kMotorLegMass * 9.81 * motor_to_leg_com_x) + 
+            (calcShooterToMotorLeg() * Math.cos(bottom_to_motor_leg_radians_));
     }
 
     private double calcSupportLegTorque() {
-        double output = ((kSupportLegMass * 9.81 * support_to_leg_com_x) + 
-            (calcShooterToSupportLeg() * Math.cos(bottom_to_support_leg_radians_)));
-        
-        SmartDashboard.putNumber("Support leg torque", output);
-        return output;
+        return (kSupportLegMass * 9.81 * support_to_leg_com_x) + 
+            (calcShooterToSupportLeg() * Math.cos(bottom_to_support_leg_radians_));
     }
 
     /**
@@ -200,10 +191,8 @@ public class FourBarFeedForward {
      */
     private double calcShooterToMotorLeg() {
         double gravity_torque = kTopMass * 9.81 * ((kTopLength * Math.cos(bottom_to_top_radians_)) - motor_leg_to_top_com_x);
-        double output = gravity_torque / (kTopLength * Math.cos(bottom_to_top_radians_));
 
-        SmartDashboard.putNumber("Shooter to motor leg force", output);
-        return output;
+        return gravity_torque / (kTopLength * Math.cos(bottom_to_top_radians_));
     }
 
     /**
@@ -211,10 +200,8 @@ public class FourBarFeedForward {
      */
     private double calcShooterToSupportLeg() {
         double gravity_torque = kTopMass * 9.81 * motor_leg_to_top_com_x;
-        double output = gravity_torque / (kTopLength * Math.cos(bottom_to_top_radians_));
-
-        SmartDashboard.putNumber("Shooter to support leg force", output);
-        return output;
+        
+        return gravity_torque / (kTopLength * Math.cos(bottom_to_top_radians_));
     }
 
 }

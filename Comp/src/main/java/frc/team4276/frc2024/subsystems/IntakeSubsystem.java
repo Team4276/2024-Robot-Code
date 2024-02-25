@@ -24,6 +24,7 @@ public class IntakeSubsystem extends Subsystem {
 
     public enum IntakeState {
         IDLE(0.0),
+        HOLDING(0.0),
         VOLTAGE(0.0),
         SLOWTAKE(12.0),
         SLOW_FEED(6),
@@ -62,9 +63,8 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void setState(IntakeState state) {
-        if (mIntakeState == state)
+        if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING) && (state != IntakeState.FOOT)))
             return;
-        //TODO: check how to properly cancel states that are aleady queued
 
         mIntakeState = state;
         mStateStartTime = mPeriodicIO.timestamp;
@@ -97,7 +97,7 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void readPeriodicInputs() {
         mPeriodicIO.current_current = mMotor.getOutputCurrent();
-        mPeriodicIO.front_sensor_tripped = mFrontSensor.get();
+        mPeriodicIO.front_sensor_tripped = !mFrontSensor.get();
 
     }
 
@@ -116,8 +116,11 @@ public class IntakeSubsystem extends Subsystem {
                         mPeriodicIO.voltage = mIntakeState.voltage;
                         break;
 
-                    case VOLTAGE: break;
+                    case HOLDING:
+                        mPeriodicIO.voltage = mIntakeState.voltage;
+                        break;
 
+                    case VOLTAGE: break;
                     case SLOWTAKE:
                         mPeriodicIO.voltage = mIntakeState.voltage;
 
@@ -127,7 +130,7 @@ public class IntakeSubsystem extends Subsystem {
                         mIntakeState = IntakeState.SLOW_FEED;
 
                     case SLOW_FEED:
-                        if (mPeriodicIO.front_sensor_tripped) {
+                        if (!mPeriodicIO.front_sensor_tripped) {
                             mIntakeState = IntakeState.IDLE;
                         }
 
@@ -145,7 +148,7 @@ public class IntakeSubsystem extends Subsystem {
 
                     case DEFEED:
                         //TODO: add another sensor or find how long it takes for note to stop (preferably another sensor)
-                        if(mPeriodicIO.front_sensor_tripped && mPeriodicIO.timestamp > mStateStartTime + 0.2){
+                        if(!mPeriodicIO.front_sensor_tripped && mPeriodicIO.timestamp > mStateStartTime + 0.2){
                             mIntakeState = IntakeState.IDLE;
                         }
 

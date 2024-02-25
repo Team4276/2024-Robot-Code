@@ -17,7 +17,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
-//TODO: actually implement this as a subsystem too lazy to rn :p
 public class MAXSwerveModuleV2 extends Subsystem {
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;

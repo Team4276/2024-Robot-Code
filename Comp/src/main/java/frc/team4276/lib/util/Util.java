@@ -34,7 +34,6 @@ public class Util {
         return side1 * Math.sin(opposite_angle) / Math.sin(angle1);
     }
 
-    //TODO: check if this will ever return NaN
     /**
      * @param side1
      * @param angle1 radians
@@ -42,7 +41,6 @@ public class Util {
      * @return radians
      */
     public static double LoSAngle(double side1, double angle1, double opposite_side) {
-        double output = Math.asin(Math.sin(angle1) * opposite_side / side1);
-        return output == Double.NaN ? null : Math.asin(Math.sin(angle1) * opposite_side / side1);
+        return Math.asin(Math.sin(angle1) * opposite_side / side1);
     }
 }

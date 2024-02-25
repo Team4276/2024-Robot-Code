@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+ 
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;
@@ -24,6 +25,7 @@ public class Superstructure extends Subsystem {
     private SuperstructureState mCommandedState;
     private GoalState mGoalState;
     private GoalState mLatestGoalState;
+    private ScoreConfig mScoreConfig;
 
     private double mDesiredFourBarVoltage = 0.0;
     private double mCommandedFourBarVoltage = 0.0;
@@ -33,22 +35,31 @@ public class Superstructure extends Subsystem {
     private FlywheelState mCommandedFlywheelState = new FlywheelState();
 
     private IntakeState mDesiredIntakeState = IntakeState.IDLE;
-    private double mDesiredIntakeVoltage = 0.0;
     private IntakeState mCommandedIntakeState = IntakeState.IDLE;
 
     public enum GoalState{
         STOW(SuperstructureConstants.kSuperstructureStowState),
-        INTAKE(SuperstructureConstants.kSuperstructureIntakeState),
+        FASTAKE(SuperstructureConstants.kSuperstructureFastakeState),
+        SLOWTAKE(SuperstructureConstants.kSuperstructureSlowtakeState),
+        READY_MIDDLE(SuperstructureConstants.kSuperstructureReadyMiddleState),
         SPEAKER_CLOSE_FRONT(SuperstructureConstants.kSuperstructureSpeakerCloseFrontState),
         SPEAKER_CLOSE_SIDE(SuperstructureConstants.kSuperstructureSpeakerCloseSideState),
-        READY_MIDDLE(SuperstructureConstants.kSuperstructureReadyMiddleState);
+        SPEAKER_DYNAMIC(SuperstructureConstants.kSuperstructureDynamicSpeakerState),
+        AMP_CLOSE(SuperstructureConstants.kSuperstructureAmpState),
+        SCORE(SuperstructureConstants.kSuperstructureStowState); //TODO: fix scoring and intaking logic
 
         public SuperstructureState state;
 
         GoalState(SuperstructureState state){
             this.state = state;
         }
-    } 
+    }
+    
+    public enum ScoreConfig {
+        NEUTRAL,
+        FAST,
+        INPUT
+    }
 
     private static Superstructure mInstance;
 
@@ -66,10 +77,15 @@ public class Superstructure extends Subsystem {
         mIntakeSubsystem = IntakeSubsystem.getInstance();
     }
 
-    public void setState(GoalState state){
+    public synchronized void setGoalState(GoalState state){
+        setGoalState(state, ScoreConfig.NEUTRAL);
+    }
+
+    public synchronized void setGoalState(GoalState state, ScoreConfig scoreConfig){
         if(mLatestGoalState == null) mLatestGoalState = state;
 
         mGoalState = state;
+        mScoreConfig = scoreConfig;
     }
 
     public void setFourBarVoltage(double voltage) {
@@ -82,11 +98,6 @@ public class Superstructure extends Subsystem {
 
     public void setIntakeState(IntakeState state){
         mDesiredIntakeState = state;
-    }
-
-    public void setIntakeVoltage(double voltage){
-        mDesiredIntakeState = IntakeState.VOLTAGE;
-        mDesiredIntakeVoltage = voltage;
     }
 
     public void toggleFourbarVoltageMode(){
@@ -125,11 +136,13 @@ public class Superstructure extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
+                shouldScore();
+
                 if (isFourBarVoltageControl) {
                     mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
                 } else {
                     if(mCommandedState != null){
-                        mFourBarSubsystem.setFourbarProfiledSetpoint(timestamp);
+                        mFourBarSubsystem.setFourBarFFSetpoint(mCommandedState.fourbar_angle);
                     }
                 }
                 
@@ -155,16 +168,19 @@ public class Superstructure extends Subsystem {
                         break;
                 }
 
-                if (mCommandedIntakeState == IntakeState.VOLTAGE){
-                    mIntakeSubsystem.setVoltage(mDesiredIntakeVoltage);
-                } else {
-                    mIntakeSubsystem.setState(mCommandedIntakeState);
-                }
+                mIntakeSubsystem.setState(mCommandedIntakeState);
             }
 
             @Override
             public void onStop(double timestamp) {}
         });
+    }
+
+    private boolean shouldScore(){
+        if(mScoreConfig != ScoreConfig.FAST) return false;
+
+        return true;
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package frc.team4276.frc2024.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
 
@@ -18,5 +19,36 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
 
     private FourBarSubsystem(){
         super(SuperstructureConstants.kFourBarConstants);
+
+        
+        SmartDashboard.putNumber("kS Calibration", 0.0);
+    }
+
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putNumber("Fourbar Measured Position", getMeasPosition());
+        SmartDashboard.putNumber("Fourbar Measured Velocity", getMeasVelocity());
+        SmartDashboard.putString("Fourbar Idle Mode", getIdleMode().name());
+        SmartDashboard.putNumber("Fourbar Applied Voltage", getAppliedVoltage());
+    }
+
+    @Override
+    public synchronized void setFourBarFFSetpoint(double position_rad) {
+        if(position_rad == Double.NaN){
+            super.setFourBarFFSetpoint(getMeasPosition());
+            return;
+        }
+
+        super.setFourBarFFSetpoint(position_rad);
+    }
+
+    @Override
+    public synchronized void setFourBarFFSetpointTEST(double position_rad) {
+        if(position_rad == Double.NaN){
+            super.setFourBarFFSetpoint(getMeasPosition());
+            return;
+        }
+
+        super.setFourBarFFSetpoint(position_rad);
     }
 }
