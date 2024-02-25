@@ -185,6 +185,8 @@ public class DriveSubsystem extends Subsystem {
 
     //   SmartDashboard.putNumber("Motor " + i + " Drive RPM: ", mModules[i].getMotorSpeed());
     // }
+
+    SmartDashboard.putNumber("Heading", mPeriodicIO.heading.getDegrees());
   }
 
   public ModuleState[] getModuleStates() {

@@ -1,5 +1,7 @@
 package frc.team4276.frc2024.subsystems;
 
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
@@ -87,6 +89,22 @@ public class Superstructure extends Subsystem {
         mDesiredIntakeVoltage = voltage;
     }
 
+    public void toggleFourbarVoltageMode(){
+        if(isFourBarVoltageControl){
+            isFourBarVoltageControl = false;
+        } else {
+            isFourBarVoltageControl = true;
+        }
+    }
+
+    public void toggleBrakeModeOnFourbar(){
+        if(mFourBarSubsystem.getIdleMode() == IdleMode.kBrake){
+            mFourBarSubsystem.setIdleMode(IdleMode.kCoast);
+        } else {
+            mFourBarSubsystem.setIdleMode(IdleMode.kBrake);
+        }
+    }
+
     // Only place we take inputs from controlboard (other than drive subsystem);
     @Override
     public void readPeriodicInputs() {
@@ -109,7 +127,13 @@ public class Superstructure extends Subsystem {
             public void onLoop(double timestamp) {
                 if (isFourBarVoltageControl) {
                     mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
+                } else {
+                    if(mCommandedState != null){
+                        mFourBarSubsystem.setFourbarProfiledSetpoint(timestamp);
+                    }
                 }
+                
+
 
                 switch (mCommandedFlywheelState.desired_mode) {
                     case VOLTAGE:

@@ -3,6 +3,7 @@ package frc.team4276.lib.drivers;
 import frc.team4276.lib.util.Util;
 
 import frc.team254.lib.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team254.lib.geometry.Rotation2d;
 
 //TODO: make signs consistent with model
@@ -118,7 +119,12 @@ public class FourBarFeedForward {
      * @return
      */
     public double calculate(double position_setpoint, double velocity_setpoint) {
-        return calcGravityVoltage(position_setpoint) + kS * Math.signum(velocity_setpoint) + kV * velocity_setpoint;
+        double gravity_voltage = calcGravityVoltage(position_setpoint);
+        double velocity_voltage = kV * velocity_setpoint;
+
+        SmartDashboard.putNumber("Fourbar Gravity Voltage", gravity_voltage);
+        SmartDashboard.putNumber("Fourbar Velocity Voltage", velocity_voltage);
+        return gravity_voltage + (kS * Math.signum(velocity_setpoint)) + velocity_voltage;
     }
 
     private double calcGravityVoltage(double position_setpoint) {
@@ -126,8 +132,10 @@ public class FourBarFeedForward {
         updateRelevantAngles();
         updateComs();
 
+        double gravity_torque = calcGravityTorque();
+
         // desired torque * max volts / max torque
-        return calcGravityTorque() * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
+        return gravity_torque * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
     }
 
     private void updateInsideAngles(double position) {
@@ -150,7 +158,7 @@ public class FourBarFeedForward {
 
         bottom_to_support_leg_radians_ = Math.PI - support_inside_angle_;
 
-        bottom_to_top_radians_ = motor_leg_to_top_inside_angle_ - (bottom_to_motor_leg_radians_ + Math.PI);
+        bottom_to_top_radians_ = motor_leg_to_top_inside_angle_ + bottom_to_motor_leg_radians_ - Math.PI;
     }
 
     private void updateComs() {
@@ -164,25 +172,38 @@ public class FourBarFeedForward {
     }
 
     private double calcGravityTorque() {
-        double transfered_force = calcSupportLegTorque() / (kSupportLegLength * Math.sin(support_leg_to_top_inside_angle_));
+        double transfered_force = calcSupportLegTorque() / (kSupportLegLength * Math.sin(support_leg_to_top_inside_angle_ % (Math.PI / 2)));
 
-        return calcMotorLegTorque() + (transfered_force * Math.sin(motor_inside_angle_ > Math.PI / 4 ? Math.PI - motor_inside_angle_ : motor_inside_angle_));
+        double transfered_torque = transfered_force * Math.sin((motor_inside_angle_ - bottom_to_top_radians_) % (Math.PI / 2)) * kMotorLegLength;
+
+        return calcMotorLegTorque() + transfered_torque;
     }
 
     private double calcMotorLegTorque() {
-        return (kMotorLegMass * 9.81 * motor_to_leg_com_x) + calcShooterToMotorLeg();
+        double output = ((kMotorLegMass * 9.81 * motor_to_leg_com_x) + 
+            (calcShooterToMotorLeg() * Math.cos(bottom_to_motor_leg_radians_)));
+
+        SmartDashboard.putNumber("Motor leg torque", output);
+        return output;
     }
 
     private double calcSupportLegTorque() {
-        return (kSupportLegMass * 9.81 * support_to_leg_com_x) + calcShooterToSupportLeg();
+        double output = ((kSupportLegMass * 9.81 * support_to_leg_com_x) + 
+            (calcShooterToSupportLeg() * Math.cos(bottom_to_support_leg_radians_)));
+        
+        SmartDashboard.putNumber("Support leg torque", output);
+        return output;
     }
 
     /**
      * Returns force of top on motor leg
      */
     private double calcShooterToMotorLeg() {
-        double gravity_torque = kTopMass * 9.81 * (Math.abs(kTopLength * Math.cos(bottom_to_top_radians_)) - motor_leg_to_top_com_x);
-        return gravity_torque / Math.abs(kTopLength * Math.cos(bottom_to_top_radians_));
+        double gravity_torque = kTopMass * 9.81 * ((kTopLength * Math.cos(bottom_to_top_radians_)) - motor_leg_to_top_com_x);
+        double output = gravity_torque / (kTopLength * Math.cos(bottom_to_top_radians_));
+
+        SmartDashboard.putNumber("Shooter to motor leg force", output);
+        return output;
     }
 
     /**
@@ -190,7 +211,10 @@ public class FourBarFeedForward {
      */
     private double calcShooterToSupportLeg() {
         double gravity_torque = kTopMass * 9.81 * motor_leg_to_top_com_x;
-        return gravity_torque / Math.abs(kTopLength * Math.cos(bottom_to_top_radians_));
+        double output = gravity_torque / (kTopLength * Math.cos(bottom_to_top_radians_));
+
+        SmartDashboard.putNumber("Shooter to support leg force", output);
+        return output;
     }
 
 }
