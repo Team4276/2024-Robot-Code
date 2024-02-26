@@ -44,18 +44,22 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
             sin_angle_ = y;
         }
 	    theta_degrees = Math.toDegrees(Math.atan2(sin_angle_, cos_angle_));
+        theta_radians = Math.atan2(sin_angle_, cos_angle_);
     }
 
     public Rotation2d(final Rotation2d other) {
         cos_angle_ = other.cos_angle_;
         sin_angle_ = other.sin_angle_;
         theta_degrees = Math.toDegrees(Math.atan2(sin_angle_, cos_angle_));
+        theta_radians = Math.atan2(sin_angle_, cos_angle_);
     }
     
     public Rotation2d(double theta_degrees){
     	cos_angle_ = Math.cos(Math.toRadians(theta_degrees));
     	sin_angle_ = Math.sin(Math.toRadians(theta_degrees));
     	this.theta_degrees = theta_degrees;
+        theta_radians = Math.toRadians(theta_degrees);
+        
     }
 
     public Rotation2d(final Translation2d direction, boolean normalize) {
