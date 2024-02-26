@@ -4,11 +4,13 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 // import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkPIDController.AccelStrategy;
+// import com.revrobotics.SparkPIDController.AccelStrategy;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -46,6 +48,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     private State mStateSetpoint;
     private double mProfileStartTime;
 
+    private ServoMotorSubsystemConstants constants;
+
     public static class ServoMotorConstants {
         public int id;
         public boolean isInverted; // TODO: check if relative to the master
@@ -68,6 +72,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public double kP = 0.0;
         public double kI = 0.0;
         public double kD = 0.0;
+        public double kFF = 0.0;
+        public double kPIDOutputRange = 0.0;
 
         public double kMaxSpeed = 0.0; // Radians
         public double kMaxAccel = 0.0; // Radians
@@ -81,6 +87,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     }
 
     protected ServoMotorSubsystem(final ServoMotorSubsystemConstants constants) {
+        this.constants = constants;
+
         mMaster = new CANSparkMax(constants.kMasterConstants.id, MotorType.kBrushless);
         mMaster.restoreFactoryDefaults();
         mMaster.setInverted(constants.kMasterConstants.isInverted);
@@ -124,10 +132,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mPIDController.setP(constants.kP);
         mPIDController.setI(constants.kI);
         mPIDController.setD(constants.kD);
-        mPIDController.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, 0);
+        mPIDController.setFF(constants.kFF);
+        // mPIDController.setSmartMotionAccelStrategy(AccelStrategy.kSCurve, 0);
         // mPIDController.setSmartMotionAllowedClosedLoopError(constants.k);
-        mPIDController.setSmartMotionMaxAccel(constants.kMaxAccel * constants.kGearRatio , 0);
-        mPIDController.setSmartMotionMaxVelocity(constants.kMaxSpeed * constants.kGearRatio, 0);
+        // mPIDController.setSmartMotionMaxAccel(constants.kMaxAccel * constants.kGearRatio , 0);
+        // mPIDController.setSmartMotionMaxVelocity(constants.kMaxSpeed * constants.kGearRatio, 0);
+        mPIDController.setOutputRange(-constants.kPIDOutputRange, constants.kPIDOutputRange);
 
         mMaster.burnFlash();
 
@@ -203,6 +213,14 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mStateSetpoint = new State(position_rad, 0.0);
         
         mProfileStartTime = mPeriodicIO.timestamp;
+    }
+
+    public synchronized void setPositionPIDSetpoint(double position_rad) {
+        if(mControlState != ControlState.SPARK_PID){
+            mControlState = ControlState.SPARK_PID;
+        }
+
+        mPIDController.setReference(position_rad, ControlType.kPosition, 0, constants.kFourBarFFConstants.kS, ArbFFUnits.kVoltage);
     }
 
     public synchronized void updateFourbarFFConfigs(){}
