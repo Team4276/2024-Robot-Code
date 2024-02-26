@@ -25,7 +25,7 @@ public class Superstructure extends Subsystem {
     private SuperstructureState mCommandedState;
     private GoalState mGoalState;
     private GoalState mLatestGoalState;
-    private ScoreConfig mScoreConfig;
+    private GoalState mReturnGoalState;
 
     private double mDesiredFourBarVoltage = 0.0;
     private double mCommandedFourBarVoltage = 0.0;
@@ -54,12 +54,6 @@ public class Superstructure extends Subsystem {
             this.state = state;
         }
     }
-    
-    public enum ScoreConfig {
-        NEUTRAL,
-        FAST,
-        INPUT
-    }
 
     private static Superstructure mInstance;
 
@@ -78,14 +72,17 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setGoalState(GoalState state){
-        setGoalState(state, ScoreConfig.NEUTRAL);
-    }
-
-    public synchronized void setGoalState(GoalState state, ScoreConfig scoreConfig){
         if(mLatestGoalState == null) mLatestGoalState = state;
 
         mGoalState = state;
-        mScoreConfig = scoreConfig;
+    }
+
+    public synchronized void setSuperstructureState(SuperstructureState state){
+        
+    }
+
+    public synchronized void setReturnGoalState(GoalState return_state){
+        mReturnGoalState = return_state;
     }
 
     public void setFourBarVoltage(double voltage) {
@@ -136,8 +133,6 @@ public class Superstructure extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                shouldScore();
-
                 if (isFourBarVoltageControl) {
                     mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
                 } else {
@@ -174,13 +169,6 @@ public class Superstructure extends Subsystem {
             @Override
             public void onStop(double timestamp) {}
         });
-    }
-
-    private boolean shouldScore(){
-        if(mScoreConfig != ScoreConfig.FAST) return false;
-
-        return true;
-
     }
 
     @Override

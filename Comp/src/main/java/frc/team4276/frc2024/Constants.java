@@ -73,6 +73,15 @@ public final class Constants {
       kUncappedLimits.kName = "Uncapped";
     }
 
+    public static final KinematicLimits kDemoLimits = new KinematicLimits();
+    static {
+      kDemoLimits.kMaxDriveVelocity = 1.0;
+      kDemoLimits.kMaxAccel = Double.MAX_VALUE;
+      kDemoLimits.kMaxAngularVelocity = kMaxAngularVel / 4; // Rad/Sec
+      kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+      kDemoLimits.kName = "Demo";
+    }
+
     public static final KinematicLimits kAutoLimits = new KinematicLimits();
     static {
       kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
@@ -83,13 +92,22 @@ public final class Constants {
 
     }
 
-    public static final KinematicLimits kDemoLimits = new KinematicLimits();
+    public static final KinematicLimits kSourceLimits = new KinematicLimits();
     static {
       kDemoLimits.kMaxDriveVelocity = 1.0;
       kDemoLimits.kMaxAccel = Double.MAX_VALUE;
       kDemoLimits.kMaxAngularVelocity = kMaxAngularVel / 4; // Rad/Sec
       kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
-      kDemoLimits.kName = "Demo";
+      kDemoLimits.kName = "Source";
+    }
+
+    public static final KinematicLimits kScoringLimits = new KinematicLimits();
+    static {
+      kDemoLimits.kMaxDriveVelocity = 1.0;
+      kDemoLimits.kMaxAccel = Double.MAX_VALUE;
+      kDemoLimits.kMaxAngularVelocity = kMaxAngularVel / 4; // Rad/Sec
+      kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
+      kDemoLimits.kName = "Score";
     }
 
     // Chassis configuration
@@ -326,18 +344,20 @@ public final class Constants {
       kFourBarConstants.kMasterConstants.isInverted = true;
 
       kFourBarConstants.kIsInverted = false;
-      kFourBarConstants.kIsCircular = true;
+      kFourBarConstants.kIsCircular = false;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
       kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
       kFourBarConstants.kOffset = Math.toRadians(210.0); // Set in hardware client; Radians 52.6
-      kFourBarConstants.kHomePosition = 150.0;
-      kFourBarConstants.kMinPosition = 0.0;
-      kFourBarConstants.kMaxPosition = 2 * Math.PI;
+      kFourBarConstants.kHomePosition = 130.0;
+      kFourBarConstants.kMinPosition = Math.toRadians(50.0);
+      kFourBarConstants.kMaxPosition = Math.toRadians(140.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
       kFourBarConstants.kP = 0.0;
       kFourBarConstants.kI = 0.0;
       kFourBarConstants.kD = 0.0;
+      kFourBarConstants.kFF = 0.0;
+      kFourBarConstants.kPIDOutputRange = 0.5;
 
       kFourBarConstants.kMaxSpeed = Math.PI / 4;
       kFourBarConstants.kMaxAccel = Math.PI / 4;
@@ -366,6 +386,17 @@ public final class Constants {
 
     public static final double kConservativeFourbarTolerance = 0.0;
     public static final double kConservativeFlywheelTolerance = 0.0;
+
+    public static final double kFourbarStowState = 130.0;
+    public static final double kFourbarIntakeState = 52.0;
+    public static final double kFourbarReadyMiddleState = 90.0;
+    public static final double kFourbarSpeakerCloseFrontState = 52.0;
+    public static final double kFourbarSpeakerCloseSideState = 52.0;
+    public static final double kFourbarAmpState = 52.0;
+    public static final double kFourbarTrapState = 52.0;
+    
+    
+
 
     public static final SuperstructureState kSuperstructureStowState = new SuperstructureState(130.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL);
     public static final SuperstructureState kSuperstructureFastakeState = new SuperstructureState(52.0, new FlywheelState(), IntakeState.FASTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.INTAKE);

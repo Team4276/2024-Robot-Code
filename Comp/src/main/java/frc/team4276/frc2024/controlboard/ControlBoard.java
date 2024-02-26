@@ -24,6 +24,8 @@ public class ControlBoard {
         operator = new BetterXboxController(OIConstants.kOpControllerPort);
     }
 
+    // Driver Controls
+
     public Translation2d getSwerveTranslation() {
         double forwardAxis = -driver.getLeftY();
         double strafeAxis = -driver.getLeftX();
@@ -54,5 +56,50 @@ public class ControlBoard {
                     / (1 - OIConstants.kJoystickDeadband);
         }
     }
+
+    public boolean wantZeroHeading(){
+        return driver.getAButtonPressed();
+    }
+
+    public boolean wantXBrake(){
+        return driver.getXButton();
+    }
+
+    boolean isDemo = false;
+    boolean hasPressed = false;
+    public boolean wantDemoLimits(){
+        if(hasPressed && !driver.isPOVUPPressed()){
+            hasPressed = false;
+            if(isDemo){
+                isDemo = false;
+            } else {
+                isDemo = true;
+            }
+            
+        } 
+
+        if(driver.isPOVUPPressed()){
+            hasPressed = true;
+        }
+
+        return isDemo;
+    }
+
+    public boolean wantSlowtake(){
+        return driver.getRightBumper();
+    }
+
+    public boolean wantFastake(){
+        return driver.getRT();
+    }
+
+
+    
+
+    // Operator Controls
+    public boolean wantReadyMiddle(){
+        return operator.isPOVUPPressed();
+    }
+
 
 }

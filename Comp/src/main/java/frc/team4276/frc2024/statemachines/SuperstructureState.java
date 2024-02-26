@@ -21,7 +21,9 @@ public class SuperstructureState {
         INTAKE,
         REV_UP,
         DYNAMIC,
-        POSITION
+        POSITION,
+        SCORE,
+        OVERRIDE
 
     }
 

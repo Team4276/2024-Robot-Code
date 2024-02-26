@@ -429,6 +429,10 @@ public class DriveSubsystem extends Subsystem {
     orientModules(orientations);
   }
 
+  public DriveControlState getDriveControlState(){
+    return mControlState;
+  }
+
 
 
 }
