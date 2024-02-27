@@ -8,13 +8,13 @@ import frc.team254.lib.geometry.Rotation2d;
 
 public class FourBarFeedForward {
     // Constants
-    private final double kS; // Volts
+    private double kS; // Volts
     private final double kV; // Volts * s / rad
 
     private final double kGearRatio;
     private final double kStallTorque;
     private final int kMotorAmnt;
-    private final double kEfficiency;
+    private double kEfficiency;
 
     /*
      * NOTE:
@@ -108,6 +108,14 @@ public class FourBarFeedForward {
         this.kMotorToCom = constants.kMotorToCom;
         this.kMotorLegToTopCom = constants.kMotorLegToTopCom;
         this.kSupportToCom = constants.kSupportToCom;
+    }
+
+    public void setkS(double static_voltage){
+        kS = static_voltage;
+    }
+
+    public void setEfficiency(double efficiency){
+        kEfficiency = efficiency;
     }
 
     /**
