@@ -316,13 +316,13 @@ public final class Constants {
   public static final class SuperstructureConstants {
     public static final FourBarFeedForwardConstants kFourbarFFConstants = new FourBarFeedForwardConstants();
     static {
-      kFourbarFFConstants.kS = 0.0;
+      kFourbarFFConstants.kS = 0.1;
 
       kFourbarFFConstants.kMotorFreeSpeedRpm = 5880.0;
       kFourbarFFConstants.kGearRatio = 330.0;
       kFourbarFFConstants.kStallTorque = 3.28;
       kFourbarFFConstants.kMotorAmnt = 1;
-      kFourbarFFConstants.kEfficiency = 0.4;
+      kFourbarFFConstants.kEfficiency = 0.1;
 
       kFourbarFFConstants.kBottomLength = Units.inchesToMeters(8.001578);
       kFourbarFFConstants.kMotorLegLength = Units.inchesToMeters(11.000000);
@@ -341,7 +341,7 @@ public final class Constants {
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
     static {
       kFourBarConstants.kMasterConstants.id = 9;
-      kFourBarConstants.kMasterConstants.isInverted = true;
+      kFourBarConstants.kMasterConstants.isInverted = false;
 
       kFourBarConstants.kIsInverted = false;
       kFourBarConstants.kIsCircular = false;
@@ -395,9 +395,6 @@ public final class Constants {
     public static final double kFourbarAmpState = 52.0;
     public static final double kFourbarTrapState = 52.0;
     
-    
-
-
     public static final SuperstructureState kSuperstructureStowState = new SuperstructureState(130.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL);
     public static final SuperstructureState kSuperstructureFastakeState = new SuperstructureState(52.0, new FlywheelState(), IntakeState.FASTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.INTAKE);
     public static final SuperstructureState kSuperstructureSlowtakeState = new SuperstructureState(52.0, new FlywheelState(), IntakeState.SLOWTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.INTAKE);

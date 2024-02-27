@@ -2,6 +2,7 @@ package frc.team4276.frc2024.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
  
@@ -24,7 +25,7 @@ public class Superstructure extends Subsystem {
     private SuperstructureState mMeasuredState;
     private SuperstructureState mCommandedState;
     private GoalState mGoalState;
-    private GoalState mLatestGoalState;
+    private GoalState mLastGoalState;
     private GoalState mReturnGoalState;
 
     private double mDesiredFourBarVoltage = 0.0;
@@ -72,8 +73,9 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setGoalState(GoalState state){
-        if(mLatestGoalState == null) mLatestGoalState = state;
+        if(mLastGoalState == null) mLastGoalState = state;
 
+        mLastGoalState = mGoalState;
         mGoalState = state;
     }
 
@@ -83,6 +85,10 @@ public class Superstructure extends Subsystem {
 
     public synchronized void setReturnGoalState(GoalState return_state){
         mReturnGoalState = return_state;
+    }
+
+    public synchronized void setReturnState(){
+        mGoalState = mReturnGoalState;
     }
 
     public void setFourBarVoltage(double voltage) {
@@ -173,4 +179,10 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {}
+
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putBoolean("isFourbarVoltageControl", isFourBarVoltageControl);
+        SmartDashboard.putString("Fourbar Goal", mGoalState == null ? "None" : mGoalState.name());
+    }
 }

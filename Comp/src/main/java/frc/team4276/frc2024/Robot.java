@@ -33,7 +33,6 @@ import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 import frc.team4276.frc2024.statemachines.FlywheelState;
-import frc.team4276.frc2024.statemachines.SuperstructureState;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -207,7 +206,8 @@ public class Robot extends TimedRobot {
 
   // TODO: check if need to flip heading
 
-  private SuperstructureState state;
+  private GoalState state;
+  private GoalState return_state;
 
   /** This function is called periodically during operator control. */
   @Override
@@ -233,64 +233,66 @@ public class Robot extends TimedRobot {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
       }
 
-      if (mControlBoard.wantSlowtake()) {
-        // state = GoalState.SLOWTAKE.state;
+      if (mControlBoard.wantFastake()) {
+        state = GoalState.FASTAKE;
 
-      } else if (mControlBoard.wantFastake()) {
-        // state = GoalState.FASTAKE.state;
+      } else if (mControlBoard.wantSlowtake()) {
+        state = GoalState.SLOWTAKE;
 
       }
 
       if (mControlBoard.wantReadyMiddle()) {
-        mSuperstructure.setReturnGoalState(GoalState.READY_MIDDLE);
+        return_state = GoalState.READY_MIDDLE;
 
       }
 
-      if (state == null) {
-        if (mControlBoard.operator.getLT()) {
-          mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
-        } else {
-          mSuperstructure.setFlywheelState(new FlywheelState());
-        }
+      if (state != null) {
+        mSuperstructure.setGoalState(state);
 
-        if (mControlBoard.operator.getRT()) {
-          mSuperstructure.setIntakeState(IntakeState.FOOT);
-
-        } else if (mControlBoard.driver.getRT()){
-          mSuperstructure.setIntakeState(IntakeState.FASTAKE);
-
-        } else if(mControlBoard.driver.getRightBumper()){
-          mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
-
-        } else {
-          mSuperstructure.setIntakeState(IntakeState.IDLE);
-
-        }
-
-        if (mControlBoard.operator.getRightStickButtonPressed()) {
-          mSuperstructure.toggleBrakeModeOnFourbar();
-        }
-
-        if (mControlBoard.operator.getAButtonPressed()) {
-          mSuperstructure.toggleFourbarVoltageMode();
-        }
-
-        if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
-          mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
-        } else if (mControlBoard.operator.getXButton()) {
-          mSuperstructure
-              .setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));
-        } else {
-          mSuperstructure.setFourBarVoltage(0.0);
-        }
-      } else {
-        mSuperstructure.setSuperstructureState(state);
+      } else if (return_state != null) {
+        mSuperstructure.setGoalState(return_state);
+        return_state = null;
 
       }
-
-      
 
       state = null;
+
+      // if (mControlBoard.operator.getLT()) {
+      //   mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
+      // } else {
+      //   mSuperstructure.setFlywheelState(new FlywheelState());
+      // }
+
+      // if (mControlBoard.operator.getRT()) {
+      //   mSuperstructure.setIntakeState(IntakeState.FOOT);
+
+      // } else if (mControlBoard.driver.getRT()) {
+      //   mSuperstructure.setIntakeState(IntakeState.FASTAKE);
+
+      // } else if (mControlBoard.driver.getRightBumper()) {
+      //   mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
+
+      // } else {
+      //   mSuperstructure.setIntakeState(IntakeState.IDLE);
+
+      // }
+
+      if (mControlBoard.operator.getRightStickButtonPressed()) {
+        mSuperstructure.toggleBrakeModeOnFourbar();
+      }
+
+      if (mControlBoard.operator.getAButtonPressed()) {
+        mSuperstructure.toggleFourbarVoltageMode();
+      }
+
+      if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
+        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
+      } else if (mControlBoard.operator.getXButton()) {
+        mSuperstructure
+            .setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));
+      } else {
+        mSuperstructure.setFourBarVoltage(0.0);
+      }
 
     } catch (Throwable t) {
       throw t;
