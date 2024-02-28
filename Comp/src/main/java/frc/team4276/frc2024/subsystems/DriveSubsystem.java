@@ -147,8 +147,6 @@ public class DriveSubsystem extends Subsystem {
       }
     }
 
-    SmartDashboard.putString("Kinematic Limits", mKinematicLimits.kName);
-
   }
 
   @Override
@@ -349,7 +347,7 @@ public class DriveSubsystem extends Subsystem {
     public String kName = "Default";
   }
 
-  public void setSpeeds(ChassisSpeeds speeds){
+  public void updatePathFollowingSetpoint(ChassisSpeeds speeds){
     if (mControlState != DriveControlState.PATH_FOLLOWING){
       mControlState = DriveControlState.PATH_FOLLOWING;
     }
@@ -357,8 +355,8 @@ public class DriveSubsystem extends Subsystem {
     mPeriodicIO.des_chassis_speeds = speeds;
   }
 
-  public void setWPISpeeds(edu.wpi.first.math.kinematics.ChassisSpeeds speeds){
-    setSpeeds(ChassisSpeeds.fromWPI(speeds));
+  public void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds){
+    updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
   }
 
   public KinematicLimits getKinematicLimits() {

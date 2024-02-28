@@ -33,7 +33,7 @@ public class PPSwerveTrajectoryAction implements Action {
             path, 
             mRobotState::getWPICurrentFieldToVehicle, 
             mDriveSubsystem::getWPIMeasSpeeds, 
-            mDriveSubsystem::setWPISpeeds, 
+            mDriveSubsystem::updatePPPathFollowingSetpoint, 
             AutoConstants.kTranslationPIDConstants, 
             AutoConstants.kRotationPIDConstants, 
             DriveConstants.kMaxVel, 
