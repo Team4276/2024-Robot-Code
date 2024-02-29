@@ -22,7 +22,7 @@ public class Superstructure extends Subsystem {
     private final FlywheelSubsystem mFlywheelSubsystem;
     private final IntakeSubsystem mIntakeSubsystem;
 
-    private SuperstructureState mMeasuredState;
+    // private SuperstructureState mMeasuredState;
     private SuperstructureState mCommandedState;
     private GoalState mGoalState;
     private GoalState mLastGoalState;

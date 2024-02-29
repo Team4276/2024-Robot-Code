@@ -31,7 +31,7 @@ import frc.team4276.frc2024.subsystems.RobotStateEstimator;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
-import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
+// import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 
 /**
@@ -206,8 +206,8 @@ public class Robot extends TimedRobot {
 
   // TODO: check if need to flip heading
 
-  private GoalState state;
-  private GoalState return_state;
+  // private GoalState state;
+  // private GoalState return_state;
 
   /** This function is called periodically during operator control. */
   @Override
