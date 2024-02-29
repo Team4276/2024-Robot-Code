@@ -64,8 +64,9 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void setState(IntakeState state) {
-        if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED 
-            || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT))) return;
+        if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED
+                || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT)))
+            return;
 
         mIntakeState = state;
         mStateStartTime = mPeriodicIO.timestamp;
@@ -102,6 +103,8 @@ public class IntakeSubsystem extends Subsystem {
 
     }
 
+    private boolean hasFrontUntripped = false;
+
     @Override
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
@@ -113,60 +116,48 @@ public class IntakeSubsystem extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
                 switch (mIntakeState) {
-                    case IDLE:
-                        mPeriodicIO.voltage = mIntakeState.voltage;
-                        break;
-
-                    case HOLDING:
-                        mPeriodicIO.voltage = mIntakeState.voltage;
-                        break;
-
+                    case IDLE: break;
+                    case HOLDING: break;
                     case VOLTAGE: break;
                     case SLOWTAKE:
-                        mPeriodicIO.voltage = mIntakeState.voltage;
-
-                        if (mPeriodicIO.current_current <= 40) break;
-
-                        mIntakeState = IntakeState.SLOW_FEED;
-
-                    case SLOW_FEED:
-                        if (!mPeriodicIO.front_sensor_tripped) {
-                            mIntakeState = IntakeState.IDLE;
+                        if (mPeriodicIO.timestamp - mStateStartTime > 0.05 && mPeriodicIO.current_current > 40) {
+                            mIntakeState = IntakeState.SLOW_FEED;
                         }
 
-                        mPeriodicIO.voltage = mIntakeState.voltage;
+                        break;
+
+                    case SLOW_FEED:
+                        if (mPeriodicIO.front_sensor_tripped) {
+                            mIntakeState = IntakeState.HOLDING;
+                        }
 
                         break;
 
                     case FASTAKE:
-                        mPeriodicIO.voltage = mIntakeState.voltage;
-
-                        if(!mPeriodicIO.front_sensor_tripped) break;
-
-                        mIntakeState = IntakeState.DEFEED;
-                        mStateStartTime = mPeriodicIO.timestamp;
-
-                    case DEFEED:
-                        if(!mPeriodicIO.front_sensor_tripped && mPeriodicIO.timestamp >= mStateStartTime + 0.1){
-                            mIntakeState = IntakeState.HOLDING;
+                        if (mPeriodicIO.front_sensor_tripped) {
+                            mIntakeState = IntakeState.DEFEED;
+                            mStateStartTime = mPeriodicIO.timestamp;
+                            hasFrontUntripped = false;
                         }
 
-                        mPeriodicIO.voltage = mIntakeState.voltage;
+                        break;
+
+                    case DEFEED:
+                        if (mPeriodicIO.front_sensor_tripped && hasFrontUntripped) {
+                            mIntakeState = IntakeState.HOLDING;
+                        }
+                        
+                        hasFrontUntripped = !mPeriodicIO.front_sensor_tripped;
 
                         break;
 
-                    case FOOT:
-                        mPeriodicIO.voltage = mIntakeState.voltage;
+                    case FOOT: break;
+                    case REVERSE: break;
+                    default: break;
+                }
 
-                        break;
-
-                    case REVERSE:
-                        mPeriodicIO.voltage = mIntakeState.voltage;
-
-                        break;
-
-                    default:
-                        break;
+                if(mIntakeState != IntakeState.VOLTAGE){
+                    mPeriodicIO.voltage = mIntakeState.voltage;
                 }
             }
 
