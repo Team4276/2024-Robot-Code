@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
@@ -73,6 +74,10 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void setVoltage(double voltage) {
+        if (mIntakeState != IntakeState.VOLTAGE){
+            mIntakeState = IntakeState.VOLTAGE;
+        }
+
         mPeriodicIO.voltage = voltage;
     }
 
@@ -98,6 +103,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void readPeriodicInputs() {
+        mPeriodicIO.timestamp = Timer.getFPGATimestamp();
         mPeriodicIO.current_current = mMotor.getOutputCurrent();
         mPeriodicIO.front_sensor_tripped = !mFrontSensor.get();
 
@@ -162,8 +168,7 @@ public class IntakeSubsystem extends Subsystem {
             }
 
             @Override
-            public void onStop(double timestamp) {
-            }
+            public void onStop(double timestamp) {}
 
         });
     }
