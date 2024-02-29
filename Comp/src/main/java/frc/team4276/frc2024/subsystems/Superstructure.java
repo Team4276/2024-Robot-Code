@@ -26,7 +26,7 @@ public class Superstructure extends Subsystem {
     private SuperstructureState mCommandedState;
     private GoalState mGoalState;
     private GoalState mLastGoalState;
-    private GoalState mReturnGoalState;
+    private boolean mAtGoal;
 
     private double mDesiredFourBarVoltage = 0.0;
     private double mCommandedFourBarVoltage = 0.0;
@@ -83,14 +83,6 @@ public class Superstructure extends Subsystem {
         
     }
 
-    public synchronized void setReturnGoalState(GoalState return_state){
-        mReturnGoalState = return_state;
-    }
-
-    public synchronized void setReturnState(){
-        mGoalState = mReturnGoalState;
-    }
-
     public void setFourBarVoltage(double voltage) {
         mDesiredFourBarVoltage = voltage;
     }
@@ -101,6 +93,26 @@ public class Superstructure extends Subsystem {
 
     public void setIntakeState(IntakeState state){
         mDesiredIntakeState = state;
+    }
+
+    public void setStateJankIntake(){
+        if(mFourBarSubsystem.getMeasPosition() > 55.0){
+            mDesiredFourBarVoltage = 3.0;
+        }
+
+    }
+
+    public void setStateJankHold(){
+        if(mFourBarSubsystem.getMeasPosition() < 70.0){
+            mDesiredFourBarVoltage = -3.0;
+        } else {
+            mDesiredFourBarVoltage = 0.1;
+        }
+
+    }
+
+    public boolean atGoal(){
+        return mAtGoal;
     }
 
     public void toggleFourbarVoltageMode(){

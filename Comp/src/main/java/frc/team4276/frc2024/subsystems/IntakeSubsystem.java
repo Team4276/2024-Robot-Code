@@ -27,10 +27,11 @@ public class IntakeSubsystem extends Subsystem {
         HOLDING(0.0),
         VOLTAGE(0.0),
         SLOWTAKE(12.0),
-        SLOW_FEED(6),
+        SLOW_FEED(3.0),
         FASTAKE(12.0),
-        DEFEED(-3.0),
-        FOOT(12);
+        DEFEED(-1.5),
+        FOOT(12),
+        REVERSE(-0.5);
 
         public double voltage;
 
@@ -63,8 +64,8 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void setState(IntakeState state) {
-        if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING) && (state != IntakeState.FOOT)))
-            return;
+        if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED 
+            || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT))) return;
 
         mIntakeState = state;
         mStateStartTime = mPeriodicIO.timestamp;
@@ -124,8 +125,7 @@ public class IntakeSubsystem extends Subsystem {
                     case SLOWTAKE:
                         mPeriodicIO.voltage = mIntakeState.voltage;
 
-                        // TODO: check how long it takes for current to get to normal amps
-                        if (mStateStartTime < 0.2 || mPeriodicIO.current_current <= 40) break;
+                        if (mPeriodicIO.current_current <= 40) break;
 
                         mIntakeState = IntakeState.SLOW_FEED;
 
@@ -147,9 +147,8 @@ public class IntakeSubsystem extends Subsystem {
                         mStateStartTime = mPeriodicIO.timestamp;
 
                     case DEFEED:
-                        //TODO: add another sensor or find how long it takes for note to stop (preferably another sensor)
-                        if(!mPeriodicIO.front_sensor_tripped && mPeriodicIO.timestamp > mStateStartTime + 0.2){
-                            mIntakeState = IntakeState.IDLE;
+                        if(!mPeriodicIO.front_sensor_tripped && mPeriodicIO.timestamp >= mStateStartTime + 0.1){
+                            mIntakeState = IntakeState.HOLDING;
                         }
 
                         mPeriodicIO.voltage = mIntakeState.voltage;
@@ -157,6 +156,11 @@ public class IntakeSubsystem extends Subsystem {
                         break;
 
                     case FOOT:
+                        mPeriodicIO.voltage = mIntakeState.voltage;
+
+                        break;
+
+                    case REVERSE:
                         mPeriodicIO.voltage = mIntakeState.voltage;
 
                         break;
@@ -180,7 +184,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putBoolean("Front Sensor Tripped", mFrontSensor.get());
+        SmartDashboard.putBoolean("Front Sensor Tripped", mPeriodicIO.front_sensor_tripped);
         SmartDashboard.putString("Intake Mode", mIntakeState.name());
     }
 }

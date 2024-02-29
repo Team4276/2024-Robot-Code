@@ -221,9 +221,11 @@ public class FlywheelSubsystem extends Subsystem {
 
         if (useEncoder){
             if (topIdleFlip) {
-                ready = Math.abs(mPeriodicIO.curr_bottom_RPM - mPeriodicIO.des_bottom_RPM) < FlywheelConstants.kFlywheelAllowableError;
+                ready = Math.abs(mPeriodicIO.curr_bottom_RPM - mPeriodicIO.des_bottom_RPM) < FlywheelConstants.kFlywheelAllowableError
+                    && Math.abs(mPeriodicIO.curr_top_RPM) < 60.0;
             } else {
-                ready = Math.abs(mPeriodicIO.curr_top_RPM - mPeriodicIO.des_top_RPM) < FlywheelConstants.kFlywheelAllowableError;
+                ready = Math.abs(mPeriodicIO.curr_top_RPM - mPeriodicIO.des_top_RPM) < FlywheelConstants.kFlywheelAllowableError
+                    && Math.abs(mPeriodicIO.curr_top_RPM) < 60.0;
             }
         } else {
             ready = true;
@@ -238,6 +240,8 @@ public class FlywheelSubsystem extends Subsystem {
         if (mPeriodicIO.flipTime > timestamp){
             return false;
         }
+
+
 
         return ready;
     }

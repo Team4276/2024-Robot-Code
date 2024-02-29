@@ -233,49 +233,51 @@ public class Robot extends TimedRobot {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
       }
 
-      if (mControlBoard.wantFastake()) {
-        state = GoalState.FASTAKE;
+      // if (mControlBoard.wantFastake()) {
+      // state = GoalState.FASTAKE;
 
-      } else if (mControlBoard.wantSlowtake()) {
-        state = GoalState.SLOWTAKE;
-
-      }
-
-      if (mControlBoard.wantReadyMiddle()) {
-        return_state = GoalState.READY_MIDDLE;
-
-      }
-
-      if (state != null) {
-        mSuperstructure.setGoalState(state);
-
-      } else if (return_state != null) {
-        mSuperstructure.setGoalState(return_state);
-        return_state = null;
-
-      }
-
-      state = null;
-
-      // if (mControlBoard.operator.getLT()) {
-      //   mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
-      // } else {
-      //   mSuperstructure.setFlywheelState(new FlywheelState());
-      // }
-
-      // if (mControlBoard.operator.getRT()) {
-      //   mSuperstructure.setIntakeState(IntakeState.FOOT);
-
-      // } else if (mControlBoard.driver.getRT()) {
-      //   mSuperstructure.setIntakeState(IntakeState.FASTAKE);
-
-      // } else if (mControlBoard.driver.getRightBumper()) {
-      //   mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
-
-      // } else {
-      //   mSuperstructure.setIntakeState(IntakeState.IDLE);
+      // } else if (mControlBoard.wantSlowtake()) {
+      // state = GoalState.SLOWTAKE;
 
       // }
+
+      // if (mControlBoard.wantReadyMiddle()) {
+      // return_state = GoalState.READY_MIDDLE;
+
+      // }
+
+      // if (state != null) {
+      // mSuperstructure.setGoalState(state);
+
+      // } else if (return_state != null) {
+      // mSuperstructure.setGoalState(return_state);
+      // return_state = null;
+
+      // }
+
+      // state = null;
+
+      if (mControlBoard.operator.getLT()) {
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
+      } else if(mControlBoard.operator.getLeftBumper()){
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3000));
+      } else {
+        mSuperstructure.setFlywheelState(new FlywheelState());
+      }
+
+      if (mControlBoard.operator.getRT()) {
+        mSuperstructure.setIntakeState(IntakeState.FOOT);
+
+      } else if (mControlBoard.driver.getRT()) {
+        mSuperstructure.setIntakeState(IntakeState.FASTAKE);
+
+      } else if (mControlBoard.driver.getRightBumper()) {
+        mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
+
+      } else {
+        mSuperstructure.setIntakeState(IntakeState.IDLE);
+
+      }
 
       if (mControlBoard.operator.getRightStickButtonPressed()) {
         mSuperstructure.toggleBrakeModeOnFourbar();
@@ -287,11 +289,20 @@ public class Robot extends TimedRobot {
 
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
         mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
+
       } else if (mControlBoard.operator.getXButton()) {
         mSuperstructure
             .setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));
+
+      } else if (mControlBoard.operator.isPOVLEFTPressed()) {
+        mSuperstructure.setStateJankIntake();
+
+      } else if (mControlBoard.operator.isPOVRIGHTPressed()) {
+        mSuperstructure.setStateJankHold();
+
       } else {
         mSuperstructure.setFourBarVoltage(0.0);
+      
       }
 
     } catch (Throwable t) {

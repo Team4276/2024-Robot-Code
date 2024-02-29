@@ -12,7 +12,6 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -24,7 +23,7 @@ public class PPSwerveTrajectoryAction implements Action {
 
     private PathPlannerPath path;
 
-    public PPSwerveTrajectoryAction(String name, Rotation2d rot) {
+    public PPSwerveTrajectoryAction(String name) {
         path = PathPlannerPath.fromPathFile(name);
 
         Alliance alliance = AllianceChooser.getInstance().getAlliance();

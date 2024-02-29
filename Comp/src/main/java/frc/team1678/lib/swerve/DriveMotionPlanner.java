@@ -27,9 +27,9 @@ public class DriveMotionPlanner {
     private boolean isFinished = false;
 
     public DriveMotionPlanner() {
-        forwardController = new PIDController(AutoConstants.kPXController, 0.0, AutoConstants.kDXController);
-        strafeController = new PIDController(AutoConstants.kPYController, 0.0, AutoConstants.kDYController);
-        rotationController = new ProfiledPIDController(AutoConstants.kPThetaController, 0.0, 0.0, AutoConstants.kThetaControllerConstraints);
+        forwardController = new PIDController(AutoConstants.kTranslationP, 0.0, AutoConstants.kTranslationD);
+        strafeController = new PIDController(AutoConstants.kTranslationP, 0.0, AutoConstants.kTranslationD);
+        rotationController = new ProfiledPIDController(AutoConstants.kRotationP, 0.0, AutoConstants.kRotationD, AutoConstants.kThetaControllerConstraints);
         snapController = new PIDController(SnapConstants.kP, SnapConstants.kI, SnapConstants.kD);
         
         rotationController.enableContinuousInput(0, 2 * Math.PI);

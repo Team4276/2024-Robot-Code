@@ -2,10 +2,11 @@ package frc.team4276.lib.drivers;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+// import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 // import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
@@ -94,8 +95,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mMaster.enableVoltageCompensation(constants.kVoltageCompensation);
         mMaster.setSmartCurrentLimit(constants.kSmartCurrentLimit);
         mMaster.setIdleMode(constants.kIdleMode);
+        mMaster.setInverted(constants.kMasterConstants.isInverted);
         // mMaster.setCANTimeout(10);
         // mMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+        // mMaster.enableSoftLimit(SoftLimitDirection.kForward, true);
+        // mMaster.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
         mFollowers = new CANSparkMax[constants.kFollowerConstants.length];
 
@@ -290,7 +294,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     @Override
     public synchronized void writePeriodicOutputs() {
         if (mControlState == ControlState.OPEN_LOOP) {
-            mMaster.setVoltage(-mPeriodicIO.demand);
+            mMaster.setVoltage(mPeriodicIO.demand);
         } else if (mControlState == ControlState.FOUR_BAR_FF) {
             SmartDashboard.putNumber("Time Since Start", mPeriodicIO.timestamp - mProfileStartTime);
             SmartDashboard.putNumber("Input Measured State Position", mPeriodicIO.meas_state.position);
@@ -305,8 +309,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             SmartDashboard.putNumber("State Position", state.position);
             SmartDashboard.putNumber("State Velocity", state.velocity);
 
-            mMaster.setVoltage(-mPeriodicIO.feed_forward);
-            SmartDashboard.putNumber("Fourbar Feedforward Voltage", -mPeriodicIO.feed_forward);
+            mMaster.setVoltage(mPeriodicIO.feed_forward);
+            SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
         } else if (mControlState == ControlState.TEST) {
             SmartDashboard.putNumber("Time Since Start", mPeriodicIO.timestamp - mProfileStartTime);
             SmartDashboard.putNumber("Input Measured State Position", mPeriodicIO.meas_state.position);
@@ -319,7 +323,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             mPeriodicIO.feed_forward = Util.limit(mFourBarFF.calculate(state.position, state.velocity), 4.8)
                     + SmartDashboard.getNumber("kS Calibration", 0.0);
 
-            mMaster.setVoltage(-mPeriodicIO.feed_forward);
+            mMaster.setVoltage(mPeriodicIO.feed_forward);
             SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
         }
     }

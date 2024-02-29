@@ -61,6 +61,7 @@ public final class Constants {
     // the robot, rather the allowed maximum speeds
     public static final double kMaxVel = 4.8; // meters per second
     public static final double kMaxAttainableVel = kMaxVel * 0.85;
+    public static final double kMaxAttainableAccel = 3.0;
 
     public static final double kMaxAngularVel = 2 * Math.PI; // radians per second
 
@@ -85,7 +86,7 @@ public final class Constants {
     public static final KinematicLimits kAutoLimits = new KinematicLimits();
     static {
       kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
-      kAutoLimits.kMaxAccel = Double.MAX_VALUE;
+      kAutoLimits.kMaxAccel = kMaxAttainableAccel;
       kAutoLimits.kMaxAngularVelocity = Double.MAX_VALUE; // Rad/Sec
       kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI
       kAutoLimits.kName = "Auto";
@@ -111,9 +112,9 @@ public final class Constants {
     }
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(27);
+    public static final double kTrackWidth = Units.inchesToMeters(23.5);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(27);
+    public static final double kWheelBase = Units.inchesToMeters(23.5);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -217,15 +218,13 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = 2 * Math.PI;
 
-    public static final double kPXController = 1;
-    public static final double kDXController = 0;
-    public static final double kPYController = 1;
-    public static final double kDYController = 0;
-    public static final double kPThetaController = 1;
-    public static final double kDThetaController = 1;
+    public static final double kTranslationP = 2.4;
+    public static final double kTranslationD = 0.0;
+    public static final double kRotationP = 2.4;
+    public static final double kRotationD = 0.0;
 
-    public static final PIDConstants kTranslationPIDConstants = new PIDConstants(kPXController, 0, kDXController);
-    public static final PIDConstants kRotationPIDConstants = new PIDConstants(kPThetaController, 0, kDThetaController);
+    public static final PIDConstants kTranslationPIDConstants = new PIDConstants(kTranslationP, 0, kTranslationD);
+    public static final PIDConstants kRotationPIDConstants = new PIDConstants(kRotationP, 0, kRotationD);
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -341,7 +340,7 @@ public final class Constants {
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
     static {
       kFourBarConstants.kMasterConstants.id = 9;
-      kFourBarConstants.kMasterConstants.isInverted = false;
+      kFourBarConstants.kMasterConstants.isInverted = true;
 
       kFourBarConstants.kIsInverted = false;
       kFourBarConstants.kIsCircular = false;
@@ -408,7 +407,7 @@ public final class Constants {
 
   public static class FlywheelConstants {
     public static double kS_Top = 0.188;
-    public static double kS_Bottom = 0.166;
+    public static double kS_Bottom = 0.193;
     // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel
     public static double kV_Top = 0.0020014125023555073743193198053;
     public static double kV_Bottom = 0.0020614125023555073743193198053;

@@ -18,7 +18,7 @@ import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.drivers.FourBarFeedForward;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 
-public class SimpleServoMotorSubsystem extends Subsystem {
+public class SimpleFourbarSubsystem extends Subsystem {
     private CANSparkMax mMaster;
 
     private AbsoluteEncoder mAbsoluteEncoder;
@@ -33,16 +33,16 @@ public class SimpleServoMotorSubsystem extends Subsystem {
 
     private boolean isCalibrating = true;
 
-    private static SimpleServoMotorSubsystem mInstance;
+    private static SimpleFourbarSubsystem mInstance;
 
-    public static SimpleServoMotorSubsystem getInstance() {
+    public static SimpleFourbarSubsystem getInstance() {
         if (mInstance == null) {
-            mInstance = new SimpleServoMotorSubsystem(SuperstructureConstants.kFourBarConstants);
+            mInstance = new SimpleFourbarSubsystem(SuperstructureConstants.kFourBarConstants);
         }
         return mInstance;
     }
 
-    private SimpleServoMotorSubsystem(ServoMotorSubsystemConstants constants) {
+    private SimpleFourbarSubsystem(ServoMotorSubsystemConstants constants) {
         mMaster = new CANSparkMax(constants.kMasterConstants.id, MotorType.kBrushless);
         mMaster.restoreFactoryDefaults();
         mMaster.enableVoltageCompensation(constants.kVoltageCompensation);

@@ -1,6 +1,5 @@
 package frc.team4276.frc2024.auto;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -14,7 +13,8 @@ public class AutoModeSelector {
         EXAMPLE,
         SPIN_TEST,
         STRESS_TEST,
-        MID_3PIECE_STAGE
+        MID_3PIECE_STAGE,
+        SUB_MIDDLE_2_PIECE
 
     }
 
@@ -30,6 +30,7 @@ public class AutoModeSelector {
         mModeChooser.addOption("Spin test", DesiredMode.SPIN_TEST);
         mModeChooser.addOption("Stress test", DesiredMode.STRESS_TEST);
         mModeChooser.addOption("Mid 3 Piece Stage", DesiredMode.MID_3PIECE_STAGE);
+        mModeChooser.addOption("Sub Middle 2 Piece", DesiredMode.SUB_MIDDLE_2_PIECE);
         SmartDashboard.putData("Auto Mode", mModeChooser);
 
     }
@@ -53,11 +54,13 @@ public class AutoModeSelector {
         case EXAMPLE:
             return Optional.of(new ActionExample());
         case SPIN_TEST:
-            return Optional.of(new PPTest("Spin test", new Rotation2d()));
+            return Optional.of(new PPTest("Spin test"));
         case STRESS_TEST:
-            return Optional.of(new PPTest("Stress Test", new Rotation2d(180)));
+            return Optional.of(new PPTest("Stress Test"));
         case MID_3PIECE_STAGE:
-            return Optional.of(new PPTest("Mid3PieceStage", new Rotation2d(180)));
+            return Optional.of(new PPTest("Mid3PieceStage"));
+        case SUB_MIDDLE_2_PIECE:
+            return Optional.of(new SubMiddle2Piece());
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;
