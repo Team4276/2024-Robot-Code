@@ -65,6 +65,10 @@ public class ControlBoard {
         return driver.getXButton();
     }
 
+    public void shootAuto(){
+        
+    } 
+
     boolean isDemo = false;
     boolean hasPressed = false;
     public boolean wantDemoLimits(){

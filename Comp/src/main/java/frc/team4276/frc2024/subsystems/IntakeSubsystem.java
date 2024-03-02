@@ -23,6 +23,37 @@ public class IntakeSubsystem extends Subsystem {
 
     private IntakeState mIntakeState = IntakeState.IDLE;
 
+    private class CurrentSensor{
+        private double currentSum;
+        private int count;
+        private double currentRange;
+
+        CurrentSensor(double CurrentRange){
+           currentRange = CurrentRange;
+        }
+
+        public void updateCurrent(double current){
+            if(!spikeCheck(current) || count < 5){
+                currentSum += current;
+                count++;
+            }
+        }
+
+        public void averageReset(){
+            currentSum = 0;
+            count = 0;
+        }
+
+        public boolean spikeCheck(double currentCurrent){
+            double averageCurrent = currentSum/count;
+            if ((averageCurrent < currentCurrent) && (averageCurrent < currentCurrent - currentRange)){
+                return true;
+            }
+            return false;
+        }
+    }
+    CurrentSensor currentSensor = new CurrentSensor(3);
+
     public enum IntakeState {
         IDLE(0.0),
         HOLDING(0.0),
@@ -65,6 +96,9 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void setState(IntakeState state) {
+        if (state != IntakeState.HOLDING && state != IntakeState.IDLE && IntakeState.VOLTAGE != state){
+            currentSensor.updateCurrent(mPeriodicIO.current_current);
+        }
         if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED
                 || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT)))
             return;
@@ -121,40 +155,27 @@ public class IntakeSubsystem extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
+                if(currentSensor.spikeCheck(mPeriodicIO.current_current)){
+                    int x = 1;
+                }
                 switch (mIntakeState) {
                     case IDLE: break;
                     case HOLDING: break;
+                    case FASTAKE: break;
                     case VOLTAGE: break;
+                    case SLOW_FEED: break;
                     case SLOWTAKE:
-                        if (mPeriodicIO.timestamp - mStateStartTime > 0.05 && mPeriodicIO.current_current > 40) {
-                            mIntakeState = IntakeState.SLOW_FEED;
-                        }
-
-                        break;
-
-                    case SLOW_FEED:
-                        if (mPeriodicIO.front_sensor_tripped) {
-                            mIntakeState = IntakeState.HOLDING;
-                        }
-
-                        break;
-
-                    case FASTAKE:
-                        if (mPeriodicIO.front_sensor_tripped) {
+                        if ( mPeriodicIO.front_sensor_tripped) {
                             mIntakeState = IntakeState.DEFEED;
-                            mStateStartTime = mPeriodicIO.timestamp;
-                            hasFrontUntripped = false;
                         }
 
                         break;
 
                     case DEFEED:
-                        if (mPeriodicIO.front_sensor_tripped && hasFrontUntripped) {
+                        if (mPeriodicIO.front_sensor_tripped) {
                             mIntakeState = IntakeState.HOLDING;
                         }
                         
-                        hasFrontUntripped = !mPeriodicIO.front_sensor_tripped;
-
                         break;
 
                     case FOOT: break;
@@ -181,6 +202,7 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void outputTelemetry() {
         SmartDashboard.putBoolean("Front Sensor Tripped", mPeriodicIO.front_sensor_tripped);
+        SmartDashboard.putBoolean("Note Detetcted", currentSensor.spikeCheck(mPeriodicIO.current_current));
         SmartDashboard.putString("Intake Mode", mIntakeState.name());
     }
 }

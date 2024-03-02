@@ -42,6 +42,7 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
         super.setFourBarFFSetpoint(position_rad);
     }
 
+
     @Override
     public synchronized void setFourBarFFSetpointTEST(double position_rad) {
         if(position_rad == Double.NaN){
@@ -51,4 +52,10 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
 
         super.setFourBarFFSetpoint(position_rad);
     }
+        
+    public synchronized void fourBarHold(){
+        
+    }
 }
+
+
