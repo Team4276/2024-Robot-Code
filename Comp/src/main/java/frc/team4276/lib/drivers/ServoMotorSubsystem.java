@@ -180,10 +180,16 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         return mMaster.getIdleMode();
     }
 
+    /**
+     * radians
+     */
     public double getMeasPosition() {
         return mPeriodicIO.meas_position_units;
     }
 
+    /**
+     * radians / second
+     */
     public double getMeasVelocity() {
         return mPeriodicIO.meas_velocity_units;
     }

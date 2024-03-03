@@ -18,9 +18,11 @@ import frc.team4276.lib.drivers.Subsystem;
  * This architecture is only necessary for subsystems with Control States.
  */
 public class Superstructure extends Subsystem {
-    private final FourBarSubsystem mFourBarSubsystem;
+    // private final FourBarSubsystem mFourBarSubsystem;
     private final FlywheelSubsystem mFlywheelSubsystem;
     private final IntakeSubsystem mIntakeSubsystem;
+
+    private final SimpleFourbarSubsystem mSimpleFourbarSubsystem;
 
     // private SuperstructureState mMeasuredState;
     private SuperstructureState mCommandedState;
@@ -67,9 +69,11 @@ public class Superstructure extends Subsystem {
     }
 
     private Superstructure(){
-        mFourBarSubsystem = FourBarSubsystem.getInstance();
+        // mFourBarSubsystem = FourBarSubsystem.getInstance();
         mFlywheelSubsystem = FlywheelSubsystem.getInstance();
         mIntakeSubsystem = IntakeSubsystem.getInstance();
+
+        mSimpleFourbarSubsystem = SimpleFourbarSubsystem.getInstance();
     }
 
     public synchronized void setGoalState(GoalState state){
@@ -96,18 +100,18 @@ public class Superstructure extends Subsystem {
     }
 
     public void setStateJankIntake(){
-        if(mFourBarSubsystem.getMeasPosition() > 55.0){
-            mDesiredFourBarVoltage = 3.0;
-        }
+        // if(Math.toDegrees(mFourBarSubsystem.getMeasPosition()) > 55.0){
+        //     mDesiredFourBarVoltage = -3.0;
+        // }
 
     }
 
     public void setStateJankHold(){
-        if(mFourBarSubsystem.getMeasPosition() < 70.0){
-            mDesiredFourBarVoltage = -3.0;
-        } else {
-            mDesiredFourBarVoltage = 0.1;
-        }
+        // if(Math.toDegrees(mFourBarSubsystem.getMeasPosition()) < 70.0){
+        //     mDesiredFourBarVoltage = 3.0;
+        // } else {
+        //     mDesiredFourBarVoltage = 0.1;
+        // }
 
     }
 
@@ -123,13 +127,13 @@ public class Superstructure extends Subsystem {
         }
     }
 
-    public void toggleBrakeModeOnFourbar(){
-        if(mFourBarSubsystem.getIdleMode() == IdleMode.kBrake){
-            mFourBarSubsystem.setIdleMode(IdleMode.kCoast);
-        } else {
-            mFourBarSubsystem.setIdleMode(IdleMode.kBrake);
-        }
-    }
+    // public void toggleBrakeModeOnFourbar(){
+    //     if(mFourBarSubsystem.getIdleMode() == IdleMode.kBrake){
+    //         mFourBarSubsystem.setIdleMode(IdleMode.kCoast);
+    //     } else {
+    //         mFourBarSubsystem.setIdleMode(IdleMode.kBrake);
+    //     }
+    // }
 
     // Only place we take inputs from controlboard (other than drive subsystem);
     @Override
@@ -152,10 +156,10 @@ public class Superstructure extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
                 if (isFourBarVoltageControl) {
-                    mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
+                    // mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
                 } else {
                     if(mCommandedState != null){
-                        mFourBarSubsystem.setFourBarFFSetpoint(mCommandedState.fourbar_angle);
+                        // mFourBarSubsystem.setFourBarFFSetpoint(mCommandedState.fourbar_angle);
                     }
                 }
                 

@@ -26,8 +26,10 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putNumber("Fourbar Measured Position", getMeasPosition());
-        SmartDashboard.putNumber("Fourbar Measured Velocity", getMeasVelocity());
+        SmartDashboard.putNumber("Fourbar Measured Position Radians", getMeasPosition());
+        SmartDashboard.putNumber("Fourbar Measured Velocity Radians", getMeasVelocity());
+        SmartDashboard.putNumber("Fourbar Measured Position Degrees", Math.toDegrees(getMeasPosition()));
+        SmartDashboard.putNumber("Fourbar Measured Velocity Degrees", Math.toDegrees(getMeasVelocity()));
         SmartDashboard.putString("Fourbar Idle Mode", getIdleMode().name());
         SmartDashboard.putNumber("Fourbar Applied Voltage", getAppliedVoltage());
     }

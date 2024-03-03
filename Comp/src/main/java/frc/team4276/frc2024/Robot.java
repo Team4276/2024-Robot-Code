@@ -28,6 +28,7 @@ import frc.team4276.frc2024.subsystems.FourBarSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.RobotStateEstimator;
+import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
@@ -51,9 +52,12 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   private final LimeLight mLimeLight = LimeLight.getInstance();
   private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
-  private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
+  // private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
   private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
   private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
+
+  private final SimpleFourbarSubsystem mSimpleFourbarSubsystem = SimpleFourbarSubsystem.getInstance();
+
   private final Superstructure mSuperstructure = Superstructure.getInstance();
 
   private final Looper mEnabledLooper = new Looper();
@@ -77,9 +81,10 @@ public class Robot extends TimedRobot {
           mDriveSubsystem,
           mRobotStateEstimator,
           mSuperstructure,
-          mFourBarSubsystem,
+          // mFourBarSubsystem,
           mIntakeSubsystem,
           mFlywheelSubsystem,
+          mSimpleFourbarSubsystem,
           mLimeLight);
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -280,30 +285,30 @@ public class Robot extends TimedRobot {
       }
 
       if (mControlBoard.operator.getRightStickButtonPressed()) {
-        mSuperstructure.toggleBrakeModeOnFourbar();
+        // mSuperstructure.toggleBrakeModeOnFourbar();
       }
 
       if (mControlBoard.operator.getAButtonPressed()) {
         mSuperstructure.toggleFourbarVoltageMode();
       }
 
-      if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
-        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
+      // if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
+      //   mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
 
-      } else if (mControlBoard.operator.getXButton()) {
-        mSuperstructure
-            .setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));
+      // } else if (mControlBoard.operator.getXButton()) {
+      //   mSuperstructure
+      //       .setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));
 
-      } else if (mControlBoard.operator.isPOVLEFTPressed()) {
-        mSuperstructure.setStateJankIntake();
+      // } else if (mControlBoard.operator.isPOVLEFTPressed()) {
+      //   mSuperstructure.setStateJankIntake();
 
-      } else if (mControlBoard.operator.isPOVRIGHTPressed()) {
-        mSuperstructure.setStateJankHold();
+      // } else if (mControlBoard.operator.isPOVRIGHTPressed()) {
+      //   mSuperstructure.setStateJankHold();
 
-      } else {
-        mSuperstructure.setFourBarVoltage(0.0);
+      // } else {
+      //   mSuperstructure.setFourBarVoltage(0.0);
       
-      }
+      // }
 
     } catch (Throwable t) {
       throw t;

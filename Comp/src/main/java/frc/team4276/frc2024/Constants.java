@@ -321,7 +321,7 @@ public final class Constants {
       kFourbarFFConstants.kGearRatio = 330.0;
       kFourbarFFConstants.kStallTorque = 3.28;
       kFourbarFFConstants.kMotorAmnt = 1;
-      kFourbarFFConstants.kEfficiency = 0.1;
+      kFourbarFFConstants.kEfficiency = 0.17;
 
       kFourbarFFConstants.kBottomLength = Units.inchesToMeters(8.001578);
       kFourbarFFConstants.kMotorLegLength = Units.inchesToMeters(11.000000);
@@ -363,7 +363,7 @@ public final class Constants {
 
       kFourBarConstants.kFourBarFFConstants = kFourbarFFConstants;
 
-      kFourBarConstants.kIdleMode = IdleMode.kBrake;
+      kFourBarConstants.kIdleMode = IdleMode.kCoast;
 
       kFourBarConstants.kSmartCurrentLimit = 40;
       kFourBarConstants.kVoltageCompensation = 12.0;

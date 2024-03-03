@@ -1,8 +1,8 @@
 package frc.team4276.frc2024.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -10,23 +10,22 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import frc.team254.lib.util.Util;
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.drivers.FourBarFeedForward;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
+import frc.team4276.lib.revlib.VIKCANSparkMax;
 
 public class SimpleFourbarSubsystem extends Subsystem {
-    private CANSparkMax mMaster;
+    private VIKCANSparkMax mMaster;
 
     private AbsoluteEncoder mAbsoluteEncoder;
 
     private PeriodicIO mPeriodicIO;
 
-    private State mStateSetpoint;
-    private double mProfileStartTime;
+    private State mStateSetpoint = new State();
+    private double mProfileStartTime = 0.0;
 
     private FourBarFeedForward mFourbarFF;
     private TrapezoidProfile mTrapezoidProfile;
@@ -43,19 +42,23 @@ public class SimpleFourbarSubsystem extends Subsystem {
     }
 
     private SimpleFourbarSubsystem(ServoMotorSubsystemConstants constants) {
-        mMaster = new CANSparkMax(constants.kMasterConstants.id, MotorType.kBrushless);
+        mMaster = new VIKCANSparkMax(constants.kMasterConstants.id, MotorType.kBrushless);
         mMaster.restoreFactoryDefaults();
         mMaster.enableVoltageCompensation(constants.kVoltageCompensation);
         mMaster.setSmartCurrentLimit(constants.kSmartCurrentLimit);
         mMaster.setIdleMode(constants.kIdleMode);
         // mMaster.setCANTimeout(10);
         // mMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+        mMaster.setInverted(constants.kMasterConstants.isInverted);
 
         mAbsoluteEncoder = mMaster.getAbsoluteEncoder(Type.kDutyCycle);
         mAbsoluteEncoder.setPositionConversionFactor(constants.kUnitsPerRotation);
         mAbsoluteEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation);
         mAbsoluteEncoder.setInverted(constants.kIsInverted);
         mAbsoluteEncoder.setZeroOffset(constants.kOffset);
+
+        mMaster.enableForwardLimitSwitch(true, com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen, true);
+        mMaster.enableReverseLimitSwitch(true, com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen, false);
 
         mFourbarFF = new FourBarFeedForward(constants.kFourBarFFConstants);
         mTrapezoidProfile = new TrapezoidProfile(new Constraints(constants.kMaxSpeed, constants.kMaxAccel));
@@ -85,6 +88,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         double meas_position_units;
         double meas_velocity_units;
         State meas_state;
+        double meas_voltage;
 
         double velocity_test;
         double voltage_test;
@@ -101,9 +105,12 @@ public class SimpleFourbarSubsystem extends Subsystem {
         mPeriodicIO.meas_position_units = mAbsoluteEncoder.getPosition();
         mPeriodicIO.meas_velocity_units = mAbsoluteEncoder.getVelocity();
         mPeriodicIO.meas_state = new State(mPeriodicIO.meas_position_units, mPeriodicIO.meas_velocity_units);
+        mPeriodicIO.meas_voltage = mMaster.getAppliedOutput() * 12.0;
 
 
     }
+
+    private double prev_des_vel = 0.0;
 
     @Override
     public void writePeriodicOutputs() {
@@ -122,12 +129,18 @@ public class SimpleFourbarSubsystem extends Subsystem {
             mFourbarFF.setEfficiency(mPeriodicIO.efficiency_test);
             mFourbarFF.setkS(mPeriodicIO.static_test);
 
-            if(mPeriodicIO.voltage_test != 0.0) {
+            if(mPeriodicIO.voltage_test == 0.0) {
                 mPeriodicIO.demand = mFourbarFF.calculate(mPeriodicIO.meas_position_units, mPeriodicIO.velocity_test);
+            } else {
+                mPeriodicIO.demand = mPeriodicIO.voltage_test;
             }
 
-            mMaster.setVoltage(Util.limit(-mPeriodicIO.demand,4.8));
-            SmartDashboard.putNumber("Fourbar Feedforward Voltage", -mPeriodicIO.demand);
+            SmartDashboard.putNumber("Velocity Error", mPeriodicIO.meas_velocity_units - prev_des_vel);
+            prev_des_vel = mPeriodicIO.velocity_test;
+            
+
+            mMaster.setVoltage(Util.limit(mPeriodicIO.demand,3.0));
+            SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.demand);
 
             return;
         }
@@ -136,7 +149,15 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 mStateSetpoint);
         mPeriodicIO.demand = Util.limit(mFourbarFF.calculate(state.position, state.velocity), 4.8);
 
-        mMaster.setVoltage(-mPeriodicIO.demand);
+        mMaster.setVoltage(mPeriodicIO.demand);
+    }
+
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putNumber("Fourbar Applied Voltage", mPeriodicIO.meas_voltage);
+        SmartDashboard.putBoolean("Front Limit", mMaster.isReverseLimitPressed());
+        SmartDashboard.putBoolean("Back Limit", mMaster.isForwardLimitPressed());
+
     }
 
 }

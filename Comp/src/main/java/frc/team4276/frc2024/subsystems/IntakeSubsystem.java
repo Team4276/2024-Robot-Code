@@ -94,7 +94,6 @@ public class IntakeSubsystem extends Subsystem {
     private class PeriodicIO {
         // Inputs
         double timestamp;
-        double current_current;
         boolean front_sensor_tripped;
 
         // Outputs
@@ -104,12 +103,9 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void readPeriodicInputs() {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-        mPeriodicIO.current_current = mMotor.getOutputCurrent();
         mPeriodicIO.front_sensor_tripped = !mFrontSensor.get();
 
     }
-
-    private boolean hasFrontUntripped = false;
 
     @Override
     public void registerEnabledLoops(ILooper enabledLooper) {
@@ -126,7 +122,7 @@ public class IntakeSubsystem extends Subsystem {
                     case HOLDING: break;
                     case VOLTAGE: break;
                     case SLOWTAKE:
-                        if (mPeriodicIO.timestamp - mStateStartTime > 0.05 && mPeriodicIO.current_current > 40) {
+                        if (mPeriodicIO.timestamp - mStateStartTime > 0.05) {
                             mIntakeState = IntakeState.SLOW_FEED;
                         }
 
@@ -142,18 +138,14 @@ public class IntakeSubsystem extends Subsystem {
                     case FASTAKE:
                         if (mPeriodicIO.front_sensor_tripped) {
                             mIntakeState = IntakeState.DEFEED;
-                            mStateStartTime = mPeriodicIO.timestamp;
-                            hasFrontUntripped = false;
                         }
 
                         break;
 
                     case DEFEED:
-                        if (mPeriodicIO.front_sensor_tripped && hasFrontUntripped) {
+                        if (mPeriodicIO.front_sensor_tripped) {
                             mIntakeState = IntakeState.HOLDING;
                         }
-                        
-                        hasFrontUntripped = !mPeriodicIO.front_sensor_tripped;
 
                         break;
 
