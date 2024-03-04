@@ -74,6 +74,9 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public double kI = 0.0;
         public double kD = 0.0;
         public double kFF = 0.0;
+        public double kDFilter = 0.0;
+        public double kIZone = 0.0;
+        public double kIMaxAccum = 0.0;
         public double kPIDOutputRange = 0.0;
 
         public double kMaxSpeed = 0.0; // Radians

@@ -289,13 +289,13 @@ public class Robot extends TimedRobot {
       }
 
       if (mControlBoard.operator.getAButtonPressed()) {
-        mSuperstructure.toggleFourbarVoltageMode();
+        // mSuperstructure.toggleFourbarVoltageMode();
       }
 
-      // if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
-      //   mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
+      if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
+        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
 
-      // } else if (mControlBoard.operator.getXButton()) {
+      } // else if (mControlBoard.operator.getXButton()) {
       //   mSuperstructure
       //       .setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));
 

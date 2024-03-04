@@ -40,6 +40,9 @@ public class Superstructure extends Subsystem {
     private IntakeState mDesiredIntakeState = IntakeState.IDLE;
     private IntakeState mCommandedIntakeState = IntakeState.IDLE;
 
+    private double mDesiredSimpleFourbarState;
+    private double mCommandedSimpleFourbarState;
+
     public enum GoalState{
         STOW(SuperstructureConstants.kSuperstructureStowState),
         FASTAKE(SuperstructureConstants.kSuperstructureFastakeState),
@@ -84,6 +87,10 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setSuperstructureState(SuperstructureState state){
+        
+    }
+
+    public void setSimpleFourbarState(double position){
         
     }
 
@@ -157,6 +164,8 @@ public class Superstructure extends Subsystem {
             public void onLoop(double timestamp) {
                 if (isFourBarVoltageControl) {
                     // mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
+
+                    mSimpleFourbarSubsystem.setVoltage(mCommandedFourBarVoltage);
                 } else {
                     if(mCommandedState != null){
                         // mFourBarSubsystem.setFourBarFFSetpoint(mCommandedState.fourbar_angle);

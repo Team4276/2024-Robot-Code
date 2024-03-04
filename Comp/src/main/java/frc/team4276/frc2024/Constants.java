@@ -348,15 +348,18 @@ public final class Constants {
       kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
       kFourBarConstants.kOffset = Math.toRadians(210.0); // Set in hardware client; Radians 52.6
       kFourBarConstants.kHomePosition = 130.0;
-      kFourBarConstants.kMinPosition = Math.toRadians(50.0);
-      kFourBarConstants.kMaxPosition = Math.toRadians(140.0);
+      kFourBarConstants.kMinPosition = Math.toRadians(55.0);
+      kFourBarConstants.kMaxPosition = Math.toRadians(130.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
       kFourBarConstants.kP = 0.0;
       kFourBarConstants.kI = 0.0;
       kFourBarConstants.kD = 0.0;
       kFourBarConstants.kFF = 0.0;
-      kFourBarConstants.kPIDOutputRange = 0.5;
+      kFourBarConstants.kDFilter = 0.0;
+      kFourBarConstants.kIZone = 0.0;
+      kFourBarConstants.kIMaxAccum = 0.0;
+      kFourBarConstants.kPIDOutputRange = 1.0;
 
       kFourBarConstants.kMaxSpeed = Math.PI / 4;
       kFourBarConstants.kMaxAccel = Math.PI / 4;
