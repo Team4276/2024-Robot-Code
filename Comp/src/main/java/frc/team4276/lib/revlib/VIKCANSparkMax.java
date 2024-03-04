@@ -59,10 +59,14 @@ public class VIKCANSparkMax extends CANSparkMax {
     }
 
     public void setVoltage(double output_volts) {
+        if(output_volts == Double.NaN) return;
+
         super.setVoltage(checkLimits(output_volts));
     }
 
     public void set(double speed) {
+        if(speed == Double.NaN) return;
+
         super.set(checkLimits(speed));
     }
 
