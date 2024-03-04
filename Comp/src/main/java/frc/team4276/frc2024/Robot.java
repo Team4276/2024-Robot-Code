@@ -6,6 +6,7 @@ package frc.team4276.frc2024;
 
 import java.util.Optional;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -76,6 +77,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     try {
+
+      CameraServer.startAutomaticCapture();
+
       // Set subsystems
       mSubsystemManager.setSubsystems(
           mDriveSubsystem,
