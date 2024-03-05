@@ -58,8 +58,8 @@ public class FlywheelSubsystem extends Subsystem {
         mTopMotor.setIdleMode(IdleMode.kBrake);
         mBottomMotor.setIdleMode(IdleMode.kBrake);
 
-        mTopMotor.setSmartCurrentLimit(60);
-        mBottomMotor.setSmartCurrentLimit(60);
+        mTopMotor.setSmartCurrentLimit(40);
+        mBottomMotor.setSmartCurrentLimit(40);
 
         mTopMotor.enableVoltageCompensation(12);
         mBottomMotor.enableVoltageCompensation(12);

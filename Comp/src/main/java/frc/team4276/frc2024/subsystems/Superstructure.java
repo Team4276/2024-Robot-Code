@@ -5,11 +5,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
- 
+
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
+import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem.ControlState;
 import frc.team4276.lib.drivers.Subsystem;
 
 /**
@@ -40,10 +41,7 @@ public class Superstructure extends Subsystem {
     private IntakeState mDesiredIntakeState = IntakeState.IDLE;
     private IntakeState mCommandedIntakeState = IntakeState.IDLE;
 
-    private double mDesiredSimpleFourbarState;
-    private double mCommandedSimpleFourbarState;
-
-    public enum GoalState{
+    public enum GoalState {
         STOW(SuperstructureConstants.kSuperstructureStowState),
         FASTAKE(SuperstructureConstants.kSuperstructureFastakeState),
         SLOWTAKE(SuperstructureConstants.kSuperstructureSlowtakeState),
@@ -52,11 +50,11 @@ public class Superstructure extends Subsystem {
         SPEAKER_CLOSE_SIDE(SuperstructureConstants.kSuperstructureSpeakerCloseSideState),
         SPEAKER_DYNAMIC(SuperstructureConstants.kSuperstructureDynamicSpeakerState),
         AMP_CLOSE(SuperstructureConstants.kSuperstructureAmpState),
-        SCORE(SuperstructureConstants.kSuperstructureStowState); //TODO: fix scoring and intaking logic
+        SCORE(SuperstructureConstants.kSuperstructureStowState); // TODO: fix scoring and intaking logic
 
         public SuperstructureState state;
 
-        GoalState(SuperstructureState state){
+        GoalState(SuperstructureState state) {
             this.state = state;
         }
     }
@@ -71,7 +69,7 @@ public class Superstructure extends Subsystem {
         return mInstance;
     }
 
-    private Superstructure(){
+    private Superstructure() {
         // mFourBarSubsystem = FourBarSubsystem.getInstance();
         mFlywheelSubsystem = FlywheelSubsystem.getInstance();
         mIntakeSubsystem = IntakeSubsystem.getInstance();
@@ -79,19 +77,16 @@ public class Superstructure extends Subsystem {
         mSimpleFourbarSubsystem = SimpleFourbarSubsystem.getInstance();
     }
 
-    public synchronized void setGoalState(GoalState state){
-        if(mLastGoalState == null) mLastGoalState = state;
+    public synchronized void setGoalState(GoalState state) {
+        if (mLastGoalState == null)
+            mLastGoalState = state;
 
         mLastGoalState = mGoalState;
         mGoalState = state;
     }
 
-    public synchronized void setSuperstructureState(SuperstructureState state){
-        
-    }
+    public synchronized void setSuperstructureState(SuperstructureState state) {
 
-    public void setSimpleFourbarState(double position){
-        
     }
 
     public void setFourBarVoltage(double voltage) {
@@ -102,44 +97,44 @@ public class Superstructure extends Subsystem {
         mDesiredFlywheelState = state;
     }
 
-    public void setIntakeState(IntakeState state){
+    public void setIntakeState(IntakeState state) {
         mDesiredIntakeState = state;
     }
 
-    public void setStateJankIntake(){
+    public void setStateJankIntake() {
         // if(Math.toDegrees(mFourBarSubsystem.getMeasPosition()) > 55.0){
-        //     mDesiredFourBarVoltage = -3.0;
+        // mDesiredFourBarVoltage = -3.0;
         // }
 
     }
 
-    public void setStateJankHold(){
+    public void setStateJankHold() {
         // if(Math.toDegrees(mFourBarSubsystem.getMeasPosition()) < 70.0){
-        //     mDesiredFourBarVoltage = 3.0;
+        // mDesiredFourBarVoltage = 3.0;
         // } else {
-        //     mDesiredFourBarVoltage = 0.1;
+        // mDesiredFourBarVoltage = 0.1;
         // }
 
     }
 
-    public boolean atGoal(){
+    public boolean atGoal() {
         return mAtGoal;
     }
 
-    public void toggleFourbarVoltageMode(){
-        if(isFourBarVoltageControl){
-            isFourBarVoltageControl = false;
-        } else {
-            isFourBarVoltageControl = true;
-        }
+    public void toggleFourbarVoltageMode() {
+        // if (isFourBarVoltageControl) {
+        //     isFourBarVoltageControl = false;
+        // } else {
+        //     isFourBarVoltageControl = true;
+        // }
     }
 
     // public void toggleBrakeModeOnFourbar(){
-    //     if(mFourBarSubsystem.getIdleMode() == IdleMode.kBrake){
-    //         mFourBarSubsystem.setIdleMode(IdleMode.kCoast);
-    //     } else {
-    //         mFourBarSubsystem.setIdleMode(IdleMode.kBrake);
-    //     }
+    // if(mFourBarSubsystem.getIdleMode() == IdleMode.kBrake){
+    // mFourBarSubsystem.setIdleMode(IdleMode.kCoast);
+    // } else {
+    // mFourBarSubsystem.setIdleMode(IdleMode.kBrake);
+    // }
     // }
 
     // Only place we take inputs from controlboard (other than drive subsystem);
@@ -158,7 +153,8 @@ public class Superstructure extends Subsystem {
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
-            public void onStart(double timestamp) {}
+            public void onStart(double timestamp) {
+            }
 
             @Override
             public void onLoop(double timestamp) {
@@ -166,13 +162,11 @@ public class Superstructure extends Subsystem {
                     // mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
 
                     mSimpleFourbarSubsystem.setVoltage(mCommandedFourBarVoltage);
-                } else {
-                    if(mCommandedState != null){
-                        // mFourBarSubsystem.setFourBarFFSetpoint(mCommandedState.fourbar_angle);
-                    }
-                }
-                
+                } else if(mSimpleFourbarSubsystem.getControlState() == ControlState.CALIBRATING){
 
+                } else if (mCommandedState != null) {
+                    mSimpleFourbarSubsystem.setSmartMotionSetpoint(mCommandedState.fourbar_angle);
+                }
 
                 switch (mCommandedFlywheelState.desired_mode) {
                     case VOLTAGE:
@@ -198,12 +192,14 @@ public class Superstructure extends Subsystem {
             }
 
             @Override
-            public void onStop(double timestamp) {}
+            public void onStop(double timestamp) {
+            }
         });
     }
 
     @Override
-    public void writePeriodicOutputs() {}
+    public void writePeriodicOutputs() {
+    }
 
     @Override
     public void outputTelemetry() {

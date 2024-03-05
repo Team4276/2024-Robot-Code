@@ -33,6 +33,7 @@ import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
+import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 // import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 
@@ -267,7 +268,7 @@ public class Robot extends TimedRobot {
       // state = null;
 
       if (mControlBoard.operator.getLT()) {
-        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
       } else if(mControlBoard.operator.getLeftBumper()){
         mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3000));
       } else {
@@ -283,7 +284,10 @@ public class Robot extends TimedRobot {
       } else if (mControlBoard.driver.getRightBumper()) {
         mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
 
-      } else {
+      } else if(mControlBoard.driver.getBButton()){
+        mSuperstructure.setIntakeState(IntakeState.FAST_DEFEED);
+      }
+       else {
         mSuperstructure.setIntakeState(IntakeState.IDLE);
 
       }
@@ -293,12 +297,20 @@ public class Robot extends TimedRobot {
       }
 
       if (mControlBoard.operator.getAButtonPressed()) {
-        // mSuperstructure.toggleFourbarVoltageMode();
+        mSuperstructure.toggleFourbarVoltageMode();
       }
 
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
         mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
 
+      } else if(mControlBoard.operator.isPOVUPPressed()){
+        mSuperstructure.setGoalState(GoalState.FASTAKE);
+      } else if(mControlBoard.operator.isPOVDOWNPressed()){
+        mSimpleFourbarSubsystem.setCalibrating();
+      } else if(mControlBoard.operator.isPOVRIGHTPressed()){
+        mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
+      } else {
+        mSuperstructure.setFourBarVoltage(0.0);
       } // else if (mControlBoard.operator.getXButton()) {
       //   mSuperstructure
       //       .setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));

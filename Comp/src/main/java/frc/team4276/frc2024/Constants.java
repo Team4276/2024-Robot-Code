@@ -59,7 +59,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxVel = 4.8; // meters per second
+    public static final double kMaxVel = 4.6; // meters per second
     public static final double kMaxAttainableVel = kMaxVel * 0.85;
     public static final double kMaxAttainableAccel = 3.0;
 
@@ -76,9 +76,9 @@ public final class Constants {
 
     public static final KinematicLimits kDemoLimits = new KinematicLimits();
     static {
-      kDemoLimits.kMaxDriveVelocity = 1.0;
+      kDemoLimits.kMaxDriveVelocity = 2.0;
       kDemoLimits.kMaxAccel = Double.MAX_VALUE;
-      kDemoLimits.kMaxAngularVelocity = kMaxAngularVel / 4; // Rad/Sec
+      kDemoLimits.kMaxAngularVelocity = kMaxAngularVel; // Rad/Sec
       kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
       kDemoLimits.kName = "Demo";
     }
@@ -315,9 +315,9 @@ public final class Constants {
   public static final class SuperstructureConstants {
     public static final FourBarFeedForwardConstants kFourbarFFConstants = new FourBarFeedForwardConstants();
     static {
-      kFourbarFFConstants.kS = 0.1;
+      kFourbarFFConstants.kS = 0.97;
 
-      kFourbarFFConstants.kMotorFreeSpeedRpm = 5880.0;
+      kFourbarFFConstants.kMotorFreeSpeedRpm = 5676.0;
       kFourbarFFConstants.kGearRatio = 330.0;
       kFourbarFFConstants.kStallTorque = 3.28;
       kFourbarFFConstants.kMotorAmnt = 1;
@@ -346,22 +346,22 @@ public final class Constants {
       kFourBarConstants.kIsCircular = false;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
       kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
-      kFourBarConstants.kOffset = Math.toRadians(210.0); // Set in hardware client; Radians 52.6
+      kFourBarConstants.kOffset = Math.toRadians(215.0); // Set in hardware client; Radians 52.6
       kFourBarConstants.kHomePosition = 130.0;
       kFourBarConstants.kMinPosition = Math.toRadians(55.0);
       kFourBarConstants.kMaxPosition = Math.toRadians(130.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
-      kFourBarConstants.kP = 0.0;
+      kFourBarConstants.kP = 0.1;
       kFourBarConstants.kI = 0.0;
-      kFourBarConstants.kD = 0.0;
+      kFourBarConstants.kD = 0.01;
       kFourBarConstants.kFF = 0.0;
       kFourBarConstants.kDFilter = 0.0;
       kFourBarConstants.kIZone = 0.0;
       kFourBarConstants.kIMaxAccum = 0.0;
       kFourBarConstants.kPIDOutputRange = 1.0;
 
-      kFourBarConstants.kMaxSpeed = Math.PI / 4;
+      kFourBarConstants.kMaxSpeed = Math.PI / 2;
       kFourBarConstants.kMaxAccel = Math.PI / 4;
 
       kFourBarConstants.kFourBarFFConstants = kFourbarFFConstants;
