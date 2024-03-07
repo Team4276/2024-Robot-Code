@@ -16,6 +16,7 @@ public class IntakeSubsystem extends Subsystem {
     private CANSparkMax mMotor;
     private RelativeEncoder mRelativeEncoder;
     private DigitalInput mFrontSensor;
+    private DigitalInput mBackSensor;
     private PeriodicIO mPeriodicIO;
     private IntakeState mIntakeState = IntakeState.IDLE;
 
@@ -97,6 +98,7 @@ public class IntakeSubsystem extends Subsystem {
         mMotor.burnFlash();
         
         mFrontSensor = new DigitalInput(0);
+        mBackSensor = new DigitalInput(1);
         mPeriodicIO = new PeriodicIO();
     }
 
@@ -133,6 +135,8 @@ public class IntakeSubsystem extends Subsystem {
         double timestamp;
         double current_current;
         boolean front_sensor_tripped;
+        boolean back_sensor_tripped;
+
         // Outputs
         double voltage;
     }
@@ -142,6 +146,8 @@ public class IntakeSubsystem extends Subsystem {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
         mPeriodicIO.current_current = mMotor.getOutputCurrent();
         mPeriodicIO.front_sensor_tripped = !mFrontSensor.get();
+        mPeriodicIO.back_sensor_tripped = !mBackSensor.get();
+
     }
 
     double start_time;
@@ -175,6 +181,11 @@ public class IntakeSubsystem extends Subsystem {
                             start_time = mPeriodicIO.timestamp;
                             mIntakeState = IntakeState.SLOW_FEED;
                         }
+                        //untested sensor code
+                        /*if (mPeriodicIO.back_sensor_tripped) {
+                            start_time = mPeriodicIO.timestamp;
+                            mIntakeState = IntakeState.SLOW_FEED;
+                        }*/
 
                     case SLOW_FEED:
                         if (mPeriodicIO.front_sensor_tripped) {
