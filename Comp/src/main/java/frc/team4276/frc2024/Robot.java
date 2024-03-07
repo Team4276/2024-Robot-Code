@@ -293,11 +293,11 @@ public class Robot extends TimedRobot {
       }
 
       if (mControlBoard.operator.getRightStickButtonPressed()) {
-        // mSuperstructure.toggleBrakeModeOnFourbar();
+        mSuperstructure.toggleBrakeModeOnFourbar();
       }
 
       if (mControlBoard.operator.getAButtonPressed()) {
-        mSuperstructure.toggleFourbarVoltageMode();
+        // mSuperstructure.toggleFourbarVoltageMode();
       }
 
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {

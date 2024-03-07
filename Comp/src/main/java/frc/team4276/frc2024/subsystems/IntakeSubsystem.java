@@ -61,10 +61,10 @@ public class IntakeSubsystem extends Subsystem {
         HOLDING(0.0),
         VOLTAGE(0.0),
         SLOWTAKE(10.0),
-        SLOW_FEED(8.0),
-        FASTAKE(12.0),
+        SLOW_FEED(5.0),
+        FASTAKE(10.0),
         DEFEED(-1.5),
-        FAST_DEFEED(-8),
+        FAST_DEFEED(-8.0),
         FOOT(12),
         REVERSE(-0.5);
 
@@ -88,12 +88,12 @@ public class IntakeSubsystem extends Subsystem {
         mMotor = new CANSparkMax(12, MotorType.kBrushless);
         mMotor.restoreFactoryDefaults();
         mMotor.enableVoltageCompensation(12);
-        mMotor.setSmartCurrentLimit(25);
+        mMotor.setSmartCurrentLimit(40);
         mMotor.setIdleMode(IdleMode.kBrake);
 
         mRelativeEncoder = mMotor.getEncoder();
         mRelativeEncoder.setAverageDepth(2);
-        mRelativeEncoder.setVelocityConversionFactor(9);
+        mRelativeEncoder.setVelocityConversionFactor(5);
         
         mMotor.burnFlash();
         

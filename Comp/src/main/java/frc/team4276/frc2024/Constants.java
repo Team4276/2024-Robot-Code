@@ -342,11 +342,11 @@ public final class Constants {
       kFourBarConstants.kMasterConstants.id = 9;
       kFourBarConstants.kMasterConstants.isInverted = true;
 
-      kFourBarConstants.kIsInverted = false;
+      kFourBarConstants.kIsInverted = true;
       kFourBarConstants.kIsCircular = false;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
       kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
-      kFourBarConstants.kOffset = Math.toRadians(215.0); // Set in hardware client; Radians 52.6
+      kFourBarConstants.kOffset = Math.toRadians(266.0); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
       kFourBarConstants.kMinPosition = Math.toRadians(55.0);
       kFourBarConstants.kMaxPosition = Math.toRadians(130.0);

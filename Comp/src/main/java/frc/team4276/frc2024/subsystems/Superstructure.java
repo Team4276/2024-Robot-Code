@@ -113,13 +113,15 @@ public class Superstructure extends Subsystem {
         }
     }
 
-    // public void toggleBrakeModeOnFourbar(){
-    // if(mFourBarSubsystem.getIdleMode() == IdleMode.kBrake){
-    // mFourBarSubsystem.setIdleMode(IdleMode.kCoast);
-    // } else {
-    // mFourBarSubsystem.setIdleMode(IdleMode.kBrake);
-    // }
-    // }
+    public void toggleBrakeModeOnFourbar() {
+        if (mSimpleFourbarSubsystem.getIdleMode() == IdleMode.kBrake) {
+            mSimpleFourbarSubsystem.setIdleMode(IdleMode.kCoast);
+
+        } else {
+            mSimpleFourbarSubsystem.setIdleMode(IdleMode.kBrake);
+            
+        }
+    }
 
     // Only place we take inputs from controlboard (other than drive subsystem);
     @Override
@@ -146,7 +148,7 @@ public class Superstructure extends Subsystem {
                     // mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
 
                     mSimpleFourbarSubsystem.setVoltage(mCommandedFourBarVoltage);
-                } else if(mSimpleFourbarSubsystem.getControlState() == ControlState.CALIBRATING){
+                } else if (mSimpleFourbarSubsystem.getControlState() == ControlState.CALIBRATING) {
 
                 } else if (mCommandedState != null) {
                     mSimpleFourbarSubsystem.setSmartMotionSetpoint(mCommandedState.fourbar_angle);

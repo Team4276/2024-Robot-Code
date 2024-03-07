@@ -3,10 +3,12 @@ package frc.team4276.frc2024.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -44,6 +46,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
     private FourBarFeedForward mFourbarFF;
     private TrapezoidProfile mTrapezoidProfile;
+    private ProfiledPIDController mProfiledPIDController;
 
     private SparkPIDController mSparkPIDController;
 
@@ -97,6 +100,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
         mFourbarFF = new FourBarFeedForward(constants.kFourBarFFConstants);
         mTrapezoidProfile = new TrapezoidProfile(new Constraints(constants.kMaxSpeed, constants.kMaxAccel));
+        mProfiledPIDController = new ProfiledPIDController(0.0, 0.0, 0.0, 
+            new Constraints(constants.kMaxSpeed, constants.kMaxAccel), Constants.kLooperDt);
 
         this.kMaxPosition = constants.kMaxPosition;
         this.kMinPosition = constants.kMinPosition;
@@ -149,6 +154,16 @@ public class SimpleFourbarSubsystem extends Subsystem {
         if(mControlState != ControlState.CALIBRATING){
             mControlState = ControlState.CALIBRATING;
         }
+    }
+
+    public void setIdleMode(IdleMode idleMode){
+        if(idleMode == mMaster.getIdleMode()) return;
+
+        mMaster.setIdleMode(idleMode);
+    }
+
+    public IdleMode getIdleMode(){
+        return mMaster.getIdleMode();
     }
 
     private class PeriodicIO {
@@ -212,7 +227,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 SmartDashboard.putNumber("Input Measured State Velocity", mPeriodicIO.meas_state.velocity);
                 SmartDashboard.putNumber("Input Setpoint State Position", mStateSetpoint.position);
                 SmartDashboard.putNumber("Input Setpoint State Velocity", mStateSetpoint.velocity);
-                
+
                 mPeriodicIO.accel_test = SmartDashboard.getNumber("Calibration Accel Test", 0.0);
 
                 if (!Util.epsilonEquals(prev_des_state.position, mPeriodicIO.meas_position_units, Math.PI / 40)
@@ -229,7 +244,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
                 mPeriodicIO.feed_forward = mFourbarFF.calculate(state.position, state.velocity);
                 
-                mPeriodicIO.feed_forward += mPeriodicIO.accel_test * (state.velocity - mPeriodicIO.meas_velocity_units) / Constants.kLooperDt;
+                mPeriodicIO.feed_forward += (mPeriodicIO.accel_test * (state.velocity - mPeriodicIO.meas_velocity_units) / Constants.kLooperDt);
 
                 SmartDashboard.putNumber("Accel Error", mPeriodicIO.meas_acceleration_units - prev_des_accel);
                 prev_des_accel = (state.velocity - mPeriodicIO.meas_velocity_units) / Constants.kLooperDt;
