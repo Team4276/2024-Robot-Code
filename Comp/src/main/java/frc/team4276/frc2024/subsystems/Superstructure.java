@@ -101,32 +101,16 @@ public class Superstructure extends Subsystem {
         mDesiredIntakeState = state;
     }
 
-    public void setStateJankIntake() {
-        // if(Math.toDegrees(mFourBarSubsystem.getMeasPosition()) > 55.0){
-        // mDesiredFourBarVoltage = -3.0;
-        // }
-
-    }
-
-    public void setStateJankHold() {
-        // if(Math.toDegrees(mFourBarSubsystem.getMeasPosition()) < 70.0){
-        // mDesiredFourBarVoltage = 3.0;
-        // } else {
-        // mDesiredFourBarVoltage = 0.1;
-        // }
-
-    }
-
     public boolean atGoal() {
         return mAtGoal;
     }
 
     public void toggleFourbarVoltageMode() {
-        // if (isFourBarVoltageControl) {
-        //     isFourBarVoltageControl = false;
-        // } else {
-        //     isFourBarVoltageControl = true;
-        // }
+        if (isFourBarVoltageControl) {
+            isFourBarVoltageControl = false;
+        } else {
+            isFourBarVoltageControl = true;
+        }
     }
 
     // public void toggleBrakeModeOnFourbar(){

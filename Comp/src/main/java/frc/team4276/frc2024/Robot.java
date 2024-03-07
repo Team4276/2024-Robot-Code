@@ -311,20 +311,7 @@ public class Robot extends TimedRobot {
         mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
       } else {
         mSuperstructure.setFourBarVoltage(0.0);
-      } // else if (mControlBoard.operator.getXButton()) {
-      //   mSuperstructure
-      //       .setFourBarVoltage(Util.limit(SmartDashboard.getNumber("Fourbar des voltage input", 0.0), 4.2));
-
-      // } else if (mControlBoard.operator.isPOVLEFTPressed()) {
-      //   mSuperstructure.setStateJankIntake();
-
-      // } else if (mControlBoard.operator.isPOVRIGHTPressed()) {
-      //   mSuperstructure.setStateJankHold();
-
-      // } else {
-      //   mSuperstructure.setFourBarVoltage(0.0);
-      
-      // }
+      }
 
     } catch (Throwable t) {
       throw t;

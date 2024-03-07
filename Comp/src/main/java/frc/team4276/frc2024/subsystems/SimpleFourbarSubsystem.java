@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team254.lib.util.Util;
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.drivers.FourBarFeedForward;
@@ -108,6 +109,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         SmartDashboard.putNumber("Calibration Voltage Test", 0.0);
         SmartDashboard.putNumber("Calibration Efficiency Test", 0.0);
         SmartDashboard.putNumber("Calibration Static Test", 0.0);
+        SmartDashboard.putNumber("Calibration Accel Test", 0.0);
     }
 
     public ControlState getControlState(){
@@ -154,6 +156,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         double timestamp;
         double meas_position_units;
         double meas_velocity_units;
+        double meas_acceleration_units;
         State meas_state;
         double meas_voltage;
 
@@ -161,12 +164,16 @@ public class SimpleFourbarSubsystem extends Subsystem {
         double voltage_test;
         double efficiency_test;
         double static_test;
+        double accel_test;
 
         // Outputs
         double feed_forward;
         double demand;
     }
 
+    private double prev_timestamp;
+    private double prev_meas_velocity_units = 0.0;
+    
     @Override
     public void readPeriodicInputs() {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
@@ -174,10 +181,17 @@ public class SimpleFourbarSubsystem extends Subsystem {
         mPeriodicIO.meas_velocity_units = mAbsoluteEncoder.getVelocity();
         mPeriodicIO.meas_state = new State(mPeriodicIO.meas_position_units, mPeriodicIO.meas_velocity_units);
         mPeriodicIO.meas_voltage = mMaster.getAppliedOutput() * 12.0;
+        mPeriodicIO.meas_acceleration_units = (mPeriodicIO.meas_velocity_units - prev_meas_velocity_units)
+            / (mPeriodicIO.timestamp - prev_timestamp);
+        
+        prev_timestamp = mPeriodicIO.timestamp;
+        prev_meas_velocity_units = mPeriodicIO.meas_velocity_units;
+
 
     }
 
-    private double prev_des_vel = 0.0;
+    private State prev_des_state = new State();
+    private double prev_des_accel = 0.0;
 
     @Override
     public void writePeriodicOutputs() {
@@ -198,7 +212,14 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 SmartDashboard.putNumber("Input Measured State Velocity", mPeriodicIO.meas_state.velocity);
                 SmartDashboard.putNumber("Input Setpoint State Position", mStateSetpoint.position);
                 SmartDashboard.putNumber("Input Setpoint State Velocity", mStateSetpoint.velocity);
-            
+                
+                mPeriodicIO.accel_test = SmartDashboard.getNumber("Calibration Accel Test", 0.0);
+
+                if (!Util.epsilonEquals(prev_des_state.position, mPeriodicIO.meas_position_units, Math.PI / 40)
+                    || !Util.epsilonEquals(prev_des_state.velocity, mPeriodicIO.meas_velocity_units, Math.PI / 40)){
+                    mProfileStartTime = mPeriodicIO.timestamp;
+                }
+
                 State state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp - mProfileStartTime,
                         mPeriodicIO.meas_state,
                         mStateSetpoint);
@@ -207,9 +228,14 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 SmartDashboard.putNumber("Fourbar Trapezoid State Velocity", state.velocity);
 
                 mPeriodicIO.feed_forward = mFourbarFF.calculate(state.position, state.velocity);
+                
+                mPeriodicIO.feed_forward += mPeriodicIO.accel_test * (state.velocity - mPeriodicIO.meas_velocity_units) / Constants.kLooperDt;
+
+                SmartDashboard.putNumber("Accel Error", mPeriodicIO.meas_acceleration_units - prev_des_accel);
+                prev_des_accel = (state.velocity - mPeriodicIO.meas_velocity_units) / Constants.kLooperDt;
             
-                SmartDashboard.putNumber("Velocity Error", mPeriodicIO.meas_velocity_units - prev_des_vel);
-                prev_des_vel = state.velocity;
+                SmartDashboard.putNumber("Velocity Error", mPeriodicIO.meas_velocity_units - prev_des_state.velocity);
+                prev_des_state = state;
 
                 SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
 
@@ -239,6 +265,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 mPeriodicIO.voltage_test = SmartDashboard.getNumber("Calibration Voltage Test", 0.0);
                 mPeriodicIO.efficiency_test = SmartDashboard.getNumber("Calibration Efficiency Test", 0.0);
                 mPeriodicIO.static_test = SmartDashboard.getNumber("Calibration Static Test", 0.0);
+                mPeriodicIO.accel_test = SmartDashboard.getNumber("Calibration Accel Test", 0.0);
 
                 mFourbarFF.setEfficiency(mPeriodicIO.efficiency_test);
                 mFourbarFF.setkS(mPeriodicIO.static_test);
@@ -246,8 +273,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 mPeriodicIO.feed_forward = mPeriodicIO.voltage_test == 0.0 ? mFourbarFF.calculate(mPeriodicIO.meas_position_units,
                             mPeriodicIO.velocity_test) : mPeriodicIO.voltage_test;
 
-                SmartDashboard.putNumber("Velocity Error", mPeriodicIO.meas_velocity_units - prev_des_vel);
-                prev_des_vel = mPeriodicIO.velocity_test;
+                SmartDashboard.putNumber("Velocity Error", mPeriodicIO.meas_velocity_units - prev_des_state.velocity);
+                prev_des_state.velocity = mPeriodicIO.velocity_test;
 
                 mMaster.setVoltage(mPeriodicIO.feed_forward);
                 SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
@@ -266,6 +293,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         SmartDashboard.putBoolean("Back Limit", mMaster.isForwardLimitPressed());
         SmartDashboard.putString("Simple Fourbar COntrolstate", mControlState.name());
         SmartDashboard.putNumber("Fourbar Position Degrees", Math.toDegrees(mPeriodicIO.meas_position_units));
+        SmartDashboard.putNumber("Fourbar Acceleration", mPeriodicIO.meas_acceleration_units);
 
     }
 
