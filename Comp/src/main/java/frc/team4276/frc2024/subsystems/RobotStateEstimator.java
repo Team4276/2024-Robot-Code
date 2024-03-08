@@ -65,6 +65,7 @@ public class RobotStateEstimator extends Subsystem {
 
     public void resetOdometry(edu.wpi.first.math.geometry.Pose2d initialPose) {
         synchronized(RobotStateEstimator.this) {
+            DriveSubsystem.getInstance().zeroHeading(initialPose.getRotation().getDegrees());
             mOdometry.resetPosition(
                 DriveSubsystem.getInstance().getModuleStates(),
                 initialPose);

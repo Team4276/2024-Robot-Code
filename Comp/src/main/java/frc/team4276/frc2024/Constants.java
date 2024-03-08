@@ -254,10 +254,11 @@ public final class Constants {
 
     public static final boolean disableAfterTeleop = !isComp;
 
-    public static final Pose2d kLimeLightRobotOffset = new Pose2d(0.25, 0, new Rotation2d(0));
-    public static final Rotation2d kLimeLightTilt = new Rotation2d(20);
+    public static final Pose2d kLimeLightRobotOffset = new Pose2d(Units.inchesToMeters(6.0),
+        Units.inchesToMeters(0.5), new Rotation2d(0.0));
+    public static final Rotation2d kLimeLightTilt = new Rotation2d(20.0);
 
-    public static final double kLensHeight = 0.2;
+    public static final double kLensHeight = Units.inchesToMeters(26.625);
 
     public static final double kResolutionWidth = 1280;
     public static final double kResolutionHeight = 960;
@@ -332,9 +333,12 @@ public final class Constants {
       kFourbarFFConstants.kTopMass = Units.lbsToKilograms(28.0);
       kFourbarFFConstants.kSupportLegMass = Units.lbsToKilograms(0.494);
 
-      kFourbarFFConstants.kMotorToCom = new frc.team254.lib.geometry.Translation2d(Units.inchesToMeters(5.5), Units.inchesToMeters(0));
-      kFourbarFFConstants.kMotorLegToTopCom = new frc.team254.lib.geometry.Translation2d(Units.inchesToMeters(4.799278), Units.inchesToMeters(1.121730));
-      kFourbarFFConstants.kSupportToCom = new frc.team254.lib.geometry.Translation2d(Units.inchesToMeters(5.076911), Units.inchesToMeters(1.096583));
+      kFourbarFFConstants.kMotorToCom = new frc.team254.lib.geometry.Translation2d(Units.inchesToMeters(5.5),
+          Units.inchesToMeters(0));
+      kFourbarFFConstants.kMotorLegToTopCom = new frc.team254.lib.geometry.Translation2d(Units.inchesToMeters(4.799278),
+          Units.inchesToMeters(1.121730));
+      kFourbarFFConstants.kSupportToCom = new frc.team254.lib.geometry.Translation2d(Units.inchesToMeters(5.076911),
+          Units.inchesToMeters(1.096583));
     }
 
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
@@ -348,8 +352,8 @@ public final class Constants {
       kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
       kFourBarConstants.kOffset = Math.toRadians(266.0); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
-      kFourBarConstants.kMinPosition = Math.toRadians(55.0);
-      kFourBarConstants.kMaxPosition = Math.toRadians(130.0);
+      kFourBarConstants.kMinPosition = Math.toRadians(45.0);
+      kFourBarConstants.kMaxPosition = Math.toRadians(140.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
       kFourBarConstants.kP = 0.1;
@@ -372,7 +376,7 @@ public final class Constants {
       kFourBarConstants.kVoltageCompensation = 12.0;
     }
 
-    //TODO: figure out how to properly change speeds
+    // TODO: figure out how to properly change speeds
     public static final double kSlowFourbarSpeed = 0.0; // radians / second
     public static final double kSlowFourbarAccel = 0.0; // radians / second^2
     public static final double kMediumFourbarSpeed = 0.0;
@@ -396,16 +400,34 @@ public final class Constants {
     public static final double kFourbarSpeakerCloseSideState = 52.0;
     public static final double kFourbarAmpState = 52.0;
     public static final double kFourbarTrapState = 52.0;
-    
-    public static final SuperstructureState kSuperstructureStowState = new SuperstructureState(130.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL);
-    public static final SuperstructureState kSuperstructureFastakeState = new SuperstructureState(52.0, new FlywheelState(), IntakeState.FASTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.INTAKE);
-    public static final SuperstructureState kSuperstructureSlowtakeState = new SuperstructureState(52.0, new FlywheelState(), IntakeState.SLOWTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.INTAKE);
-    public static final SuperstructureState kSuperstructureSpeakerCloseFrontState = new SuperstructureState(52.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.REV_UP);
-    public static final SuperstructureState kSuperstructureSpeakerCloseSideState = new SuperstructureState(52.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.REV_UP);
-    public static final SuperstructureState kSuperstructureReadyMiddleState = new SuperstructureState(90.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.REV_UP);
-    public static final SuperstructureState kSuperstructureFarSpinUpState = new SuperstructureState(Double.NaN, new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.REV_UP);
-    public static final SuperstructureState kSuperstructureDynamicSpeakerState = new SuperstructureState(Double.NaN, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.DYNAMIC);
-    public static final SuperstructureState kSuperstructureAmpState = new SuperstructureState(52.0, new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.POSITION);
+
+    public static final SuperstructureState kSuperstructureStowState = new SuperstructureState(130.0,
+        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
+        FlywheelTolerance.LIBERAL);
+    public static final SuperstructureState kSuperstructureFastakeState = new SuperstructureState(52.0,
+        new FlywheelState(), IntakeState.FASTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
+        FlywheelTolerance.LIBERAL, Action.INTAKE);
+    public static final SuperstructureState kSuperstructureSlowtakeState = new SuperstructureState(52.0,
+        new FlywheelState(), IntakeState.SLOWTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
+        FlywheelTolerance.LIBERAL, Action.INTAKE);
+    public static final SuperstructureState kSuperstructureSpeakerCloseFrontState = new SuperstructureState(52.0,
+        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
+        FlywheelTolerance.LIBERAL, Action.REV_UP);
+    public static final SuperstructureState kSuperstructureSpeakerCloseSideState = new SuperstructureState(52.0,
+        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
+        FlywheelTolerance.LIBERAL, Action.REV_UP);
+    public static final SuperstructureState kSuperstructureReadyMiddleState = new SuperstructureState(90.0,
+        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
+        FlywheelTolerance.LIBERAL, Action.REV_UP);
+    public static final SuperstructureState kSuperstructureFarSpinUpState = new SuperstructureState(Double.NaN,
+        new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500), IntakeState.IDLE, FourbarSpeed.SONIC,
+        FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.REV_UP);
+    public static final SuperstructureState kSuperstructureDynamicSpeakerState = new SuperstructureState(Double.NaN,
+        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
+        FlywheelTolerance.LIBERAL, Action.DYNAMIC);
+    public static final SuperstructureState kSuperstructureAmpState = new SuperstructureState(52.0, new FlywheelState(),
+        IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL,
+        Action.POSITION);
   }
 
   public static class FlywheelConstants {

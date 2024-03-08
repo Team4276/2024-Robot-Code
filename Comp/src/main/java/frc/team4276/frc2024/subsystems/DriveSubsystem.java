@@ -37,6 +37,7 @@ public class DriveSubsystem extends Subsystem {
     HEADING_CONTROL,
     PATH_FOLLOWING,
     AUTO_ALIGN,
+    LOCK_ON_POSITION
   }
 
   public MAXSwerveModuleV2[] mModules;
@@ -185,6 +186,7 @@ public class DriveSubsystem extends Subsystem {
     // }
 
     SmartDashboard.putNumber("Heading", mPeriodicIO.heading.getDegrees());
+    SmartDashboard.putString("Drive Mode", mControlState.name());
   }
 
   public ModuleState[] getModuleStates() {
@@ -352,10 +354,15 @@ public class DriveSubsystem extends Subsystem {
       mControlState = DriveControlState.PATH_FOLLOWING;
     }
 
-    mPeriodicIO.des_chassis_speeds = speeds;
+    mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+      speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
 
   public void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds){
+    SmartDashboard.putNumber("Des X Traj Speed", speeds.vxMetersPerSecond);
+    SmartDashboard.putNumber("Des Y Traj Speed", speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("Des Rot Traj Speed", speeds.omegaRadiansPerSecond);
+
     updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
   }
 

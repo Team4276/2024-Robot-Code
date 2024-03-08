@@ -60,10 +60,10 @@ public class IntakeSubsystem extends Subsystem {
         IDLE(0.0),
         HOLDING(0.0),
         VOLTAGE(0.0),
-        SLOWTAKE(10.0),
+        SLOWTAKE(12.0),
         SLOW_FEED(5.0),
-        FASTAKE(10.0),
-        DEFEED(-1.5),
+        FASTAKE(12.0),
+        DEFEED(-2.0),
         FAST_DEFEED(-8.0),
         FOOT(12),
         REVERSE(-0.5);
@@ -103,9 +103,9 @@ public class IntakeSubsystem extends Subsystem {
     }
 
     public void setState(IntakeState state) {
-        if (state != IntakeState.HOLDING && state != IntakeState.IDLE && IntakeState.VOLTAGE != state) {
-            currentSensor.updateCurrent(mPeriodicIO.current_current);
-        }
+        // if (state != IntakeState.HOLDING && state != IntakeState.IDLE && IntakeState.VOLTAGE != state) {
+        //     currentSensor.updateCurrent(mPeriodicIO.current_current);
+        // }
         if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED
                 || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT)))
             return;

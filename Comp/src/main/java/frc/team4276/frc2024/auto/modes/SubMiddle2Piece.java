@@ -6,11 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
-import frc.team4276.frc2024.auto.actions.LambdaAction;
-// import frc.team4276.frc2024.auto.actions.LambdaRunnableAction;
 import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
-import frc.team4276.frc2024.auto.actions.ParallelAction;
-import frc.team4276.frc2024.auto.actions.SeriesAction;
 import frc.team4276.frc2024.auto.actions.WaitAction;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.subsystems.Superstructure;
@@ -24,35 +20,29 @@ public class SubMiddle2Piece extends AutoModeBase {
     private final PPSwerveTrajectoryAction traj2;
 
     public SubMiddle2Piece() {
-        traj1 = new PPSwerveTrajectoryAction("SubMiddleToCloseMiddlePickup");
-        traj2 = new PPSwerveTrajectoryAction("CloseMiddlePickupToSub");
+        traj1 = new PPSwerveTrajectoryAction("SubMidtoCloseMiddlePickup");
+        traj2 = new PPSwerveTrajectoryAction("CloseMidPickuptoSub");
     }
 
     @Override
     protected void routine() throws AutoModeEndedException {
         // Shoot preload
-        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
-        // runAction(new LambdaRunnableAction(() -> mSuperstructure.setStateJankIntake(), 4.0));
+        mSuperstructure.setFourBarVoltage(-3.0);
+        runAction(new WaitAction(5.0));
+        mSuperstructure.setFourBarVoltage(0.0);
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
+        runAction(new WaitAction(1.0));
         mSuperstructure.setIntakeState(IntakeState.FOOT);
         runAction(new WaitAction(1.0));
 
         // Drive to note and intake
-        mSuperstructure.setIntakeState(IntakeState.IDLE);
+        mSuperstructure.setIntakeState(IntakeState.FASTAKE);
         mSuperstructure.setFlywheelState(new FlywheelState());
-        runAction(new ParallelAction(List.of(
-                new SeriesAction(List.of(
-                        // new LambdaRunnableAction(() -> mSuperstructure.setStateJankHold(), 1.0),
-                        new LambdaAction(() -> mSuperstructure.setIntakeState(IntakeState.FASTAKE))
-                        // new LambdaRunnableAction(() -> mSuperstructure.setStateJankIntake(), 3.0)
-                        )),
-                traj1)));
+        runAction(traj1);
 
         // Drive to Sub and shoot
-        runAction(new ParallelAction(List.of(
-                // new LambdaRunnableAction(() -> mSuperstructure.setStateJankHold(), 3.0),
-                traj2)));
-        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500));
-        // runAction(new LambdaRunnableAction(() -> mSuperstructure.setStateJankIntake(), 3.0));
+        runAction(traj2);
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
         mSuperstructure.setIntakeState(IntakeState.FOOT);
 
     }

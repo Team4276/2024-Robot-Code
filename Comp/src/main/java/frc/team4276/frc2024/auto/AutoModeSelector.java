@@ -14,7 +14,8 @@ public class AutoModeSelector {
         SPIN_TEST,
         STRESS_TEST,
         MID_3PIECE_STAGE,
-        SUB_MIDDLE_2_PIECE
+        SUB_MIDDLE_2_PIECE,
+        TAXI
 
     }
 
@@ -31,6 +32,7 @@ public class AutoModeSelector {
         mModeChooser.addOption("Stress test", DesiredMode.STRESS_TEST);
         mModeChooser.addOption("Mid 3 Piece Stage", DesiredMode.MID_3PIECE_STAGE);
         mModeChooser.addOption("Sub Middle 2 Piece", DesiredMode.SUB_MIDDLE_2_PIECE);
+        mModeChooser.addOption("Taxi", DesiredMode.TAXI);
         SmartDashboard.putData("Auto Mode", mModeChooser);
 
     }
@@ -61,6 +63,8 @@ public class AutoModeSelector {
             return Optional.of(new PPTest("Mid3PieceStage"));
         case SUB_MIDDLE_2_PIECE:
             return Optional.of(new SubMiddle2Piece());
+        case TAXI:
+            return Optional.of(new PPTest("SubMidtoCloseMiddlePickup"));
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

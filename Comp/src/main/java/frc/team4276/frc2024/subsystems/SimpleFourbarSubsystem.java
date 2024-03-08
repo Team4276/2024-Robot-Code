@@ -73,8 +73,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
         // mMaster.setCANTimeout(10);
         // mMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
         mMaster.setInverted(constants.kMasterConstants.isInverted);
-        mMaster.enableForwardLimitSwitch(true, com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen, true);
-        mMaster.enableReverseLimitSwitch(true, com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen, false);
+        mMaster.enableForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen, true);
+        mMaster.enableReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen, false);
 
         mAbsoluteEncoder = mMaster.getAbsoluteEncoder(Type.kDutyCycle);
         mAbsoluteEncoder.setPositionConversionFactor(constants.kUnitsPerRotation);

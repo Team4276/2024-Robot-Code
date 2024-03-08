@@ -179,12 +179,15 @@ public class Robot extends TimedRobot {
       Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
       if (autoMode.isPresent()) {
         mAutoModeExecutor.setAutoMode(autoMode.get());
+
+        mRobotStateEstimator.resetOdometry(autoMode.get().getStartingPose());
+      } else {
+        mRobotStateEstimator.resetOdometry(new Pose2d(0, 0, new Rotation2d(180)));
+
       }
 
       mEnabledLooper.start();
       mAutoModeExecutor.start();
-
-      mRobotStateEstimator.resetOdometry(new Pose2d(0, 0, new Rotation2d(180)));
 
       mLimeLight.setDisableProcessing(true);
       RobotState.getInstance().setHasBeenEnabled(true);
@@ -236,6 +239,10 @@ public class Robot extends TimedRobot {
             mControlBoard.getSwerveRotation(),
             mDriveSubsystem.getWPIHeading()));
       }
+
+      SmartDashboard.putNumber("DesSwerveTranslationX", mControlBoard.getSwerveTranslation().x());
+      SmartDashboard.putNumber("DesSwerveTranslationY", mControlBoard.getSwerveTranslation().y());
+      SmartDashboard.putNumber("DesSwerveRotation", mControlBoard.getSwerveRotation());
 
       if (mControlBoard.wantDemoLimits()) {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
@@ -301,7 +308,7 @@ public class Robot extends TimedRobot {
       }
 
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
-        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 7.5);
+        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 8.5);
 
       } else if(mControlBoard.operator.isPOVUPPressed()){
         mSuperstructure.setGoalState(GoalState.FASTAKE);
