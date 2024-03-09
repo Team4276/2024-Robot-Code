@@ -81,6 +81,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
         public double kMaxSpeed = 0.0; // Radians
         public double kMaxAccel = 0.0; // Radians
+        public double kVelTol = 0.0;
+        public double kPosTol = 0.0;
 
         public FourBarFeedForwardConstants kFourBarFFConstants;
 

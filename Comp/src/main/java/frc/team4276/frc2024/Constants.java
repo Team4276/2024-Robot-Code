@@ -367,6 +367,8 @@ public final class Constants {
 
       kFourBarConstants.kMaxSpeed = Math.PI / 2;
       kFourBarConstants.kMaxAccel = Math.PI / 4;
+      kFourBarConstants.kVelTol = Math.PI / 180.0;
+      kFourBarConstants.kPosTol = Math.PI / 180.0;
 
       kFourBarConstants.kFourBarFFConstants = kFourbarFFConstants;
 
