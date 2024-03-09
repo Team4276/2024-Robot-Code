@@ -64,7 +64,7 @@ public class AutoModeSelector {
         case SUB_MIDDLE_2_PIECE:
             return Optional.of(new SubMiddle2Piece());
         case TAXI:
-            return Optional.of(new PPTest("SubMidtoCloseMiddlePickup"));
+            return Optional.of(new PPTest("Taxi"));
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

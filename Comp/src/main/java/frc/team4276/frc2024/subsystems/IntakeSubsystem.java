@@ -101,11 +101,11 @@ public class IntakeSubsystem extends Subsystem {
         mBackSensor = new DigitalInput(1);
         mPeriodicIO = new PeriodicIO();
     }
-
+    
     public void setState(IntakeState state) {
-        // if (state != IntakeState.HOLDING && state != IntakeState.IDLE && IntakeState.VOLTAGE != state) {
-        //     currentSensor.updateCurrent(mPeriodicIO.current_current);
-        // }
+        if (state != IntakeState.HOLDING && state != IntakeState.IDLE && IntakeState.VOLTAGE != state) {
+            currentSensor.updateCurrent(mPeriodicIO.current_current);
+        }
         if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED
                 || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT)))
             return;

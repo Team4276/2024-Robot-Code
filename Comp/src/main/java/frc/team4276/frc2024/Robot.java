@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
   private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
-  private final LimeLight mLimeLight = LimeLight.getInstance();
+  // private final LimeLight mLimeLight = LimeLight.getInstance();
   private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
   // private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
   private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
@@ -89,8 +89,9 @@ public class Robot extends TimedRobot {
           // mFourBarSubsystem,
           mIntakeSubsystem,
           mFlywheelSubsystem,
-          mSimpleFourbarSubsystem,
-          mLimeLight);
+          mSimpleFourbarSubsystem
+          // ,mLimeLight
+          );
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -128,8 +129,8 @@ public class Robot extends TimedRobot {
     try {
       mEnabledLooper.stop();
       mDisabledLooper.start();
-      mLimeLight.start();
-      mLimeLight.setDisableProcessing(true);
+      // mLimeLight.start();
+      // mLimeLight.setDisableProcessing(true);
 
     } catch (Throwable t) {
       throw t;
@@ -149,9 +150,9 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     try {
       if (mAllianceChooser.getAlliance() == Alliance.Red) {
-        mLimeLight.setRedTagMap();
+        // mLimeLight.setRedTagMap();
       } else {
-        mLimeLight.setBlueTagMap();
+        // mLimeLight.setBlueTagMap();
       }
 
       mAutoModeSelector.updateModeCreator(mAllianceChooser.isAllianceChanged());
@@ -189,7 +190,7 @@ public class Robot extends TimedRobot {
       mEnabledLooper.start();
       mAutoModeExecutor.start();
 
-      mLimeLight.setDisableProcessing(true);
+      // mLimeLight.setDisableProcessing(true);
       RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
@@ -208,7 +209,7 @@ public class Robot extends TimedRobot {
       mDisabledLooper.stop();
       mEnabledLooper.start();
 
-      mLimeLight.setDisableProcessing(LimelightConstants.disableAfterTeleop);
+      // mLimeLight.setDisableProcessing(LimelightConstants.disableAfterTeleop);
 
       RobotState.getInstance().setHasBeenEnabled(true);
 
