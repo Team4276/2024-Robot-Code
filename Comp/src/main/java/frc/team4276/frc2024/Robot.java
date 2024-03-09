@@ -278,7 +278,7 @@ public class Robot extends TimedRobot {
       if (mControlBoard.operator.getLT()) {
         mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
       } else if(mControlBoard.operator.getLeftBumper()){
-        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3000));
+        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3500));
       } else {
         mSuperstructure.setFlywheelState(new FlywheelState());
       }
@@ -309,7 +309,7 @@ public class Robot extends TimedRobot {
       }
 
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
-        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 8.5);
+        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 10.0);
 
       } else if(mControlBoard.operator.isPOVUPPressed()){
         mSuperstructure.setGoalState(GoalState.FASTAKE);
@@ -317,6 +317,8 @@ public class Robot extends TimedRobot {
         mSimpleFourbarSubsystem.setCalibrating();
       } else if(mControlBoard.operator.isPOVRIGHTPressed()){
         mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
+      } else if(mControlBoard.operator.isPOVLEFTPressed()){
+        mSuperstructure.setFourBarVoltage(0.3);
       } else {
         mSuperstructure.setFourBarVoltage(0.0);
       }
