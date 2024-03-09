@@ -18,6 +18,7 @@ import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.Constants.OIConstants;
+import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -241,10 +242,6 @@ public class Robot extends TimedRobot {
             mDriveSubsystem.getWPIHeading()));
       }
 
-      SmartDashboard.putNumber("DesSwerveTranslationX", mControlBoard.getSwerveTranslation().x());
-      SmartDashboard.putNumber("DesSwerveTranslationY", mControlBoard.getSwerveTranslation().y());
-      SmartDashboard.putNumber("DesSwerveRotation", mControlBoard.getSwerveRotation());
-
       if (mControlBoard.wantDemoLimits()) {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
       } else {
@@ -276,11 +273,11 @@ public class Robot extends TimedRobot {
       // state = null;
 
       if (mControlBoard.operator.getLT()) {
-        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
+        mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShoot);
       } else if(mControlBoard.operator.getLeftBumper()){
-        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3500));
+        mSuperstructure.setFlywheelState(SuperstructureConstants.kWhatTheFlip);
       } else {
-        mSuperstructure.setFlywheelState(new FlywheelState());
+        mSuperstructure.setFlywheelState(FlywheelState.getIdentity());
       }
 
       if (mControlBoard.operator.getRT()) {

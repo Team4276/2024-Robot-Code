@@ -350,7 +350,7 @@ public final class Constants {
       kFourBarConstants.kIsCircular = false;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
       kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
-      kFourBarConstants.kOffset = Math.toRadians(266.0); // Set in hardware client; Radians 52.6 143
+      kFourBarConstants.kOffset = Math.toRadians(268.0); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
       kFourBarConstants.kMinPosition = Math.toRadians(45.0);
       kFourBarConstants.kMaxPosition = Math.toRadians(140.0);
@@ -402,6 +402,9 @@ public final class Constants {
     public static final double kFourbarSpeakerCloseSideState = 52.0;
     public static final double kFourbarAmpState = 52.0;
     public static final double kFourbarTrapState = 52.0;
+
+    public static final FlywheelState kNormalShoot = new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500);
+    public static final FlywheelState kWhatTheFlip = new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3500);
 
     public static final SuperstructureState kSuperstructureStowState = new SuperstructureState(130.0,
         new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,

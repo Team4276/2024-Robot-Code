@@ -6,6 +6,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.SparkLimitSwitch.Type;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Added features to CANSparkMax class
  */
@@ -20,6 +22,8 @@ public class VIKCANSparkMax extends CANSparkMax {
     protected EncoderLimit mNegativeEncoderLimit = null;
 
     protected DoubleSupplier mPositionSupplierForLimiting;
+
+    protected double mPositionForLimiting;
 
     public VIKCANSparkMax(int id, MotorType motorType) {
         super(id, motorType);
@@ -98,6 +102,10 @@ public class VIKCANSparkMax extends CANSparkMax {
         super.set(checkLimits(speed));
     }
 
+    public void updateEncoderForLimits(double position) {
+        mPositionForLimiting = position;
+    }
+
     public static enum Direction {
         POSITIVE,
         NEGATIVE
@@ -141,6 +149,7 @@ public class VIKCANSparkMax extends CANSparkMax {
     }
 
     protected double checkLimits(double output_volts) {
+
         if (mReverseLimitSwitch != null) {
             if (mReverseLimitSwitch.isPressed()) {
                 if (mReverseCancelNegative && output_volts < 0) {
@@ -161,25 +170,34 @@ public class VIKCANSparkMax extends CANSparkMax {
             }
         }
 
-        if (mPositiveEncoderLimit != null) {
-            if (mPositionSupplierForLimiting.getAsDouble() > mPositiveEncoderLimit.position) {
-                if (mPositiveEncoderLimit.limit_positive && output_volts > 0) {
-                    return Math.abs(mPositiveEncoderLimit.magnitude) * 0.0;
-                } else if (!mPositiveEncoderLimit.limit_positive && output_volts < 0) {
-                    return Math.abs(mPositiveEncoderLimit.magnitude) * 0.0;
-                }
-            }
-        }
+        // if (mPositiveEncoderLimit != null) {
+        //     if (mPositionForLimiting > mPositiveEncoderLimit.position) {
+        //         SmartDashboard.putBoolean("Is Past Encoder Limit", true);
+        //         if (mPositiveEncoderLimit.limit_positive && output_volts > 0) {
+        //             SmartDashboard.putBoolean("Encoder Limit", true);
+        //             return Math.abs(mPositiveEncoderLimit.magnitude) * 0.0;
+        //         } else if (!mPositiveEncoderLimit.limit_positive && output_volts < 0) {
+        //             SmartDashboard.putBoolean("Encoder Limit", true);
+        //             return Math.abs(mPositiveEncoderLimit.magnitude) * 0.0;
+        //         }
+        //     }
+        // }
 
-        if (mNegativeEncoderLimit != null) {
-            if (mPositionSupplierForLimiting.getAsDouble() < mNegativeEncoderLimit.position) {
-                if (mNegativeEncoderLimit.limit_positive && output_volts > 0) {
-                    return Math.abs(mNegativeEncoderLimit.magnitude) * 0.0;
-                } else if (!mNegativeEncoderLimit.limit_positive && output_volts < 0) {
-                    return Math.abs(mNegativeEncoderLimit.magnitude) * 0.0;
-                }
-            }
-        }
+        // if (mNegativeEncoderLimit != null) {
+        //     if (mPositionForLimiting < mNegativeEncoderLimit.position) {
+        //         SmartDashboard.putBoolean("Is Past Encoder Limit", true);
+        //         if (mNegativeEncoderLimit.limit_positive && output_volts > 0) {
+        //             SmartDashboard.putBoolean("Encoder Limit", true);
+        //             return Math.abs(mNegativeEncoderLimit.magnitude) * 0.0;
+        //         } else if (!mNegativeEncoderLimit.limit_positive && output_volts < 0) {
+        //             SmartDashboard.putBoolean("Encoder Limit", true);
+        //             return Math.abs(mNegativeEncoderLimit.magnitude) * 0.0;
+        //         }
+        //     }
+        // }
+
+        SmartDashboard.putBoolean("Is Past Encoder Limit", false);
+        SmartDashboard.putBoolean("Encoder Limit", false);
 
         return output_volts;
     }

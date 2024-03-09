@@ -1,0 +1,58 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.719320017812645,
+        "y": 6.9679477447399965
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.8058747672416873,
+        "y": 6.827417706190619
+      },
+      "isLocked": false,
+      "linkedName": "CloseAmpPickup1"
+    },
+    {
+      "anchor": {
+        "x": 0.7167669684840067,
+        "y": 6.663465994549679
+      },
+      "prevControl": {
+        "x": 1.407706324685116,
+        "y": 6.780574360007493
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "SubASC"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.2,
+      "rotationDegrees": -170.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.91,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -120.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Comp",
+  "previewStartingState": {
+    "rotation": -170.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

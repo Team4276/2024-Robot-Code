@@ -223,6 +223,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 break;
 
             case VOLTAGE:
+                mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
                 mMaster.setVoltage(mPeriodicIO.demand);
 
                 break;
@@ -274,6 +275,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
                 // }
 
+                
+                mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
                 mMaster.setVoltage(mPeriodicIO.feed_forward);
 
                 break;
@@ -301,7 +304,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
                 SmartDashboard.putNumber("Velocity Error", mPeriodicIO.meas_velocity_units - prev_des_state.velocity);
                 prev_des_state.velocity = mPeriodicIO.velocity_test;
-
+                
+                mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
                 mMaster.setVoltage(mPeriodicIO.feed_forward);
                 SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
 
