@@ -184,7 +184,7 @@ public class Robot extends TimedRobot {
 
         mRobotStateEstimator.resetOdometry(autoMode.get().getStartingPose());
       } else {
-        mRobotStateEstimator.resetOdometry(new Pose2d(0, 0, new Rotation2d(180)));
+        mRobotStateEstimator.resetOdometry(new Pose2d(0, 0, new Rotation2d(0.0)));
 
       }
 

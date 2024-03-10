@@ -13,11 +13,14 @@ import com.pathplanner.lib.commands.FollowPathHolonomic;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class PPSwerveTrajectoryAction implements Action {
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
+
+    private Alliance alliance;
 
     private Command mCommand;
 
@@ -26,7 +29,7 @@ public class PPSwerveTrajectoryAction implements Action {
     public PPSwerveTrajectoryAction(String name) {
         path = PathPlannerPath.fromPathFile(name);
 
-        Alliance alliance = AllianceChooser.getInstance().getAlliance();
+        alliance = AllianceChooser.getInstance().getAlliance();
 
         mCommand = new FollowPathHolonomic(
             path, 
@@ -41,7 +44,7 @@ public class PPSwerveTrajectoryAction implements Action {
             () -> alliance == Alliance.Red, 
             new EmptySubsystem());
 
-        System.out.println("Loaded path with alliance" + alliance.name());
+        SmartDashboard.putString("Loaded path with alliance", alliance.name());
     }
 
     @Override
@@ -69,6 +72,6 @@ public class PPSwerveTrajectoryAction implements Action {
     }
 
     public Pose2d getInitialPose(){
-        return path.getPreviewStartingHolonomicPose();
+        return alliance == Alliance.Red ? path.flipPath().getPreviewStartingHolonomicPose() : path.getPreviewStartingHolonomicPose();
     }
 }

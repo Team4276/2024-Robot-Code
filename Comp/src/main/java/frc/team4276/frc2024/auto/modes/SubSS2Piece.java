@@ -19,11 +19,12 @@ public class SubSS2Piece extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-
+        runAction(traj1);
+        runAction(traj2);
     }
 
     @Override
     public Pose2d getStartingPose() {
-        return null;
+        return traj1.getInitialPose();
     }
 }
