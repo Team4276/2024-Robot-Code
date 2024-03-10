@@ -20,16 +20,18 @@ public class PPSwerveTrajectoryAction implements Action {
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
     private RobotState mRobotState = RobotState.getInstance();
 
-    private Alliance alliance;
-
     private Command mCommand;
 
     private PathPlannerPath path;
+    private Pose2d initialPose;
 
+    /**
+     * Alliance Test
+     */
     public PPSwerveTrajectoryAction(String name) {
         path = PathPlannerPath.fromPathFile(name);
 
-        alliance = AllianceChooser.getInstance().getAlliance();
+        Alliance alliance = AllianceChooser.getInstance().getAlliance();
 
         mCommand = new FollowPathHolonomic(
             path, 
@@ -43,6 +45,9 @@ public class PPSwerveTrajectoryAction implements Action {
             new ReplanningConfig(), 
             () -> alliance == Alliance.Red, 
             new EmptySubsystem());
+
+        initialPose = alliance == Alliance.Red ? path.flipPath().getPreviewStartingHolonomicPose() 
+            : path.getPreviewStartingHolonomicPose();        
 
         SmartDashboard.putString("Loaded path with alliance", alliance.name());
     }
@@ -72,6 +77,6 @@ public class PPSwerveTrajectoryAction implements Action {
     }
 
     public Pose2d getInitialPose(){
-        return alliance == Alliance.Red ? path.flipPath().getPreviewStartingHolonomicPose() : path.getPreviewStartingHolonomicPose();
+        return initialPose;
     }
 }

@@ -23,7 +23,7 @@ public class ShootTest extends AutoModeBase {
         mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
         runAction(new WaitAction(2.0));
         mSuperstructure.setIntakeState(IntakeState.FOOT);
-        runAction(new WaitAction(1.0));
+        runAction(new WaitAction(2.0));
         mSuperstructure.setIntakeState(IntakeState.IDLE);
         mSuperstructure.setFlywheelState(new FlywheelState());
 

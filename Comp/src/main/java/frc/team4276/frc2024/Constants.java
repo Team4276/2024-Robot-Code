@@ -349,7 +349,7 @@ public final class Constants {
       kFourBarConstants.kIsInverted = true;
       kFourBarConstants.kIsCircular = false;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
-      kFourBarConstants.kGearRatio = 330.0; // Motor Rotations to Overall Rotations
+      kFourBarConstants.kGearRatio = 110.0; // Motor Rotations to Overall Rotations
       kFourBarConstants.kOffset = Math.toRadians(268.0); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
       kFourBarConstants.kMinPosition = Math.toRadians(45.0);

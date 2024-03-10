@@ -66,7 +66,7 @@ public class IntakeSubsystem extends Subsystem {
         DEFEED(-2.0),
         FAST_DEFEED(-8.0),
         FOOT(12),
-        REVERSE(-0.5);
+        REVERSE(-3.0);
 
         public double voltage;
 

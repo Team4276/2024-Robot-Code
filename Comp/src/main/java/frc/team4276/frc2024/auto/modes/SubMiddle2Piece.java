@@ -21,7 +21,7 @@ public class SubMiddle2Piece extends AutoModeBase {
 
     public SubMiddle2Piece() {
         traj1 = new PPSwerveTrajectoryAction("SubMidtoCloseMiddlePickup");
-        traj2 = new PPSwerveTrajectoryAction("CloseMidPickuptoSub");
+        traj2 = new PPSwerveTrajectoryAction("CloseMiddlePickuptoSubMid");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class SubMiddle2Piece extends AutoModeBase {
         mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
         runAction(new WaitAction(2.0));
         mSuperstructure.setIntakeState(IntakeState.FOOT);
-        runAction(new WaitAction(1.0));
+        runAction(new WaitAction(2.0));
 
         // Drive to note and intake
         mSuperstructure.setIntakeState(IntakeState.FASTAKE);

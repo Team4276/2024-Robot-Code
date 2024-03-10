@@ -17,24 +17,24 @@ public class SubAmpSide2Piece extends AutoModeBase {
 
     private final PPSwerveTrajectoryAction traj1;
     private final PPSwerveTrajectoryAction traj2;
-    
-    public SubAmpSide2Piece(){
+
+    public SubAmpSide2Piece() {
         traj1 = new PPSwerveTrajectoryAction("SubASCtoAmpPickup1");
         traj2 = new PPSwerveTrajectoryAction("AmpPickup1toSubASC");
     }
 
     @Override
-    protected void routine() throws AutoModeEndedException {
+    protected void routine() throws AutoModeEndedException { 
         // Shoot preload
-        mSuperstructure.setFourBarVoltage(-3.0);
-        runAction(new WaitAction(5.0));
+        mSuperstructure.setFourBarVoltage(-2.0);
+        runAction(new WaitAction(2.0));
         mSuperstructure.setFourBarVoltage(0.0);
         mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
-        runAction(new WaitAction(1.0));
+        runAction(new WaitAction(2.0));
         mSuperstructure.setIntakeState(IntakeState.FOOT);
-        runAction(new WaitAction(1.0));
+        runAction(new WaitAction(2.0));
+        mSuperstructure.setIntakeState(IntakeState.IDLE);
 
-        
         // Drive to note and intake
         mSuperstructure.setIntakeState(IntakeState.FASTAKE);
         mSuperstructure.setFlywheelState(new FlywheelState());
@@ -43,6 +43,7 @@ public class SubAmpSide2Piece extends AutoModeBase {
         // Drive to Sub and shoot
         runAction(traj2);
         mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
+        runAction(new WaitAction(2.0));
         mSuperstructure.setIntakeState(IntakeState.FOOT);
     }
 
