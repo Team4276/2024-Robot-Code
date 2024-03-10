@@ -280,7 +280,11 @@ public class Robot extends TimedRobot {
         mSuperstructure.setFlywheelState(FlywheelState.getIdentity());
       }
 
-      if (mControlBoard.operator.getRT()) {
+      // if(Math.abs(mControlBoard.operator.getLeftY()) > OIConstants.kJoystickDeadband){
+      //   // mSuperstructure.
+
+      // } else
+       if (mControlBoard.operator.getRT()) {
         mSuperstructure.setIntakeState(IntakeState.FOOT);
 
       } else if (mControlBoard.driver.getRT()) {
@@ -306,7 +310,7 @@ public class Robot extends TimedRobot {
       }
 
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
-        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 3.5);
+        mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 6.0);
 
       } else if(mControlBoard.operator.isPOVUPPressed()){
         mSuperstructure.setGoalState(GoalState.FASTAKE);
