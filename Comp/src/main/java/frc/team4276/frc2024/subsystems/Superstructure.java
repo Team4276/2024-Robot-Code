@@ -5,7 +5,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
-
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;

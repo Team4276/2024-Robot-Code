@@ -4,10 +4,11 @@
 
 package frc.team4276.lib.util;
 
+import org.ejml.simple.SimpleMatrix;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Num;
 import edu.wpi.first.math.Pair;
-import org.ejml.simple.SimpleMatrix;
 
 public final class Discretization {
   private Discretization() {

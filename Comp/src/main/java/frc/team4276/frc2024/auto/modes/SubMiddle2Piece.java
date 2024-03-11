@@ -1,17 +1,14 @@
 package frc.team4276.frc2024.auto.modes;
 
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose2d;
-
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.WaitAction;
 import frc.team4276.frc2024.statemachines.FlywheelState;
-import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
+import frc.team4276.frc2024.subsystems.Superstructure;
 
 public class SubMiddle2Piece extends AutoModeBase {
     private final Superstructure mSuperstructure = Superstructure.getInstance();

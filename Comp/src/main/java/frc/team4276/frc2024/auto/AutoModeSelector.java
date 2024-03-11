@@ -1,11 +1,16 @@
 package frc.team4276.frc2024.auto;
 
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.Optional;
 
-import frc.team4276.frc2024.auto.modes.*;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team4276.frc2024.auto.modes.ActionExample;
+import frc.team4276.frc2024.auto.modes.DoNothingMode;
+import frc.team4276.frc2024.auto.modes.PPTest;
+import frc.team4276.frc2024.auto.modes.ShootTest;
+import frc.team4276.frc2024.auto.modes.SubAmpSide2Piece;
+import frc.team4276.frc2024.auto.modes.SubMiddle2Piece;
+import frc.team4276.frc2024.auto.modes.SubSS2Piece;
 
 public class AutoModeSelector {
     public enum DesiredMode {

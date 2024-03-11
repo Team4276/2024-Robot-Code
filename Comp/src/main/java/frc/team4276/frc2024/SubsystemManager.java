@@ -1,14 +1,13 @@
 package frc.team4276.frc2024;
 
-import frc.team1678.lib.loops.ILooper;
-import frc.team1678.lib.loops.Loop;
-import frc.team1678.lib.loops.Looper;
-//import frc.team1678.lib.logger.LoggingSystem;
-import frc.team4276.lib.drivers.Subsystem;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import frc.team1678.lib.loops.ILooper;
+import frc.team1678.lib.loops.Loop;
+import frc.team1678.lib.loops.Looper;
+import frc.team4276.lib.drivers.Subsystem;
 
 /**
  * Used to reset, start, stop, and update all subsystems at once

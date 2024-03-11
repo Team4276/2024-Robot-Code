@@ -1,9 +1,8 @@
 package frc.team4276.frc2024.auto;
 
-import frc.team4276.frc2024.auto.actions.Action;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
+import frc.team4276.frc2024.auto.actions.Action;
 
 /**
  * An abstract class that is the basis of the robot's autonomous routines. This

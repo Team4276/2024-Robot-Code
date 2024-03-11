@@ -1,7 +1,6 @@
 package frc.team4276.frc2024.statemachines;
 
 import frc.team254.lib.util.Util;
-
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 

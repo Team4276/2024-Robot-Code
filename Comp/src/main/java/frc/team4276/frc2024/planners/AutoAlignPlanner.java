@@ -3,9 +3,7 @@ package frc.team4276.frc2024.planners;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-
 import frc.team1678.lib.swerve.ChassisSpeeds;
-
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Twist2d;
 import frc.team4276.frc2024.Constants;

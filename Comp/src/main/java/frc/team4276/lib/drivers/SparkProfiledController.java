@@ -1,8 +1,8 @@
 package frc.team4276.lib.drivers;
 
 import com.revrobotics.CANSparkBase;
-import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
