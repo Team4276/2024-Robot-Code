@@ -107,7 +107,7 @@ public class IntakeSubsystem extends Subsystem {
             currentSensor.updateCurrent(mPeriodicIO.current_current);
         }
         if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED
-                || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT)))
+                || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT) && (state != IntakeState.REVERSE)))
             return;
         mIntakeState = state;
         mStateStartTime = mPeriodicIO.timestamp;

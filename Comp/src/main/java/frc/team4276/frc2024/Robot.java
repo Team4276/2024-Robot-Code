@@ -295,8 +295,10 @@ public class Robot extends TimedRobot {
 
       } else if(mControlBoard.driver.getBButton()){
         mSuperstructure.setIntakeState(IntakeState.FAST_DEFEED);
-      }
-       else {
+      } else if(mControlBoard.operator.getXButton()){
+        mSuperstructure.setIntakeState(IntakeState.REVERSE);
+
+      } else {
         mSuperstructure.setIntakeState(IntakeState.IDLE);
 
       }
