@@ -119,7 +119,7 @@ public class Superstructure extends Subsystem {
 
         } else {
             mSimpleFourbarSubsystem.setIdleMode(IdleMode.kBrake);
-            
+
         }
     }
 

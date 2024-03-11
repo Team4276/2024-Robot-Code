@@ -18,7 +18,7 @@ public class NOPE extends AutoModeBase {
     /**
      * @param nopes 1-4 nope notes
      */
-    public NOPE(int nopes){
+    public NOPE(int nopes) {
         this.nopes = nopes;
 
         traj1 = new PPSwerveTrajectoryAction("SubSSCtoMid1");
@@ -26,20 +26,20 @@ public class NOPE extends AutoModeBase {
         traj3 = new PPSwerveTrajectoryAction("Mid2toMid3");
         traj4 = new PPSwerveTrajectoryAction("Mid3toMid4");
     }
-    
+
     @Override
     protected void routine() throws AutoModeEndedException {
         runAction(traj1);
 
-        if(nopes > 1){
+        if (nopes > 1) {
             runAction(traj2);
         }
-        
-        if(nopes > 2){
+
+        if (nopes > 2) {
             runAction(traj3);
         }
 
-        if(nopes > 3){
+        if (nopes > 3) {
             runAction(traj4);
         }
     }

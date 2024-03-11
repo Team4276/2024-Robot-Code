@@ -2,7 +2,8 @@ package frc.team4276.lib.util;
 
 public class Util {
     // Utility class; do not instantiate
-    private Util(){}
+    private Util() {
+    }
 
     /**
      * @param side1
@@ -19,15 +20,15 @@ public class Util {
      * @param side2
      * @param opposite_side opposite side
      * @return radians
-     */ 
-    public static double LoCAngle(double side1, double side2, double opposite_side) {        
+     */
+    public static double LoCAngle(double side1, double side2, double opposite_side) {
         return Math.acos((Math.pow(side1, 2) + Math.pow(side2, 2) - Math.pow(opposite_side, 2)) / (2 * side1 * side2));
     }
 
     /**
-     * @param side1 
-     * @param angle1 radians
-     * @param opposite_angle radians 
+     * @param side1
+     * @param angle1         radians
+     * @param opposite_angle radians
      * @return
      */
     public static double LoSLength(double side1, double angle1, double opposite_angle) {
@@ -36,7 +37,7 @@ public class Util {
 
     /**
      * @param side1
-     * @param angle1 radians
+     * @param angle1        radians
      * @param opposite_side
      * @return radians
      */

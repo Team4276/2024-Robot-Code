@@ -18,7 +18,8 @@ public class LambdaAction implements Action {
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -26,5 +27,6 @@ public class LambdaAction implements Action {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+    }
 }

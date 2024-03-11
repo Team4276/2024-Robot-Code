@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotStateEstimator extends Subsystem {
-  // Odometry class for tracking robot pose
-  private SwerveDriveOdometry mOdometry;
+    // Odometry class for tracking robot pose
+    private SwerveDriveOdometry mOdometry;
 
     private RobotStateEstimator() {
         mOdometry = new SwerveDriveOdometry(
@@ -40,13 +40,12 @@ public class RobotStateEstimator extends Subsystem {
             }
 
             @Override
-            public void onLoop(double timestamp) {          
+            public void onLoop(double timestamp) {
                 mOdometry.update(
-                    DriveSubsystem.getInstance().getHeading().toWPI(),
-                    DriveSubsystem.getInstance().getModuleStates()
-                );
+                        DriveSubsystem.getInstance().getHeading().toWPI(),
+                        DriveSubsystem.getInstance().getModuleStates());
                 RobotState.getInstance().addOdomObservations(
-                    timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
+                        timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
             }
 
             @Override
@@ -56,19 +55,17 @@ public class RobotStateEstimator extends Subsystem {
     }
 
     @Override
-    public void outputTelemetry(){
+    public void outputTelemetry() {
         SmartDashboard.putNumber("Robot X", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().x());
         SmartDashboard.putNumber("Robot Y", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().y());
     }
 
-    
-
     public void resetOdometry(edu.wpi.first.math.geometry.Pose2d initialPose) {
-        synchronized(RobotStateEstimator.this) {
+        synchronized (RobotStateEstimator.this) {
             DriveSubsystem.getInstance().zeroHeading(initialPose.getRotation().getDegrees());
             mOdometry.resetPosition(
-                DriveSubsystem.getInstance().getModuleStates(),
-                initialPose);
+                    DriveSubsystem.getInstance().getModuleStates(),
+                    initialPose);
             RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.fromWPI(initialPose));
         }
     }

@@ -38,11 +38,11 @@ public class MAXSwerveModuleV3 extends Subsystem {
 
   private double mChassisAngularOffset = 0.0;
 
-  //TODO: look into sampling depth
-  //TODO: look into error initiallization
-  //TODO: look into peridic frame period
-  //TODO: look into control frame period
-  //TODO: look into CANTimeout
+  // TODO: look into sampling depth
+  // TODO: look into error initiallization
+  // TODO: look into peridic frame period
+  // TODO: look into control frame period
+  // TODO: look into CANTimeout
 
   /**
    * Constructs a MAXSwerveModule and configures the driving and turning motor,
@@ -159,7 +159,7 @@ public class MAXSwerveModuleV3 extends Subsystem {
     Rotation2d angle = desiredState.angle.rotateBy(new Rotation2d(mChassisAngularOffset));
 
     if (Util.shouldReverse(frc.team254.lib.geometry.Rotation2d.fromWPI(desiredState.angle),
-      frc.team254.lib.geometry.Rotation2d.fromRadians(m_turningEncoder.getPosition()))) {
+        frc.team254.lib.geometry.Rotation2d.fromRadians(m_turningEncoder.getPosition()))) {
       speed *= -1;
       angle.rotateBy(new Rotation2d(Math.PI));
     }
@@ -178,14 +178,14 @@ public class MAXSwerveModuleV3 extends Subsystem {
   }
 
   private void checkMotorCommands(REVLibError e1, REVLibError e2, double timestamp) {
-    if(e1 == REVLibError.kOk && e2 == REVLibError.kOk){
+    if (e1 == REVLibError.kOk && e2 == REVLibError.kOk) {
       return;
     }
 
-    System.out.println("Driving Motor ID:" + kDrivingCANId + 
-      " returned " + e1.toString() + " at " + timestamp);
-    System.out.println("Turning Motor ID:" + kTurningCANId + 
-      " returned " + e2.toString() + " at " + timestamp);
+    System.out.println("Driving Motor ID:" + kDrivingCANId +
+        " returned " + e1.toString() + " at " + timestamp);
+    System.out.println("Turning Motor ID:" + kTurningCANId +
+        " returned " + e2.toString() + " at " + timestamp);
   }
 
   /** Zeroes all the SwerveModule encoders. */

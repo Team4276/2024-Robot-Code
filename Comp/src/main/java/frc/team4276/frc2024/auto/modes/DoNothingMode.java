@@ -6,7 +6,8 @@ import frc.team4276.frc2024.auto.AutoModeEndedException;
 
 public class DoNothingMode extends AutoModeBase {
     @Override
-    protected void routine() throws AutoModeEndedException {}
+    protected void routine() throws AutoModeEndedException {
+    }
 
     @Override
     public Pose2d getStartingPose() {

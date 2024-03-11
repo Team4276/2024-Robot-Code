@@ -194,9 +194,9 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_drivingSparkMax.set(0);
     m_turningSparkMax.set(0);
 
-  } 
+  }
 
-  public double getMotorSpeed(){
+  public double getMotorSpeed() {
     return m_drivingEncoder.getVelocity();
   }
 }

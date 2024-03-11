@@ -11,7 +11,7 @@ public class ActionExample extends AutoModeBase {
 
     private PPSwerveTrajectoryAction traj1;
 
-    public ActionExample(){
+    public ActionExample() {
         traj1 = new PPSwerveTrajectoryAction(path1);
 
     }

@@ -28,7 +28,7 @@ public class Pigeon {
     private Rotation2d rollAdjustmentAngle = Rotation2d.identity();
     private Rotation2d pitchAdjustmentAngle = Rotation2d.identity();
 
-    private Pigeon() {        
+    private Pigeon() {
         mGyro = new ADIS16470_IMU();
     }
 

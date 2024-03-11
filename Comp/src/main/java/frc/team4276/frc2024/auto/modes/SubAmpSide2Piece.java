@@ -24,7 +24,7 @@ public class SubAmpSide2Piece extends AutoModeBase {
     }
 
     @Override
-    protected void routine() throws AutoModeEndedException { 
+    protected void routine() throws AutoModeEndedException {
         // Shoot preload
         mSuperstructure.setFourBarVoltage(-2.0);
         runAction(new WaitAction(2.0));

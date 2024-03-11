@@ -5,79 +5,79 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.team4276.frc2024.Constants.OIConstants;
 
 public class BetterXboxController extends XboxController {
-    public BetterXboxController(int port){
+    public BetterXboxController(int port) {
         super(port);
     }
 
-    public boolean isPOVUPPressed(){
-        if (getPOV() == 0){
+    public boolean isPOVUPPressed() {
+        if (getPOV() == 0) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean isPOVRIGHTPressed(){
-        if (getPOV() == 90){
+    public boolean isPOVRIGHTPressed() {
+        if (getPOV() == 90) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean isPOVDOWNPressed(){
-        if (getPOV() == 180){
+    public boolean isPOVDOWNPressed() {
+        if (getPOV() == 180) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean isPOVLEFTPressed(){
-        if (getPOV() == 270){
+    public boolean isPOVLEFTPressed() {
+        if (getPOV() == 270) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean getLT(){
-        if (getLeftTriggerAxis() > OIConstants.kJoystickDeadband){
+    public boolean getLT() {
+        if (getLeftTriggerAxis() > OIConstants.kJoystickDeadband) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean getRT(){
-        if (getRightTriggerAxis() > OIConstants.kJoystickDeadband){
+    public boolean getRT() {
+        if (getRightTriggerAxis() > OIConstants.kJoystickDeadband) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean leftYIsPushed(){
-        if (Math.abs(getLeftY()) > OIConstants.kJoystickDeadband){
+    public boolean leftYIsPushed() {
+        if (Math.abs(getLeftY()) > OIConstants.kJoystickDeadband) {
             return true;
         } else {
             return false;
         }
     }
 
-    public double getLeftYDeadband(){
+    public double getLeftYDeadband() {
         return MathUtil.applyDeadband(getLeftY(), OIConstants.kJoystickDeadband);
     }
 
-    public double getLeftXDeadband(){
+    public double getLeftXDeadband() {
         return MathUtil.applyDeadband(getLeftX(), OIConstants.kJoystickDeadband);
     }
 
-    public double getRightYDeadband(){
+    public double getRightYDeadband() {
         return MathUtil.applyDeadband(getRightY(), OIConstants.kJoystickDeadband);
     }
 
-    public double getRightXDeadband(){
+    public double getRightXDeadband() {
         return MathUtil.applyDeadband(getRightX(), OIConstants.kJoystickDeadband);
     }
 

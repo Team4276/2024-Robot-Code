@@ -52,10 +52,10 @@ public class AutoAlignPlanner {
     // TODO: fix this thing bc its stupid
 
     public ChassisSpeeds update(double timeStamp, Pose2d currentPose, Twist2d currentVel) {
-        if (Math.abs(currentPose.getTranslation().norm() - Math.hypot(goalX.position, goalY.position)) 
-                > AutoAlignConstants.kTranslationTolerance &&
-                Math.abs(goalTheta.position - currentPose.getRotation().getRadians()) 
-                > AutoAlignConstants.kThetaTolerance) {
+        if (Math.abs(currentPose.getTranslation().norm()
+                - Math.hypot(goalX.position, goalY.position)) > AutoAlignConstants.kTranslationTolerance &&
+                Math.abs(goalTheta.position
+                        - currentPose.getRotation().getRadians()) > AutoAlignConstants.kThetaTolerance) {
             atGoal = true;
             return ChassisSpeeds.identity();
         }
@@ -70,7 +70,8 @@ public class AutoAlignPlanner {
 
         double dx = mXController.calculate(timeStamp + Constants.kLooperDt, XState, curr_state_x, prevGoalStateX);
         double dy = mYController.calculate(timeStamp + Constants.kLooperDt, YState, curr_state_y, prevGoalStateY);
-        double dtheta = mThetaController.calculate(timeStamp + Constants.kLooperDt, ThetaState, curr_state_theta, prevGoalStateTheta);
+        double dtheta = mThetaController.calculate(timeStamp + Constants.kLooperDt, ThetaState, curr_state_theta,
+                prevGoalStateTheta);
 
         prevGoalStateX = XState;
         prevGoalStateY = YState;

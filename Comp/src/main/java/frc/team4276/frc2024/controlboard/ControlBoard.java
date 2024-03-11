@@ -57,49 +57,46 @@ public class ControlBoard {
         }
     }
 
-    public boolean wantZeroHeading(){
+    public boolean wantZeroHeading() {
         return driver.getAButtonPressed();
     }
 
-    public boolean wantXBrake(){
+    public boolean wantXBrake() {
         return driver.getXButton();
     }
 
     boolean isDemo = false;
     boolean hasPressed = false;
-    public boolean wantDemoLimits(){
-        if(hasPressed && !driver.isPOVUPPressed()){
+
+    public boolean wantDemoLimits() {
+        if (hasPressed && !driver.isPOVUPPressed()) {
             hasPressed = false;
-            if(isDemo){
+            if (isDemo) {
                 isDemo = false;
             } else {
                 isDemo = true;
             }
-            
-        } 
 
-        if(driver.isPOVUPPressed()){
+        }
+
+        if (driver.isPOVUPPressed()) {
             hasPressed = true;
         }
 
         return isDemo;
     }
 
-    public boolean wantSlowtake(){
+    public boolean wantSlowtake() {
         return driver.getRightBumper();
     }
 
-    public boolean wantFastake(){
+    public boolean wantFastake() {
         return driver.getRT();
     }
 
-
-    
-
     // Operator Controls
-    public boolean wantReadyMiddle(){
+    public boolean wantReadyMiddle() {
         return operator.isPOVUPPressed();
     }
-
 
 }

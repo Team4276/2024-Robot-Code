@@ -3,10 +3,12 @@ package frc.team4276.frc2024.auto.actions;
 public class EmptyAction implements Action {
 
     @Override
-    public void start() {}
+    public void start() {
+    }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -14,5 +16,6 @@ public class EmptyAction implements Action {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+    }
 }

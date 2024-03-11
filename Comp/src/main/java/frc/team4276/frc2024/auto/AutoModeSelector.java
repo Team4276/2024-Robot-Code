@@ -9,7 +9,7 @@ import frc.team4276.frc2024.auto.modes.*;
 
 public class AutoModeSelector {
     public enum DesiredMode {
-        DO_NOTHING, 
+        DO_NOTHING,
         EXAMPLE,
         SPIN_TEST,
         STRESS_TEST,
@@ -49,7 +49,8 @@ public class AutoModeSelector {
             desiredMode = DesiredMode.DO_NOTHING;
         }
         if (mCachedDesiredMode != desiredMode || force_regen) {
-            //System.out.println("Auto selection changed, updating creator: desiredMode->" + desiredMode.name());
+            // System.out.println("Auto selection changed, updating creator: desiredMode->"
+            // + desiredMode.name());
             mAutoMode = getAutoModeForParams(desiredMode);
         }
         mCachedDesiredMode = desiredMode;
@@ -57,29 +58,29 @@ public class AutoModeSelector {
 
     private Optional<AutoModeBase> getAutoModeForParams(DesiredMode mode) {
         switch (mode) {
-        case DO_NOTHING:
-            return Optional.of(new DoNothingMode());
-        case EXAMPLE:
-            return Optional.of(new ActionExample());
-        case SPIN_TEST:
-            return Optional.of(new PPTest("Spin test"));
-        case STRESS_TEST:
-            return Optional.of(new PPTest("Stress Test"));
-        case MID_3PIECE_STAGE:
-            return Optional.of(new PPTest("Mid3PieceStage"));
-        case SUB_MIDDLE_2_PIECE:
-            return Optional.of(new SubMiddle2Piece());
-        case TAXI:
-            return Optional.of(new PPTest("Taxi"));
-        case SHOOT_TEST:
-            return Optional.of(new ShootTest());
-        case SUB_AS_2PIECE:
-            return Optional.of(new SubAmpSide2Piece());
-        case SUB_SS_2Piece:
-            return Optional.of(new SubSS2Piece());
-        default:
-            System.out.println("ERROR: unexpected auto mode: " + mode);
-            break;
+            case DO_NOTHING:
+                return Optional.of(new DoNothingMode());
+            case EXAMPLE:
+                return Optional.of(new ActionExample());
+            case SPIN_TEST:
+                return Optional.of(new PPTest("Spin test"));
+            case STRESS_TEST:
+                return Optional.of(new PPTest("Stress Test"));
+            case MID_3PIECE_STAGE:
+                return Optional.of(new PPTest("Mid3PieceStage"));
+            case SUB_MIDDLE_2_PIECE:
+                return Optional.of(new SubMiddle2Piece());
+            case TAXI:
+                return Optional.of(new PPTest("Taxi"));
+            case SHOOT_TEST:
+                return Optional.of(new ShootTest());
+            case SUB_AS_2PIECE:
+                return Optional.of(new SubAmpSide2Piece());
+            case SUB_SS_2Piece:
+                return Optional.of(new SubSS2Piece());
+            default:
+                System.out.println("ERROR: unexpected auto mode: " + mode);
+                break;
         }
 
         System.err.println("No valid auto mode found for  " + mode);

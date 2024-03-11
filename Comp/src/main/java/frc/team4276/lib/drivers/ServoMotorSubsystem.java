@@ -124,8 +124,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mAbsoluteEncoder.setZeroOffset(constants.kOffset);
 
         // mRelativeEncoder = mMaster.getEncoder();
-        // mRelativeEncoder.setPositionConversionFactor(constants.kUnitsPerRotation / constants.kGearRatio);
-        // mRelativeEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation / (60.0 * constants.kGearRatio));
+        // mRelativeEncoder.setPositionConversionFactor(constants.kUnitsPerRotation /
+        // constants.kGearRatio);
+        // mRelativeEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation /
+        // (60.0 * constants.kGearRatio));
         // mRelativeEncoder.setAverageDepth(constants.kRelativeEncoderAvgSamplingDepth);
         // mRelativeEncoder.setPosition(constants.kOffset / constants.kGearRatio);
 

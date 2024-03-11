@@ -10,12 +10,13 @@ public class FlywheelState {
     public double des_bottom_voltage = 0.0;
 
     private static FlywheelState kIdentity = new FlywheelState();
-    
-    public static FlywheelState getIdentity(){
+
+    public static FlywheelState getIdentity() {
         return kIdentity;
     }
 
-    public FlywheelState() {}
+    public FlywheelState() {
+    }
 
     public FlywheelState(DesiredFlywheelMode desired_mode, double des_top_RPM,
             double des_bottom_RPM) {
@@ -30,5 +31,4 @@ public class FlywheelState {
         this.des_bottom_voltage = des_bottom_voltage;
     }
 
-    
 }
