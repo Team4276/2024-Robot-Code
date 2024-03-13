@@ -6,23 +6,24 @@ public class Apriltag {
     private int id;
     private Pose2d tagInField;
     private double height;
-
-    public Apriltag(int id, Pose2d tagInField, double height) {
+    
+    public Apriltag(int id, Pose2d tagInField, double height){
         this.id = id;
         this.tagInField = tagInField;
         this.height = height;
     }
 
-    public int getId() {
+    public int getId(){
         return id;
     }
 
-    public Pose2d getTagInField() {
+    public Pose2d getTagInField(){
         return tagInField;
     }
 
-    public double getHeight() {
+    public double getHeight(){
         return height;
     }
-
+    
+    
 }

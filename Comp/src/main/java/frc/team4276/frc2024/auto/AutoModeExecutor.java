@@ -17,6 +17,7 @@ public class AutoModeExecutor {
         }
     }
 
+
     public void stop() {
         if (m_auto_mode != null) {
             m_auto_mode.stop();

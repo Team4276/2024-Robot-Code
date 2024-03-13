@@ -1,12 +1,16 @@
 package frc.team4276.lib.drivers;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkMax;
+// import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
+// import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+// import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkPIDController;
+// import com.revrobotics.SparkPIDController.AccelStrategy;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -14,9 +18,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+
 import frc.team254.lib.util.Util;
+
 import frc.team4276.lib.drivers.FourBarFeedForward.FourBarFeedForwardConstants;
 
 // Subsystem class for NEO v1.1 Brushless motors
@@ -117,10 +124,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mAbsoluteEncoder.setZeroOffset(constants.kOffset);
 
         // mRelativeEncoder = mMaster.getEncoder();
-        // mRelativeEncoder.setPositionConversionFactor(constants.kUnitsPerRotation /
-        // constants.kGearRatio);
-        // mRelativeEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation /
-        // (60.0 * constants.kGearRatio));
+        // mRelativeEncoder.setPositionConversionFactor(constants.kUnitsPerRotation / constants.kGearRatio);
+        // mRelativeEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation / (60.0 * constants.kGearRatio));
         // mRelativeEncoder.setAverageDepth(constants.kRelativeEncoderAvgSamplingDepth);
         // mRelativeEncoder.setPosition(constants.kOffset / constants.kGearRatio);
 

@@ -7,8 +7,8 @@ import frc.team4276.lib.drivers.ServoMotorSubsystem;
 public class FourBarSubsystem extends ServoMotorSubsystem {
     private static FourBarSubsystem mInstance;
 
-    public static synchronized FourBarSubsystem getInstance() {
-        if (mInstance == null) {
+    public static synchronized FourBarSubsystem getInstance(){
+        if (mInstance == null){
             mInstance = new FourBarSubsystem();
         }
 
@@ -17,9 +17,10 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
 
     // -1 = forward; 1 = backward (on the robot)
 
-    private FourBarSubsystem() {
+    private FourBarSubsystem(){
         super(SuperstructureConstants.kFourBarConstants);
 
+        
         SmartDashboard.putNumber("kS Calibration", 0.0);
     }
 
@@ -35,7 +36,7 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
 
     @Override
     public synchronized void setFourBarFFSetpoint(double position_rad) {
-        if (position_rad == Double.NaN) {
+        if(position_rad == Double.NaN){
             super.setFourBarFFSetpoint(getMeasPosition());
             return;
         }
@@ -45,7 +46,7 @@ public class FourBarSubsystem extends ServoMotorSubsystem {
 
     @Override
     public synchronized void setFourBarFFSetpointTEST(double position_rad) {
-        if (position_rad == Double.NaN) {
+        if(position_rad == Double.NaN){
             super.setFourBarFFSetpoint(getMeasPosition());
             return;
         }

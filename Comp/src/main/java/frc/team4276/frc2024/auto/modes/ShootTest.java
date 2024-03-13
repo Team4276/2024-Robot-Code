@@ -12,7 +12,7 @@ import frc.team4276.frc2024.subsystems.Superstructure;
 public class ShootTest extends AutoModeBase {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
-    public ShootTest() {
+    public ShootTest(){
     }
 
     @Override
@@ -27,6 +27,8 @@ public class ShootTest extends AutoModeBase {
         mSuperstructure.setIntakeState(IntakeState.IDLE);
         mSuperstructure.setFlywheelState(new FlywheelState());
 
+
+        
     }
 
     @Override

@@ -37,6 +37,5 @@ public class LambdaRunnableAction implements Action {
     }
 
     @Override
-    public void done() {
-    }
+    public void done() {}
 }

@@ -1,6 +1,7 @@
 package frc.team4276.frc2024.statemachines;
 
 import frc.team254.lib.util.Util;
+
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 
@@ -74,8 +75,7 @@ public class SuperstructureState {
      * @param action
      */
     public SuperstructureState(double fourbar_angle, FlywheelState flywheel_state, IntakeState intake_state,
-            FourbarSpeed fourbar_speed, FourbarTolerance fourbar_tolerance, FlywheelTolerance flywheel_tolerance,
-            Action action) {
+            FourbarSpeed fourbar_speed, FourbarTolerance fourbar_tolerance, FlywheelTolerance flywheel_tolerance, Action action) {
         this.fourbar_angle = Math.toRadians(fourbar_angle);
         this.flywheel_state = flywheel_state;
         this.intake_state = intake_state;

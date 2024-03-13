@@ -1,7 +1,9 @@
 package frc.team4276.lib.drivers;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+
 import frc.team254.lib.geometry.Rotation2d;
+
 import frc.team4276.frc2024.Constants;
 
 // Modified Version of 1678s 2023 Pigeon class
@@ -26,7 +28,7 @@ public class Pigeon {
     private Rotation2d rollAdjustmentAngle = Rotation2d.identity();
     private Rotation2d pitchAdjustmentAngle = Rotation2d.identity();
 
-    private Pigeon() {
+    private Pigeon() {        
         mGyro = new ADIS16470_IMU();
     }
 

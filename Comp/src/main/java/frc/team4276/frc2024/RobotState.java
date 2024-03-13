@@ -4,14 +4,16 @@ import java.util.Optional;
 
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.util.InterpolatingDouble;
 import frc.team254.lib.util.InterpolatingTreeMap;
+
 import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.Constants.RobotStateConstants;
 import frc.team4276.frc2024.Limelight.VisionPoseAcceptor;
@@ -68,16 +70,17 @@ public class RobotState {
     }
 
     public synchronized void resetKalmanFilters() {
-        mKalmanFilter = new UnscentedKalmanFilter<>(
-                Nat.N2(),
-                Nat.N2(),
-                (x, u) -> VecBuilder.fill(0.0, 0.0),
-                (x, u) -> x,
-                RobotStateConstants.kStateStdDevs,
-                RobotStateConstants.kLocalMeasurementStdDevs, Constants.kLooperDt);
+        mKalmanFilter =
+        new UnscentedKalmanFilter<>(
+            Nat.N2(),
+            Nat.N2(),
+            (x, u) -> VecBuilder.fill(0.0, 0.0),
+            (x, u) -> x,
+            RobotStateConstants.kStateStdDevs,
+            RobotStateConstants.kLocalMeasurementStdDevs, Constants.kLooperDt);
 
     }
-
+    
     public synchronized boolean getHasBeenEnabled() {
         return mHasBeenEnabled;
     }
@@ -101,15 +104,16 @@ public class RobotState {
 
             Pose2d visionFieldToVehicle = mLatestVisionUpdate.get().getTagInField().transformBy(vehicleToTag.inverse());
 
-            if (!mPoseAcceptor.shouldAcceptVision(vehicleToTag, DriveSubsystem.getInstance().getMeasSpeeds())) {
+            if (!mPoseAcceptor.shouldAcceptVision(vehicleToTag, DriveSubsystem.getInstance().getMeasSpeeds())){
                 return;
             }
             boolean disabledAndNeverEnabled = DriverStation.isDisabled() && !mHasBeenEnabled;
             if (initial_field_to_odom_.isEmpty() || disabledAndNeverEnabled) {
-                var odom_to_vehicle_translation = disabledAndNeverEnabled ? Translation2d.identity()
-                        : getOdomToVehicle(visionTimestamp).getTranslation();
+                var odom_to_vehicle_translation = disabledAndNeverEnabled ?
+                Translation2d.identity() :
+                getOdomToVehicle(visionTimestamp).getTranslation();
                 field_to_odom_.put(new InterpolatingDouble(visionTimestamp),
-                        visionFieldToVehicle.getTranslation().translateBy(odom_to_vehicle_translation.inverse()));
+                visionFieldToVehicle.getTranslation().translateBy(odom_to_vehicle_translation.inverse()));
                 initial_field_to_odom_ = Optional.of(field_to_odom_.lastEntry().getValue());
                 mKalmanFilter.setXhat(0, field_to_odom_.lastEntry().getValue().x());
                 mKalmanFilter.setXhat(1, field_to_odom_.lastEntry().getValue().y());
@@ -138,7 +142,7 @@ public class RobotState {
                                     .getTranslation());
                 } catch (Exception e) {
                     throw e;
-                    // DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
+                    //DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
                 }
             } else {
                 // mDisplayVisionPose = null;
@@ -150,21 +154,18 @@ public class RobotState {
 
     /**
      * Return Initial Vision Offset for Pure Odometry Visualization Purposes
-     * 
      * @return
      */
     public synchronized Pose2d getInitialFieldToOdom() {
-        if (initial_field_to_odom_.isEmpty())
-            return Pose2d.identity();
+        if (initial_field_to_odom_.isEmpty()) return Pose2d.identity();
         return Pose2d.fromTranslation(initial_field_to_odom_.get());
     }
 
     public synchronized Translation2d getFieldToOdom(double timestamp) {
-        if (initial_field_to_odom_.isEmpty())
-            return Translation2d.identity();
-        return initial_field_to_odom_.get().inverse()
-                .translateBy(field_to_odom_.getInterpolated(new InterpolatingDouble(timestamp)));
+        if (initial_field_to_odom_.isEmpty()) return Translation2d.identity();
+        return initial_field_to_odom_.get().inverse().translateBy(field_to_odom_.getInterpolated(new InterpolatingDouble(timestamp)));
     }
+
 
     public synchronized Translation2d getAbsoluteFieldToOdom(double timestamp) {
         return field_to_odom_.getInterpolated(new InterpolatingDouble(timestamp));
@@ -182,16 +183,16 @@ public class RobotState {
 
     }
 
-    public synchronized Pose2d getFieldToVehicleAbsolute(double timestamp) {
+    public synchronized Pose2d getFieldToVehicleAbsolute(double timestamp) {        
         var field_to_odom = initial_field_to_odom_.orElse(Translation2d.identity());
         return Pose2d.fromTranslation(field_to_odom).transformBy(getFieldToVehicle(timestamp));
     }
 
-    public synchronized Pose2d getCurrentFieldToVehicle() {
+    public synchronized Pose2d getCurrentFieldToVehicle(){
         return getFieldToVehicleAbsolute(Timer.getFPGATimestamp());
     }
 
-    public synchronized edu.wpi.first.math.geometry.Pose2d getWPICurrentFieldToVehicle() {
+    public synchronized edu.wpi.first.math.geometry.Pose2d getWPICurrentFieldToVehicle(){
         return getCurrentFieldToVehicle().toWPI();
     }
 
@@ -203,6 +204,7 @@ public class RobotState {
     public synchronized Pose2d getOdomToVehicle(double timestamp) {
         return odom_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
     }
+    
 
     public synchronized void addOdomToVehicleObservation(double timestamp, Pose2d observation) {
         odom_to_vehicle_.put(new InterpolatingDouble(timestamp), observation);
@@ -214,7 +216,7 @@ public class RobotState {
         } catch (Exception e) {
             throw e;
 
-            // TODO: look into throwables and error catching
+            //TODO: look into throwables and error catching
         }
         addOdomToVehicleObservation(timestamp, odom_to_robot);
     }
@@ -222,5 +224,6 @@ public class RobotState {
     public synchronized void reset() {
         reset(Timer.getFPGATimestamp(), Pose2d.identity());
     }
+
 
 }

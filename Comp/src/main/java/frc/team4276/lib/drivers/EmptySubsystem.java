@@ -5,7 +5,6 @@ package frc.team4276.lib.drivers;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class EmptySubsystem extends SubsystemBase {
-    public EmptySubsystem() {
-    };
-
+    public EmptySubsystem(){};
+    
 }

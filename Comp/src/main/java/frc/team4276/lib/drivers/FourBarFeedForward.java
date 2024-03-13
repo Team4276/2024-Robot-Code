@@ -1,9 +1,10 @@
 package frc.team4276.lib.drivers;
 
+import frc.team4276.lib.util.Util;
+
+import frc.team254.lib.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team254.lib.geometry.Rotation2d;
-import frc.team254.lib.geometry.Translation2d;
-import frc.team4276.lib.util.Util;
 
 public class FourBarFeedForward {
     // Constants
@@ -110,11 +111,11 @@ public class FourBarFeedForward {
         this.kSupportToCom = constants.kSupportToCom;
     }
 
-    public void setkS(double static_voltage) {
+    public void setkS(double static_voltage){
         kS = static_voltage;
     }
 
-    public void setEfficiency(double efficiency) {
+    public void setEfficiency(double efficiency){
         kEfficiency = efficiency;
     }
 
@@ -136,11 +137,10 @@ public class FourBarFeedForward {
         return gravity_voltage + (kS * Math.signum(velocity_setpoint)) + velocity_voltage;
     }
 
-    private double calcAccelerationVoltage() {
-
+    private double calcAccelerationVoltage(){
+        
         // total COM distance * total mass * efficiency * nominal voltage
-        return (0) * (kMotorLegMass + kTopMass + kSupportLegMass) * kEfficiency * 12
-                / (kStallTorque * kMotorAmnt * kGearRatio);
+        return (0) * (kMotorLegMass + kTopMass + kSupportLegMass) * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
     }
 
     private double calcGravityVoltage(double position_setpoint) {
@@ -184,31 +184,28 @@ public class FourBarFeedForward {
     }
 
     private double calcGravityTorque() {
-        double transfered_force = calcSupportLegTorque()
-                / (kSupportLegLength * Math.sin(support_leg_to_top_inside_angle_ % (Math.PI / 2)));
+        double transfered_force = calcSupportLegTorque() / (kSupportLegLength * Math.sin(support_leg_to_top_inside_angle_ % (Math.PI / 2)));
 
-        double transfered_torque = transfered_force
-                * Math.sin((motor_inside_angle_ - bottom_to_top_radians_) % (Math.PI / 2)) * kMotorLegLength;
+        double transfered_torque = transfered_force * Math.sin((motor_inside_angle_ - bottom_to_top_radians_) % (Math.PI / 2)) * kMotorLegLength;
 
         return calcMotorLegTorque() + transfered_torque;
     }
 
     private double calcMotorLegTorque() {
-        return (kMotorLegMass * 9.81 * motor_to_leg_com_.x()) +
-                (calcShooterToMotorLeg() * Math.cos(bottom_to_motor_leg_radians_));
+        return (kMotorLegMass * 9.81 * motor_to_leg_com_.x()) + 
+            (calcShooterToMotorLeg() * Math.cos(bottom_to_motor_leg_radians_));
     }
 
     private double calcSupportLegTorque() {
-        return (kSupportLegMass * 9.81 * support_to_leg_com_.x()) +
-                (calcShooterToSupportLeg() * Math.cos(bottom_to_support_leg_radians_));
+        return (kSupportLegMass * 9.81 * support_to_leg_com_.x()) + 
+            (calcShooterToSupportLeg() * Math.cos(bottom_to_support_leg_radians_));
     }
 
     /**
      * Returns force of top on motor leg
      */
     private double calcShooterToMotorLeg() {
-        double gravity_torque = kTopMass * 9.81
-                * ((kTopLength * Math.cos(bottom_to_top_radians_)) - motor_leg_to_top_com_.x());
+        double gravity_torque = kTopMass * 9.81 * ((kTopLength * Math.cos(bottom_to_top_radians_)) - motor_leg_to_top_com_.x());
 
         return gravity_torque / (kTopLength * Math.cos(bottom_to_top_radians_));
     }
@@ -218,7 +215,7 @@ public class FourBarFeedForward {
      */
     private double calcShooterToSupportLeg() {
         double gravity_torque = kTopMass * 9.81 * motor_leg_to_top_com_.x();
-
+        
         return gravity_torque / (kTopLength * Math.cos(bottom_to_top_radians_));
     }
 

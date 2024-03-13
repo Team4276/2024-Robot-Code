@@ -4,11 +4,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
+import frc.team4276.frc2024.auto.actions.WaitAction;
 
 public class PPTest extends AutoModeBase {
     private PPSwerveTrajectoryAction traj1;
 
-    public PPTest(String name) {
+    public PPTest(String name){
         traj1 = new PPSwerveTrajectoryAction(name);
     }
 
@@ -16,7 +17,7 @@ public class PPTest extends AutoModeBase {
     protected void routine() throws AutoModeEndedException {
         // runAction(new WaitAction(9.0));
         runAction(traj1);
-
+        
     }
 
     @Override

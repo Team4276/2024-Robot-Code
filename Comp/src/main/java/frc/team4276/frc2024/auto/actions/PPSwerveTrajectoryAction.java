@@ -34,20 +34,20 @@ public class PPSwerveTrajectoryAction implements Action {
         Alliance alliance = AllianceChooser.getInstance().getAlliance();
 
         mCommand = new FollowPathHolonomic(
-                path,
-                mRobotState::getWPICurrentFieldToVehicle,
-                mDriveSubsystem::getWPIMeasSpeeds,
-                mDriveSubsystem::updatePPPathFollowingSetpoint,
-                AutoConstants.kTranslationPIDConstants,
-                AutoConstants.kRotationPIDConstants,
-                DriveConstants.kMaxVel,
-                DriveConstants.kTrackWidth * Math.sqrt(2) / 2,
-                new ReplanningConfig(),
-                () -> alliance == Alliance.Red,
-                new EmptySubsystem());
+            path, 
+            mRobotState::getWPICurrentFieldToVehicle, 
+            mDriveSubsystem::getWPIMeasSpeeds, 
+            mDriveSubsystem::updatePPPathFollowingSetpoint, 
+            AutoConstants.kTranslationPIDConstants, 
+            AutoConstants.kRotationPIDConstants, 
+            DriveConstants.kMaxVel, 
+            DriveConstants.kTrackWidth * Math.sqrt(2) / 2, 
+            new ReplanningConfig(), 
+            () -> alliance == Alliance.Red, 
+            new EmptySubsystem());
 
-        initialPose = alliance == Alliance.Red ? path.flipPath().getPreviewStartingHolonomicPose()
-                : path.getPreviewStartingHolonomicPose();
+        initialPose = alliance == Alliance.Red ? path.flipPath().getPreviewStartingHolonomicPose() 
+            : path.getPreviewStartingHolonomicPose();        
 
         SmartDashboard.putString("Loaded path with alliance", alliance.name());
     }
@@ -76,7 +76,7 @@ public class PPSwerveTrajectoryAction implements Action {
     public void done() {
     }
 
-    public Pose2d getInitialPose() {
+    public Pose2d getInitialPose(){
         return initialPose;
     }
 }

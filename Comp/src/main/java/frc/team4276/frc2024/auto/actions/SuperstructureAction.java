@@ -26,17 +26,14 @@ public class SuperstructureAction implements Action {
     }
 
     @Override
-    public void update() {
-    }
+    public void update() {}
 
     @Override
     public boolean isFinished() {
-        if (mTimeout >= 0 && Timer.getFPGATimestamp() - mStartTime >= mTimeout)
-            return true;
+        if (mTimeout >= 0 && Timer.getFPGATimestamp() - mStartTime >= mTimeout) return true;
         return mSuperstructure.atGoal();
     }
 
     @Override
-    public void done() {
-    }
+    public void done() {}
 }

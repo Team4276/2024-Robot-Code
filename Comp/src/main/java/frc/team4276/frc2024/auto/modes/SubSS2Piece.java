@@ -39,7 +39,7 @@ public class SubSS2Piece extends AutoModeBase {
 
         // Drive to Sub and shoot
         runAction(traj2);
-
+        
         mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
         runAction(new WaitAction(2.0));
         mSuperstructure.setIntakeState(IntakeState.FOOT);

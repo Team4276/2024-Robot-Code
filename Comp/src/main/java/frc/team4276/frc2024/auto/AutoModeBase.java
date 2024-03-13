@@ -1,8 +1,9 @@
 package frc.team4276.frc2024.auto;
 
+import frc.team4276.frc2024.auto.actions.Action;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
-import frc.team4276.frc2024.auto.actions.Action;
 
 /**
  * An abstract class that is the basis of the robot's autonomous routines. This
@@ -12,6 +13,7 @@ import frc.team4276.frc2024.auto.actions.Action;
 public abstract class AutoModeBase {
     protected double m_update_rate = 1.0 / 50.0;
     protected boolean m_active = false;
+
 
     protected double startTime = 0.0;
 
@@ -71,8 +73,8 @@ public abstract class AutoModeBase {
         action.done();
     }
 
-    public void waitForEventAction() {
-
+    public void waitForEventAction(){
+        
     }
 
     public abstract Pose2d getStartingPose();

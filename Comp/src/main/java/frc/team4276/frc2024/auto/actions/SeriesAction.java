@@ -12,8 +12,8 @@ public class SeriesAction implements Action {
     private final ArrayList<Action> mRemainingActions;
 
     public SeriesAction(List<Action> actions) {
-        mRemainingActions = new ArrayList<>(actions.size());
-        mRemainingActions.addAll(actions);
+        mRemainingActions = new ArrayList<>(actions.size()); 
+        mRemainingActions.addAll(actions); 
         mCurrentAction = null;
     }
 
@@ -22,8 +22,7 @@ public class SeriesAction implements Action {
     }
 
     @Override
-    public void start() {
-    }
+    public void start() {}
 
     @Override
     public void update() {
@@ -50,6 +49,5 @@ public class SeriesAction implements Action {
     }
 
     @Override
-    public void done() {
-    }
+    public void done() {}
 }

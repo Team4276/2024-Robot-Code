@@ -1,10 +1,10 @@
 package frc.team4276.frc2024.controlboard;
 
-import frc.team1678.lib.Util;
-import frc.team254.lib.geometry.Rotation2d;
-import frc.team254.lib.geometry.Translation2d;
 import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team254.lib.geometry.Rotation2d;
+import frc.team254.lib.geometry.Translation2d;
+import frc.team1678.lib.Util;
 
 public class ControlBoard {
     private static ControlBoard mInstance = null;
@@ -57,46 +57,49 @@ public class ControlBoard {
         }
     }
 
-    public boolean wantZeroHeading() {
+    public boolean wantZeroHeading(){
         return driver.getAButtonPressed();
     }
 
-    public boolean wantXBrake() {
+    public boolean wantXBrake(){
         return driver.getXButton();
     }
 
     boolean isDemo = false;
     boolean hasPressed = false;
-
-    public boolean wantDemoLimits() {
-        if (hasPressed && !driver.isPOVUPPressed()) {
+    public boolean wantDemoLimits(){
+        if(hasPressed && !driver.isPOVUPPressed()){
             hasPressed = false;
-            if (isDemo) {
+            if(isDemo){
                 isDemo = false;
             } else {
                 isDemo = true;
             }
+            
+        } 
 
-        }
-
-        if (driver.isPOVUPPressed()) {
+        if(driver.isPOVUPPressed()){
             hasPressed = true;
         }
 
         return isDemo;
     }
 
-    public boolean wantSlowtake() {
+    public boolean wantSlowtake(){
         return driver.getRightBumper();
     }
 
-    public boolean wantFastake() {
+    public boolean wantFastake(){
         return driver.getRT();
     }
 
+
+    
+
     // Operator Controls
-    public boolean wantReadyMiddle() {
+    public boolean wantReadyMiddle(){
         return operator.isPOVUPPressed();
     }
+
 
 }

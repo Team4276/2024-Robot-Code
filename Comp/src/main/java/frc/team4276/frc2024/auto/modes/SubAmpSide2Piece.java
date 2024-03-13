@@ -1,14 +1,16 @@
 package frc.team4276.frc2024.auto.modes;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.WaitAction;
 import frc.team4276.frc2024.statemachines.FlywheelState;
+import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
-import frc.team4276.frc2024.subsystems.Superstructure;
 
 public class SubAmpSide2Piece extends AutoModeBase {
     private Superstructure mSuperstructure = Superstructure.getInstance();
@@ -22,7 +24,7 @@ public class SubAmpSide2Piece extends AutoModeBase {
     }
 
     @Override
-    protected void routine() throws AutoModeEndedException {
+    protected void routine() throws AutoModeEndedException { 
         // Shoot preload
         mSuperstructure.setFourBarVoltage(-2.0);
         runAction(new WaitAction(2.0));

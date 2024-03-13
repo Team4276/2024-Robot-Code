@@ -1,13 +1,14 @@
 package frc.team4276.frc2024;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.Looper;
+//import frc.team1678.lib.logger.LoggingSystem;
 import frc.team4276.lib.drivers.Subsystem;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Used to reset, start, stop, and update all subsystems at once
@@ -18,10 +19,9 @@ public class SubsystemManager implements ILooper {
     private List<Subsystem> mAllSubsystems;
     private List<Loop> mLoops = new ArrayList<>();
 
-    // private LoggingSystem ls = LoggingSystem.getInstance();
+    //private LoggingSystem ls = LoggingSystem.getInstance();
 
-    private SubsystemManager() {
-    }
+    private SubsystemManager() {}
 
     public static SubsystemManager getInstance() {
         if (mInstance == null) {
@@ -58,7 +58,7 @@ public class SubsystemManager implements ILooper {
 
     public void setSubsystems(Subsystem... allSubsystems) {
         mAllSubsystems = Arrays.asList(allSubsystems);
-        // mAllSubsystems.forEach((s) -> ls.registerObject(s.getClass(), s));
+        //mAllSubsystems.forEach((s) -> ls.registerObject(s.getClass(), s));
     }
 
     private class EnabledLoop implements Loop {
@@ -72,11 +72,9 @@ public class SubsystemManager implements ILooper {
             mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
             mLoops.forEach(l -> l.onLoop(timestamp));
             mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
-            /*
-             * if (!LoggingSystem.disableLogger) {
-             * ls.queueLogs();
-             * }
-             */
+            /*if (!LoggingSystem.disableLogger) {
+                ls.queueLogs();
+            }*/
         }
 
         @Override
@@ -87,8 +85,7 @@ public class SubsystemManager implements ILooper {
 
     private class DisabledLoop implements Loop {
         @Override
-        public void onStart(double timestamp) {
-        }
+        public void onStart(double timestamp) {}
 
         @Override
         public void onLoop(double timestamp) {
@@ -96,8 +93,7 @@ public class SubsystemManager implements ILooper {
         }
 
         @Override
-        public void onStop(double timestamp) {
-        }
+        public void onStop(double timestamp) {}
     }
 
     public void registerEnabledLoops(Looper enabledLooper) {
