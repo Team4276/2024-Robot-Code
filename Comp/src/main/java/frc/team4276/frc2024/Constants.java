@@ -4,9 +4,6 @@
 
 package frc.team4276.frc2024;
 
-import com.pathplanner.lib.util.PIDConstants;
-import com.revrobotics.CANSparkBase.IdleMode;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,9 +11,10 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.team1678.lib.swerve.SwerveDriveKinematics;
-import frc.team254.lib.geometry.Pose2d;
-import frc.team254.lib.geometry.Rotation2d;
+
+import com.pathplanner.lib.util.PIDConstants;
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;
@@ -30,6 +28,10 @@ import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.lib.drivers.FourBarFeedForward.FourBarFeedForwardConstants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
+
+import frc.team254.lib.geometry.Pose2d;
+import frc.team254.lib.geometry.Rotation2d;
+import frc.team1678.lib.swerve.SwerveDriveKinematics;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -54,6 +56,8 @@ public final class Constants {
 
   public static final class DebugConstants {
     public static final boolean writeSwerveErrors = true;
+    //set to "DriverStation" to log to driver station or set to "Standard Out" to log to the standard output 
+    public static String printOutput = "Standard Out";
   }
 
   public static final class DriveConstants {

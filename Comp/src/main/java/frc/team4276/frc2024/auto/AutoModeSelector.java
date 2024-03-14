@@ -1,9 +1,9 @@
 package frc.team4276.frc2024.auto;
 
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import java.util.Optional;
 
 import frc.team4276.frc2024.auto.modes.*;
 

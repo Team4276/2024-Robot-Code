@@ -1,18 +1,19 @@
 package frc.team4276.frc2024.subsystems;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team4276.frc2024.Constants.FlywheelConstants;
+import frc.team4276.lib.drivers.Subsystem;
+
 import frc.team1678.lib.Util;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
-
-import frc.team4276.frc2024.Constants.FlywheelConstants;
-import frc.team4276.lib.drivers.Subsystem;
 
 public class FlywheelSubsystem extends Subsystem {
     private CANSparkMax mTopMotor;

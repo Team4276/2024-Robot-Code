@@ -1,5 +1,16 @@
 package frc.team4276.frc2024.auto.actions;
 
+import java.lang.Math;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+
 import frc.team4276.frc2024.Constants.AutoConstants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.field.AllianceChooser;
@@ -7,14 +18,7 @@ import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.lib.drivers.EmptySubsystem;
 import frc.team4276.frc2024.RobotState;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.ReplanningConfig;
-import com.pathplanner.lib.commands.FollowPathHolonomic;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 
 public class PPSwerveTrajectoryAction implements Action {
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();

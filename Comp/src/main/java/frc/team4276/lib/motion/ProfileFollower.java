@@ -1,6 +1,7 @@
 package frc.team4276.lib.motion;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+
 import frc.team254.lib.util.Util;
 
 //TODO: make another motion state class

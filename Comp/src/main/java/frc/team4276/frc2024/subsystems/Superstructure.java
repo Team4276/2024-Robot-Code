@@ -3,8 +3,6 @@ package frc.team4276.frc2024.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1678.lib.loops.ILooper;
-import frc.team1678.lib.loops.Loop;
 
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
@@ -12,6 +10,9 @@ import frc.team4276.frc2024.statemachines.SuperstructureState;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem.ControlState;
 import frc.team4276.lib.drivers.Subsystem;
+
+import frc.team1678.lib.loops.ILooper;
+import frc.team1678.lib.loops.Loop;
 
 /**
  * Use for ServoMotorSubsystems.

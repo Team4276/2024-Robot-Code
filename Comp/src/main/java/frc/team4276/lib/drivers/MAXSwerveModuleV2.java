@@ -4,11 +4,7 @@
 
 package frc.team4276.lib.drivers;
 
-import frc.team1678.lib.swerve.ModuleState;
-import frc.team254.lib.util.Util;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.team4276.frc2024.Constants.DriveConstants;
-import frc.team4276.frc2024.Constants.ModuleConstants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -16,6 +12,13 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
+
+import frc.team4276.frc2024.Constants.DriveConstants;
+import frc.team4276.frc2024.Constants.ModuleConstants;
+
+import frc.team254.lib.util.Util;
+
+import frc.team1678.lib.swerve.ModuleState;
 
 public class MAXSwerveModuleV2 extends Subsystem {
   private final CANSparkMax m_drivingSparkMax;
