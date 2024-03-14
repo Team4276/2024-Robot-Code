@@ -1,5 +1,12 @@
 package frc.team4276.frc2024.subsystems;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
@@ -8,25 +15,20 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import frc.team254.lib.util.Util;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.drivers.FourBarFeedForward;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
-import frc.team4276.lib.revlib.VIKCANSparkMax;
-import frc.team4276.lib.revlib.VIKCANSparkMax.Direction;
+import frc.team4276.lib.revlib.VIKCANSparkServoMotor;
+import frc.team4276.lib.revlib.VIKCANSparkServoMotor.Direction;
+import frc.team4276.frc2024.Logging.PrintLogger;
+
+import frc.team254.lib.util.Util;
 
 //TODO: abstract this
 public class SimpleFourbarSubsystem extends Subsystem {
-    private VIKCANSparkMax mMaster;
+    private VIKCANSparkServoMotor mMaster;
 
     private AbsoluteEncoder mAbsoluteEncoder;
 
@@ -66,7 +68,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
     }
 
     private SimpleFourbarSubsystem(ServoMotorSubsystemConstants constants) {
-        mMaster = new VIKCANSparkMax(constants.kMasterConstants.id, MotorType.kBrushless);
+        mMaster = new VIKCANSparkServoMotor(constants.kMasterConstants.id, MotorType.kBrushless);
         mMaster.restoreFactoryDefaults();
         mMaster.enableVoltageCompensation(constants.kVoltageCompensation);
         mMaster.setSmartCurrentLimit(constants.kSmartCurrentLimit);
