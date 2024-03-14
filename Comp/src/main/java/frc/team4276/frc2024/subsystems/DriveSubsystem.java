@@ -54,6 +54,14 @@ public class DriveSubsystem extends Subsystem {
 
   private AutoAlignPlanner mAutoAlignPlanner;
 
+  public static class KinematicLimits {
+    public double kMaxDriveVelocity = DriveConstants.kMaxVel; // m/s
+    public double kMaxAccel = Double.MAX_VALUE; // m/s^2
+    public double kMaxAngularVelocity = DriveConstants.kMaxAngularVel; // rad/s
+    public double kMaxAngularAccel = Double.MAX_VALUE; // rad/s^2
+    public String kName = "Default";
+  }
+
   private static DriveSubsystem mInstance;
 
   public static DriveSubsystem getInstance() {
@@ -98,6 +106,179 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
+  public void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
+    if (mControlState != DriveControlState.PATH_FOLLOWING) {
+      mControlState = DriveControlState.PATH_FOLLOWING;
+    }
+
+    mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+        speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
+  }
+
+  public void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
+    updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
+  }
+
+  public void setKinematicLimits(KinematicLimits kinematicLimits) {
+    this.mKinematicLimits = kinematicLimits;
+  }
+
+  public void setHeadingSetpoint(double desHeadingDeg) {
+    if (mControlState != DriveControlState.HEADING_CONTROL) {
+      mControlState = DriveControlState.HEADING_CONTROL;
+    }
+    mSnapController.reset();
+    mPeriodicIO.heading_setpoint = Rotation2d.fromDegrees(desHeadingDeg);
+  }
+
+  public synchronized void teleopDrive(ChassisSpeeds speeds) {
+    if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL) {
+      mControlState = DriveControlState.OPEN_LOOP;
+    }
+
+    if (mControlState == DriveControlState.HEADING_CONTROL) {
+      if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0 || mSnapController.atSetpoint()) {
+        mControlState = DriveControlState.OPEN_LOOP;
+      } else {
+        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
+            speeds.vxMetersPerSecond,
+            speeds.vyMetersPerSecond,
+            mSnapController.calculate(mPeriodicIO.heading.getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
+        return;
+      }
+    }
+    mPeriodicIO.des_chassis_speeds = speeds;
+  }
+
+  public void stop() {
+    for (MAXSwerveModuleV2 module : mModules) {
+      module.stop();
+    }
+  }
+
+  // Stops drive without orienting modules
+  public synchronized void stopModules() {
+    List<Rotation2d> orientations = new ArrayList<>();
+    for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
+      orientations.add(Rotation2d.fromWPI(mPeriodicIO.meas_module_states[i].angle));
+    }
+    orientModules(orientations);
+  }
+
+  public synchronized void orientModules(List<Rotation2d> orientations) {
+    if (mControlState != DriveControlState.FORCE_ORIENT) {
+      mControlState = DriveControlState.FORCE_ORIENT;
+    }
+    for (int i = 0; i < mModules.length; ++i) {
+      mPeriodicIO.des_module_states[i] = ModuleState.fromSpeeds(orientations.get(i).toWPI(), 0.0);
+    }
+  }
+
+  public void setX() {
+    orientModules(
+        List.of(
+            Rotation2d.fromDegrees(45),
+            Rotation2d.fromDegrees(-45),
+            Rotation2d.fromDegrees(-45),
+            Rotation2d.fromDegrees(45)));
+  }
+
+  /**
+   * Sets the swerve ModuleStates.
+   *
+   * @param desiredStates The desired SwerveModule states.
+   */
+  public void setModuleStates(ModuleState[] desiredStates) {
+    mPeriodicIO.des_module_states = desiredStates;
+  }
+
+  /** Resets the drive encoders to currently read a position of 0. */
+  public void resetEncoders() {
+    for (MAXSwerveModuleV2 mod : mModules) {
+      mod.resetEncoders();
+    }
+  }
+
+  /** Zeroes yaw with given degrees */
+  public void zeroHeading(double reset) {
+    mPigeon.setYaw(reset);
+    RobotState.getInstance().reset();
+  }
+
+  public void flipHeading() {
+    zeroHeading(180 + mPeriodicIO.heading.getDegrees());
+  }
+
+  public Rotation2d getHeading() {
+    return mPeriodicIO.heading;
+  }
+
+  public edu.wpi.first.math.geometry.Rotation2d getWPIHeading() {
+    return getHeading().toWPI();
+  }
+
+  public Rotation2d getPitch() {
+    return mPeriodicIO.pitch;
+  }
+
+  public ChassisSpeeds getMeasSpeeds() {
+    return mPeriodicIO.meas_chassis_speeds;
+  }
+
+  public edu.wpi.first.math.kinematics.ChassisSpeeds getWPIMeasSpeeds() {
+    return getMeasSpeeds().toWPI();
+  }
+
+  public ModuleState[] getModuleStates() {
+    return mPeriodicIO.meas_module_states;
+  }
+
+  public DriveControlState getDriveControlState() {
+    return mControlState;
+  }
+
+  public KinematicLimits getKinematicLimits() {
+    return mKinematicLimits;
+  }
+
+  private class PeriodicIO {
+    // Inputs/Desired States
+    // double timestamp;
+    ChassisSpeeds des_chassis_speeds = ChassisSpeeds.identity();
+    ChassisSpeeds meas_chassis_speeds = ChassisSpeeds.identity();
+    ModuleState[] meas_module_states = new ModuleState[] {
+        ModuleState.identity(),
+        ModuleState.identity(),
+        ModuleState.identity(),
+        ModuleState.identity()
+    };
+    Rotation2d heading = Rotation2d.identity();
+    Rotation2d pitch = Rotation2d.identity();
+
+    // Outputs
+    ModuleState[] des_module_states = new ModuleState[] {
+        ModuleState.identity(),
+        ModuleState.identity(),
+        ModuleState.identity(),
+        ModuleState.identity()
+    };
+    Rotation2d heading_setpoint = Rotation2d.identity();
+  }
+
+  @Override
+  public void readPeriodicInputs() {
+    // mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+
+    for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
+      mPeriodicIO.meas_module_states[i] = mModules[i].getState();
+    }
+
+    mPeriodicIO.meas_chassis_speeds = DriveConstants.kDriveKinematics.toChassisSpeeds(mPeriodicIO.meas_module_states);
+    mPeriodicIO.heading = mPigeon.getYaw();
+    mPeriodicIO.pitch = mPigeon.getPitch();
+
+  }
+
   @Override
   public void registerEnabledLoops(ILooper enabledLooper) {
     enabledLooper.register(new Loop() {
@@ -119,10 +300,11 @@ public class DriveSubsystem extends Subsystem {
             case PATH_FOLLOWING:
               break;
             case AUTO_ALIGN:
-              mAutoAlignPlanner.update(timestamp, 
-                RobotState.getInstance().getFieldToVehicleAbsolute(timestamp), Twist2d.toWPI(getMeasSpeeds().toTwist2d()));
+              mAutoAlignPlanner.update(timestamp,
+                  RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
+                  Twist2d.toWPI(getMeasSpeeds().toTwist2d()));
               break;
-          
+
             default:
               break;
           }
@@ -151,50 +333,24 @@ public class DriveSubsystem extends Subsystem {
   }
 
   @Override
-  public void readPeriodicInputs() {
-    // mPeriodicIO.timestamp = Timer.getFPGATimestamp();
-
-    for(int i = 0; i < mPeriodicIO.meas_module_states.length; i++){
-      mPeriodicIO.meas_module_states[i] = mModules[i].getState();
-    }
-
-    mPeriodicIO.meas_chassis_speeds = DriveConstants.kDriveKinematics.toChassisSpeeds(mPeriodicIO.meas_module_states);
-    mPeriodicIO.heading = mPigeon.getYaw();
-    mPeriodicIO.pitch = mPigeon.getPitch();
-
-  }
-
-  public ChassisSpeeds getMeasSpeeds(){
-    return mPeriodicIO.meas_chassis_speeds;
-  }
-
-  public edu.wpi.first.math.kinematics.ChassisSpeeds getWPIMeasSpeeds(){
-    return getMeasSpeeds().toWPI();
-  }
-
-  @Override
   public void outputTelemetry() {
     if (Constants.disableExtraTelemetry) {
       return;
     }
 
-    // for (int i = 0; i < mModules.length; i++) {
-    //   SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ", mModules[i].getDriveSetpoint());
-    //   SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ", mModules[i].getTurnSetpoint());
+    for (int i = 0; i < mModules.length; i++) {
+      SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
+          mModules[i].getDriveSetpoint());
+      SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ",
+          mModules[i].getTurnSetpoint());
 
-    //   SmartDashboard.putNumber("Motor " + i + " Drive RPM: ", mModules[i].getMotorSpeed());
-    // }
+      SmartDashboard.putNumber("Motor " + i + " Drive RPM: ",
+          mModules[i].getMotorSpeed());
+    }
 
     SmartDashboard.putNumber("Heading", mPeriodicIO.heading.getDegrees());
     SmartDashboard.putString("Drive Mode", mControlState.name());
   }
-
-  public ModuleState[] getModuleStates() {
-    return mPeriodicIO.meas_module_states;
-  }
-
-  //TODO: add theta X translation pathfollower (not for autos)
-  //TODO: add auto alighner within an area
 
   private void updateSetpoint() {
     if (mControlState == DriveControlState.FORCE_ORIENT) {
@@ -278,166 +434,4 @@ public class DriveSubsystem extends Subsystem {
     ModuleState[] real_module_setpoints = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
     mPeriodicIO.des_module_states = real_module_setpoints;
   }
-
-  /**
-   * Sets the swerve ModuleStates.
-   *
-   * @param desiredStates The desired SwerveModule states.
-   */
-  public void setModuleStates(ModuleState[] desiredStates) {
-    mPeriodicIO.des_module_states = desiredStates;
-  }
-
-  /** Resets the drive encoders to currently read a position of 0. */
-  public void resetEncoders() {
-    for (MAXSwerveModuleV2 mod : mModules) {
-      mod.resetEncoders();
-    }
-  }
-
-  /** Zeroes yaw with given degrees */
-  public void zeroHeading(double reset) {
-    mPigeon.setYaw(reset);
-    RobotState.getInstance().reset();
-  }
-
-  public void flipHeading(){
-    zeroHeading(180 + mPeriodicIO.heading.getDegrees());
-  }
-
-  public Rotation2d getHeading() {
-    return mPeriodicIO.heading;
-  }
-
-  public edu.wpi.first.math.geometry.Rotation2d getWPIHeading() {
-    return getHeading().toWPI();
-  }
-
-  public Rotation2d getPitch() {
-    return mPeriodicIO.pitch;
-  }
-
-  private class PeriodicIO {
-    // Inputs/Desired States
-    // double timestamp;
-    ChassisSpeeds des_chassis_speeds = ChassisSpeeds.identity();
-    ChassisSpeeds meas_chassis_speeds = ChassisSpeeds.identity();
-    ModuleState[] meas_module_states = new ModuleState[] {
-        ModuleState.identity(),
-        ModuleState.identity(),
-        ModuleState.identity(),
-        ModuleState.identity()
-    };
-    Rotation2d heading = Rotation2d.identity();
-    Rotation2d pitch = Rotation2d.identity();
-
-    // Outputs
-    ModuleState[] des_module_states = new ModuleState[] {
-        ModuleState.identity(),
-        ModuleState.identity(),
-        ModuleState.identity(),
-        ModuleState.identity()
-    };
-    Rotation2d heading_setpoint = Rotation2d.identity();
-  }
-
-  public static class KinematicLimits {
-    public double kMaxDriveVelocity = DriveConstants.kMaxVel; // m/s
-    public double kMaxAccel = Double.MAX_VALUE; // m/s^2
-    public double kMaxAngularVelocity = DriveConstants.kMaxAngularVel; // rad/s
-    public double kMaxAngularAccel = Double.MAX_VALUE; // rad/s^2
-    public String kName = "Default";
-  }
-
-  public void updatePathFollowingSetpoint(ChassisSpeeds speeds){
-    if (mControlState != DriveControlState.PATH_FOLLOWING){
-      mControlState = DriveControlState.PATH_FOLLOWING;
-    }
-
-    mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
-      speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
-  }
-
-  public void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds){
-    SmartDashboard.putNumber("Des X Traj Speed", speeds.vxMetersPerSecond);
-    SmartDashboard.putNumber("Des Y Traj Speed", speeds.vyMetersPerSecond);
-    SmartDashboard.putNumber("Des Rot Traj Speed", speeds.omegaRadiansPerSecond);
-
-    updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
-  }
-
-  public KinematicLimits getKinematicLimits() {
-    return mKinematicLimits;
-  }
-
-  public void setKinematicLimits(KinematicLimits kinematicLimits) {
-    this.mKinematicLimits = kinematicLimits;
-  }
-
-  public void setHeadingSetpoint(double desHeadingDeg){
-    if (mControlState != DriveControlState.HEADING_CONTROL) {
-      mControlState = DriveControlState.HEADING_CONTROL;
-    }
-    mSnapController.reset();
-    mPeriodicIO.heading_setpoint = Rotation2d.fromDegrees(desHeadingDeg);
-  }
-
-  public synchronized void teleopDrive(ChassisSpeeds speeds) {
-    if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL) {
-      mControlState = DriveControlState.OPEN_LOOP;
-    }
-
-    if (mControlState == DriveControlState.HEADING_CONTROL){
-      if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0 || mSnapController.atSetpoint()) {
-        mControlState = DriveControlState.OPEN_LOOP;
-      } else {
-        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
-          speeds.vxMetersPerSecond, 
-          speeds.vyMetersPerSecond, 
-          mSnapController.calculate(mPeriodicIO.heading.getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
-        return;
-      }
-    }
-    mPeriodicIO.des_chassis_speeds = speeds;
-  }
-
-  public void stop() {
-    for (MAXSwerveModuleV2 module : mModules) {
-      module.stop();
-    }
-  }
-
-  public synchronized void orientModules(List<Rotation2d> orientations) {
-    if (mControlState != DriveControlState.FORCE_ORIENT) {
-      mControlState = DriveControlState.FORCE_ORIENT;
-    }
-    for (int i = 0; i < mModules.length; ++i) {
-      mPeriodicIO.des_module_states[i] = ModuleState.fromSpeeds(orientations.get(i).toWPI(), 0.0);
-    }
-  }
-
-  public void setX() {
-    orientModules(
-        List.of(
-            Rotation2d.fromDegrees(45),
-            Rotation2d.fromDegrees(-45),
-            Rotation2d.fromDegrees(-45),
-            Rotation2d.fromDegrees(45)));
-  }
-
-  // Stops drive without orienting modules
-  public synchronized void stopModules() {
-    List<Rotation2d> orientations = new ArrayList<>();
-    for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
-      orientations.add(Rotation2d.fromWPI(mPeriodicIO.meas_module_states[i].angle));
-    }
-    orientModules(orientations);
-  }
-
-  public DriveControlState getDriveControlState(){
-    return mControlState;
-  }
-
-
-
 }

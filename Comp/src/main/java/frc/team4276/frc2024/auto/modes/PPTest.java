@@ -16,7 +16,7 @@ public class PPTest extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        // runAction(new WaitAction(9.0));
+        runAction(new WaitAction(0.0));
         runAction(traj1);
         
     }

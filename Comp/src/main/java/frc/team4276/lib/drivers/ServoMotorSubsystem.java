@@ -28,8 +28,6 @@ import frc.team1678.lib.loops.Loop;
 
 // Subsystem class for NEO v1.1 Brushless motors
 
-//TODO: add soft limits to everything;
-
 public abstract class ServoMotorSubsystem extends Subsystem {
     private final CANSparkMax mMaster;
     private final CANSparkMax[] mFollowers;
@@ -169,7 +167,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         SONIC
     }
 
-    // TODO: properly implement brake mode
     public synchronized void setIdleMode(IdleMode idleMode) {
         if (mMaster.getIdleMode() == idleMode)
             return;
@@ -211,7 +208,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mPeriodicIO.demand = voltage;
     }
 
-    // TODO: look into S curve
     public synchronized void setFourBarFFSetpoint(double position_rad) {
         if (mControlState != ControlState.FOUR_BAR_FF) {
             mControlState = ControlState.FOUR_BAR_FF;

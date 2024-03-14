@@ -216,7 +216,6 @@ public class RobotState {
         } catch (Exception e) {
             throw e;
 
-            //TODO: look into throwables and error catching
         }
         addOdomToVehicleObservation(timestamp, odom_to_robot);
     }

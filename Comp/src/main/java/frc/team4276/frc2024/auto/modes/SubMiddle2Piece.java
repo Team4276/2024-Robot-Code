@@ -1,7 +1,5 @@
 package frc.team4276.frc2024.auto.modes;
 
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose2d;
 
 import frc.team4276.frc2024.auto.AutoModeBase;

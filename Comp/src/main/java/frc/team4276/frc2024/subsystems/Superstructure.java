@@ -51,7 +51,7 @@ public class Superstructure extends Subsystem {
         SPEAKER_CLOSE_SIDE(SuperstructureConstants.kSuperstructureSpeakerCloseSideState),
         SPEAKER_DYNAMIC(SuperstructureConstants.kSuperstructureDynamicSpeakerState),
         AMP_CLOSE(SuperstructureConstants.kSuperstructureAmpState),
-        SCORE(SuperstructureConstants.kSuperstructureStowState); // TODO: fix scoring and intaking logic
+        SCORE(SuperstructureConstants.kSuperstructureStowState);
 
         public SuperstructureState state;
 

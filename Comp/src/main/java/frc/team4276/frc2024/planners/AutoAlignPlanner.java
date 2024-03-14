@@ -50,8 +50,6 @@ public class AutoAlignPlanner {
 
     }
 
-    // TODO: fix this thing bc its stupid
-
     public ChassisSpeeds update(double timeStamp, Pose2d currentPose, Twist2d currentVel) {
         if (Math.abs(currentPose.getTranslation().norm() - Math.hypot(goalX.position, goalY.position)) 
                 > AutoAlignConstants.kTranslationTolerance &&

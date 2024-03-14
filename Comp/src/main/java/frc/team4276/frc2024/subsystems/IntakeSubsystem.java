@@ -19,7 +19,7 @@ public class IntakeSubsystem extends Subsystem {
     private CANSparkMax mMotor;
     private RelativeEncoder mRelativeEncoder;
     private DigitalInput mFrontSensor;
-    private DigitalInput mBackSensor;
+    // private DigitalInput mBackSensor;
     private PeriodicIO mPeriodicIO;
     private IntakeState mIntakeState = IntakeState.IDLE;
 
@@ -42,10 +42,10 @@ public class IntakeSubsystem extends Subsystem {
         }
 
         // Todo: maybe use this after each cycle
-        public void averageReset() {
-            currentSum = 0;
-            count = 0;
-        }
+        // public void averageReset() {
+        //     currentSum = 0;
+        //     count = 0;
+        // }
 
         public boolean spikeCheck(double currentCurrent) {
             double averageCurrent = currentSum / count;
@@ -101,7 +101,7 @@ public class IntakeSubsystem extends Subsystem {
         mMotor.burnFlash();
         
         mFrontSensor = new DigitalInput(0);
-        mBackSensor = new DigitalInput(1);
+        // mBackSensor = new DigitalInput(1);
         mPeriodicIO = new PeriodicIO();
     }
     
@@ -138,7 +138,7 @@ public class IntakeSubsystem extends Subsystem {
         double timestamp;
         double current_current;
         boolean front_sensor_tripped;
-        boolean back_sensor_tripped;
+        // boolean back_sensor_tripped;
 
         // Outputs
         double voltage;
@@ -149,11 +149,9 @@ public class IntakeSubsystem extends Subsystem {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
         mPeriodicIO.current_current = mMotor.getOutputCurrent();
         mPeriodicIO.front_sensor_tripped = !mFrontSensor.get();
-        mPeriodicIO.back_sensor_tripped = !mBackSensor.get();
+        // mPeriodicIO.back_sensor_tripped = !mBackSensor.get();
 
     }
-
-    double start_time;
 
     @Override
     public void registerEnabledLoops(ILooper enabledLooper) {
@@ -181,7 +179,7 @@ public class IntakeSubsystem extends Subsystem {
                             break;
                         }
                         if (currentSensor.spikeCheck(mPeriodicIO.current_current)) {
-                            start_time = mPeriodicIO.timestamp;
+                            mStateStartTime = mPeriodicIO.timestamp;
                             mIntakeState = IntakeState.SLOW_FEED;
                         }
                         //untested sensor code
@@ -193,7 +191,7 @@ public class IntakeSubsystem extends Subsystem {
                     case SLOW_FEED:
                         if (mPeriodicIO.front_sensor_tripped) {
                             mIntakeState = IntakeState.HOLDING;
-                        } else if (start_time - timestamp >= 4.5) {
+                        } else if (mStateStartTime - timestamp >= 4.5) {
                             mIntakeState = IntakeState.IDLE;
                         }
 
