@@ -326,6 +326,7 @@ public class Robot extends TimedRobot {
       }
 
     } catch (Throwable t) {
+      System.out.println(t.getMessage());
       throw t;
     }
   }
