@@ -170,31 +170,31 @@ public class VIKCANSparkServoMotor extends CANSparkMax {
             }
         }
 
-        // if (mPositiveEncoderLimit != null) {
-        // if (mPositionForLimiting > mPositiveEncoderLimit.position) {
-        // SmartDashboard.putBoolean("Is Past Encoder Limit", true);
-        // if (mPositiveEncoderLimit.limit_positive && output_volts > 0) {
-        // SmartDashboard.putBoolean("Encoder Limit", true);
-        // return Math.abs(mPositiveEncoderLimit.magnitude) * 0.0;
-        // } else if (!mPositiveEncoderLimit.limit_positive && output_volts < 0) {
-        // SmartDashboard.putBoolean("Encoder Limit", true);
-        // return Math.abs(mPositiveEncoderLimit.magnitude) * 0.0;
-        // }
-        // }
-        // }
+        if (mPositiveEncoderLimit != null) {
+            if (mPositionForLimiting > mPositiveEncoderLimit.position) {
+                SmartDashboard.putBoolean("Is Past Encoder Limit", true);
+                if (mPositiveEncoderLimit.limit_positive && output_volts > 0) {
+                    SmartDashboard.putBoolean("Encoder Limit", true);
+                    // return Math.abs(mPositiveEncoderLimit.magnitude) * 0.0;
+                } else if (!mPositiveEncoderLimit.limit_positive && output_volts < 0) {
+                    SmartDashboard.putBoolean("Encoder Limit", true);
+                    // return Math.abs(mPositiveEncoderLimit.magnitude) * 0.0;
+                }
+            }
+        }
 
-        // if (mNegativeEncoderLimit != null) {
-        // if (mPositionForLimiting < mNegativeEncoderLimit.position) {
-        // SmartDashboard.putBoolean("Is Past Encoder Limit", true);
-        // if (mNegativeEncoderLimit.limit_positive && output_volts > 0) {
-        // SmartDashboard.putBoolean("Encoder Limit", true);
-        // return Math.abs(mNegativeEncoderLimit.magnitude) * 0.0;
-        // } else if (!mNegativeEncoderLimit.limit_positive && output_volts < 0) {
-        // SmartDashboard.putBoolean("Encoder Limit", true);
-        // return Math.abs(mNegativeEncoderLimit.magnitude) * 0.0;
-        // }
-        // }
-        // }
+        if (mNegativeEncoderLimit != null) {
+            if (mPositionForLimiting < mNegativeEncoderLimit.position) {
+                SmartDashboard.putBoolean("Is Past Encoder Limit", true);
+                if (mNegativeEncoderLimit.limit_positive && output_volts > 0) {
+                    SmartDashboard.putBoolean("Encoder Limit", true);
+                    // return Math.abs(mNegativeEncoderLimit.magnitude) * 0.0;
+                } else if (!mNegativeEncoderLimit.limit_positive && output_volts < 0) {
+                    SmartDashboard.putBoolean("Encoder Limit", true);
+                    // return Math.abs(mNegativeEncoderLimit.magnitude) * 0.0;
+                }
+            }
+        }
 
         SmartDashboard.putBoolean("Is Past Encoder Limit", false);
         SmartDashboard.putBoolean("Encoder Limit", false);

@@ -22,7 +22,6 @@ import frc.team4276.lib.drivers.FourBarFeedForward;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.revlib.VIKCANSparkServoMotor;
 import frc.team4276.lib.revlib.VIKCANSparkServoMotor.Direction;
-import frc.team4276.frc2024.Logging.PrintLogger;
 
 import frc.team254.lib.util.Util;
 
@@ -56,7 +55,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
     private double kMaxPosition = Double.POSITIVE_INFINITY;
     private double kMinPosition = Double.NEGATIVE_INFINITY;
 
-    private boolean isMaintain = false;
+    // private boolean isMaintain = false;
 
     private static SimpleFourbarSubsystem mInstance;
 
@@ -154,7 +153,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         mProfileStartTime = mPeriodicIO.timestamp;
 
         mStateSetpoint = new State(Util.limit(position_radians, kMinPosition, kMaxPosition), 0.0);
-        isMaintain = false;
+        // isMaintain = false;
         mProfiledPIDController.reset(mPeriodicIO.meas_state);
     }
 

@@ -63,7 +63,7 @@ public class FourBarFeedForward {
     private Translation2d support_to_leg_com_;
     private Translation2d motor_leg_to_top_com_;
 
-    private Translation2d total_motor_to_com_;
+    // private Translation2d total_motor_to_com_;
 
     public static class FourBarFeedForwardConstants {
         public double kS;
@@ -138,11 +138,11 @@ public class FourBarFeedForward {
         return gravity_voltage + (kS * Math.signum(velocity_setpoint)) + velocity_voltage;
     }
 
-    private double calcAccelerationVoltage(){
+    // private double calcAccelerationVoltage(){
         
-        // total COM distance * total mass * efficiency * nominal voltage
-        return (0) * (kMotorLegMass + kTopMass + kSupportLegMass) * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
-    }
+    //     // total COM distance * total mass * efficiency * nominal voltage
+    //     return (0) * (kMotorLegMass + kTopMass + kSupportLegMass) * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
+    // }
 
     private double calcGravityVoltage(double position_setpoint) {
         // desired torque * nominal voltage / max torque
@@ -180,7 +180,7 @@ public class FourBarFeedForward {
 
         support_to_leg_com_ = kSupportToCom.rotateBy(Rotation2d.fromRadians(bottom_to_support_leg_radians_));
 
-        total_motor_to_com_ = new Translation2d();
+        // total_motor_to_com_ = new Translation2d();
 
     }
 

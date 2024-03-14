@@ -2,7 +2,6 @@ package frc.team4276.lib.revlib;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
-import com.revrobotics.CANSparkBase.IdleMode;
 
 import frc.team4276.frc2024.Logging.PrintLogger;
 
