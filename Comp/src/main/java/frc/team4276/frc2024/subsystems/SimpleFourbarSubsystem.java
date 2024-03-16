@@ -39,7 +39,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
         IDLE,
         VOLTAGE,
         SMART_MOTION,
-        CALIBRATING
+        CALIBRATING,
+        TEST_TRAPEZOID
 
     }
 
@@ -75,10 +76,12 @@ public class SimpleFourbarSubsystem extends Subsystem {
         // mMaster.setCANTimeout(10);
         // mMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
         mMaster.setInverted(constants.kMasterConstants.isInverted);
-        // mMaster.enableForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen, true);
-        // mMaster.enableReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen, false);
-        mMaster.setEncoderLimit(kMinPosition, Direction.NEGATIVE, false, 0.1);
-        mMaster.setEncoderLimit(kMaxPosition, Direction.POSITIVE, true, 0.1);
+        // mMaster.enableForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen,
+        // true);
+        // mMaster.enableReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen,
+        // false);
+        // mMaster.setEncoderLimit(kMinPosition, Direction.NEGATIVE, false, 0.1);
+        // mMaster.setEncoderLimit(kMaxPosition, Direction.POSITIVE, true, 0.1);
 
         mAbsoluteEncoder = mMaster.getAbsoluteEncoder(Type.kDutyCycle);
         mAbsoluteEncoder.setPositionConversionFactor(constants.kUnitsPerRotation);
@@ -155,12 +158,24 @@ public class SimpleFourbarSubsystem extends Subsystem {
         mStateSetpoint = new State(Util.limit(position_radians, kMinPosition, kMaxPosition), 0.0);
         // isMaintain = false;
         mProfiledPIDController.reset(mPeriodicIO.meas_state);
+        start_state = mPeriodicIO.meas_state;
     }
 
     public void setCalibrating() {
         if (mControlState != ControlState.CALIBRATING) {
             mControlState = ControlState.CALIBRATING;
         }
+    }
+
+    public void setTestTrapezoid() {
+        if (mControlState != ControlState.TEST_TRAPEZOID) {
+            mControlState = ControlState.TEST_TRAPEZOID;
+        }
+
+        mProfileStartTime = mPeriodicIO.timestamp;
+        prev_des_state = new State();
+        finishedtime = -1;
+
     }
 
     public void setIdleMode(IdleMode idleMode) {
@@ -197,6 +212,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
     private double prev_timestamp;
     private double prev_meas_velocity_units = 0.0;
 
+    private State start_state = new State();
+
     @Override
     public void readPeriodicInputs() {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
@@ -215,6 +232,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
     private State prev_des_state = new State();
     private double prev_des_accel = 0.0;
 
+    private double finishedtime = 0.0;
+
     @Override
     public void writePeriodicOutputs() {
         switch (mControlState) {
@@ -224,7 +243,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 break;
 
             case VOLTAGE:
-                mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
+                // mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
                 mMaster.setVoltage(mPeriodicIO.demand);
 
                 break;
@@ -238,14 +257,14 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
                 mPeriodicIO.accel_test = SmartDashboard.getNumber("Calibration Accel Test", 0.0);
 
-                if (!Util.epsilonEquals(prev_des_state.position, mPeriodicIO.meas_position_units, Math.PI / 40)
-                        || !Util.epsilonEquals(prev_des_state.velocity, mPeriodicIO.meas_velocity_units,
-                                Math.PI / 40)) {
-                    mProfileStartTime = mPeriodicIO.timestamp;
-                }
+                // if (!Util.epsilonEquals(prev_des_state.position, mPeriodicIO.meas_position_units, Math.PI / 40)
+                //         || !Util.epsilonEquals(prev_des_state.velocity, mPeriodicIO.meas_velocity_units,
+                //                 Math.PI / 40)) {
+                //     mProfileStartTime = mPeriodicIO.timestamp;
+                // }
 
                 State state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp - mProfileStartTime,
-                        mPeriodicIO.meas_state,
+                        start_state,
                         mStateSetpoint);
 
                 SmartDashboard.putNumber("Fourbar Trapezoid State Position", state.position);
@@ -267,16 +286,17 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 SmartDashboard.putBoolean("Is Fourbar FInished",
                         mTrapezoidProfile.isFinished(mPeriodicIO.timestamp - mProfileStartTime));
 
-                // if (Math.abs(mPeriodicIO.meas_position_units - mStateSetpoint.position) < (Math.PI / 50)
-                //         || isMaintain) {
-                //     isMaintain = true;
-                //     mSparkPIDController.setReference(mStateSetpoint.position, ControlType.kPosition, 0,
-                //             mFourbarFF.calculate(mStateSetpoint.position, 0.0), ArbFFUnits.kVoltage);
-                //     return;
+                // if (Math.abs(mPeriodicIO.meas_position_units - mStateSetpoint.position) <
+                // (Math.PI / 50)
+                // || isMaintain) {
+                // isMaintain = true;
+                // mSparkPIDController.setReference(mStateSetpoint.position,
+                // ControlType.kPosition, 0,
+                // mFourbarFF.calculate(mStateSetpoint.position, 0.0), ArbFFUnits.kVoltage);
+                // return;
 
                 // }
 
-                
                 mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
                 mMaster.setVoltage(mPeriodicIO.feed_forward);
 
@@ -303,12 +323,29 @@ public class SimpleFourbarSubsystem extends Subsystem {
                                 mPeriodicIO.velocity_test)
                         : mPeriodicIO.voltage_test;
 
+                mPeriodicIO.feed_forward += (mPeriodicIO.accel_test
+                        * (mPeriodicIO.velocity_test - mPeriodicIO.meas_velocity_units)
+                        / Constants.kLooperDt);
+
                 SmartDashboard.putNumber("Velocity Error", mPeriodicIO.meas_velocity_units - prev_des_state.velocity);
                 prev_des_state.velocity = mPeriodicIO.velocity_test;
-                
+
                 mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
                 mMaster.setVoltage(mPeriodicIO.feed_forward);
                 SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
+
+                break;
+            case TEST_TRAPEZOID:
+                prev_des_state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp - mProfileStartTime, new State(), new State(Math.toRadians(90.0), 0.0));
+
+                if(prev_des_state.equals(new State(Math.toRadians(90.0), 0.0)) && finishedtime == -1){
+                    finishedtime = mPeriodicIO.timestamp - mProfileStartTime;
+                }
+
+                SmartDashboard.putNumber("Test Trapezoid Des Position", prev_des_state.position);
+                SmartDashboard.putNumber("Test Trapezoid Des Velocity", prev_des_state.velocity);
+                SmartDashboard.putNumber("Test Trapezoid Timestamp", mPeriodicIO.timestamp - mProfileStartTime);
+                SmartDashboard.putNumber("Test Trapezoid Finish", finishedtime);
 
                 break;
 

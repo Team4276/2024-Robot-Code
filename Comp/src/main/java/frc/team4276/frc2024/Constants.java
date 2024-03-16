@@ -320,13 +320,13 @@ public final class Constants {
   public static final class SuperstructureConstants {
     public static final FourBarFeedForwardConstants kFourbarFFConstants = new FourBarFeedForwardConstants();
     static {
-      kFourbarFFConstants.kS = 0.97;
+      kFourbarFFConstants.kS = 0.2;
 
       kFourbarFFConstants.kMotorFreeSpeedRpm = 5676.0;
-      kFourbarFFConstants.kGearRatio = 330.0;
+      kFourbarFFConstants.kGearRatio = 224.3333333333333;
       kFourbarFFConstants.kStallTorque = 3.28;
       kFourbarFFConstants.kMotorAmnt = 1;
-      kFourbarFFConstants.kEfficiency = 0.17;
+      kFourbarFFConstants.kEfficiency = 0.2155;
 
       kFourbarFFConstants.kBottomLength = Units.inchesToMeters(8.001578);
       kFourbarFFConstants.kMotorLegLength = Units.inchesToMeters(11.000000);
@@ -353,24 +353,24 @@ public final class Constants {
       kFourBarConstants.kIsInverted = true;
       kFourBarConstants.kIsCircular = false;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
-      kFourBarConstants.kGearRatio = 110.0; // Motor Rotations to Overall Rotations
-      kFourBarConstants.kOffset = Math.toRadians(268.0); // Set in hardware client; Radians 52.6 143
+      kFourBarConstants.kGearRatio = 224.3333333333333; // Motor Rotations to Overall Rotations
+      kFourBarConstants.kOffset = Math.toRadians(210.0); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
       kFourBarConstants.kMinPosition = Math.toRadians(45.0);
       kFourBarConstants.kMaxPosition = Math.toRadians(140.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
-      kFourBarConstants.kP = 0.1;
+      kFourBarConstants.kP = 0.0;
       kFourBarConstants.kI = 0.0;
-      kFourBarConstants.kD = 0.01;
+      kFourBarConstants.kD = 0.0;
       kFourBarConstants.kFF = 0.0;
       kFourBarConstants.kDFilter = 0.0;
       kFourBarConstants.kIZone = 0.0;
       kFourBarConstants.kIMaxAccum = 0.0;
       kFourBarConstants.kPIDOutputRange = 1.0;
 
-      kFourBarConstants.kMaxSpeed = Math.PI / 2;
-      kFourBarConstants.kMaxAccel = Math.PI / 4;
+      kFourBarConstants.kMaxSpeed = Math.PI / 8;
+      kFourBarConstants.kMaxAccel = Math.PI / 8;
       kFourBarConstants.kVelTol = Math.PI / 180.0;
       kFourBarConstants.kPosTol = Math.PI / 180.0;
 

@@ -338,15 +338,15 @@ public class DriveSubsystem extends Subsystem {
       return;
     }
 
-    for (int i = 0; i < mModules.length; i++) {
-      SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
-          mModules[i].getDriveSetpoint());
-      SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ",
-          mModules[i].getTurnSetpoint());
+    // for (int i = 0; i < mModules.length; i++) {
+    //   SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
+    //       mModules[i].getDriveSetpoint());
+    //   SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ",
+    //       mModules[i].getTurnSetpoint());
 
-      SmartDashboard.putNumber("Motor " + i + " Drive RPM: ",
-          mModules[i].getMotorSpeed());
-    }
+    //   SmartDashboard.putNumber("Motor " + i + " Drive RPM: ",
+    //       mModules[i].getMotorSpeed());
+    // }
 
     SmartDashboard.putNumber("Heading", mPeriodicIO.heading.getDegrees());
     SmartDashboard.putString("Drive Mode", mControlState.name());

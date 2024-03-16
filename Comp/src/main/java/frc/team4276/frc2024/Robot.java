@@ -307,7 +307,7 @@ public class Robot extends TimedRobot {
       }
 
       if (mControlBoard.operator.getAButtonPressed()) {
-        // mSuperstructure.toggleFourbarVoltageMode();
+        mSuperstructure.toggleFourbarVoltageMode();
       }
 
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
@@ -320,7 +320,7 @@ public class Robot extends TimedRobot {
       } else if(mControlBoard.operator.isPOVRIGHTPressed()){
         mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
       } else if(mControlBoard.operator.isPOVLEFTPressed()){
-        mSuperstructure.setFourBarVoltage(0.3);
+        mSimpleFourbarSubsystem.setTestTrapezoid();
       } else {
         mSuperstructure.setFourBarVoltage(0.0);
       }
