@@ -56,7 +56,8 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   // private final LimeLight mLimeLight = LimeLight.getInstance();
   private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
-  // private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
+  // private final FourBarSubsystem mFourBarSubsystem =
+  // FourBarSubsystem.getInstance();
   private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
   private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
 
@@ -92,8 +93,8 @@ public class Robot extends TimedRobot {
           mIntakeSubsystem,
           mFlywheelSubsystem,
           mSimpleFourbarSubsystem
-          // ,mLimeLight
-          );
+      // ,mLimeLight
+      );
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -205,6 +206,8 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
   }
 
+  private double zeroHeading = 0.0; // Degrees
+
   @Override
   public void teleopInit() {
     try {
@@ -214,6 +217,8 @@ public class Robot extends TimedRobot {
       // mLimeLight.setDisableProcessing(LimelightConstants.disableAfterTeleop);
 
       RobotState.getInstance().setHasBeenEnabled(true);
+
+      zeroHeading = mAllianceChooser.getAlliance() == Alliance.Red ? 180.0 : 0.0;
 
     } catch (Throwable t) {
       throw t;
@@ -228,7 +233,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     try {
       if (mControlBoard.wantZeroHeading()) {
-        mDriveSubsystem.zeroHeading(0);
+        mDriveSubsystem.zeroHeading(zeroHeading);
       }
 
       if (mControlBoard.wantXBrake()) {
@@ -238,7 +243,8 @@ public class Robot extends TimedRobot {
             mControlBoard.getSwerveTranslation().x(),
             mControlBoard.getSwerveTranslation().y(),
             mControlBoard.getSwerveRotation(),
-            mDriveSubsystem.getWPIHeading()));
+            mDriveSubsystem.getWPIHeading().rotateBy(Rotation2d.fromDegrees(zeroHeading))
+        ));
       }
 
       if (mControlBoard.wantDemoLimits()) {
@@ -273,17 +279,18 @@ public class Robot extends TimedRobot {
 
       if (mControlBoard.operator.getLT()) {
         mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShoot);
-      } else if(mControlBoard.operator.getLeftBumper()){
+      } else if (mControlBoard.operator.getLeftBumper()) {
         mSuperstructure.setFlywheelState(SuperstructureConstants.kWhatTheFlip);
       } else {
         mSuperstructure.setFlywheelState(FlywheelState.getIdentity());
       }
 
-      // if(Math.abs(mControlBoard.operator.getLeftY()) > OIConstants.kJoystickDeadband){
-      //   // mSuperstructure.
+      // if(Math.abs(mControlBoard.operator.getLeftY()) >
+      // OIConstants.kJoystickDeadband){
+      // // mSuperstructure.
 
       // } else
-       if (mControlBoard.operator.getRT()) {
+      if (mControlBoard.operator.getRT()) {
         mSuperstructure.setIntakeState(IntakeState.FOOT);
 
       } else if (mControlBoard.driver.getRT()) {
@@ -292,9 +299,9 @@ public class Robot extends TimedRobot {
       } else if (mControlBoard.driver.getRightBumper()) {
         mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
 
-      } else if(mControlBoard.driver.getBButton()){
+      } else if (mControlBoard.driver.getBButton()) {
         mSuperstructure.setIntakeState(IntakeState.FAST_DEFEED);
-      } else if(mControlBoard.operator.getXButton()){
+      } else if (mControlBoard.operator.getXButton()) {
         mSuperstructure.setIntakeState(IntakeState.REVERSE);
 
       } else {
@@ -313,13 +320,13 @@ public class Robot extends TimedRobot {
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
         mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 6.0);
 
-      } else if(mControlBoard.operator.isPOVUPPressed()){
+      } else if (mControlBoard.operator.isPOVUPPressed()) {
         mSuperstructure.setGoalState(GoalState.FASTAKE);
-      } else if(mControlBoard.operator.isPOVDOWNPressed()){
+      } else if (mControlBoard.operator.isPOVDOWNPressed()) {
         mSimpleFourbarSubsystem.setCalibrating();
-      } else if(mControlBoard.operator.isPOVRIGHTPressed()){
+      } else if (mControlBoard.operator.isPOVRIGHTPressed()) {
         mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
-      } else if(mControlBoard.operator.isPOVLEFTPressed()){
+      } else if (mControlBoard.operator.isPOVLEFTPressed()) {
         mSimpleFourbarSubsystem.setTestTrapezoid();
       } else {
         mSuperstructure.setFourBarVoltage(0.0);
