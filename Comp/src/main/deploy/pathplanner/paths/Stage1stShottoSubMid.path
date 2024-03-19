@@ -3,32 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5,
-        "y": 5.55
+        "x": 2.2519547741798185,
+        "y": 4.437457523563696
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6,
-        "y": 5.55
+        "x": 3.1579356852407394,
+        "y": 3.8273071140736876
       },
       "isLocked": false,
-      "linkedName": "SubMid"
+      "linkedName": "Stage1stShot"
     },
     {
       "anchor": {
-        "x": 2.7,
+        "x": 1.5,
         "y": 5.55
       },
       "prevControl": {
-        "x": 2.6,
-        "y": 5.55
+        "x": 1.9931030853052696,
+        "y": 5.029118526705522
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CloseMidPickup"
+      "linkedName": "SubMid"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3,
+      "rotationDegrees": 151.19,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -40,12 +46,12 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 180.0,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
-  "folder": "Comp",
+  "folder": "Experimental",
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": 151.19,
     "velocity": 0
   },
   "useDefaultConstraints": true
