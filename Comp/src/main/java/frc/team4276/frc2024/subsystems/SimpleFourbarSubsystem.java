@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
-// import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
-// import com.revrobotics.SparkPIDController.ArbFFUnits;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.team4276.frc2024.Constants;
@@ -21,7 +21,6 @@ import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.drivers.FourBarFeedForward;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.revlib.VIKCANSparkServoMotor;
-import frc.team4276.lib.revlib.VIKCANSparkServoMotor.Direction;
 
 import frc.team254.lib.util.Util;
 
@@ -39,6 +38,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         IDLE,
         VOLTAGE,
         SMART_MOTION,
+        SMART_MOTION_TEST,
         CALIBRATING,
         TEST_TRAPEZOID
 
@@ -56,7 +56,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
     private double kMaxPosition = Double.POSITIVE_INFINITY;
     private double kMinPosition = Double.NEGATIVE_INFINITY;
 
-    // private boolean isMaintain = false;
+    private boolean isMaintain = false;
 
     private static SimpleFourbarSubsystem mInstance;
 
@@ -156,7 +156,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         mProfileStartTime = mPeriodicIO.timestamp;
 
         mStateSetpoint = new State(Util.limit(position_radians, kMinPosition, kMaxPosition), 0.0);
-        // isMaintain = false;
+        isMaintain = false;
         mProfiledPIDController.reset(mPeriodicIO.meas_state);
         start_state = mPeriodicIO.meas_state;
     }
@@ -249,6 +249,22 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 break;
 
             case SMART_MOTION:
+                double curr_time = mPeriodicIO.timestamp - mProfileStartTime;
+
+                State des_state = mTrapezoidProfile.calculate(curr_time, start_state, mStateSetpoint);
+
+                mPeriodicIO.feed_forward = mFourbarFF.calculate(des_state.position, des_state.velocity);
+
+                if(isMaintain || mTrapezoidProfile.isFinished(curr_time)){
+                    mSparkPIDController.setReference(mStateSetpoint.position, ControlType.kPosition, 0, 
+                        mPeriodicIO.feed_forward, ArbFFUnits.kVoltage);
+
+                    break;
+                }
+
+                mMaster.setVoltage(mPeriodicIO.feed_forward);
+
+            case SMART_MOTION_TEST:
                 SmartDashboard.putNumber("Time Since Start", mPeriodicIO.timestamp - mProfileStartTime);
                 SmartDashboard.putNumber("Input Measured State Position", mPeriodicIO.meas_state.position);
                 SmartDashboard.putNumber("Input Measured State Velocity", mPeriodicIO.meas_state.velocity);
@@ -257,10 +273,12 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
                 mPeriodicIO.accel_test = SmartDashboard.getNumber("Calibration Accel Test", 0.0);
 
-                // if (!Util.epsilonEquals(prev_des_state.position, mPeriodicIO.meas_position_units, Math.PI / 40)
-                //         || !Util.epsilonEquals(prev_des_state.velocity, mPeriodicIO.meas_velocity_units,
-                //                 Math.PI / 40)) {
-                //     mProfileStartTime = mPeriodicIO.timestamp;
+                // if (!Util.epsilonEquals(prev_des_state.position,
+                // mPeriodicIO.meas_position_units, Math.PI / 40)
+                // || !Util.epsilonEquals(prev_des_state.velocity,
+                // mPeriodicIO.meas_velocity_units,
+                // Math.PI / 40)) {
+                // mProfileStartTime = mPeriodicIO.timestamp;
                 // }
 
                 State state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp - mProfileStartTime,
@@ -286,14 +304,13 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 SmartDashboard.putBoolean("Is Fourbar FInished",
                         mTrapezoidProfile.isFinished(mPeriodicIO.timestamp - mProfileStartTime));
 
-                // if (Math.abs(mPeriodicIO.meas_position_units - mStateSetpoint.position) <
-                // (Math.PI / 50)
-                // || isMaintain) {
-                // isMaintain = true;
-                // mSparkPIDController.setReference(mStateSetpoint.position,
-                // ControlType.kPosition, 0,
-                // mFourbarFF.calculate(mStateSetpoint.position, 0.0), ArbFFUnits.kVoltage);
-                // return;
+                // if (Math.abs(mPeriodicIO.meas_position_units - mStateSetpoint.position) < (Math.PI / 50)
+                //         || isMaintain) {
+                //     isMaintain = true;
+                //     mSparkPIDController.setReference(mStateSetpoint.position,
+                //             ControlType.kPosition, 0,
+                //             mFourbarFF.calculate(mStateSetpoint.position, 0.0), ArbFFUnits.kVoltage);
+                //     break;
 
                 // }
 
@@ -336,9 +353,10 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
                 break;
             case TEST_TRAPEZOID:
-                prev_des_state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp - mProfileStartTime, new State(), new State(Math.toRadians(90.0), 0.0));
+                prev_des_state = mTrapezoidProfile.calculate(mPeriodicIO.timestamp - mProfileStartTime, new State(),
+                        new State(Math.toRadians(90.0), 0.0));
 
-                if(prev_des_state.equals(new State(Math.toRadians(90.0), 0.0)) && finishedtime == -1){
+                if (prev_des_state.equals(new State(Math.toRadians(90.0), 0.0)) && finishedtime == -1) {
                     finishedtime = mPeriodicIO.timestamp - mProfileStartTime;
                 }
 
