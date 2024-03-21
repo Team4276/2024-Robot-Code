@@ -91,7 +91,7 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public void setTargetRPM(double des_top_RPM, double des_bottom_RPM){
-        if (mDesiredMode != DesiredFlywheelMode.RPM) {
+        if (mDesiredMode != DesiredFlywheelMode.RPM && mDesiredMode != DesiredFlywheelMode.WHAT_THE_FLIP) {
             mDesiredMode = DesiredFlywheelMode.RPM;
         }
 

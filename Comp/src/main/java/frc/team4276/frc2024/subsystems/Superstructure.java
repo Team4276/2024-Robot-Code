@@ -3,7 +3,6 @@ package frc.team4276.frc2024.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;
@@ -20,39 +19,39 @@ import frc.team1678.lib.loops.Loop;
  * This architecture is only necessary for subsystems with Control States.
  */
 public class Superstructure extends Subsystem {
-    // private final FourBarSubsystem mFourBarSubsystem;
     private final FlywheelSubsystem mFlywheelSubsystem;
     private final IntakeSubsystem mIntakeSubsystem;
-
     private final SimpleFourbarSubsystem mSimpleFourbarSubsystem;
 
     // private SuperstructureState mMeasuredState;
     private SuperstructureState mCommandedState;
     private GoalState mGoalState;
     private GoalState mLastGoalState;
+    private double mDesiredDynamicFourbarPosition;
     private boolean mAtGoal;
 
     private double mDesiredFourBarVoltage = 0.0;
     private double mCommandedFourBarVoltage = 0.0;
     private boolean isFourBarVoltageControl = true;
 
-    private FlywheelState mDesiredFlywheelState = new FlywheelState();
-    private FlywheelState mCommandedFlywheelState = new FlywheelState();
+    private FlywheelState mDesiredFlywheelState = FlywheelState.identity();
+    private FlywheelState mCommandedFlywheelState = FlywheelState.identity();
 
     private IntakeState mDesiredIntakeState = IntakeState.IDLE;
     private IntakeState mCommandedIntakeState = IntakeState.IDLE;
 
     public enum GoalState {
-        STOW(SuperstructureConstants.kSuperstructureStowState),
-        FASTAKE(SuperstructureConstants.kSuperstructureFastakeState),
-        SLOWTAKE(SuperstructureConstants.kSuperstructureSlowtakeState),
-        READY_MIDDLE(SuperstructureConstants.kSuperstructureReadyMiddleState),
-        SPEAKER_CLOSE_FRONT(SuperstructureConstants.kSuperstructureSpeakerCloseFrontState),
-        SPEAKER_CLOSE_SIDE(SuperstructureConstants.kSuperstructureSpeakerCloseSideState),
-        SPEAKER_DYNAMIC(SuperstructureConstants.kSuperstructureDynamicSpeakerState),
-        AMP_CLOSE(SuperstructureConstants.kSuperstructureAmpState),
-        SCORE(SuperstructureConstants.kSuperstructureStowState);
-
+        STOW(new SuperstructureState(SuperstructureConstants.kFourbarStowState, IntakeState.IDLE, FlywheelState.identity(), false)),
+        READY_MIDDLE(new SuperstructureState(SuperstructureConstants.kFourbarReadyMiddleState, IntakeState.IDLE, FlywheelState.identity(), false)),
+        READY_LOW(new SuperstructureState(SuperstructureConstants.kFourbarReadyLowState, IntakeState.IDLE, FlywheelState.identity(), false)),
+        FASTAKE(new SuperstructureState(SuperstructureConstants.kFourbarIntakeState, IntakeState.FASTAKE, FlywheelState.identity(), false)),
+        SLOWTAKE(new SuperstructureState(SuperstructureConstants.kFourbarIntakeState, IntakeState.SLOWTAKE, FlywheelState.identity(), false)),
+        SUB_CLOSE_SIDE(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseFrontState, IntakeState.IDLE, SuperstructureConstants.kNormalShot, true)),
+        SUB_CLOSE_FRONT(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseFrontState, IntakeState.IDLE, SuperstructureConstants.kNormalShot, true)),
+        AMP(new SuperstructureState(SuperstructureConstants.kFourbarAmpState, IntakeState.IDLE, SuperstructureConstants.kWhatTheFlip, true)),
+        PODIUM(new SuperstructureState(SuperstructureConstants.kFourbarPodiumState, IntakeState.IDLE, SuperstructureConstants.kNormalShot, true)),
+        DYNAMIC(new SuperstructureState(Double.NaN, IntakeState.IDLE, new FlywheelState(-4500, -4500), true));
+        
         public SuperstructureState state;
 
         GoalState(SuperstructureState state) {
@@ -71,23 +70,22 @@ public class Superstructure extends Subsystem {
     }
 
     private Superstructure() {
-        // mFourBarSubsystem = FourBarSubsystem.getInstance();
         mFlywheelSubsystem = FlywheelSubsystem.getInstance();
         mIntakeSubsystem = IntakeSubsystem.getInstance();
-
         mSimpleFourbarSubsystem = SimpleFourbarSubsystem.getInstance();
     }
 
     public synchronized void setGoalState(GoalState state) {
-        if (mLastGoalState == null)
+        if (mLastGoalState == null) {
             mLastGoalState = state;
+        }
 
         mLastGoalState = mGoalState;
         mGoalState = state;
     }
 
-    public synchronized void setSuperstructureState(SuperstructureState state) {
-
+    public synchronized void setDynamicFourbarPosition(double position) {
+        mDesiredDynamicFourbarPosition = position;
     }
 
     public void setFourBarVoltage(double voltage) {
@@ -146,9 +144,8 @@ public class Superstructure extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
                 if (isFourBarVoltageControl) {
-                    // mFourBarSubsystem.setVoltage(mCommandedFourBarVoltage);
-
                     mSimpleFourbarSubsystem.setVoltage(mCommandedFourBarVoltage);
+
                 } else if (mSimpleFourbarSubsystem.getControlState() == ControlState.CALIBRATING) {
 
                 } else if (mCommandedState != null) {

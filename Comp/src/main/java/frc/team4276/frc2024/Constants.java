@@ -17,14 +17,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
 import frc.team4276.frc2024.statemachines.FlywheelState;
-import frc.team4276.frc2024.statemachines.SuperstructureState;
-import frc.team4276.frc2024.statemachines.SuperstructureState.Action;
-import frc.team4276.frc2024.statemachines.SuperstructureState.FlywheelTolerance;
-import frc.team4276.frc2024.statemachines.SuperstructureState.FourbarSpeed;
-import frc.team4276.frc2024.statemachines.SuperstructureState.FourbarTolerance;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
-import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.lib.drivers.FourBarFeedForward.FourBarFeedForwardConstants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
@@ -382,61 +376,21 @@ public final class Constants {
       kFourBarConstants.kVoltageCompensation = 12.0;
     }
 
-    // TODO: figure out how to properly change speeds
-    public static final double kSlowFourbarSpeed = 0.0; // radians / second
-    public static final double kSlowFourbarAccel = 0.0; // radians / second^2
-    public static final double kMediumFourbarSpeed = 0.0;
-    public static final double kMediumFourbarAccel = 0.0;
-    public static final double kSonicFourbarSpeed = 0.0;
-    public static final double kSonicFourbarAccel = 0.0;
-
     public static final double kLiberalFourbarTolerance = 0.0; // radians
-    public static final double kLiberalFlywheelTolerance = 0.0; // RPM
-
     public static final double kModerateFourbarTolerance = 0.0;
-    public static final double kModerateFlywheelTolerance = 0.0;
-
     public static final double kConservativeFourbarTolerance = 0.0;
-    public static final double kConservativeFlywheelTolerance = 0.0;
 
     public static final double kFourbarStowState = 130.0;
-    public static final double kFourbarIntakeState = 52.0;
     public static final double kFourbarReadyMiddleState = 90.0;
-    public static final double kFourbarSpeakerCloseFrontState = 52.0;
-    public static final double kFourbarSpeakerCloseSideState = 52.0;
+    public static final double kFourbarReadyLowState = 60.0;
+    public static final double kFourbarIntakeState = 46.0;
+    public static final double kFourbarSubCloseSideState = 52.0;
+    public static final double kFourbarSubCloseFrontState = 52.0;
     public static final double kFourbarAmpState = 52.0;
-    public static final double kFourbarTrapState = 52.0;
+    public static final double kFourbarPodiumState = 52.0;
 
-    public static final FlywheelState kNormalShoot = new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500);
+    public static final FlywheelState kNormalShot = new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500);
     public static final FlywheelState kWhatTheFlip = new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3500);
-
-    public static final SuperstructureState kSuperstructureStowState = new SuperstructureState(130.0,
-        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
-        FlywheelTolerance.LIBERAL);
-    public static final SuperstructureState kSuperstructureFastakeState = new SuperstructureState(52.0,
-        new FlywheelState(), IntakeState.FASTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
-        FlywheelTolerance.LIBERAL, Action.INTAKE);
-    public static final SuperstructureState kSuperstructureSlowtakeState = new SuperstructureState(52.0,
-        new FlywheelState(), IntakeState.SLOWTAKE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
-        FlywheelTolerance.LIBERAL, Action.INTAKE);
-    public static final SuperstructureState kSuperstructureSpeakerCloseFrontState = new SuperstructureState(52.0,
-        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
-        FlywheelTolerance.LIBERAL, Action.REV_UP);
-    public static final SuperstructureState kSuperstructureSpeakerCloseSideState = new SuperstructureState(52.0,
-        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
-        FlywheelTolerance.LIBERAL, Action.REV_UP);
-    public static final SuperstructureState kSuperstructureReadyMiddleState = new SuperstructureState(90.0,
-        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
-        FlywheelTolerance.LIBERAL, Action.REV_UP);
-    public static final SuperstructureState kSuperstructureFarSpinUpState = new SuperstructureState(Double.NaN,
-        new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500), IntakeState.IDLE, FourbarSpeed.SONIC,
-        FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL, Action.REV_UP);
-    public static final SuperstructureState kSuperstructureDynamicSpeakerState = new SuperstructureState(Double.NaN,
-        new FlywheelState(), IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE,
-        FlywheelTolerance.LIBERAL, Action.DYNAMIC);
-    public static final SuperstructureState kSuperstructureAmpState = new SuperstructureState(52.0, new FlywheelState(),
-        IntakeState.IDLE, FourbarSpeed.SONIC, FourbarTolerance.CONSERVATIVE, FlywheelTolerance.LIBERAL,
-        Action.POSITION);
   }
 
   public static class FlywheelConstants {

@@ -11,11 +11,11 @@ public class FlywheelState {
 
     private static FlywheelState kIdentity = new FlywheelState();
     
-    public static FlywheelState getIdentity(){
+    public static FlywheelState identity(){
         return kIdentity;
     }
 
-    public FlywheelState() {}
+    private FlywheelState(){}
 
     public FlywheelState(DesiredFlywheelMode desired_mode, double des_top_RPM,
             double des_bottom_RPM) {

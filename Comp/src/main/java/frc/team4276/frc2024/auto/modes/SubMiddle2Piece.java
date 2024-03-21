@@ -1,7 +1,7 @@
 package frc.team4276.frc2024.auto.modes;
 
 import edu.wpi.first.math.geometry.Pose2d;
-
+import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
@@ -28,19 +28,19 @@ public class SubMiddle2Piece extends AutoModeBase {
         mSuperstructure.setFourBarVoltage(-2.0);
         runAction(new WaitAction(2.0));
         mSuperstructure.setFourBarVoltage(0.0);
-        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
+        mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShot);
         runAction(new WaitAction(2.0));
         mSuperstructure.setIntakeState(IntakeState.FOOT);
         runAction(new WaitAction(2.0));
 
         // Drive to note and intake
         mSuperstructure.setIntakeState(IntakeState.FASTAKE);
-        mSuperstructure.setFlywheelState(new FlywheelState());
+        mSuperstructure.setFlywheelState(FlywheelState.identity());
         runAction(traj1);
 
         // Drive to Sub and shoot
         runAction(traj2);
-        mSuperstructure.setFlywheelState(new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500));
+        mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShot);
         runAction(new WaitAction(2.0));
         mSuperstructure.setIntakeState(IntakeState.FOOT);
 
