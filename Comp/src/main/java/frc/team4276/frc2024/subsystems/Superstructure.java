@@ -125,7 +125,11 @@ public class Superstructure extends Subsystem {
     // Only place we take inputs from controlboard (other than drive subsystem);
     @Override
     public void readPeriodicInputs() {
-        if (mGoalState != null) {
+        if(mGoalState == GoalState.DYNAMIC){
+            mCommandedState = mGoalState.state;
+            mCommandedState.fourbar_angle = mDesiredDynamicFourbarPosition;
+            
+        } else if (mGoalState != null) {
             mCommandedState = mGoalState.state;
         }
 

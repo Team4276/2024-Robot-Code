@@ -32,7 +32,6 @@ import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 // import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
-import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 // import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 
@@ -99,7 +98,7 @@ public class Robot extends TimedRobot {
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
       mSubsystemManager.registerDisabledLoops(mDisabledLooper);
       mRobotStateEstimator.registerEnabledLoops(mDisabledLooper);
-      mRobotStateEstimator.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180)));
+      mRobotStateEstimator.resetOdometry(new Pose2d());
       RobotState.getInstance().resetKalmanFilters();
 
       SmartDashboard.putNumber("Fourbar des voltage input", 0.0);
