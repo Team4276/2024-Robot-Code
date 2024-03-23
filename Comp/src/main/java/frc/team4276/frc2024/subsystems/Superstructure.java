@@ -2,7 +2,9 @@ package frc.team4276.frc2024.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;
@@ -23,12 +25,15 @@ public class Superstructure extends Subsystem {
     private final IntakeSubsystem mIntakeSubsystem;
     private final SimpleFourbarSubsystem mSimpleFourbarSubsystem;
 
-    // private SuperstructureState mMeasuredState;
+    private SuperstructureState mMeasuredState;
     private SuperstructureState mCommandedState;
     private GoalState mGoalState;
     private GoalState mLastGoalState;
     private double mDesiredDynamicFourbarPosition;
-    private boolean mAtGoal;
+
+    private boolean isAutoShoot = false;
+    private boolean isShooting = false;
+    private double mShotStartTime = -1;
 
     private double mDesiredFourBarVoltage = 0.0;
     private double mCommandedFourBarVoltage = 0.0;
@@ -75,6 +80,10 @@ public class Superstructure extends Subsystem {
         mSimpleFourbarSubsystem = SimpleFourbarSubsystem.getInstance();
     }
 
+    public synchronized void setAutoShoot(boolean isAutoShoot){
+        this.isAutoShoot = isAutoShoot;
+    }
+
     public synchronized void setGoalState(GoalState state) {
         if (mLastGoalState == null) {
             mLastGoalState = state;
@@ -84,8 +93,23 @@ public class Superstructure extends Subsystem {
         mGoalState = state;
     }
 
+    public synchronized SuperstructureState getState(){
+        return null;
+    }
+
     public synchronized void setDynamicFourbarPosition(double position) {
         mDesiredDynamicFourbarPosition = position;
+
+        setGoalState(GoalState.DYNAMIC);
+    }
+
+    public synchronized void SHOOT(){
+        if(!mCommandedState.isShootingState) return;
+
+        isShooting = true;
+
+        // if()
+        mShotStartTime = Timer.getFPGATimestamp();
     }
 
     public void setFourBarVoltage(double voltage) {
@@ -101,7 +125,7 @@ public class Superstructure extends Subsystem {
     }
 
     public boolean atGoal() {
-        return mAtGoal;
+        return false;
     }
 
     public void toggleFourbarVoltageMode() {
@@ -125,12 +149,22 @@ public class Superstructure extends Subsystem {
     // Only place we take inputs from controlboard (other than drive subsystem);
     @Override
     public void readPeriodicInputs() {
-        if(mGoalState == GoalState.DYNAMIC){
+        mMeasuredState = new SuperstructureState(mSimpleFourbarSubsystem.getAngleRadians(), mIntakeSubsystem.getState(), mFlywheelSubsystem.getState());
+
+        if (mGoalState != null) {
             mCommandedState = mGoalState.state;
+
+        }
+
+        if(mGoalState == GoalState.DYNAMIC){
             mCommandedState.fourbar_angle = mDesiredDynamicFourbarPosition;
             
-        } else if (mGoalState != null) {
-            mCommandedState = mGoalState.state;
+        }
+
+        if(isShooting && Timer.getFPGATimestamp() < mShotStartTime + SuperstructureConstants.kAutoShotFeedTime){
+            mCommandedState.intake_state = IntakeState.FOOT;
+        } else {
+            isShooting = false;
         }
 
         mCommandedFourBarVoltage = mDesiredFourBarVoltage;

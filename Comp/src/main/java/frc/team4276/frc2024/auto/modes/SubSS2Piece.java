@@ -7,7 +7,6 @@ import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.PPSwerveTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.WaitAction;
 import frc.team4276.frc2024.statemachines.FlywheelState;
-import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.frc2024.subsystems.Superstructure;
 

@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import frc.team4276.frc2024.Constants.DriveConstants;
 
 public class PathPlannerPaths {
+    // public static final PathPlannerPath path1 = new PathPlannerPaths(); 
+    //TODO: load all paths in here
 
     public PathPlannerPath generate(List<Translation2d> positions, List<RotationTarget> rotation_targets, PathConstraints path_constraints){
         List<PathPoint> waypoints = new ArrayList<>();

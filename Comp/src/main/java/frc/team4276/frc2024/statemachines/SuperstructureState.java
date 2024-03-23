@@ -15,4 +15,13 @@ public class SuperstructureState {
         this.flywheel_state = flywheelState;
         this.isShootingState = isShootingState;
     }
+
+    public SuperstructureState(double fourbar_angle, IntakeState intakeState, 
+        FlywheelState flywheelState){
+        this.fourbar_angle = fourbar_angle;
+        this.intake_state = intakeState;
+        this.flywheel_state = flywheelState;
+    }
+
+    
 }

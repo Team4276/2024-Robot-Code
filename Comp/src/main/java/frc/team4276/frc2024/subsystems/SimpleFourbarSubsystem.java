@@ -126,6 +126,10 @@ public class SimpleFourbarSubsystem extends Subsystem {
         SmartDashboard.putNumber("Calibration Accel Test", 0.0);
     }
 
+    public double getAngleRadians(){
+        return mPeriodicIO.meas_position_units;
+    }
+
     public ControlState getControlState() {
         return mControlState == null ? ControlState.IDLE : mControlState;
     }

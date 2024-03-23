@@ -152,8 +152,10 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     try {
       if (mAllianceChooser.getAlliance() == Alliance.Red) {
+        RobotState.getInstance().setRed();
         // mLimeLight.setRedTagMap();
       } else {
+        RobotState.getInstance().setBlue();
         // mLimeLight.setBlueTagMap();
       }
 

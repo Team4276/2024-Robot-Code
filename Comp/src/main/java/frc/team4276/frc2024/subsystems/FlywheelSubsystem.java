@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import frc.team4276.frc2024.Constants.FlywheelConstants;
+import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.lib.drivers.Subsystem;
 
 import frc.team1678.lib.Util;
@@ -79,6 +80,10 @@ public class FlywheelSubsystem extends Subsystem {
 
         mTopFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Top,FlywheelConstants.kV_Top,FlywheelConstants.kA);
         mBottomFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Bottom,FlywheelConstants.kV_Bottom,FlywheelConstants.kA);
+    }
+
+    public FlywheelState getState(){
+        return null;
     }
 
     public void setVoltage(double des_top_voltage, double des_bottom_voltage){

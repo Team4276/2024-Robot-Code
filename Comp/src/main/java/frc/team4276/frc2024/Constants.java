@@ -379,17 +379,20 @@ public final class Constants {
     public static final double kModerateFourbarTolerance = 0.0;
     public static final double kConservativeFourbarTolerance = 0.0;
 
-    public static final double kFourbarStowState = 130.0;
-    public static final double kFourbarReadyMiddleState = 90.0;
-    public static final double kFourbarReadyLowState = 60.0;
-    public static final double kFourbarIntakeState = 46.0;
-    public static final double kFourbarSubCloseSideState = 52.0;
-    public static final double kFourbarSubCloseFrontState = 52.0;
-    public static final double kFourbarAmpState = 52.0;
-    public static final double kFourbarPodiumState = 52.0;
+    // Radians
+    public static final double kFourbarStowState = Math.toRadians(130.0);
+    public static final double kFourbarReadyMiddleState = Math.toRadians(90.0);
+    public static final double kFourbarReadyLowState = Math.toRadians(60.0);
+    public static final double kFourbarIntakeState = Math.toRadians(46.0);
+    public static final double kFourbarSubCloseSideState = Math.toRadians(52.0);
+    public static final double kFourbarSubCloseFrontState = Math.toRadians(52.0);
+    public static final double kFourbarAmpState = Math.toRadians(52.0);
+    public static final double kFourbarPodiumState = Math.toRadians(52.0);
 
     public static final FlywheelState kNormalShot = new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500);
     public static final FlywheelState kWhatTheFlip = new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3500);
+
+    public static final double kAutoShotFeedTime = 0.25;
   }
 
   public static class FlywheelConstants {

@@ -6,12 +6,14 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.Constants.RobotStateConstants;
 import frc.team4276.frc2024.Limelight.VisionPoseAcceptor;
+import frc.team4276.frc2024.field.Field;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight.VisionUpdate;
 
@@ -34,6 +36,11 @@ public class RobotState {
     private static final int kObservationBufferSize = 50;
 
     private boolean mHasBeenEnabled = false;
+
+    private Field.POIs mPOIs;
+
+    /** key: metres; values: degrees */
+    private InterpolatingDoubleTreeMap fourbarAngleMap = new InterpolatingDoubleTreeMap();
 
     public static RobotState getInstance() {
         if (mInstance == null) {
@@ -67,6 +74,18 @@ public class RobotState {
         // Constants.kHeightField2d, new edu.wpi.first.math.geometry.Rotation2d(0));
         // mField2d.getObject("fused").setPose(Constants.kWidthField2d,
         // Constants.kHeightField2d, new edu.wpi.first.math.geometry.Rotation2d(0));
+    }
+
+    public Field.POIs getPOIs(){
+        return mPOIs;
+    }
+
+    public void setBlue(){
+        mPOIs = Field.Blue.kPOIs;
+    }
+
+    public void setRed(){
+        mPOIs = Field.Red.kPOIs;
     }
 
     public synchronized void resetKalmanFilters() {
@@ -222,6 +241,17 @@ public class RobotState {
 
     public synchronized void reset() {
         reset(Timer.getFPGATimestamp(), Pose2d.identity());
+    }
+
+    public synchronized double getDistanceFromSpeaker(){
+        return getCurrentFieldToVehicle().getTranslation().distance(mPOIs.kSpeakerCenter);
+    }
+
+    /** 
+     * @return fourbar angle in radians
+     */
+    public synchronized double calcDynamicFourbarAngle(){
+        return fourbarAngleMap.get(getDistanceFromSpeaker());
     }
 
 
