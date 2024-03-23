@@ -308,6 +308,9 @@ public final class Constants {
 
     public static final double kThetaTolerance = Math.PI / 50;
     public static final double kThetaUpdateTolerance = Math.PI / 50;
+
+    // Metres
+    public static final double kValidSpeakerDistance = 8.0;
   }
 
   public static final class SuperstructureConstants {
@@ -353,7 +356,7 @@ public final class Constants {
       kFourBarConstants.kMaxPosition = Math.toRadians(140.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
-      kFourBarConstants.kP = 0.0;
+      kFourBarConstants.kP = 0.0; // 0.03490658503988659153847381536977;
       kFourBarConstants.kI = 0.0;
       kFourBarConstants.kD = 0.0;
       kFourBarConstants.kFF = 0.0;
@@ -375,9 +378,12 @@ public final class Constants {
       kFourBarConstants.kVoltageCompensation = 12.0;
     }
 
-    public static final double kLiberalFourbarTolerance = 0.0; // radians
-    public static final double kModerateFourbarTolerance = 0.0;
-    public static final double kConservativeFourbarTolerance = 0.0;
+    // Radians
+    public static final double kLiberalFourbarPositionTolerance = Math.toRadians(1.0); 
+    public static final double kModerateFourbarPositionTolerance = Math.toRadians(1.0);
+    public static final double kConservativeFourbarPositionTolerance = Math.toRadians(1.0);
+
+    public static final double kConservativeFourbarVelocityTolerance = Math.toRadians(1.0);
 
     // Radians
     public static final double kFourbarStowState = Math.toRadians(130.0);

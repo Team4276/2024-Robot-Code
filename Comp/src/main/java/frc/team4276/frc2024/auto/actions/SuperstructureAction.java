@@ -31,7 +31,7 @@ public class SuperstructureAction implements Action {
     @Override
     public boolean isFinished() {
         if (mTimeout >= 0 && Timer.getFPGATimestamp() - mStartTime >= mTimeout) return true;
-        return mSuperstructure.atGoal();
+        return mDesiredState.state.isShootingState ? !mSuperstructure.isHoldingNote() : mSuperstructure.atGoal();
     }
 
     @Override

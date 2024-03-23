@@ -143,7 +143,7 @@ public class LimeLight extends Subsystem {
         @Override
         public void accept(NetworkTable table, String key, NetworkTableEvent event) {
             if (key.equals("json")) {
-                if (mDisableProcessing) {
+                if (!mDisableProcessing) {
                     readInputsAndAddVisionUpdate();
                 }
             }

@@ -76,10 +76,10 @@ public class SimpleFourbarSubsystem extends Subsystem {
         // mMaster.setCANTimeout(10);
         // mMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
         mMaster.setInverted(constants.kMasterConstants.isInverted);
-        // mMaster.enableForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen,
-        // true);
-        // mMaster.enableReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen,
-        // false);
+        mMaster.enableForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen,
+        true);
+        mMaster.enableReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyOpen,
+        false);
         // mMaster.setEncoderLimit(kMinPosition, Direction.NEGATIVE, false, 0.1);
         // mMaster.setEncoderLimit(kMaxPosition, Direction.POSITIVE, true, 0.1);
 
@@ -124,6 +124,14 @@ public class SimpleFourbarSubsystem extends Subsystem {
         SmartDashboard.putNumber("Calibration Efficiency Test", 0.0);
         SmartDashboard.putNumber("Calibration Static Test", 0.0);
         SmartDashboard.putNumber("Calibration Accel Test", 0.0);
+    }
+
+    public boolean atSetpoint(){
+        return mTrapezoidProfile.isFinished(mPeriodicIO.timestamp) && 
+            Util.epsilonEquals(mPeriodicIO.meas_position_units, mStateSetpoint.position, 
+            SuperstructureConstants.kConservativeFourbarPositionTolerance) &&
+            Util.epsilonEquals(mPeriodicIO.meas_velocity_units, mStateSetpoint.velocity, 
+            SuperstructureConstants.kConservativeFourbarVelocityTolerance);
     }
 
     public double getAngleRadians(){
@@ -384,6 +392,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         SmartDashboard.putString("Simple Fourbar COntrolstate", mControlState.name());
         SmartDashboard.putNumber("Fourbar Position Degrees", Math.toDegrees(mPeriodicIO.meas_position_units));
         SmartDashboard.putNumber("Fourbar Acceleration", mPeriodicIO.meas_acceleration_units);
+        SmartDashboard.putBoolean("Fourbar At Setpoint", atSetpoint());
 
     }
 

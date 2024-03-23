@@ -9,7 +9,7 @@ import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-
+import frc.team4276.frc2024.Constants.AutoAlignConstants;
 import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.Constants.RobotStateConstants;
 import frc.team4276.frc2024.Limelight.VisionPoseAcceptor;
@@ -40,7 +40,11 @@ public class RobotState {
     private Field.POIs mPOIs;
 
     /** key: metres; values: degrees */
-    private InterpolatingDoubleTreeMap fourbarAngleMap = new InterpolatingDoubleTreeMap();
+    private static InterpolatingDoubleTreeMap fourbarAngleMap = new InterpolatingDoubleTreeMap();
+
+    static {
+        fourbarAngleMap.put(1.05, 45.0);
+    }
 
     public static RobotState getInstance() {
         if (mInstance == null) {
@@ -243,15 +247,19 @@ public class RobotState {
         reset(Timer.getFPGATimestamp(), Pose2d.identity());
     }
 
-    public synchronized double getDistanceFromSpeaker(){
+    public synchronized double getSpeakerDistance(){
         return getCurrentFieldToVehicle().getTranslation().distance(mPOIs.kSpeakerCenter);
+    }
+
+    public synchronized boolean isValidSpeakerDistance(){
+        return getSpeakerDistance() <= AutoAlignConstants.kValidSpeakerDistance;
     }
 
     /** 
      * @return fourbar angle in radians
      */
     public synchronized double calcDynamicFourbarAngle(){
-        return fourbarAngleMap.get(getDistanceFromSpeaker());
+        return Math.toRadians(fourbarAngleMap.get(getSpeakerDistance()));
     }
 
 

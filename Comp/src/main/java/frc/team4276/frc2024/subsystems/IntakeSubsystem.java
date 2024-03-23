@@ -19,7 +19,7 @@ public class IntakeSubsystem extends Subsystem {
     private CANSparkMax mMotor;
     private RelativeEncoder mRelativeEncoder;
     private DigitalInput mFrontSensor;
-    // private DigitalInput mBackSensor;
+    private DigitalInput mBackSensor;
     private PeriodicIO mPeriodicIO;
     private IntakeState mIntakeState = IntakeState.IDLE;
 
@@ -101,7 +101,7 @@ public class IntakeSubsystem extends Subsystem {
         mMotor.burnFlash();
         
         mFrontSensor = new DigitalInput(0);
-        // mBackSensor = new DigitalInput(1);
+        mBackSensor = new DigitalInput(1);
         mPeriodicIO = new PeriodicIO();
     }
     
@@ -138,7 +138,7 @@ public class IntakeSubsystem extends Subsystem {
         double timestamp;
         double current_current;
         boolean front_sensor_tripped;
-        // boolean back_sensor_tripped;
+        boolean back_sensor_tripped;
 
         // Outputs
         double voltage;
@@ -149,7 +149,7 @@ public class IntakeSubsystem extends Subsystem {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
         mPeriodicIO.current_current = mMotor.getOutputCurrent();
         mPeriodicIO.front_sensor_tripped = !mFrontSensor.get();
-        // mPeriodicIO.back_sensor_tripped = !mBackSensor.get();
+        mPeriodicIO.back_sensor_tripped = !mBackSensor.get();
 
     }
 
@@ -173,20 +173,20 @@ public class IntakeSubsystem extends Subsystem {
                         currentSensor.starting = true;
                         break;
                     case SLOWTAKE:
-                        if (mRelativeEncoder.getVelocity() >= 9500) {
-                            currentSensor.starting = false;
-                        } else {
-                            break;
-                        }
-                        if (currentSensor.spikeCheck(mPeriodicIO.current_current)) {
+                        // if (mRelativeEncoder.getVelocity() >= 9500) {
+                        //     currentSensor.starting = false;
+                        // } else {
+                        //     break;
+                        // }
+                        // if (currentSensor.spikeCheck(mPeriodicIO.current_current)) {
+                        //     mStateStartTime = mPeriodicIO.timestamp;
+                        //     mIntakeState = IntakeState.SLOW_FEED;
+                        // }
+
+                        if (mPeriodicIO.back_sensor_tripped) {
                             mStateStartTime = mPeriodicIO.timestamp;
                             mIntakeState = IntakeState.SLOW_FEED;
                         }
-                        //untested sensor code
-                        /*if (mPeriodicIO.back_sensor_tripped) {
-                            start_time = mPeriodicIO.timestamp;
-                            mIntakeState = IntakeState.SLOW_FEED;
-                        }*/
 
                     case SLOW_FEED:
                         if (mPeriodicIO.front_sensor_tripped) {
@@ -236,6 +236,7 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void outputTelemetry() {
         SmartDashboard.putBoolean("Front Sensor Tripped", mPeriodicIO.front_sensor_tripped);
+        SmartDashboard.putBoolean("Back Sensor Tripped", mPeriodicIO.back_sensor_tripped);
         SmartDashboard.putBoolean("Note Detetcted", currentSensor.spikeCheck(mPeriodicIO.current_current));
         SmartDashboard.putString("Intake Mode", mIntakeState.name());
         SmartDashboard.putNumber("feeder RPM:", mRelativeEncoder.getVelocity());

@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.Constants.DriveConstants;
-// import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.auto.AutoModeBase;
@@ -26,7 +25,7 @@ import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
 // import frc.team4276.frc2024.subsystems.FourBarSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
-// import frc.team4276.frc2024.subsystems.LimeLight;
+import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.RobotStateEstimator;
 import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
@@ -53,7 +52,7 @@ public class Robot extends TimedRobot {
   private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
-  // private final LimeLight mLimeLight = LimeLight.getInstance();
+  private final LimeLight mLimeLight = LimeLight.getInstance();
   private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
   // private final FourBarSubsystem mFourBarSubsystem =
   // FourBarSubsystem.getInstance();
@@ -91,8 +90,8 @@ public class Robot extends TimedRobot {
           // mFourBarSubsystem,
           mIntakeSubsystem,
           mFlywheelSubsystem,
-          mSimpleFourbarSubsystem
-      // ,mLimeLight
+          mSimpleFourbarSubsystem,
+          mLimeLight
       );
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -131,8 +130,8 @@ public class Robot extends TimedRobot {
     try {
       mEnabledLooper.stop();
       mDisabledLooper.start();
-      // mLimeLight.start();
-      // mLimeLight.setDisableProcessing(true);
+      mLimeLight.start();
+      mLimeLight.setDisableProcessing(false);
 
     } catch (Throwable t) {
       throw t;
@@ -153,10 +152,10 @@ public class Robot extends TimedRobot {
     try {
       if (mAllianceChooser.getAlliance() == Alliance.Red) {
         RobotState.getInstance().setRed();
-        // mLimeLight.setRedTagMap();
+        mLimeLight.setRedTagMap();
       } else {
         RobotState.getInstance().setBlue();
-        // mLimeLight.setBlueTagMap();
+        mLimeLight.setBlueTagMap();
       }
 
       mAutoModeSelector.updateModeCreator(mAllianceChooser.isAllianceChanged());
@@ -194,7 +193,7 @@ public class Robot extends TimedRobot {
       mEnabledLooper.start();
       mAutoModeExecutor.start();
 
-      // mLimeLight.setDisableProcessing(true);
+      mLimeLight.setDisableProcessing(false);
       RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
@@ -215,7 +214,7 @@ public class Robot extends TimedRobot {
       mDisabledLooper.stop();
       mEnabledLooper.start();
 
-      // mLimeLight.setDisableProcessing(LimelightConstants.disableAfterTeleop);
+      mLimeLight.setDisableProcessing(false);
 
       RobotState.getInstance().setHasBeenEnabled(true);
 
@@ -252,6 +251,14 @@ public class Robot extends TimedRobot {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
       } else {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
+      }
+
+      if(mControlBoard.operator.getYButtonReleased()){
+        mSuperstructure.addFourbarScoringOffset(Math.toRadians(0.5));
+      } else if(mControlBoard.operator.getLeftStickButtonReleased()){
+        mSuperstructure.addFourbarScoringOffset(Math.toRadians(-0.5));
+      } else if(mControlBoard.operator.getLeftYDeadband() > 0.0){
+        mSuperstructure.addFourbarScoringOffset(Math.toRadians(-mControlBoard.operator.getLeftYDeadband() * 10.0));
       }
 
       // if (mControlBoard.wantFastake()) {

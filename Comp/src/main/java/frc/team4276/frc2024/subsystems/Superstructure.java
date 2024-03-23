@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;
@@ -25,11 +25,12 @@ public class Superstructure extends Subsystem {
     private final IntakeSubsystem mIntakeSubsystem;
     private final SimpleFourbarSubsystem mSimpleFourbarSubsystem;
 
-    private SuperstructureState mMeasuredState;
-    private SuperstructureState mCommandedState;
+    private SuperstructureState mMeasuredState = SuperstructureState.identity();
+    private SuperstructureState mCommandedState = SuperstructureState.identity();
     private GoalState mGoalState;
     private GoalState mLastGoalState;
-    private double mDesiredDynamicFourbarPosition;
+
+    private double mFourbarScoringOffset = 0.0;
 
     private boolean isAutoShoot = false;
     private boolean isShooting = false;
@@ -46,17 +47,26 @@ public class Superstructure extends Subsystem {
     private IntakeState mCommandedIntakeState = IntakeState.IDLE;
 
     public enum GoalState {
-        STOW(new SuperstructureState(SuperstructureConstants.kFourbarStowState, IntakeState.IDLE, FlywheelState.identity(), false)),
-        READY_MIDDLE(new SuperstructureState(SuperstructureConstants.kFourbarReadyMiddleState, IntakeState.IDLE, FlywheelState.identity(), false)),
-        READY_LOW(new SuperstructureState(SuperstructureConstants.kFourbarReadyLowState, IntakeState.IDLE, FlywheelState.identity(), false)),
-        FASTAKE(new SuperstructureState(SuperstructureConstants.kFourbarIntakeState, IntakeState.FASTAKE, FlywheelState.identity(), false)),
-        SLOWTAKE(new SuperstructureState(SuperstructureConstants.kFourbarIntakeState, IntakeState.SLOWTAKE, FlywheelState.identity(), false)),
-        SUB_CLOSE_SIDE(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseFrontState, IntakeState.IDLE, SuperstructureConstants.kNormalShot, true)),
-        SUB_CLOSE_FRONT(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseFrontState, IntakeState.IDLE, SuperstructureConstants.kNormalShot, true)),
-        AMP(new SuperstructureState(SuperstructureConstants.kFourbarAmpState, IntakeState.IDLE, SuperstructureConstants.kWhatTheFlip, true)),
-        PODIUM(new SuperstructureState(SuperstructureConstants.kFourbarPodiumState, IntakeState.IDLE, SuperstructureConstants.kNormalShot, true)),
+        STOW(new SuperstructureState(SuperstructureConstants.kFourbarStowState, IntakeState.IDLE,
+                FlywheelState.identity(), false)),
+        READY_MIDDLE(new SuperstructureState(SuperstructureConstants.kFourbarReadyMiddleState, IntakeState.IDLE,
+                FlywheelState.identity(), false)),
+        READY_LOW(new SuperstructureState(SuperstructureConstants.kFourbarReadyLowState, IntakeState.IDLE,
+                FlywheelState.identity(), false)),
+        FASTAKE(new SuperstructureState(SuperstructureConstants.kFourbarIntakeState, IntakeState.FASTAKE,
+                FlywheelState.identity(), false)),
+        SLOWTAKE(new SuperstructureState(SuperstructureConstants.kFourbarIntakeState, IntakeState.SLOWTAKE,
+                FlywheelState.identity(), false)),
+        SUB_CLOSE_SIDE(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseFrontState, IntakeState.IDLE,
+                SuperstructureConstants.kNormalShot, true)),
+        SUB_CLOSE_FRONT(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseFrontState, IntakeState.IDLE,
+                SuperstructureConstants.kNormalShot, true)),
+        AMP(new SuperstructureState(SuperstructureConstants.kFourbarAmpState, IntakeState.IDLE,
+                SuperstructureConstants.kWhatTheFlip, true)),
+        PODIUM(new SuperstructureState(SuperstructureConstants.kFourbarPodiumState, IntakeState.IDLE,
+                SuperstructureConstants.kNormalShot, true)),
         DYNAMIC(new SuperstructureState(Double.NaN, IntakeState.IDLE, new FlywheelState(-4500, -4500), true));
-        
+
         public SuperstructureState state;
 
         GoalState(SuperstructureState state) {
@@ -80,7 +90,11 @@ public class Superstructure extends Subsystem {
         mSimpleFourbarSubsystem = SimpleFourbarSubsystem.getInstance();
     }
 
-    public synchronized void setAutoShoot(boolean isAutoShoot){
+    public synchronized void addFourbarScoringOffset(double delta_offset) {
+        mFourbarScoringOffset += delta_offset;
+    }
+
+    public synchronized void setAutoShoot(boolean isAutoShoot) {
         this.isAutoShoot = isAutoShoot;
     }
 
@@ -93,22 +107,19 @@ public class Superstructure extends Subsystem {
         mGoalState = state;
     }
 
-    public synchronized SuperstructureState getState(){
-        return null;
+    public synchronized SuperstructureState getState() {
+        return mMeasuredState;
     }
 
-    public synchronized void setDynamicFourbarPosition(double position) {
-        mDesiredDynamicFourbarPosition = position;
+    public synchronized void SHOOT() {
+        if (!mCommandedState.isShootingState)
+            return;
 
-        setGoalState(GoalState.DYNAMIC);
-    }
-
-    public synchronized void SHOOT(){
-        if(!mCommandedState.isShootingState) return;
+        System.out.println("Fourbar Angle" + Math.toDegrees(mSimpleFourbarSubsystem.getAngleRadians()));
+        System.out.println("Distance from Speaker" + RobotState.getInstance().getSpeakerDistance());
+        System.out.println("Robot X" + SmartDashboard.getNumber("Robot X", mCommandedFourBarVoltage));
 
         isShooting = true;
-
-        // if()
         mShotStartTime = Timer.getFPGATimestamp();
     }
 
@@ -125,7 +136,11 @@ public class Superstructure extends Subsystem {
     }
 
     public boolean atGoal() {
-        return false;
+        return mGoalState.state.isInRange(mMeasuredState, mCommandedFourBarVoltage);
+    }
+
+    public boolean isHoldingNote() {
+        return mMeasuredState.intake_state == IntakeState.HOLDING;
     }
 
     public void toggleFourbarVoltageMode() {
@@ -142,29 +157,39 @@ public class Superstructure extends Subsystem {
 
         } else {
             mSimpleFourbarSubsystem.setIdleMode(IdleMode.kBrake);
-            
+
         }
     }
 
     // Only place we take inputs from controlboard (other than drive subsystem);
     @Override
     public void readPeriodicInputs() {
-        mMeasuredState = new SuperstructureState(mSimpleFourbarSubsystem.getAngleRadians(), mIntakeSubsystem.getState(), mFlywheelSubsystem.getState());
+        mMeasuredState = new SuperstructureState(mSimpleFourbarSubsystem.getAngleRadians(), mIntakeSubsystem.getState(),
+                mFlywheelSubsystem.getState());
 
         if (mGoalState != null) {
             mCommandedState = mGoalState.state;
 
-        }
+            if (mGoalState == GoalState.DYNAMIC) {
+                mCommandedState.fourbar_angle = RobotState.getInstance().calcDynamicFourbarAngle();
 
-        if(mGoalState == GoalState.DYNAMIC){
-            mCommandedState.fourbar_angle = mDesiredDynamicFourbarPosition;
-            
-        }
+            }
 
-        if(isShooting && Timer.getFPGATimestamp() < mShotStartTime + SuperstructureConstants.kAutoShotFeedTime){
-            mCommandedState.intake_state = IntakeState.FOOT;
-        } else {
-            isShooting = false;
+            if (mGoalState.state.isShootingState) {
+                mCommandedState.fourbar_angle += mFourbarScoringOffset;
+            }
+
+            if (isAutoShoot && getState().isInRange(mCommandedState.fourbar_angle, mCommandedState.flywheel_state,
+                    SuperstructureConstants.kConservativeFourbarPositionTolerance)
+                    && mIntakeSubsystem.getState() == IntakeState.HOLDING) {
+                SHOOT();
+            }
+
+            if (isShooting && Timer.getFPGATimestamp() < mShotStartTime + SuperstructureConstants.kAutoShotFeedTime) {
+                mCommandedState.intake_state = IntakeState.FOOT;
+            } else {
+                isShooting = false;
+            }
         }
 
         mCommandedFourBarVoltage = mDesiredFourBarVoltage;
@@ -192,18 +217,18 @@ public class Superstructure extends Subsystem {
 
                 switch (mCommandedFlywheelState.desired_mode) {
                     case VOLTAGE:
-                        mFlywheelSubsystem.setVoltage(mCommandedFlywheelState.des_top_voltage,
-                                mCommandedFlywheelState.des_bottom_voltage);
+                        mFlywheelSubsystem.setVoltage(mCommandedFlywheelState.top_voltage,
+                                mCommandedFlywheelState.bottom_voltage);
                         break;
                     case RPM:
-                        mFlywheelSubsystem.setTargetRPM(mCommandedFlywheelState.des_top_RPM,
-                                mCommandedFlywheelState.des_bottom_RPM);
+                        mFlywheelSubsystem.setTargetRPM(mCommandedFlywheelState.top_RPM,
+                                mCommandedFlywheelState.bottom_RPM);
                         break;
                     case DEFEEDING:
                         break;
                     case WHAT_THE_FLIP:
-                        mFlywheelSubsystem.setTargetRPM(mCommandedFlywheelState.des_top_RPM,
-                                mCommandedFlywheelState.des_bottom_RPM);
+                        mFlywheelSubsystem.setTargetRPM(mCommandedFlywheelState.top_RPM,
+                                mCommandedFlywheelState.bottom_RPM);
                         mFlywheelSubsystem.setFlip();
                         break;
                     default:
@@ -226,6 +251,12 @@ public class Superstructure extends Subsystem {
     @Override
     public void outputTelemetry() {
         SmartDashboard.putBoolean("isFourbarVoltageControl", isFourBarVoltageControl);
-        SmartDashboard.putString("Fourbar Goal", mGoalState == null ? "None" : mGoalState.name());
+        SmartDashboard.putNumber("Fourbar Scoring Offset", mFourbarScoringOffset);
+
+        SmartDashboard.putBoolean("Is Holding Note", isHoldingNote());
+
+        if (mGoalState != null) {
+            SmartDashboard.putString("Fourbar Goal", mGoalState.name());
+        }
     }
 }
