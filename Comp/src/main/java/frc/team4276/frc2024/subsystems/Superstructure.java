@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team4276.frc2024.RobotState;
+
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;
@@ -29,6 +29,8 @@ public class Superstructure extends Subsystem {
     private SuperstructureState mCommandedState = SuperstructureState.identity();
     private GoalState mGoalState;
     private GoalState mLastGoalState;
+
+    private double mDynamicFourbarAngle;
 
     private double mFourbarScoringOffset = 0.0;
 
@@ -107,8 +109,18 @@ public class Superstructure extends Subsystem {
         mGoalState = state;
     }
 
+    public synchronized void updateDynamicFourbarAngle(double fourbarAngle){
+        if(mGoalState != GoalState.DYNAMIC) return;
+
+        mDynamicFourbarAngle = fourbarAngle;
+    }
+
     public synchronized SuperstructureState getState() {
         return mMeasuredState;
+    }
+
+    public synchronized GoalState getGoalState(){
+        return mGoalState;
     }
 
     public synchronized void SHOOT() {
@@ -116,8 +128,6 @@ public class Superstructure extends Subsystem {
             return;
 
         System.out.println("Fourbar Angle" + Math.toDegrees(mSimpleFourbarSubsystem.getAngleRadians()));
-        System.out.println("Distance from Speaker" + RobotState.getInstance().getSpeakerDistance());
-        System.out.println("Robot X" + SmartDashboard.getNumber("Robot X", mCommandedFourBarVoltage));
 
         isShooting = true;
         mShotStartTime = Timer.getFPGATimestamp();
@@ -171,8 +181,13 @@ public class Superstructure extends Subsystem {
             mCommandedState = mGoalState.state;
 
             if (mGoalState == GoalState.DYNAMIC) {
-                mCommandedState.fourbar_angle = RobotState.getInstance().calcDynamicFourbarAngle();
+                if(mDynamicFourbarAngle == Double.NaN){
+                    mCommandedState.fourbar_angle = mSimpleFourbarSubsystem.getAngleRadians();
+                }
+                mCommandedState.fourbar_angle = mDynamicFourbarAngle;
 
+            } else {
+                mDynamicFourbarAngle = Double.NaN;
             }
 
             if (mGoalState.state.isShootingState) {

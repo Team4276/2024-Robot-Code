@@ -16,6 +16,7 @@ import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.Constants.SnapConstants;
 import frc.team4276.frc2024.planners.AutoAlignPlanner;
+import frc.team4276.frc2024.planners.AutoLockPlanner;
 import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.drivers.MAXSwerveModuleV2;
@@ -37,7 +38,7 @@ public class DriveSubsystem extends Subsystem {
     HEADING_CONTROL,
     PATH_FOLLOWING,
     AUTO_ALIGN,
-    LOCK_ON_POSITION
+    LOCK_ON_TARGET
   }
 
   public MAXSwerveModuleV2[] mModules;
@@ -53,6 +54,8 @@ public class DriveSubsystem extends Subsystem {
   private PIDController mSnapController;
 
   private AutoAlignPlanner mAutoAlignPlanner;
+
+  private AutoLockPlanner mAutoLockPlanner;
 
   public static class KinematicLimits {
     public double kMaxDriveVelocity = DriveConstants.kMaxVel; // m/s
@@ -102,17 +105,27 @@ public class DriveSubsystem extends Subsystem {
 
     mAutoAlignPlanner = new AutoAlignPlanner();
 
+    mAutoLockPlanner = AutoLockPlanner.getInstance();
+
     mPeriodicIO = new PeriodicIO();
 
   }
 
   public void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
-    if (mControlState != DriveControlState.PATH_FOLLOWING) {
+    if (mControlState != DriveControlState.PATH_FOLLOWING && mControlState != DriveControlState.LOCK_ON_TARGET) {
       mControlState = DriveControlState.PATH_FOLLOWING;
     }
 
-    mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
-        speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
+    if(mControlState == DriveControlState.LOCK_ON_TARGET){
+      double[] output = mAutoLockPlanner.update(RobotState.getInstance().getCurrentFieldToVehicle(),
+          getMeasSpeeds());
+
+      mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(speeds.vxMetersPerSecond, 
+        speeds.vyMetersPerSecond, output[0]);
+      Superstructure.getInstance().updateDynamicFourbarAngle(output[1]);
+    }
+
+    mPeriodicIO.des_chassis_speeds = speeds;
   }
 
   public void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
@@ -132,7 +145,8 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public synchronized void teleopDrive(ChassisSpeeds speeds) {
-    if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL) {
+    if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL
+        && mControlState != DriveControlState.LOCK_ON_TARGET) {
       mControlState = DriveControlState.OPEN_LOOP;
     }
 
@@ -146,6 +160,15 @@ public class DriveSubsystem extends Subsystem {
             mSnapController.calculate(mPeriodicIO.heading.getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
         return;
       }
+    }
+
+    if (mControlState == DriveControlState.LOCK_ON_TARGET) {
+      double[] output = mAutoLockPlanner.update(RobotState.getInstance().getCurrentFieldToVehicle(),
+          getMeasSpeeds());
+
+      mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond = output[0];
+      Superstructure.getInstance().updateDynamicFourbarAngle(output[1]);
+
     }
     mPeriodicIO.des_chassis_speeds = speeds;
   }
@@ -304,6 +327,8 @@ public class DriveSubsystem extends Subsystem {
                   RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
                   Twist2d.toWPI(getMeasSpeeds().toTwist2d()));
               break;
+            case LOCK_ON_TARGET:
+              break;
 
             default:
               break;
@@ -339,13 +364,13 @@ public class DriveSubsystem extends Subsystem {
     }
 
     // for (int i = 0; i < mModules.length; i++) {
-    //   SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
-    //       mModules[i].getDriveSetpoint());
-    //   SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ",
-    //       mModules[i].getTurnSetpoint());
+    // SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
+    // mModules[i].getDriveSetpoint());
+    // SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ",
+    // mModules[i].getTurnSetpoint());
 
-    //   SmartDashboard.putNumber("Motor " + i + " Drive RPM: ",
-    //       mModules[i].getMotorSpeed());
+    // SmartDashboard.putNumber("Motor " + i + " Drive RPM: ",
+    // mModules[i].getMotorSpeed());
     // }
 
     SmartDashboard.putNumber("Heading", mPeriodicIO.heading.getDegrees());
