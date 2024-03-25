@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
   }
 
-  private double zeroHeading = 0.0; // Degrees
+  private Rotation2d zeroHeading; // Degrees
 
   @Override
   public void teleopInit() {
@@ -218,7 +218,7 @@ public class Robot extends TimedRobot {
 
       RobotState.getInstance().setHasBeenEnabled(true);
 
-      zeroHeading = mAllianceChooser.getAlliance() == Alliance.Red ? 180.0 : 0.0;
+      zeroHeading = mAllianceChooser.getAlliance() == Alliance.Red ? Rotation2d.fromDegrees(180.0) : Rotation2d.fromDegrees(0.0);
 
     } catch (Throwable t) {
       throw t;
@@ -233,7 +233,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     try {
       if (mControlBoard.wantZeroHeading()) {
-        mDriveSubsystem.zeroHeading(zeroHeading);
+        mDriveSubsystem.zeroHeading(zeroHeading.getDegrees());
       }
 
       if (mControlBoard.wantXBrake()) {
@@ -243,7 +243,7 @@ public class Robot extends TimedRobot {
             mControlBoard.getSwerveTranslation().x(),
             mControlBoard.getSwerveTranslation().y(),
             mControlBoard.getSwerveRotation(),
-            mDriveSubsystem.getWPIHeading().rotateBy(Rotation2d.fromDegrees(zeroHeading))
+            mDriveSubsystem.getHeading().toWPI().rotateBy(zeroHeading)  
         ));
       }
 

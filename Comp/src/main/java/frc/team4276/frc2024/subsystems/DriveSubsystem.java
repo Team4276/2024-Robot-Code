@@ -120,8 +120,6 @@ public class DriveSubsystem extends Subsystem {
       double[] output = mAutoLockPlanner.update(RobotState.getInstance().getCurrentFieldToVehicle(),
           getMeasSpeeds());
 
-      mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromRobotRelativeSpeeds(speeds.vxMetersPerSecond, 
-        speeds.vyMetersPerSecond, output[0]);
       Superstructure.getInstance().updateDynamicFourbarAngle(output[1]);
     }
 
@@ -162,14 +160,17 @@ public class DriveSubsystem extends Subsystem {
       }
     }
 
-    if (mControlState == DriveControlState.LOCK_ON_TARGET) {
+    if(mControlState == DriveControlState.LOCK_ON_TARGET){
       double[] output = mAutoLockPlanner.update(RobotState.getInstance().getCurrentFieldToVehicle(),
           getMeasSpeeds());
 
-      mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond = output[0];
+      mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(speeds.vxMetersPerSecond, 
+        speeds.vyMetersPerSecond, output[0]);
       Superstructure.getInstance().updateDynamicFourbarAngle(output[1]);
 
+      return;
     }
+
     mPeriodicIO.des_chassis_speeds = speeds;
   }
 
@@ -228,16 +229,8 @@ public class DriveSubsystem extends Subsystem {
     RobotState.getInstance().reset();
   }
 
-  public void flipHeading() {
-    zeroHeading(180 + mPeriodicIO.heading.getDegrees());
-  }
-
   public Rotation2d getHeading() {
     return mPeriodicIO.heading;
-  }
-
-  public edu.wpi.first.math.geometry.Rotation2d getWPIHeading() {
-    return getHeading().toWPI();
   }
 
   public Rotation2d getPitch() {
