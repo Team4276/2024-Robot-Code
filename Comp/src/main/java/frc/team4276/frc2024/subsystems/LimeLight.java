@@ -20,7 +20,7 @@ import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.field.Apriltag;
@@ -63,7 +63,6 @@ public class LimeLight extends Subsystem {
 
     private LimeLight() {
         mNetworkTable = NetworkTableInstance.getDefault().getTable("limelight");
-
         
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
@@ -174,8 +173,8 @@ public class LimeLight extends Subsystem {
                                 getTargetDistance().inverse(),
                                 mPeriodicIO.tagId));
 
-                // SmartDashboard.putNumber("Distance to camera X", mPeriodicIO.targetDistanceToRobot[2]);
-                // SmartDashboard.putNumber("Distance to camera Y", mPeriodicIO.targetDistanceToRobot[0]);
+                SmartDashboard.putNumber("Distance to camera X", mPeriodicIO.targetDistanceToRobot[2]);
+                SmartDashboard.putNumber("Distance to camera Y", mPeriodicIO.targetDistanceToRobot[0]);
             } else {
                 RobotState.getInstance().visionUpdate(null);
             }

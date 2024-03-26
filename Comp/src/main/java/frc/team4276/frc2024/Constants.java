@@ -101,7 +101,7 @@ public final class Constants {
     public static final double kMaxAttainableVel = kMaxVel * 0.85;
     public static final double kMaxAttainableAccel = 3.0;
 
-    public static final double kMaxAngularVel = kMaxVel / (2 * Math.sqrt(kTrackWidth)); // radians per second
+    public static final double kMaxAngularVel = kMaxVel * 2 / (kTrackWidth * Math.sqrt(2)); // radians per second
 
     public static final KinematicLimits kUncappedLimits = new KinematicLimits();
     static {
@@ -251,11 +251,11 @@ public final class Constants {
 
     public static final boolean disableAfterTeleop = !isComp;
 
-    public static final Pose2d kLimeLightRobotOffset = new Pose2d(Units.inchesToMeters(6.0),
-        Units.inchesToMeters(0.5), new Rotation2d(0.0));
+    public static final Pose2d kLimeLightRobotOffset = new Pose2d(Units.inchesToMeters(-8.0),
+        Units.inchesToMeters(-6.375), new Rotation2d(0.0));
     public static final Rotation2d kLimeLightTilt = new Rotation2d(20.0);
 
-    public static final double kLensHeight = Units.inchesToMeters(26.625);
+    public static final double kLensHeight = Units.inchesToMeters(9.375);
 
     public static final double kResolutionWidth = 1280;
     public static final double kResolutionHeight = 960;
@@ -346,11 +346,14 @@ public final class Constants {
       kFourBarConstants.kMasterConstants.id = 9;
       kFourBarConstants.kMasterConstants.isInverted = true;
 
+      // kFourBarConstants.kFollowerConstants[0].id = 13;
+      // kFourBarConstants.kFollowerConstants[0].isInverted = true;
+
       kFourBarConstants.kIsInverted = true;
       kFourBarConstants.kIsCircular = false;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
-      kFourBarConstants.kGearRatio = 224.3333333333333; // Motor Rotations to Overall Rotations
-      kFourBarConstants.kOffset = Math.toRadians(210.0); // Set in hardware client; Radians 52.6 143
+      kFourBarConstants.kGearRatio = 232.14; // Motor Rotations to Overall Rotations
+      kFourBarConstants.kOffset = Math.toRadians(0.0); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
       kFourBarConstants.kMinPosition = Math.toRadians(45.0);
       kFourBarConstants.kMaxPosition = Math.toRadians(140.0);
@@ -410,6 +413,12 @@ public final class Constants {
     public static double kA = 0;
 
     public static double kFlywheelAllowableError = 50;
+  }
+
+  public static class AutoLockConstants{
+    public static double kMaxAngularVelocity = DriveConstants.kMaxAngularVel; // Rad / sec
+    public static double kMaxAngularAccel = Math.PI; // Rad / sec^2
+
   }
 
 }

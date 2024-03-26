@@ -83,7 +83,7 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public FlywheelState getState(){
-        return null;
+        return new FlywheelState(mDesiredMode, mPeriodicIO.curr_top_RPM, mPeriodicIO.curr_bottom_RPM);
     }
 
     public void setVoltage(double des_top_voltage, double des_bottom_voltage){

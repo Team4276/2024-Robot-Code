@@ -101,5 +101,9 @@ public class ControlBoard {
         return operator.isPOVUPPressed();
     }
 
+    public boolean wantAutoLock(){
+        return operator.getRT();
+    }
+
 
 }

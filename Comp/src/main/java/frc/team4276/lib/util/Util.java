@@ -1,5 +1,7 @@
 package frc.team4276.lib.util;
 
+import frc.team254.lib.geometry.Rotation2d;
+
 public class Util {
     // Utility class; do not instantiate
     private Util(){}
@@ -42,5 +44,13 @@ public class Util {
      */
     public static double LoSAngle(double side1, double angle1, double opposite_side) {
         return Math.asin(Math.sin(angle1) * opposite_side / side1);
+    }
+
+    public static Rotation2d Rescope360to180(Rotation2d rot){
+        if(rot.getRadians() > Math.PI){
+            return rot.rotateBy(Rotation2d.fromRadians(-2 * Math.PI));
+        }
+
+        return rot;
     }
 }

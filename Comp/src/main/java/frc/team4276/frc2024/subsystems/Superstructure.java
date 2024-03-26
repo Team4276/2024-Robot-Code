@@ -31,6 +31,7 @@ public class Superstructure extends Subsystem {
     private GoalState mLastGoalState;
 
     private double mDynamicFourbarAngle;
+    private double mLatestDistance = 0.0;
 
     private double mFourbarScoringOffset = 0.0;
 
@@ -109,10 +110,14 @@ public class Superstructure extends Subsystem {
         mGoalState = state;
     }
 
-    public synchronized void updateDynamicFourbarAngle(double fourbarAngle){
-        if(mGoalState != GoalState.DYNAMIC) return;
-
+    public synchronized void updateDynamicFourbarAngle(double fourbarAngle, double distance){
         mDynamicFourbarAngle = fourbarAngle;
+
+        mLatestDistance = distance;
+
+        if(mGoalState != GoalState.DYNAMIC) {
+            mGoalState = GoalState.DYNAMIC;
+        }
     }
 
     public synchronized SuperstructureState getState() {
@@ -128,6 +133,7 @@ public class Superstructure extends Subsystem {
             return;
 
         System.out.println("Fourbar Angle" + Math.toDegrees(mSimpleFourbarSubsystem.getAngleRadians()));
+        System.out.println("Distance" + mLatestDistance);
 
         isShooting = true;
         mShotStartTime = Timer.getFPGATimestamp();
@@ -182,10 +188,9 @@ public class Superstructure extends Subsystem {
 
             if (mGoalState == GoalState.DYNAMIC) {
                 if(mDynamicFourbarAngle == Double.NaN){
-                    mCommandedState.fourbar_angle = mSimpleFourbarSubsystem.getAngleRadians();
+                    mDynamicFourbarAngle = mSimpleFourbarSubsystem.getAngleRadians();
                 }
-                mCommandedState.fourbar_angle = mDynamicFourbarAngle;
-
+                
             } else {
                 mDynamicFourbarAngle = Double.NaN;
             }
@@ -227,7 +232,8 @@ public class Superstructure extends Subsystem {
                 } else if (mSimpleFourbarSubsystem.getControlState() == ControlState.CALIBRATING) {
 
                 } else if (mCommandedState != null) {
-                    mSimpleFourbarSubsystem.setSmartMotionSetpoint(mCommandedState.fourbar_angle);
+                    mSimpleFourbarSubsystem.setSmartMotionSetpoint(mGoalState == GoalState.DYNAMIC ? 
+                        mDynamicFourbarAngle : mCommandedState.fourbar_angle);
                 }
 
                 switch (mCommandedFlywheelState.desired_mode) {

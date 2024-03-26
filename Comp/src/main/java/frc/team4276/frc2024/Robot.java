@@ -31,6 +31,7 @@ import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 // import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
+import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 // import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 
@@ -261,6 +262,10 @@ public class Robot extends TimedRobot {
         mSuperstructure.addFourbarScoringOffset(Math.toRadians(-mControlBoard.operator.getLeftYDeadband() * 10.0));
       }
 
+      // if(mControlBoard.wantAutoLock()){
+      //   state = GoalState.DYNAMIC;
+      // }
+
       // if (mControlBoard.wantFastake()) {
       // state = GoalState.FASTAKE;
 
@@ -330,10 +335,13 @@ public class Robot extends TimedRobot {
 
       } else if (mControlBoard.operator.isPOVUPPressed()) {
         // mSuperstructure.setGoalState(GoalState.FASTAKE);
+        // mSimpleFourbarSubsystem.setSmartMotionSetpoint(SuperstructureConstants.kFourbarIntakeState);
       } else if (mControlBoard.operator.isPOVDOWNPressed()) {
         mSimpleFourbarSubsystem.setCalibrating();
       } else if (mControlBoard.operator.isPOVRIGHTPressed()) {
         // mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
+        // mSimpleFourbarSubsystem.setSmartMotionSetpoint(SuperstructureConstants.kFourbarReadyMiddleState);
+
       } else if (mControlBoard.operator.isPOVLEFTPressed()) {
         mSimpleFourbarSubsystem.setTestTrapezoid();
       } else {

@@ -9,7 +9,7 @@ import frc.team254.lib.geometry.Pose2d;
 public class VisionPoseAcceptor {
     public boolean shouldAcceptVision(Pose2d vehicleToTag, ChassisSpeeds speeds) {
         if (DriverStation.isAutonomous()) {
-            double kMaxRange = 4.0;
+            double kMaxRange = 10.0;
             if (vehicleToTag.getTranslation().norm() > kMaxRange) {
                 return false;
             }

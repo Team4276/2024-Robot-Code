@@ -100,8 +100,8 @@ public class IntakeSubsystem extends Subsystem {
         
         mMotor.burnFlash();
         
-        mFrontSensor = new DigitalInput(0);
-        mBackSensor = new DigitalInput(1);
+        mFrontSensor = new DigitalInput(2);
+        mBackSensor = new DigitalInput(0);
         mPeriodicIO = new PeriodicIO();
     }
     

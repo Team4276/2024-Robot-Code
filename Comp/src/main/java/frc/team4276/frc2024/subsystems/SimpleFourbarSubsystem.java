@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -27,6 +28,7 @@ import frc.team254.lib.util.Util;
 //TODO: abstract this
 public class SimpleFourbarSubsystem extends Subsystem {
     private VIKCANSparkServoMotor mMaster;
+    private CANSparkMax mFollower;
 
     private AbsoluteEncoder mAbsoluteEncoder;
 
@@ -83,6 +85,13 @@ public class SimpleFourbarSubsystem extends Subsystem {
         // mMaster.setEncoderLimit(kMinPosition, Direction.NEGATIVE, false, 0.1);
         // mMaster.setEncoderLimit(kMaxPosition, Direction.POSITIVE, true, 0.1);
 
+        mFollower = new CANSparkMax(13, MotorType.kBrushless);
+        mFollower.restoreFactoryDefaults();
+        mFollower.enableVoltageCompensation(constants.kVoltageCompensation);
+        mFollower.setSmartCurrentLimit(constants.kSmartCurrentLimit);
+        mFollower.setIdleMode(constants.kIdleMode);
+        mFollower.follow(mMaster, true);
+
         mAbsoluteEncoder = mMaster.getAbsoluteEncoder(Type.kDutyCycle);
         mAbsoluteEncoder.setPositionConversionFactor(constants.kUnitsPerRotation);
         mAbsoluteEncoder.setVelocityConversionFactor(constants.kUnitsPerRotation);
@@ -116,6 +125,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         this.kMinPosition = constants.kMinPosition;
 
         mMaster.burnFlash();
+        mFollower.burnFlash();
 
         mPeriodicIO = new PeriodicIO();
 
@@ -195,6 +205,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
             return;
 
         mMaster.setIdleMode(idleMode);
+        mFollower.setIdleMode(idleMode);
     }
 
     public IdleMode getIdleMode() {
@@ -208,7 +219,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
         double meas_velocity_units;
         double meas_acceleration_units;
         State meas_state;
-        double meas_voltage;
+        double meas_master_voltage;
+        double meas_follower_voltage;
 
         double velocity_test;
         double voltage_test;
@@ -232,7 +244,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
         mPeriodicIO.meas_position_units = mAbsoluteEncoder.getPosition();
         mPeriodicIO.meas_velocity_units = mAbsoluteEncoder.getVelocity();
         mPeriodicIO.meas_state = new State(mPeriodicIO.meas_position_units, mPeriodicIO.meas_velocity_units);
-        mPeriodicIO.meas_voltage = mMaster.getAppliedOutput() * 12.0;
+        mPeriodicIO.meas_master_voltage = mMaster.getAppliedOutput() * 12.0;
+        mPeriodicIO.meas_follower_voltage = mFollower.getAppliedOutput() * 12.0;
         mPeriodicIO.meas_acceleration_units = (mPeriodicIO.meas_velocity_units - prev_meas_velocity_units)
                 / (mPeriodicIO.timestamp - prev_timestamp);
 
@@ -386,7 +399,8 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putNumber("Fourbar Applied Voltage", mPeriodicIO.meas_voltage);
+        SmartDashboard.putNumber("Fourbar Applied Master Voltage", mPeriodicIO.meas_master_voltage);
+        SmartDashboard.putNumber("Fourbar Applied Follower Voltage", mPeriodicIO.meas_follower_voltage);
         SmartDashboard.putBoolean("Front Limit", mMaster.isReverseLimitPressed());
         SmartDashboard.putBoolean("Back Limit", mMaster.isForwardLimitPressed());
         SmartDashboard.putString("Simple Fourbar COntrolstate", mControlState.name());

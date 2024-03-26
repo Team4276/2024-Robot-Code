@@ -111,16 +111,21 @@ public class DriveSubsystem extends Subsystem {
 
   }
 
+  public void setLockOnTarget() {
+    if (mControlState != DriveControlState.LOCK_ON_TARGET) {
+      mAutoLockPlanner.reset();
+
+      mControlState = DriveControlState.LOCK_ON_TARGET;
+    }
+  }
+
+  public void updateAutoLockRotationSpeed(double d_theta) {
+    mPeriodicIO.des_rotation_speed = d_theta;
+  }
+
   public void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
     if (mControlState != DriveControlState.PATH_FOLLOWING && mControlState != DriveControlState.LOCK_ON_TARGET) {
       mControlState = DriveControlState.PATH_FOLLOWING;
-    }
-
-    if(mControlState == DriveControlState.LOCK_ON_TARGET){
-      double[] output = mAutoLockPlanner.update(RobotState.getInstance().getCurrentFieldToVehicle(),
-          getMeasSpeeds());
-
-      Superstructure.getInstance().updateDynamicFourbarAngle(output[1]);
     }
 
     mPeriodicIO.des_chassis_speeds = speeds;
@@ -158,17 +163,6 @@ public class DriveSubsystem extends Subsystem {
             mSnapController.calculate(mPeriodicIO.heading.getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
         return;
       }
-    }
-
-    if(mControlState == DriveControlState.LOCK_ON_TARGET){
-      double[] output = mAutoLockPlanner.update(RobotState.getInstance().getCurrentFieldToVehicle(),
-          getMeasSpeeds());
-
-      mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(speeds.vxMetersPerSecond, 
-        speeds.vyMetersPerSecond, output[0]);
-      Superstructure.getInstance().updateDynamicFourbarAngle(output[1]);
-
-      return;
     }
 
     mPeriodicIO.des_chassis_speeds = speeds;
@@ -270,6 +264,7 @@ public class DriveSubsystem extends Subsystem {
     };
     Rotation2d heading = Rotation2d.identity();
     Rotation2d pitch = Rotation2d.identity();
+    double des_rotation_speed = 0.0;
 
     // Outputs
     ModuleState[] des_module_states = new ModuleState[] {
@@ -321,6 +316,8 @@ public class DriveSubsystem extends Subsystem {
                   Twist2d.toWPI(getMeasSpeeds().toTwist2d()));
               break;
             case LOCK_ON_TARGET:
+              mAutoLockPlanner.update(timestamp, RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
+                  getMeasSpeeds());
               break;
 
             default:
@@ -376,6 +373,10 @@ public class DriveSubsystem extends Subsystem {
     }
 
     ChassisSpeeds des_chassis_speeds = mPeriodicIO.des_chassis_speeds;
+
+    if (mControlState == DriveControlState.LOCK_ON_TARGET && !Util.epsilonEquals(0.0, mPeriodicIO.des_rotation_speed, 0.005)) {
+      des_chassis_speeds.omegaRadiansPerSecond = mPeriodicIO.des_rotation_speed;
+    }
 
     Pose2d robot_pose_vel = new Pose2d(des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt,
         des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt,
