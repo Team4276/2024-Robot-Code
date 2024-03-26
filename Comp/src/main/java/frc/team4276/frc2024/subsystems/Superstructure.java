@@ -152,7 +152,7 @@ public class Superstructure extends Subsystem {
     }
 
     public boolean atGoal() {
-        return mGoalState.state.isInRange(mMeasuredState, mCommandedFourBarVoltage);
+        return mGoalState.state.isInRange(mMeasuredState, SuperstructureConstants.kConservativeFourbarPositionTolerance);
     }
 
     public boolean isHoldingNote() {
