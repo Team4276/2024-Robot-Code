@@ -1,28 +1,28 @@
 package frc.team4276.frc2024.planners;
 
-import java.util.Optional;
+// import java.util.Optional;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+// import edu.wpi.first.math.trajectory.TrapezoidProfile;
+// import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.AutoAlignConstants;
-import frc.team4276.frc2024.Constants.AutoLockConstants;
+// import frc.team4276.frc2024.Constants.AutoLockConstants;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team254.lib.geometry.Pose2d;
-import frc.team254.lib.geometry.Rotation2d;
+// import frc.team254.lib.geometry.Rotation2d;
 
 import frc.team1678.lib.swerve.ChassisSpeeds;
 
 public class AutoLockPlanner {
-    private TrapezoidProfile mTrapezoidProfile;
+    // private TrapezoidProfile mTrapezoidProfile;
     private PIDController mPidController;
-    private Optional<TrapezoidProfile.State> mStartState;
-    private Optional<TrapezoidProfile.State> mGoalState;
-    private double mGoalStartTime;
+    // private Optional<TrapezoidProfile.State> mStartState;
+    // private Optional<TrapezoidProfile.State> mGoalState;
+    // private double mGoalStartTime;
 
     /** key: metres; values: radians */
     private static InterpolatingDoubleTreeMap fourbarAngleMap = new InterpolatingDoubleTreeMap();
@@ -42,8 +42,8 @@ public class AutoLockPlanner {
 
     // TODO: move stuff to constants and tune
     private AutoLockPlanner() {
-        mTrapezoidProfile = new TrapezoidProfile(new Constraints(
-                AutoLockConstants.kMaxAngularVelocity, AutoLockConstants.kMaxAngularAccel));
+        // mTrapezoidProfile = new TrapezoidProfile(new Constraints(
+        //         AutoLockConstants.kMaxAngularVelocity, AutoLockConstants.kMaxAngularAccel));
 
         mPidController = new PIDController(0.0, 0.0, 0.0);
         mPidController.enableContinuousInput(0.0, 2 * Math.PI);
@@ -94,9 +94,9 @@ public class AutoLockPlanner {
     }
 
     public void reset() {
-        mStartState = null;
-        mGoalState = null;
-        mGoalStartTime = -1.0;
+        // mStartState = null;
+        // mGoalState = null;
+        // mGoalStartTime = -1.0;
         mPidController.reset();
 
     }
