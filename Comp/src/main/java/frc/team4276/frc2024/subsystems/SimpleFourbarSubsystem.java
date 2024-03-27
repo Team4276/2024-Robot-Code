@@ -212,6 +212,11 @@ public class SimpleFourbarSubsystem extends Subsystem {
         return mMaster.getIdleMode();
     }
 
+    @Override
+    public void stop() {
+        mControlState = ControlState.IDLE;
+    }
+
     private class PeriodicIO {
         // Inputs
         double timestamp;

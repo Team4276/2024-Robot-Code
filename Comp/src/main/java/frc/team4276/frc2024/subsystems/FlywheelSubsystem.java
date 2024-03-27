@@ -28,7 +28,7 @@ public class FlywheelSubsystem extends Subsystem {
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();
 
-    private DesiredFlywheelMode mDesiredMode = DesiredFlywheelMode.VOLTAGE;
+    private DesiredFlywheelMode mDesiredMode = DesiredFlywheelMode.IDLE;
 
     private boolean topIdleFlip = true;
     private boolean useEncoder = true;
@@ -138,7 +138,13 @@ public class FlywheelSubsystem extends Subsystem {
         return mPeriodicIO.atSetpoint;
     }
 
+    @Override
+    public void stop() {
+        mDesiredMode = DesiredFlywheelMode.IDLE;
+    }
+
     public enum DesiredFlywheelMode {
+        IDLE,
         VOLTAGE,
         RPM,
         DEFEEDING,
@@ -181,6 +187,10 @@ public class FlywheelSubsystem extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
                 switch (mDesiredMode) {
+                    case IDLE:
+                        mPeriodicIO.des_top_voltage = 0.0;
+                        mPeriodicIO.des_bottom_voltage = 0.0;
+                        return;
                     case VOLTAGE:
                         return;
                     case RPM:
