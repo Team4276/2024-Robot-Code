@@ -6,10 +6,14 @@ package frc.team4276.frc2024;
 
 import java.util.Optional;
 
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,6 +25,7 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.field.AllianceChooser;
+import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
 // import frc.team4276.frc2024.subsystems.FourBarSubsystem;
@@ -55,12 +60,11 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   private final LimeLight mLimeLight = LimeLight.getInstance();
   private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
-  // private final FourBarSubsystem mFourBarSubsystem =
-  // FourBarSubsystem.getInstance();
+  // private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
   private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
   private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
-
   private final SimpleFourbarSubsystem mSimpleFourbarSubsystem = SimpleFourbarSubsystem.getInstance();
+  private final ClimberSubsystem mClimberSubsystem = ClimberSubsystem.getInstance();
 
   private final Superstructure mSuperstructure = Superstructure.getInstance();
 
@@ -92,7 +96,8 @@ public class Robot extends TimedRobot {
           mIntakeSubsystem,
           mFlywheelSubsystem,
           mSimpleFourbarSubsystem,
-          mLimeLight
+          mLimeLight,
+          mClimberSubsystem
       );
 
       mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -125,12 +130,15 @@ public class Robot extends TimedRobot {
 
   }
 
+  private boolean mHasFlippedClimberSetting = false;
+
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
     try {
       mEnabledLooper.stop();
       mDisabledLooper.start();
+      mSubsystemManager.stop();
       mLimeLight.start();
       mLimeLight.setDisableProcessing(false);
 
@@ -146,6 +154,8 @@ public class Robot extends TimedRobot {
     mAutoModeSelector.reset();
     mAutoModeSelector.updateModeCreator(false);
     mAutoModeExecutor = new AutoModeExecutor();
+
+    mHasFlippedClimberSetting = false;
   }
 
   @Override
@@ -163,6 +173,16 @@ public class Robot extends TimedRobot {
       Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();
       if (autoMode.isPresent()) {
         mAutoModeExecutor.setAutoMode(autoMode.get());
+      }
+
+      if (mControlBoard.wantClimberCoastMode() && mHasFlippedClimberSetting){
+        mClimberSubsystem.setIdleMode(IdleMode.kCoast);
+
+      } else {
+        mClimberSubsystem.setIdleMode(IdleMode.kBrake);
+
+        mHasFlippedClimberSetting = true;
+      
       }
 
     } catch (Throwable t) {
@@ -219,6 +239,7 @@ public class Robot extends TimedRobot {
 
       RobotState.getInstance().setHasBeenEnabled(true);
 
+      //TODO: put this in drive subsystem
       zeroHeading = mAllianceChooser.getAlliance() == Alliance.Red ? Rotation2d.fromDegrees(180.0) : Rotation2d.fromDegrees(0.0);
 
     } catch (Throwable t) {
@@ -348,6 +369,19 @@ public class Robot extends TimedRobot {
         mSuperstructure.setFourBarVoltage(0.0);
       }
 
+      if (mControlBoard.operator.getRightBumper()){
+        mClimberSubsystem.setDesiredState(ClimberSubsystem.DesiredState.RAISE);
+
+      } else if(mControlBoard.driver.getLeftBumper()){
+        mClimberSubsystem.setDesiredState(ClimberSubsystem.DesiredState.S_LOWER);
+
+      } else if(mControlBoard.driver.getLT()){
+        mClimberSubsystem.setDesiredState(ClimberSubsystem.DesiredState.F_LOWER);
+
+      } else {
+        mClimberSubsystem.setDesiredState(ClimberSubsystem.DesiredState.IDLE);
+
+      }
     } catch (Throwable t) {
       System.out.println(t.getMessage());
       throw t;
