@@ -252,7 +252,7 @@ public final class Constants {
     public static final boolean disableAfterTeleop = !isComp;
 
     public static final Pose2d kLimeLightRobotOffset = new Pose2d(Units.inchesToMeters(-8.0),
-        Units.inchesToMeters(-6.375), new Rotation2d(0.0));
+        Units.inchesToMeters(6.375), new Rotation2d(0.0));
     public static final Rotation2d kLimeLightTilt = new Rotation2d(20.0);
 
     public static final double kLensHeight = Units.inchesToMeters(9.375);
@@ -359,9 +359,9 @@ public final class Constants {
       kFourBarConstants.kMaxPosition = Math.toRadians(130.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
-      kFourBarConstants.kP = 0.0; // 0.03490658503988659153847381536977;
-      kFourBarConstants.kI = 0.0;
-      kFourBarConstants.kD = 0.0;
+      kFourBarConstants.kP = 0.03490658503988659153847381536977 * 5;
+      kFourBarConstants.kI = 0.003;
+      kFourBarConstants.kD = 0.06;
       kFourBarConstants.kFF = 0.0;
       kFourBarConstants.kDFilter = 0.0;
       kFourBarConstants.kIZone = 0.0;
@@ -392,7 +392,7 @@ public final class Constants {
     public static final double kFourbarStowState = Math.toRadians(130.0);
     public static final double kFourbarReadyMiddleState = Math.toRadians(90.0);
     public static final double kFourbarReadyLowState = Math.toRadians(60.0);
-    public static final double kFourbarIntakeState = Math.toRadians(46.0);
+    public static final double kFourbarIntakeState = Math.toRadians(49.0);
     public static final double kFourbarSubCloseSideState = Math.toRadians(52.0);
     public static final double kFourbarSubCloseFrontState = Math.toRadians(52.0);
     public static final double kFourbarAmpState = Math.toRadians(52.0);

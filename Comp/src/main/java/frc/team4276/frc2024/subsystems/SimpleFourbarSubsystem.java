@@ -177,6 +177,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
         mProfileStartTime = mPeriodicIO.timestamp;
 
+        finishedtime = -1;
         mStateSetpoint = new State(Util.limit(position_radians, kMinPosition, kMaxPosition), 0.0);
         isMaintain = false;
         mProfiledPIDController.reset(mPeriodicIO.meas_state);
@@ -286,8 +287,13 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 mPeriodicIO.feed_forward = mFourbarFF.calculate(des_state.position, des_state.velocity);
 
                 if(isMaintain || mTrapezoidProfile.isFinished(curr_time)){
-                    if(finishedtime == -1){
-                        finishedtime = curr_time;
+                    if(Util.epsilonEquals(mPeriodicIO.meas_position_units, mStateSetpoint.position, Math.toRadians(0.5))){
+                        mSparkPIDController.setIAccum(0.0);
+                        // mSparkPIDController.setDFilter();
+
+                        if(finishedtime == -1){
+                            finishedtime = curr_time;
+                        }
                     }
 
                     mSparkPIDController.setReference(mStateSetpoint.position, ControlType.kPosition, 0, 

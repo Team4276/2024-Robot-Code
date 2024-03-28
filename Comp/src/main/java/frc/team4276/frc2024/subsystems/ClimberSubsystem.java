@@ -17,6 +17,8 @@ public class ClimberSubsystem extends Subsystem {
     private RelativeEncoder mRightEncoder;
     private RelativeEncoder mLeftEncoder;
 
+    private double mDesiredVoltage;
+
     public enum DesiredState {
         IDLE,
         RAISE,
@@ -67,7 +69,7 @@ public class ClimberSubsystem extends Subsystem {
         mRightEncoder.setVelocityConversionFactor(1);
         mLeftEncoder.setVelocityConversionFactor(1);
 
-        mLeftMotor.follow(mRightMotor, true);
+        // mLeftMotor.follow(mRightMotor, true);
 
         mRightMotor.burnFlash();
         mLeftMotor.burnFlash();
@@ -101,19 +103,19 @@ public class ClimberSubsystem extends Subsystem {
             public void onLoop(double timestamp) {
                 switch (mDesiredState) {
                     case IDLE:
-                        mRightMotor.setVoltage(0.0);
+                        mDesiredVoltage = 0.0;
 
                         break;
                     case RAISE:
-                        mRightMotor.setVoltage(3.0);
+                        mDesiredVoltage = 3.0;
 
                         break;
                     case F_LOWER:
-                        mRightMotor.setVoltage(-3.0);
+                        mDesiredVoltage = -3.0;
 
                         break;
                     case S_LOWER:
-                        mRightMotor.setVoltage(-2.0);
+                        mDesiredVoltage = -2.0;
 
                         break;
                     default:
@@ -124,6 +126,11 @@ public class ClimberSubsystem extends Subsystem {
             @Override
             public void onStop(double timestamp) {}
         });
+    }
+
+    @Override
+    public void writePeriodicOutputs() {
+        mRightMotor.setVoltage(mDesiredVoltage);
     }
 
     @Override
