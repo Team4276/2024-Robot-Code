@@ -51,7 +51,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     public static class ServoMotorConstants {
         public int id;
-        public boolean isInverted; // TODO: check if relative to the master
+        public boolean isInverted;
     }
 
     public static class ServoMotorSubsystemConstants {

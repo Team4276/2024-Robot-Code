@@ -12,6 +12,7 @@ public class ControlBoard {
     public final BetterXboxController operator;
 
     private final DigitalInput climberSetting;
+    private final DigitalInput fourbarSetting;
 
     private static ControlBoard mInstance;
 
@@ -26,7 +27,8 @@ public class ControlBoard {
         driver = new BetterXboxController(OIConstants.kDriverControllerPort);
         operator = new BetterXboxController(OIConstants.kOpControllerPort);
 
-        climberSetting = new DigitalInput(10);
+        climberSetting = new DigitalInput(6);
+        fourbarSetting = new DigitalInput(7);
     }
 
     // Driver Controls
@@ -97,26 +99,52 @@ public class ControlBoard {
     public boolean wantFastake(){
         return driver.getRT();
     }
-
-
     
+    public boolean wantPoop(){
+        return driver.getBButton();
+    }
+
+    public boolean wantSLowerClimber(){
+        return driver.getLeftBumper();
+    }
+
+    public boolean wantFLowerClimber(){
+        return driver.getLT();
+    }
+
 
     // Operator Controls
+    public boolean wantStow(){
+        return operator.getLeftStickButtonPressed();
+    }
+
     public boolean wantReadyMiddle(){
         return operator.isPOVUPPressed();
     }
 
-    public boolean wantAmp(){
+    public boolean wantReadyLow(){
+        return operator.isPOVDOWNPressed();
+    }
+
+    public boolean wantSubClose(){
+        return operator.isPOVRIGHTPressed();
+    }
+
+    public boolean wantPodium(){
         return operator.isPOVLEFTPressed();
     }
 
-    public boolean wantDynamic(){
-        return operator.getLT();
+    public boolean wantAmp(){
+        return operator.getYButtonPressed();
     }
 
-    public boolean wantScore(){
-        return operator.getRT();
+    public boolean wantAutoLock(){
+        return operator.getLeftBumperPressed();
     }
+
+    // public boolean wantScore(){
+    //     return operator.getRT();
+    // }
 
     private boolean wantAutoScore = false;
 
@@ -132,13 +160,30 @@ public class ControlBoard {
         return wantAutoScore;
     }
 
-    public boolean wantAutoLock(){
+    public boolean wantFoot(){
         return operator.getRT();
     }
+
+    public boolean wantIntakeReverse(){
+        return operator.getXButton();
+    }
+
+    public boolean wantRaiseClimber(){
+        return operator.getRightBumper();
+    }
+
+    public boolean wantQueuedState(){
+        return operator.getLT();
+    }
+
 
     // Robot Button Board
     public boolean wantClimberCoastMode(){
         return climberSetting.get();
+    }
+
+    public boolean wantFourbarCoastMode(){
+        return fourbarSetting.get();
     }
 
 

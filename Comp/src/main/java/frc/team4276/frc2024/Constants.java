@@ -233,8 +233,6 @@ public final class Constants {
   }
 
   public static final class SnapConstants {
-    // Radians
-
     public static final double kP = 0.18;
     public static final double kI = 0.009;
     public static final double kD = 0.012;
@@ -356,7 +354,7 @@ public final class Constants {
       kFourBarConstants.kOffset = Math.toRadians(84.5); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
       kFourBarConstants.kMinPosition = Math.toRadians(45.0);
-      kFourBarConstants.kMaxPosition = Math.toRadians(130.0);
+      kFourBarConstants.kMaxPosition = Math.toRadians(125.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
       kFourBarConstants.kP = 0.03490658503988659153847381536977 * 5;
@@ -375,26 +373,27 @@ public final class Constants {
 
       kFourBarConstants.kFourBarFFConstants = kFourbarFFConstants;
 
-      kFourBarConstants.kIdleMode = IdleMode.kCoast;
+      kFourBarConstants.kIdleMode = IdleMode.kBrake;
 
       kFourBarConstants.kSmartCurrentLimit = 40;
       kFourBarConstants.kVoltageCompensation = 12.0;
     }
 
     // Radians
-    public static final double kLiberalFourbarPositionTolerance = Math.toRadians(1.0); 
-    public static final double kModerateFourbarPositionTolerance = Math.toRadians(1.0);
-    public static final double kConservativeFourbarPositionTolerance = Math.toRadians(1.0);
+    public static final double kLiberalFourbarPositionTolerance = Math.toRadians(20.0); 
+    public static final double kModerateFourbarPositionTolerance = Math.toRadians(5.0);
+    public static final double kConservativeFourbarPositionTolerance = Math.toRadians(0.75);
 
+    public static final double kLiberalFourbarVelocityTolerance = Math.toRadians(10.0); 
+    public static final double kModerateFourbarVelocityTolerance = Math.toRadians(2.0);
     public static final double kConservativeFourbarVelocityTolerance = Math.toRadians(1.0);
 
     // Radians
-    public static final double kFourbarStowState = Math.toRadians(130.0);
+    public static final double kFourbarStowState = Math.toRadians(120.0);
     public static final double kFourbarReadyMiddleState = Math.toRadians(90.0);
     public static final double kFourbarReadyLowState = Math.toRadians(60.0);
     public static final double kFourbarIntakeState = Math.toRadians(49.0);
-    public static final double kFourbarSubCloseSideState = Math.toRadians(52.0);
-    public static final double kFourbarSubCloseFrontState = Math.toRadians(52.0);
+    public static final double kFourbarSubCloseState = Math.toRadians(45.0);
     public static final double kFourbarAmpState = Math.toRadians(52.0);
     public static final double kFourbarPodiumState = Math.toRadians(52.0);
 

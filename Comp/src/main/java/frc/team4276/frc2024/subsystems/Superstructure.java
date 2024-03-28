@@ -1,7 +1,5 @@
 package frc.team4276.frc2024.subsystems;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -51,7 +49,7 @@ public class Superstructure extends Subsystem {
 
     public enum GoalState {
         STOW(new SuperstructureState(SuperstructureConstants.kFourbarStowState, IntakeState.IDLE,
-                FlywheelState.identity(), false)),
+                FlywheelState.identity(), false, SuperstructureState.FourbarTol.LIBERAL)),
         READY_MIDDLE(new SuperstructureState(SuperstructureConstants.kFourbarReadyMiddleState, IntakeState.IDLE,
                 FlywheelState.identity(), false)),
         READY_LOW(new SuperstructureState(SuperstructureConstants.kFourbarReadyLowState, IntakeState.IDLE,
@@ -60,9 +58,7 @@ public class Superstructure extends Subsystem {
                 FlywheelState.identity(), false)),
         SLOWTAKE(new SuperstructureState(SuperstructureConstants.kFourbarIntakeState, IntakeState.SLOWTAKE,
                 FlywheelState.identity(), false)),
-        SUB_CLOSE_SIDE(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseFrontState, IntakeState.IDLE,
-                SuperstructureConstants.kNormalShot, true)),
-        SUB_CLOSE_FRONT(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseFrontState, IntakeState.IDLE,
+        SUB_CLOSE(new SuperstructureState(SuperstructureConstants.kFourbarSubCloseState, IntakeState.IDLE,
                 SuperstructureConstants.kNormalShot, true)),
         AMP(new SuperstructureState(SuperstructureConstants.kFourbarAmpState, IntakeState.IDLE,
                 SuperstructureConstants.kWhatTheFlip, true)),
@@ -152,7 +148,8 @@ public class Superstructure extends Subsystem {
     }
 
     public boolean atGoal() {
-        return mGoalState.state.isInRange(mMeasuredState, SuperstructureConstants.kConservativeFourbarPositionTolerance);
+        return mGoalState.state.isInRange(mMeasuredState, mSimpleFourbarSubsystem.getAngleVelRadians(), 
+            SuperstructureConstants.kConservativeFourbarPositionTolerance);
     }
 
     public boolean isHoldingNote() {
@@ -164,16 +161,6 @@ public class Superstructure extends Subsystem {
             isFourBarVoltageControl = false;
         } else {
             isFourBarVoltageControl = true;
-        }
-    }
-
-    public void toggleBrakeModeOnFourbar() {
-        if (mSimpleFourbarSubsystem.getIdleMode() == IdleMode.kBrake) {
-            mSimpleFourbarSubsystem.setIdleMode(IdleMode.kCoast);
-
-        } else {
-            mSimpleFourbarSubsystem.setIdleMode(IdleMode.kBrake);
-
         }
     }
 
@@ -199,8 +186,8 @@ public class Superstructure extends Subsystem {
                 mCommandedState.fourbar_angle += mFourbarScoringOffset;
             }
 
-            if (isAutoShoot && getState().isInRange(mCommandedState.fourbar_angle, mCommandedState.flywheel_state,
-                    SuperstructureConstants.kConservativeFourbarPositionTolerance)
+            if (isAutoShoot && getState().isInRange(mCommandedState.fourbar_angle, mCommandedState.flywheel_state, 
+                    mSimpleFourbarSubsystem.getAngleVelRadians(), SuperstructureConstants.kConservativeFourbarPositionTolerance)
                     && mIntakeSubsystem.getState() == IntakeState.HOLDING) {
                 SHOOT();
             }

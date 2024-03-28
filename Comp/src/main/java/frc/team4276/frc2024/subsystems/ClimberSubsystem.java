@@ -69,7 +69,7 @@ public class ClimberSubsystem extends Subsystem {
         mRightEncoder.setVelocityConversionFactor(1);
         mLeftEncoder.setVelocityConversionFactor(1);
 
-        // mLeftMotor.follow(mRightMotor, true);
+        mLeftMotor.follow(mRightMotor, true);
 
         mRightMotor.burnFlash();
         mLeftMotor.burnFlash();
@@ -130,7 +130,7 @@ public class ClimberSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        mRightMotor.setVoltage(mDesiredVoltage);
+        // mRightMotor.setVoltage(mDesiredVoltage);
     }
 
     @Override

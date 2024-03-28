@@ -67,7 +67,7 @@ public class IntakeSubsystem extends Subsystem {
         SLOW_FEED(5.0),
         FASTAKE(12.0),
         DEFEED(-2.0),
-        FAST_DEFEED(-8.0),
+        POOP(-8.0),
         FOOT(12),
         REVERSE(-3.0);
 
@@ -113,7 +113,7 @@ public class IntakeSubsystem extends Subsystem {
         }
         if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED
                 || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT) && (state != IntakeState.REVERSE)
-                && (state != IntakeState.FAST_DEFEED)))
+                && (state != IntakeState.POOP)))
             return;
         mIntakeState = state;
         mStateStartTime = mPeriodicIO.timestamp;
@@ -211,7 +211,7 @@ public class IntakeSubsystem extends Subsystem {
                             mIntakeState = IntakeState.HOLDING;
                         }
                         break;
-                    case FAST_DEFEED:
+                    case POOP:
                         break;
                     case FOOT:
                         currentSensor.starting = true;

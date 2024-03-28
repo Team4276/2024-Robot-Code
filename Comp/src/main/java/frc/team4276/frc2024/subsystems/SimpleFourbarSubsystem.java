@@ -148,6 +148,10 @@ public class SimpleFourbarSubsystem extends Subsystem {
         return mPeriodicIO.meas_position_units;
     }
 
+    public double getAngleVelRadians(){
+        return mPeriodicIO.meas_velocity_units;
+    }
+
     public ControlState getControlState() {
         return mControlState == null ? ControlState.IDLE : mControlState;
     }

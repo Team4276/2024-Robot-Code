@@ -26,14 +26,11 @@ import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
-// import frc.team4276.frc2024.subsystems.FourBarSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.RobotStateEstimator;
 import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
-// import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
-import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 
@@ -57,7 +54,6 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
   private final LimeLight mLimeLight = LimeLight.getInstance();
   private final RobotStateEstimator mRobotStateEstimator = RobotStateEstimator.getInstance();
-  // private final FourBarSubsystem mFourBarSubsystem = FourBarSubsystem.getInstance();
   private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
   private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
   private final SimpleFourbarSubsystem mSimpleFourbarSubsystem = SimpleFourbarSubsystem.getInstance();
@@ -89,7 +85,6 @@ public class Robot extends TimedRobot {
           mDriveSubsystem,
           mRobotStateEstimator,
           mSuperstructure,
-          // mFourBarSubsystem,
           mIntakeSubsystem,
           mFlywheelSubsystem,
           mSimpleFourbarSubsystem,
@@ -182,6 +177,14 @@ public class Robot extends TimedRobot {
       
       }
 
+      if (mControlBoard.wantFourbarCoastMode()){
+        mSimpleFourbarSubsystem.setIdleMode(IdleMode.kCoast);
+
+      } else {
+        mSimpleFourbarSubsystem.setIdleMode(IdleMode.kBrake);
+
+      }
+
     } catch (Throwable t) {
       throw t;
     }
@@ -245,7 +248,8 @@ public class Robot extends TimedRobot {
   }
 
   private GoalState state;
-  private GoalState return_state = GoalState.READY_MIDDLE;
+  private GoalState queued_state;
+  private GoalState return_state = GoalState.STOW;
 
   /** This function is called periodically during operator control. */
   @Override
@@ -271,7 +275,8 @@ public class Robot extends TimedRobot {
       } else {
         mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
       }
-
+      
+      // -------------------------------------------- TEMPORARY FOR CALIBRATION --------------------------------------------
       if(mControlBoard.operator.getYButtonReleased()){
         mSuperstructure.addFourbarScoringOffset(Math.toRadians(0.5));
       } else if(mControlBoard.operator.getLeftStickButtonReleased()){
@@ -280,62 +285,8 @@ public class Robot extends TimedRobot {
         mSuperstructure.addFourbarScoringOffset(Math.toRadians(-mControlBoard.operator.getLeftYDeadband() * 10.0));
       }
 
-      // if(mControlBoard.wantAutoLock()){
-      //   state = GoalState.DYNAMIC;
-      // }
-
-      if (mControlBoard.wantFastake()) {
-        state = GoalState.FASTAKE;
-
-      } else if (mControlBoard.wantSlowtake()) {
-        state = GoalState.SLOWTAKE;
-
-      }
-
-      if (mControlBoard.wantReadyMiddle()) {
-        return_state = GoalState.READY_MIDDLE;
-
-      }
-
-      if (state != null) {
-        mSuperstructure.setGoalState(state);  
-
-      } else if (return_state != null) {
-        mSuperstructure.setGoalState(return_state);
-
-      }
-
-      state = null;
-
-      if (mControlBoard.operator.getLT()) {
-        mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShot);
-      } else if (mControlBoard.operator.getLeftBumper()) {
-        mSuperstructure.setFlywheelState(SuperstructureConstants.kWhatTheFlip);
-      } else {
-        mSuperstructure.setFlywheelState(FlywheelState.identity());
-      }
-
-      // if(Math.abs(mControlBoard.operator.getLeftY()) >
-      // OIConstants.kJoystickDeadband){
-      // // mSuperstructure.
-
-      // } else
-      if (mControlBoard.operator.getRT()) {
-        mSuperstructure.setIntakeState(IntakeState.FOOT);
-
-      } else if (mControlBoard.driver.getBButton()) {
-        mSuperstructure.setIntakeState(IntakeState.FAST_DEFEED);
-        
-      } else if (mControlBoard.operator.getXButton()) {
-        mSuperstructure.setIntakeState(IntakeState.REVERSE);
-
-      } else {
-        mSuperstructure.setIntakeState(IntakeState.IDLE);
-
-      }
-
-      if (mControlBoard.operator.getRightStickButtonPressed()) {
-        mSuperstructure.toggleBrakeModeOnFourbar();
+      if(mControlBoard.operator.getRightStickButtonReleased()){
+        mSuperstructure.SHOOT();
       }
 
       if (mControlBoard.operator.getAButtonPressed()) {
@@ -345,27 +296,106 @@ public class Robot extends TimedRobot {
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
         mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 6.0);
 
-      }else if (mControlBoard.operator.isPOVDOWNPressed()) {
-        mSimpleFourbarSubsystem.setCalibrating();
-      } else if (mControlBoard.operator.isPOVLEFTPressed()) {
-        mSimpleFourbarSubsystem.setTestTrapezoid();
-      } else {
+      } 
+      // else if (mControlBoard.operator.isPOVDOWNPressed()) {
+      //   mSimpleFourbarSubsystem.setCalibrating();
+      // } else if (mControlBoard.operator.isPOVLEFTPressed()) {
+      //   mSimpleFourbarSubsystem.setTestTrapezoid();
+      // }
+        else {
         mSuperstructure.setFourBarVoltage(0.0);
       }
 
-      if (mControlBoard.operator.getRightBumper()){
+      if (mControlBoard.operator.getLT()) {
+        mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShot);
+      } else if (mControlBoard.operator.getLeftBumper()) {
+        mSuperstructure.setFlywheelState(SuperstructureConstants.kWhatTheFlip);
+      } else {
+        mSuperstructure.setFlywheelState(FlywheelState.identity());
+      }
+
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ TEMPORARY FOR CALIBRATION ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+      if(mControlBoard.wantAutoScore()) {
+        mSuperstructure.setAutoShoot(true);
+      } else {
+        mSuperstructure.setAutoShoot(false);
+      }
+
+      if (mControlBoard.wantFastake()) {
+        state = GoalState.FASTAKE;
+
+      } else if (mControlBoard.wantSlowtake()) {
+        state = GoalState.SLOWTAKE;
+
+      }
+
+      // if(mControlBoard.wantAutoLock()){
+      //   queued_state = GoalState.DYNAMIC;
+      // } else 
+      //   if (mControlBoard.wantAmp()) {
+      //   queued_state = GoalState.AMP;
+
+      // } else if (mControlBoard.wantPodium()){
+      //   queued_state = GoalState.PODIUM;
+
+      // } else if (mControlBoard.wantSubClose()){
+      //   queued_state = GoalState.SUB_CLOSE;
+
+      // }
+
+      if (mControlBoard.wantReadyMiddle()) {
+        return_state = GoalState.READY_MIDDLE;
+
+      } else if (mControlBoard.wantStow()) {
+        return_state = GoalState.STOW;
+
+      } else if (mControlBoard.wantReadyLow()) {
+        return_state = GoalState.READY_LOW;
+
+      }
+
+      if (state != null) {
+        mSuperstructure.setGoalState(state);  
+
+      } else if(queued_state != null && mControlBoard.wantQueuedState()){
+        mSuperstructure.setGoalState(queued_state);
+
+      } else if (return_state != null) {
+        mSuperstructure.setGoalState(return_state);
+
+      }
+
+      state = null;
+
+      if (mControlBoard.wantFoot()) {
+        mSuperstructure.setIntakeState(IntakeSubsystem.IntakeState.FOOT);
+
+      } else if (mControlBoard.wantPoop()) {
+        mSuperstructure.setIntakeState(IntakeSubsystem.IntakeState.POOP);
+        
+      } else if (mControlBoard.wantIntakeReverse()) {
+        mSuperstructure.setIntakeState(IntakeSubsystem.IntakeState.REVERSE);
+
+      } else {
+        mSuperstructure.setIntakeState(IntakeSubsystem.IntakeState.IDLE);
+
+      }      
+
+      if (mControlBoard.wantRaiseClimber()){
         mClimberSubsystem.setDesiredState(ClimberSubsystem.DesiredState.RAISE);
 
-      } else if(mControlBoard.driver.getLeftBumper()){
+      } else if(mControlBoard.wantSLowerClimber()){
         mClimberSubsystem.setDesiredState(ClimberSubsystem.DesiredState.S_LOWER);
 
-      } else if(mControlBoard.driver.getLT()){
+      } else if(mControlBoard.wantFLowerClimber()){
         mClimberSubsystem.setDesiredState(ClimberSubsystem.DesiredState.F_LOWER);
 
       } else {
         mClimberSubsystem.setDesiredState(ClimberSubsystem.DesiredState.IDLE);
 
       }
+
     } catch (Throwable t) {
       System.out.println(t.getMessage());
       throw t;
