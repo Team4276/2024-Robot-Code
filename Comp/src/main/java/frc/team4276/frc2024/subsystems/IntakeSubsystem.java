@@ -100,17 +100,20 @@ public class IntakeSubsystem extends Subsystem {
         
         mMotor.burnFlash();
         
-        mFrontSensor = new DigitalInput(2);
+        mFrontSensor = new DigitalInput(1);
         mBackSensor = new DigitalInput(0);
         mPeriodicIO = new PeriodicIO();
     }
     
     public void setState(IntakeState state) {
+        if(state == null) return;
+
         if (state != IntakeState.HOLDING && state != IntakeState.IDLE && IntakeState.VOLTAGE != state) {
             currentSensor.updateCurrent(mPeriodicIO.current_current);
         }
         if ((mIntakeState == state) || ((mIntakeState == IntakeState.HOLDING || mIntakeState == IntakeState.SLOW_FEED
-                || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT) && (state != IntakeState.REVERSE)))
+                || mIntakeState == IntakeState.DEFEED) && (state != IntakeState.FOOT) && (state != IntakeState.REVERSE)
+                && (state != IntakeState.FAST_DEFEED)))
             return;
         mIntakeState = state;
         mStateStartTime = mPeriodicIO.timestamp;
@@ -207,6 +210,8 @@ public class IntakeSubsystem extends Subsystem {
                         if (mPeriodicIO.front_sensor_tripped) {
                             mIntakeState = IntakeState.HOLDING;
                         }
+                        break;
+                    case FAST_DEFEED:
                         break;
                     case FOOT:
                         currentSensor.starting = true;

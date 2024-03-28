@@ -32,26 +32,26 @@ public class Close5Piece extends AutoModeBase {
     
     @Override
     protected void routine() throws AutoModeEndedException {
-        mSuperstructure.setGoalState(Superstructure.GoalState.READY_MIDDLE);
+        // mSuperstructure.setGoalState(Superstructure.GoalState.READY_MIDDLE);
         runAction(traj1);
-        mSuperstructure.setAutoShoot(true);
+        // mSuperstructure.setAutoShoot(true);
         runAction(new SeriesAction(List.of(
-            new SuperstructureAction(GoalState.DYNAMIC),
-            new SuperstructureAction(GoalState.SLOWTAKE),
+            // new SuperstructureAction(GoalState.DYNAMIC),
+            // new SuperstructureAction(GoalState.SLOWTAKE),
             traj2,
-            new SuperstructureAction(GoalState.DYNAMIC),
-            new SuperstructureAction(GoalState.SLOWTAKE),
-            traj3,
-            new SuperstructureAction(GoalState.DYNAMIC),
-            new SuperstructureAction(GoalState.SLOWTAKE),
-            traj4,
-            new SuperstructureAction(GoalState.DYNAMIC)
+            // new SuperstructureAction(GoalState.DYNAMIC),
+            // new SuperstructureAction(GoalState.SLOWTAKE),
+            traj3
+            // new SuperstructureAction(GoalState.DYNAMIC),
+            // new SuperstructureAction(GoalState.SLOWTAKE),
+            // traj4
+            // new SuperstructureAction(GoalState.DYNAMIC)
         )));
-        mSuperstructure.setGoalState(GoalState.SLOWTAKE);
-        runAction(traj5);
-        runAction(new SuperstructureAction(GoalState.DYNAMIC));
-        mSuperstructure.setAutoShoot(false);
-        mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
+        // mSuperstructure.setGoalState(GoalState.SLOWTAKE);
+        // runAction(traj5);
+        // runAction(new SuperstructureAction(GoalState.DYNAMIC));
+        // mSuperstructure.setAutoShoot(false);
+        // mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
     }
 
     @Override

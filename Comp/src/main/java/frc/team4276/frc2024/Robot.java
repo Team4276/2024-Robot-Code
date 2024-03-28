@@ -34,8 +34,7 @@ import frc.team4276.frc2024.subsystems.SimpleFourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 // import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
-// import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
-// import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
+import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 
 import frc.team1678.lib.loops.Looper;
@@ -245,8 +244,8 @@ public class Robot extends TimedRobot {
     }
   }
 
-  // private GoalState state;
-  // private GoalState return_state;
+  private GoalState state;
+  private GoalState return_state = GoalState.READY_MIDDLE;
 
   /** This function is called periodically during operator control. */
   @Override
@@ -285,29 +284,28 @@ public class Robot extends TimedRobot {
       //   state = GoalState.DYNAMIC;
       // }
 
-      // if (mControlBoard.wantFastake()) {
-      // state = GoalState.FASTAKE;
+      if (mControlBoard.wantFastake()) {
+        state = GoalState.FASTAKE;
 
-      // } else if (mControlBoard.wantSlowtake()) {
-      // state = GoalState.SLOWTAKE;
+      } else if (mControlBoard.wantSlowtake()) {
+        state = GoalState.SLOWTAKE;
 
-      // }
+      }
 
-      // if (mControlBoard.wantReadyMiddle()) {
-      // return_state = GoalState.READY_MIDDLE;
+      if (mControlBoard.wantReadyMiddle()) {
+        return_state = GoalState.READY_MIDDLE;
 
-      // }
+      }
 
-      // if (state != null) {
-      // mSuperstructure.setGoalState(state);
+      if (state != null) {
+        mSuperstructure.setGoalState(state);  
 
-      // } else if (return_state != null) {
-      // mSuperstructure.setGoalState(return_state);
-      // return_state = null;
+      } else if (return_state != null) {
+        mSuperstructure.setGoalState(return_state);
 
-      // }
+      }
 
-      // state = null;
+      state = null;
 
       if (mControlBoard.operator.getLT()) {
         mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShot);
@@ -325,14 +323,9 @@ public class Robot extends TimedRobot {
       if (mControlBoard.operator.getRT()) {
         mSuperstructure.setIntakeState(IntakeState.FOOT);
 
-      } else if (mControlBoard.driver.getRT()) {
-        mSuperstructure.setIntakeState(IntakeState.FASTAKE);
-
-      } else if (mControlBoard.driver.getRightBumper()) {
-        mSuperstructure.setIntakeState(IntakeState.SLOWTAKE);
-
       } else if (mControlBoard.driver.getBButton()) {
         mSuperstructure.setIntakeState(IntakeState.FAST_DEFEED);
+        
       } else if (mControlBoard.operator.getXButton()) {
         mSuperstructure.setIntakeState(IntakeState.REVERSE);
 
@@ -352,15 +345,8 @@ public class Robot extends TimedRobot {
       if (Math.abs(mControlBoard.operator.getRightY()) > OIConstants.kJoystickDeadband) {
         mSuperstructure.setFourBarVoltage(mControlBoard.operator.getRightYDeadband() * 6.0);
 
-      } else if (mControlBoard.operator.isPOVUPPressed()) {
-        // mSuperstructure.setGoalState(GoalState.FASTAKE);
-        // mSimpleFourbarSubsystem.setSmartMotionSetpoint(SuperstructureConstants.kFourbarIntakeState);
-      } else if (mControlBoard.operator.isPOVDOWNPressed()) {
+      }else if (mControlBoard.operator.isPOVDOWNPressed()) {
         mSimpleFourbarSubsystem.setCalibrating();
-      } else if (mControlBoard.operator.isPOVRIGHTPressed()) {
-        // mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
-        // mSimpleFourbarSubsystem.setSmartMotionSetpoint(SuperstructureConstants.kFourbarReadyMiddleState);
-
       } else if (mControlBoard.operator.isPOVLEFTPressed()) {
         mSimpleFourbarSubsystem.setTestTrapezoid();
       } else {

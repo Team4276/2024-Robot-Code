@@ -214,7 +214,8 @@ public class Superstructure extends Subsystem {
 
         mCommandedFourBarVoltage = mDesiredFourBarVoltage;
         mCommandedFlywheelState = mDesiredFlywheelState;
-        mCommandedIntakeState = mDesiredIntakeState;
+        mCommandedIntakeState = mDesiredIntakeState == IntakeState.IDLE ? mCommandedState.intake_state 
+            : mDesiredIntakeState;
     }
 
     @Override

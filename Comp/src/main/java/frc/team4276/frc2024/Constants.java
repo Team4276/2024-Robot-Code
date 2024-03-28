@@ -316,12 +316,12 @@ public final class Constants {
   public static final class SuperstructureConstants {
     public static final FourBarFeedForwardConstants kFourbarFFConstants = new FourBarFeedForwardConstants();
     static {
-      kFourbarFFConstants.kS = 0.2;
+      kFourbarFFConstants.kS = 0.185;
 
       kFourbarFFConstants.kMotorFreeSpeedRpm = 5676.0;
-      kFourbarFFConstants.kGearRatio = 224.3333333333333;
+      kFourbarFFConstants.kGearRatio = 232.14;
       kFourbarFFConstants.kStallTorque = 3.28;
-      kFourbarFFConstants.kMotorAmnt = 1;
+      kFourbarFFConstants.kMotorAmnt = 2;
       kFourbarFFConstants.kEfficiency = 0.2155;
 
       kFourbarFFConstants.kBottomLength = Units.inchesToMeters(8.001578);
@@ -344,7 +344,7 @@ public final class Constants {
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
     static {
       kFourBarConstants.kMasterConstants.id = 9;
-      kFourBarConstants.kMasterConstants.isInverted = true;
+      kFourBarConstants.kMasterConstants.isInverted = false;
 
       // kFourBarConstants.kFollowerConstants[0].id = 13;
       // kFourBarConstants.kFollowerConstants[0].isInverted = true;
@@ -353,10 +353,10 @@ public final class Constants {
       kFourBarConstants.kIsCircular = false;
       kFourBarConstants.kUnitsPerRotation = 2 * Math.PI; // Overall Rotation to Radians
       kFourBarConstants.kGearRatio = 232.14; // Motor Rotations to Overall Rotations
-      kFourBarConstants.kOffset = Math.toRadians(0.0); // Set in hardware client; Radians 52.6 143
+      kFourBarConstants.kOffset = Math.toRadians(84.5); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
       kFourBarConstants.kMinPosition = Math.toRadians(45.0);
-      kFourBarConstants.kMaxPosition = Math.toRadians(140.0);
+      kFourBarConstants.kMaxPosition = Math.toRadians(130.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
       kFourBarConstants.kP = 0.0; // 0.03490658503988659153847381536977;
@@ -368,8 +368,8 @@ public final class Constants {
       kFourBarConstants.kIMaxAccum = 0.0;
       kFourBarConstants.kPIDOutputRange = 1.0;
 
-      kFourBarConstants.kMaxSpeed = Math.PI / 8;
-      kFourBarConstants.kMaxAccel = Math.PI / 8;
+      kFourBarConstants.kMaxSpeed = Math.PI;
+      kFourBarConstants.kMaxAccel = 2 * Math.PI;
       kFourBarConstants.kVelTol = Math.PI / 180.0;
       kFourBarConstants.kPosTol = Math.PI / 180.0;
 
@@ -398,7 +398,7 @@ public final class Constants {
     public static final double kFourbarAmpState = Math.toRadians(52.0);
     public static final double kFourbarPodiumState = Math.toRadians(52.0);
 
-    public static final FlywheelState kNormalShot = new FlywheelState(DesiredFlywheelMode.RPM, -3500, -3500);
+    public static final FlywheelState kNormalShot = new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500);
     public static final FlywheelState kWhatTheFlip = new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3500);
 
     public static final double kAutoShotFeedTime = 0.25;

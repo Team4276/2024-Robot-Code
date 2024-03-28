@@ -106,6 +106,32 @@ public class ControlBoard {
         return operator.isPOVUPPressed();
     }
 
+    public boolean wantAmp(){
+        return operator.isPOVLEFTPressed();
+    }
+
+    public boolean wantDynamic(){
+        return operator.getLT();
+    }
+
+    public boolean wantScore(){
+        return operator.getRT();
+    }
+
+    private boolean wantAutoScore = false;
+
+    public boolean wantAutoScore(){
+        if(!operator.getBButton()) return wantAutoScore;
+
+        if(wantAutoScore){
+            wantAutoScore = false;
+        } else {
+            wantAutoScore = true;
+        }
+
+        return wantAutoScore;
+    }
+
     public boolean wantAutoLock(){
         return operator.getRT();
     }

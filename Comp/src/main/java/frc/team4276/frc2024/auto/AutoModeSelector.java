@@ -18,7 +18,8 @@ public class AutoModeSelector {
         TAXI,
         SHOOT_TEST,
         SUB_AS_2PIECE,
-        SUB_SS_2Piece
+        SUB_SS_2Piece,
+        Close5Piece
 
     }
 
@@ -39,6 +40,7 @@ public class AutoModeSelector {
         mModeChooser.addOption("Shoot Test", DesiredMode.SHOOT_TEST);
         mModeChooser.addOption("Sub Amp Side 2Piece", DesiredMode.SUB_AS_2PIECE);
         mModeChooser.addOption("Sub Stage Side 2Piece", DesiredMode.SUB_SS_2Piece);
+        mModeChooser.addOption("Close 5 Piece", DesiredMode.Close5Piece);
         SmartDashboard.putData("Auto Mode", mModeChooser);
 
     }
@@ -77,6 +79,8 @@ public class AutoModeSelector {
             return Optional.of(new SubAmpSide2Piece());
         case SUB_SS_2Piece:
             return Optional.of(new SubSS2Piece());
+        case Close5Piece:
+            return Optional.of(new Close5Piece());
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

@@ -5,6 +5,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team4276.lib.drivers.Subsystem;
@@ -36,8 +37,8 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     private ClimberSubsystem(){
-        mRightMotor = new CANSparkMax(20, MotorType.kBrushless);
-        mLeftMotor = new CANSparkMax(21, MotorType.kBrushless);
+        mRightMotor = new CANSparkMax(15, MotorType.kBrushless);
+        mLeftMotor = new CANSparkMax(14, MotorType.kBrushless);
 
         mRightEncoder = mRightMotor.getEncoder();
         mLeftEncoder = mLeftMotor.getEncoder();
@@ -123,6 +124,12 @@ public class ClimberSubsystem extends Subsystem {
             @Override
             public void onStop(double timestamp) {}
         });
+    }
+
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putString("Climber State", mDesiredState.toString());
+        SmartDashboard.putNumber("Climber Current", mRightMotor.getOutputCurrent());
     }
 
 }

@@ -173,11 +173,11 @@ public class LimeLight extends Subsystem {
                                 getTargetDistance().inverse(),
                                 mPeriodicIO.tagId));
 
-                SmartDashboard.putNumber("Distance to camera X", mPeriodicIO.targetDistanceToRobot[2]);
-                SmartDashboard.putNumber("Distance to camera Y", mPeriodicIO.targetDistanceToRobot[0]);
             } else {
                 RobotState.getInstance().visionUpdate(null);
             }
+
+            
         }
 
     }
