@@ -161,6 +161,12 @@ public class IntakeSubsystem extends Subsystem {
         enabledLooper.register(new Loop() {
             @Override
             public void onStart(double timestamp) {
+                if(mPeriodicIO.front_sensor_tripped){
+                    setState(IntakeState.HOLDING);
+
+                    return;
+                }
+
                 setState(IntakeState.IDLE);
             }
 

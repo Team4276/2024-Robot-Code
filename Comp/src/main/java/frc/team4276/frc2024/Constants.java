@@ -308,7 +308,7 @@ public final class Constants {
     public static final double kThetaUpdateTolerance = Math.PI / 50;
 
     // Metres
-    public static final double kValidSpeakerDistance = 8.0;
+    public static final double kValidSpeakerDistance = 4.0;
   }
 
   public static final class SuperstructureConstants {
@@ -404,7 +404,7 @@ public final class Constants {
   }
 
   public static class FlywheelConstants {
-    public static double kS_Top = 0.188;
+    public static final double kS_Top = 0.188;
     public static double kS_Bottom = 0.188;
     // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel
     public static double kV_Top = 0.0020014125023555073743193198053;
@@ -415,8 +415,12 @@ public final class Constants {
   }
 
   public static class AutoLockConstants{
-    public static double kMaxAngularVelocity = DriveConstants.kMaxAngularVel; // Rad / sec
-    public static double kMaxAngularAccel = Math.PI; // Rad / sec^2
+    public static double kP = 0.0;
+    public static double kD = 0.0;
+    public static double kMaxAngularVelocity = DriveConstants.kMaxAngularVel * 0.8; // Rad / sec
+    public static double kMaxAngularAccel = Math.PI * 5.5; // Rad / sec^2
+
+    public static double kTolerance = Math.toRadians(1.0);
 
   }
 

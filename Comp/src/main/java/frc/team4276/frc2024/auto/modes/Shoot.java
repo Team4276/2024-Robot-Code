@@ -8,7 +8,6 @@ import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.LambdaAction;
 import frc.team4276.frc2024.auto.actions.SeriesAction;
 import frc.team4276.frc2024.auto.actions.WaitAction;
-import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
 import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
@@ -16,9 +15,7 @@ import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 public class Shoot extends AutoModeBase {
     private Superstructure mSuperstructure = Superstructure.getInstance();
 
-    public Shoot() {
-
-    }
+    public Shoot() {}
 
     @Override
     protected void routine() throws AutoModeEndedException {

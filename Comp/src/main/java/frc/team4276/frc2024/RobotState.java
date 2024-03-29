@@ -138,7 +138,7 @@ public class RobotState {
                 var field_to_odom = visionFieldToVehicle.getTranslation()
                         .translateBy(odomToVehicle.getTranslation().inverse());
                 if (DriverStation.isAutonomous()) {
-                    final double kMaxDistanceToAccept = 10.0;
+                    final double kMaxDistanceToAccept = 4.0;
                     if (field_to_odom.inverse().translateBy(field_to_odom_.lastEntry().getValue())
                             .norm() > kMaxDistanceToAccept) {
                         System.out.println("Invalid vision update!");

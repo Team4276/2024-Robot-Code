@@ -35,5 +35,9 @@ public class SuperstructureAction implements Action {
     }
 
     @Override
-    public void done() {}
+    public void done() {
+        if(mDesiredState.state.isShootingState && mSuperstructure.isHoldingNote()){
+            mSuperstructure.SHOOT();
+        }
+    }
 }

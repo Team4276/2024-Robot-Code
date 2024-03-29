@@ -167,9 +167,11 @@ public class Robot extends TimedRobot {
         mAutoModeExecutor.setAutoMode(autoMode.get());
       }
 
-      if (mControlBoard.wantClimberCoastMode() && mHasFlippedClimberSetting){
-        mClimberSubsystem.setIdleMode(IdleMode.kCoast);
-
+      if (mControlBoard.wantClimberCoastMode()){
+        if(mHasFlippedClimberSetting){
+          mClimberSubsystem.setIdleMode(IdleMode.kCoast);
+        
+        }
       } else {
         mClimberSubsystem.setIdleMode(IdleMode.kBrake);
 
@@ -333,8 +335,7 @@ public class Robot extends TimedRobot {
       if(mControlBoard.wantAutoLock()){
         queued_state = GoalState.DYNAMIC;
         
-      } else 
-      if (mControlBoard.wantAmp()) {
+      } else if (mControlBoard.wantAmp()) {
         queued_state = GoalState.AMP;
 
       } else if (mControlBoard.wantPodium()){

@@ -395,7 +395,6 @@ public class LimeLight extends Subsystem {
     }
 
     @Override
-    public void stop() {
-    }
+    public void stop() {}
 
 }

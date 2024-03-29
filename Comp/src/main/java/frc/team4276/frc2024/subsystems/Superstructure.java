@@ -228,7 +228,7 @@ public class Superstructure extends Subsystem {
                 } else if (mSimpleFourbarSubsystem.getControlState() == ControlState.CALIBRATING) {
 
                 } else if (mCommandedState != null) {
-                    mSimpleFourbarSubsystem.setSmartMotionSetpoint(mGoalState == GoalState.DYNAMIC ? 
+                    mSimpleFourbarSubsystem.setSmartMotionSetpoint(mCommandedState.fourbar_angle == Double.NaN ? 
                         mDynamicFourbarAngle : mCommandedState.fourbar_angle);
                 }
 

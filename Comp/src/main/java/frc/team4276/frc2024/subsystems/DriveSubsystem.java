@@ -113,13 +113,11 @@ public class DriveSubsystem extends Subsystem {
 
   public void setLockOnTarget() {
     if (mControlState != DriveControlState.LOCK_ON_TARGET) {
-      mAutoLockPlanner.reset();
-
       mControlState = DriveControlState.LOCK_ON_TARGET;
     }
   }
 
-  public void updateAutoLockRotationSpeed(double d_theta) {
+  public void updateAutoLockAngularVel(double d_theta) {
     mPeriodicIO.des_rotation_speed = d_theta;
   }
 
@@ -161,6 +159,17 @@ public class DriveSubsystem extends Subsystem {
             speeds.vxMetersPerSecond,
             speeds.vyMetersPerSecond,
             mSnapController.calculate(mPeriodicIO.heading.getRadians(), mPeriodicIO.heading_setpoint.getRadians()));
+        return;
+      }
+    }
+
+    if(mControlState == DriveControlState.LOCK_ON_TARGET){
+      if(Math.abs(speeds.vxMetersPerSecond) > 0.05 || Math.abs(speeds.vyMetersPerSecond) > 0.05){
+        mControlState = DriveControlState.OPEN_LOOP;
+
+      } else {
+        mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(0.0, 0.0, mPeriodicIO.des_rotation_speed);
+
         return;
       }
     }
@@ -317,8 +326,8 @@ public class DriveSubsystem extends Subsystem {
                     Twist2d.toWPI(getMeasSpeeds().toTwist2d()));
                 break;
               case LOCK_ON_TARGET:
-                mAutoLockPlanner.update(timestamp, RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
-                    getMeasSpeeds());
+                mAutoLockPlanner.update(RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
+                  mPeriodicIO.meas_chassis_speeds);
                 break;
 
               default:
@@ -377,11 +386,6 @@ public class DriveSubsystem extends Subsystem {
     }
 
     ChassisSpeeds des_chassis_speeds = mPeriodicIO.des_chassis_speeds;
-
-    if (mControlState == DriveControlState.LOCK_ON_TARGET
-        && !Util.epsilonEquals(0.0, mPeriodicIO.des_rotation_speed, 0.005)) {
-      des_chassis_speeds.omegaRadiansPerSecond = mPeriodicIO.des_rotation_speed;
-    }
 
     Pose2d robot_pose_vel = new Pose2d(des_chassis_speeds.vxMetersPerSecond * Constants.kLooperDt,
         des_chassis_speeds.vyMetersPerSecond * Constants.kLooperDt,
