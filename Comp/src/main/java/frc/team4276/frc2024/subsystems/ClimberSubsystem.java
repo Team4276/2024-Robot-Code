@@ -57,8 +57,7 @@ public class ClimberSubsystem extends Subsystem {
         mRightMotor.enableVoltageCompensation(12);
         mLeftMotor.enableVoltageCompensation(12);
 
-        mRightMotor.setInverted(false);
-        // mLeftMotor.setInverted(true);
+        mLeftMotor.setInverted(true);
 
         mRightEncoder.setAverageDepth(2);
         mLeftEncoder.setAverageDepth(2);
@@ -69,7 +68,7 @@ public class ClimberSubsystem extends Subsystem {
         mRightEncoder.setVelocityConversionFactor(1);
         mLeftEncoder.setVelocityConversionFactor(1);
 
-        mLeftMotor.follow(mRightMotor, true);
+        mRightMotor.follow(mLeftMotor, true);
 
         mRightMotor.burnFlash();
         mLeftMotor.burnFlash();
@@ -80,7 +79,7 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     public void setIdleMode(IdleMode mode){
-        if(mode == mRightMotor.getIdleMode()) return;
+        if(mode == mLeftMotor.getIdleMode()) return;
 
         mRightMotor.setIdleMode(mode);
         mLeftMotor.setIdleMode(mode);
@@ -101,6 +100,7 @@ public class ClimberSubsystem extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
+                try{
                 switch (mDesiredState) {
                     case IDLE:
                         mDesiredVoltage = 0.0;
@@ -111,16 +111,19 @@ public class ClimberSubsystem extends Subsystem {
 
                         break;
                     case F_LOWER:
-                        mDesiredVoltage = -3.0;
+                        mDesiredVoltage = -7.0;
 
                         break;
                     case S_LOWER:
-                        mDesiredVoltage = -2.0;
+                        mDesiredVoltage = -4.0;
 
                         break;
                     default:
                         break;
                 }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+              }
             }
 
             @Override
@@ -130,13 +133,12 @@ public class ClimberSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        // mRightMotor.setVoltage(mDesiredVoltage);
+        mLeftMotor.setVoltage(mDesiredVoltage);
     }
 
     @Override
     public void outputTelemetry() {
         SmartDashboard.putString("Climber State", mDesiredState.toString());
-        SmartDashboard.putNumber("Climber Current", mRightMotor.getOutputCurrent());
     }
 
 }

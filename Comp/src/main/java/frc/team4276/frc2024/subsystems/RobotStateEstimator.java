@@ -41,13 +41,18 @@ public class RobotStateEstimator extends Subsystem {
             }
 
             @Override
-            public void onLoop(double timestamp) {          
+            public void onLoop(double timestamp) {   
+                try {       
                 mOdometry.update(
                     DriveSubsystem.getInstance().getHeading().toWPI(),
                     DriveSubsystem.getInstance().getModuleStates()
                 );
                 RobotState.getInstance().addOdomObservations(
                     timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
+
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                  }
             }
 
             @Override

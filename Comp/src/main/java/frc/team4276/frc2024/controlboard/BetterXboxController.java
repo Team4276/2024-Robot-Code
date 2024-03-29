@@ -1,12 +1,21 @@
 package frc.team4276.frc2024.controlboard;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.team4276.frc2024.Constants.OIConstants;
 
 public class BetterXboxController extends XboxController {
     public BetterXboxController(int port){
         super(port);
+    }
+
+    public void update(){
+        if(rumbleStartTime + 0.25 > Timer.getFPGATimestamp()){
+            setRumble(RumbleType.kBothRumble, 0.0);
+            rumbleStartTime = -1.0;
+
+        }
     }
 
     public boolean isPOVUPPressed(){
@@ -81,4 +90,15 @@ public class BetterXboxController extends XboxController {
         return MathUtil.applyDeadband(getRightX(), OIConstants.kJoystickDeadband);
     }
 
+    private double rumbleStartTime = -1.0;
+    private boolean hasRumbled = false;
+
+    public void shortRumble(){
+        if(!hasRumbled){
+            hasRumbled = true;
+            rumbleStartTime = Timer.getFPGATimestamp();
+            setRumble(RumbleType.kBothRumble, 0.25);
+
+        }
+    }
 }

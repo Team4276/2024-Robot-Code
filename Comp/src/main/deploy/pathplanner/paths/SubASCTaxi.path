@@ -3,35 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5,
-        "y": 4.262744502664469
+        "x": 0.7167669684840067,
+        "y": 6.663465994549679
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7739281341589663,
-        "y": 4.321298685387436
+        "x": 1.3929974013794195,
+        "y": 7.015396338484985
       },
       "isLocked": false,
-      "linkedName": "StagePickup"
+      "linkedName": "SubASC"
     },
     {
       "anchor": {
-        "x": 0.7516461186768542,
-        "y": 4.4499912076747234
+        "x": 2.389558625271098,
+        "y": 7.666614563998359
       },
       "prevControl": {
-        "x": 1.3137662728717863,
-        "y": 4.4265695345772205
+        "x": 1.6594048572712548,
+        "y": 7.212735194701159
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SubSSC"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.2,
-      "rotationDegrees": 161.08,
+      "waypointRelativePos": 0.05,
+      "rotationDegrees": -120.0,
       "rotateFast": false
     }
   ],
@@ -45,13 +45,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 120.0,
+    "rotation": 180.0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Comp",
+  "folder": "Taxis",
   "previewStartingState": {
-    "rotation": 161.08,
+    "rotation": -120.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

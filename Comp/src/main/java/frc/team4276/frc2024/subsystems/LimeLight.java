@@ -48,7 +48,7 @@ public class LimeLight extends Subsystem {
 
     private static HashMap<Integer, Apriltag> mTagMap = Field.Red.kAprilTagMap;
 
-    private boolean mDisableProcessing = false;
+    private boolean mDisableProcessing = true;
 
     private static LimeLight mInstance;
 

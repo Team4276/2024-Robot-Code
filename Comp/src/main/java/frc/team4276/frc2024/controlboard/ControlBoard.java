@@ -52,13 +52,15 @@ public class ControlBoard {
         }
     }
 
+    private double kMaxTurnMagnitude = 0.75;
+
     public double getSwerveRotation() {
         double rotAxis = -driver.getRightX();
 
         if (Math.abs(rotAxis) < OIConstants.kJoystickDeadband) {
             return 0.0;
         } else {
-            return DriveSubsystem.getInstance().getKinematicLimits().kMaxAngularVelocity
+            return kMaxTurnMagnitude * DriveSubsystem.getInstance().getKinematicLimits().kMaxAngularVelocity
                     * (rotAxis - (Math.signum(rotAxis) * OIConstants.kJoystickDeadband))
                     / (1 - OIConstants.kJoystickDeadband);
         }

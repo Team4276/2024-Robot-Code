@@ -39,7 +39,7 @@ public class Superstructure extends Subsystem {
 
     private double mDesiredFourBarVoltage = 0.0;
     private double mCommandedFourBarVoltage = 0.0;
-    private boolean isFourBarVoltageControl = true;
+    private boolean isFourBarVoltageControl = false;
 
     private FlywheelState mDesiredFlywheelState = FlywheelState.identity();
     private FlywheelState mCommandedFlywheelState = FlywheelState.identity();
@@ -125,8 +125,8 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void SHOOT() {
-        if (!mCommandedState.isShootingState)
-            return;
+        if(mCommandedState == null) return;
+        if (!mCommandedState.isShootingState) return;
 
         System.out.println("Fourbar Angle" + Math.toDegrees(mSimpleFourbarSubsystem.getAngleRadians()));
         System.out.println("Distance" + mLatestDistance);
@@ -152,6 +152,13 @@ public class Superstructure extends Subsystem {
             SuperstructureConstants.kConservativeFourbarPositionTolerance);
     }
 
+    public boolean atScoring(){
+        if(mCommandedState == null) return false;
+
+        return getState().isInRange(mCommandedState.fourbar_angle, mCommandedState.flywheel_state, 
+            mSimpleFourbarSubsystem.getAngleVelRadians(), SuperstructureConstants.kConservativeFourbarPositionTolerance);
+    }
+
     public boolean isHoldingNote() {
         return mMeasuredState.intake_state == IntakeState.HOLDING;
     }
@@ -159,6 +166,7 @@ public class Superstructure extends Subsystem {
     public void toggleFourbarVoltageMode() {
         if (isFourBarVoltageControl) {
             isFourBarVoltageControl = false;
+            mCommandedState = mMeasuredState;
         } else {
             isFourBarVoltageControl = true;
         }
@@ -186,34 +194,34 @@ public class Superstructure extends Subsystem {
                 mCommandedState.fourbar_angle += mFourbarScoringOffset;
             }
 
-            if (isAutoShoot && getState().isInRange(mCommandedState.fourbar_angle, mCommandedState.flywheel_state, 
-                    mSimpleFourbarSubsystem.getAngleVelRadians(), SuperstructureConstants.kConservativeFourbarPositionTolerance)
-                    && mIntakeSubsystem.getState() == IntakeState.HOLDING) {
+            if (isAutoShoot && atScoring()) {
                 SHOOT();
             }
 
             if (isShooting && Timer.getFPGATimestamp() < mShotStartTime + SuperstructureConstants.kAutoShotFeedTime) {
                 mCommandedState.intake_state = IntakeState.FOOT;
-            } else {
+            } else if(isShooting) {
+                mCommandedState.intake_state = IntakeState.IDLE;
                 isShooting = false;
             }
         }
 
         mCommandedFourBarVoltage = mDesiredFourBarVoltage;
-        mCommandedFlywheelState = mDesiredFlywheelState;
-        mCommandedIntakeState = mDesiredIntakeState == IntakeState.IDLE ? mCommandedState.intake_state 
-            : mDesiredIntakeState;
+        mCommandedFlywheelState = mDesiredFlywheelState.isInRange(FlywheelState.identity()) && mCommandedState != null
+            ? mCommandedState.flywheel_state : mDesiredFlywheelState;
+        mCommandedIntakeState = mDesiredIntakeState == IntakeState.IDLE && mCommandedState != null
+             ? mCommandedState.intake_state : mDesiredIntakeState;
     }
 
     @Override
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
-            public void onStart(double timestamp) {
-            }
+            public void onStart(double timestamp) {}
 
             @Override
             public void onLoop(double timestamp) {
+                try{
                 if (isFourBarVoltageControl) {
                     mSimpleFourbarSubsystem.setVoltage(mCommandedFourBarVoltage);
 
@@ -245,6 +253,9 @@ public class Superstructure extends Subsystem {
                 }
 
                 mIntakeSubsystem.setState(mCommandedIntakeState);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+              }
             }
 
             @Override

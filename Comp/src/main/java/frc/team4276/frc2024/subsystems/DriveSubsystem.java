@@ -300,31 +300,35 @@ public class DriveSubsystem extends Subsystem {
 
       @Override
       public void onLoop(double timestamp) {
-        synchronized (this) {
-          switch (mControlState) {
-            case OPEN_LOOP:
-              break;
-            case FORCE_ORIENT:
-              break;
-            case HEADING_CONTROL:
-              break;
-            case PATH_FOLLOWING:
-              break;
-            case AUTO_ALIGN:
-              mAutoAlignPlanner.update(timestamp,
-                  RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
-                  Twist2d.toWPI(getMeasSpeeds().toTwist2d()));
-              break;
-            case LOCK_ON_TARGET:
-              mAutoLockPlanner.update(timestamp, RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
-                  getMeasSpeeds());
-              break;
+        try {
+          synchronized (this) {
+            switch (mControlState) {
+              case OPEN_LOOP:
+                break;
+              case FORCE_ORIENT:
+                break;
+              case HEADING_CONTROL:
+                break;
+              case PATH_FOLLOWING:
+                break;
+              case AUTO_ALIGN:
+                mAutoAlignPlanner.update(timestamp,
+                    RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
+                    Twist2d.toWPI(getMeasSpeeds().toTwist2d()));
+                break;
+              case LOCK_ON_TARGET:
+                mAutoLockPlanner.update(timestamp, RobotState.getInstance().getFieldToVehicleAbsolute(timestamp),
+                    getMeasSpeeds());
+                break;
 
-            default:
-              break;
+              default:
+                break;
+            }
+
+            updateSetpoint();
           }
-
-          updateSetpoint();
+        } catch (Exception e) {
+          System.out.println(e.getMessage());
         }
       }
 
@@ -374,7 +378,8 @@ public class DriveSubsystem extends Subsystem {
 
     ChassisSpeeds des_chassis_speeds = mPeriodicIO.des_chassis_speeds;
 
-    if (mControlState == DriveControlState.LOCK_ON_TARGET && !Util.epsilonEquals(0.0, mPeriodicIO.des_rotation_speed, 0.005)) {
+    if (mControlState == DriveControlState.LOCK_ON_TARGET
+        && !Util.epsilonEquals(0.0, mPeriodicIO.des_rotation_speed, 0.005)) {
       des_chassis_speeds.omegaRadiansPerSecond = mPeriodicIO.des_rotation_speed;
     }
 

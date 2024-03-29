@@ -353,17 +353,17 @@ public final class Constants {
       kFourBarConstants.kGearRatio = 232.14; // Motor Rotations to Overall Rotations
       kFourBarConstants.kOffset = Math.toRadians(84.5); // Set in hardware client; Radians 52.6 143
       kFourBarConstants.kHomePosition = 130.0;
-      kFourBarConstants.kMinPosition = Math.toRadians(45.0);
+      kFourBarConstants.kMinPosition = Math.toRadians(42.0);
       kFourBarConstants.kMaxPosition = Math.toRadians(125.0);
       kFourBarConstants.kRelativeEncoderAvgSamplingDepth = 2;
 
-      kFourBarConstants.kP = 0.03490658503988659153847381536977 * 5;
+      kFourBarConstants.kP = 0.03490658503988659153847381536977;
       kFourBarConstants.kI = 0.003;
-      kFourBarConstants.kD = 0.06;
+      kFourBarConstants.kD = 0.006;
       kFourBarConstants.kFF = 0.0;
       kFourBarConstants.kDFilter = 0.0;
-      kFourBarConstants.kIZone = 0.0;
-      kFourBarConstants.kIMaxAccum = 0.0;
+      kFourBarConstants.kIZone = Math.toRadians(5.0);
+      kFourBarConstants.kIMaxAccum = 0.03;
       kFourBarConstants.kPIDOutputRange = 1.0;
 
       kFourBarConstants.kMaxSpeed = Math.PI;
@@ -382,11 +382,11 @@ public final class Constants {
     // Radians
     public static final double kLiberalFourbarPositionTolerance = Math.toRadians(20.0); 
     public static final double kModerateFourbarPositionTolerance = Math.toRadians(5.0);
-    public static final double kConservativeFourbarPositionTolerance = Math.toRadians(0.75);
+    public static final double kConservativeFourbarPositionTolerance = Math.toRadians(1.0);
 
     public static final double kLiberalFourbarVelocityTolerance = Math.toRadians(10.0); 
-    public static final double kModerateFourbarVelocityTolerance = Math.toRadians(2.0);
-    public static final double kConservativeFourbarVelocityTolerance = Math.toRadians(1.0);
+    public static final double kModerateFourbarVelocityTolerance = Math.toRadians(5.0);
+    public static final double kConservativeFourbarVelocityTolerance = Math.toRadians(3.0);
 
     // Radians
     public static final double kFourbarStowState = Math.toRadians(120.0);
@@ -394,24 +394,24 @@ public final class Constants {
     public static final double kFourbarReadyLowState = Math.toRadians(60.0);
     public static final double kFourbarIntakeState = Math.toRadians(49.0);
     public static final double kFourbarSubCloseState = Math.toRadians(45.0);
-    public static final double kFourbarAmpState = Math.toRadians(52.0);
+    public static final double kFourbarAmpState = Math.toRadians(84.0); // 92.8
     public static final double kFourbarPodiumState = Math.toRadians(52.0);
 
     public static final FlywheelState kNormalShot = new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500);
-    public static final FlywheelState kWhatTheFlip = new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 1000, -3500);
+    public static final FlywheelState kWhatTheFlip = new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 0.0, -3500);
 
     public static final double kAutoShotFeedTime = 0.25;
   }
 
   public static class FlywheelConstants {
     public static double kS_Top = 0.188;
-    public static double kS_Bottom = 0.193;
+    public static double kS_Bottom = 0.188;
     // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel
     public static double kV_Top = 0.0020014125023555073743193198053;
-    public static double kV_Bottom = 0.0020614125023555073743193198053;
+    public static double kV_Bottom = 0.0020014125023555073743193198053;
     public static double kA = 0;
 
-    public static double kFlywheelAllowableError = 50;
+    public static double kFlywheelAllowableError = 300.0;
   }
 
   public static class AutoLockConstants{

@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
       mDisabledLooper.start();
       mSubsystemManager.stop();
       mLimeLight.start();
-      mLimeLight.setDisableProcessing(false);
+      // mLimeLight.setDisableProcessing(false);
 
     } catch (Throwable t) {
       throw t;
@@ -214,7 +214,7 @@ public class Robot extends TimedRobot {
       mEnabledLooper.start();
       mAutoModeExecutor.start();
 
-      mLimeLight.setDisableProcessing(false);
+      // mLimeLight.setDisableProcessing(false);
       RobotState.getInstance().setHasBeenEnabled(true);
 
     } catch (Throwable t) {
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
       mDisabledLooper.stop();
       mEnabledLooper.start();
 
-      mLimeLight.setDisableProcessing(false);
+      // mLimeLight.setDisableProcessing(false);
 
       RobotState.getInstance().setHasBeenEnabled(true);
 
@@ -277,17 +277,17 @@ public class Robot extends TimedRobot {
       }
       
       // -------------------------------------------- TEMPORARY FOR CALIBRATION --------------------------------------------
-      if(mControlBoard.operator.getYButtonReleased()){
-        mSuperstructure.addFourbarScoringOffset(Math.toRadians(0.5));
-      } else if(mControlBoard.operator.getLeftStickButtonReleased()){
-        mSuperstructure.addFourbarScoringOffset(Math.toRadians(-0.5));
-      } else if(mControlBoard.operator.getLeftYDeadband() > 0.0){
-        mSuperstructure.addFourbarScoringOffset(Math.toRadians(-mControlBoard.operator.getLeftYDeadband() * 10.0));
-      }
+      // if(mControlBoard.operator.getYButtonReleased()){
+      //   mSuperstructure.addFourbarScoringOffset(Math.toRadians(0.5));
+      // } else if(mControlBoard.operator.getLeftStickButtonReleased()){
+      //   mSuperstructure.addFourbarScoringOffset(Math.toRadians(-0.5));
+      // } else if(mControlBoard.operator.getLeftYDeadband() > 0.0){
+      //   mSuperstructure.addFourbarScoringOffset(Math.toRadians(-mControlBoard.operator.getLeftYDeadband() * 10.0));
+      // }
 
-      if(mControlBoard.operator.getRightStickButtonReleased()){
-        mSuperstructure.SHOOT();
-      }
+      // if(mControlBoard.operator.getRightStickButtonReleased()){
+      //   mSuperstructure.SHOOT();
+      // }
 
       if (mControlBoard.operator.getAButtonPressed()) {
         mSuperstructure.toggleFourbarVoltageMode();
@@ -306,21 +306,21 @@ public class Robot extends TimedRobot {
         mSuperstructure.setFourBarVoltage(0.0);
       }
 
-      if (mControlBoard.operator.getLT()) {
-        mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShot);
-      } else if (mControlBoard.operator.getLeftBumper()) {
-        mSuperstructure.setFlywheelState(SuperstructureConstants.kWhatTheFlip);
-      } else {
-        mSuperstructure.setFlywheelState(FlywheelState.identity());
-      }
+      // if (mControlBoard.operator.getLT()) {
+      //   mSuperstructure.setFlywheelState(SuperstructureConstants.kNormalShot);
+      // } else if (mControlBoard.operator.getLeftBumper()) {
+      //   mSuperstructure.setFlywheelState(SuperstructureConstants.kWhatTheFlip);
+      // } else {
+      //   mSuperstructure.setFlywheelState(FlywheelState.identity());
+      // }
 
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ TEMPORARY FOR CALIBRATION ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-      if(mControlBoard.wantAutoScore()) {
-        mSuperstructure.setAutoShoot(true);
-      } else {
-        mSuperstructure.setAutoShoot(false);
-      }
+      // if(mControlBoard.wantAutoScore()) {
+      //   mSuperstructure.setAutoShoot(true);
+      // } else {
+      //   mSuperstructure.setAutoShoot(false);
+      // }
 
       if (mControlBoard.wantFastake()) {
         state = GoalState.FASTAKE;
@@ -330,19 +330,20 @@ public class Robot extends TimedRobot {
 
       }
 
-      // if(mControlBoard.wantAutoLock()){
-      //   queued_state = GoalState.DYNAMIC;
-      // } else 
-      //   if (mControlBoard.wantAmp()) {
-      //   queued_state = GoalState.AMP;
+      if(mControlBoard.wantAutoLock()){
+        queued_state = GoalState.DYNAMIC;
+        
+      } else 
+      if (mControlBoard.wantAmp()) {
+        queued_state = GoalState.AMP;
 
-      // } else if (mControlBoard.wantPodium()){
-      //   queued_state = GoalState.PODIUM;
+      } else if (mControlBoard.wantPodium()){
+        queued_state = GoalState.PODIUM;
 
-      // } else if (mControlBoard.wantSubClose()){
-      //   queued_state = GoalState.SUB_CLOSE;
+      } else if (mControlBoard.wantSubClose()){
+        queued_state = GoalState.SUB_CLOSE;
 
-      // }
+      }
 
       if (mControlBoard.wantReadyMiddle()) {
         return_state = GoalState.READY_MIDDLE;
@@ -364,6 +365,11 @@ public class Robot extends TimedRobot {
       } else if (return_state != null) {
         mSuperstructure.setGoalState(return_state);
 
+        SmartDashboard.putString("Return State", return_state.name());
+      }
+
+      if(queued_state != null){
+        SmartDashboard.putString("Queued State", queued_state.name());
       }
 
       state = null;

@@ -84,7 +84,7 @@ public class SuperstructureState {
     public boolean isInRange(SuperstructureState other, double fourbarVelocity, double fourbarDeadbandRadians){
         return Util.epsilonEquals(this.fourbar_angle, other.fourbar_angle, fourbarDeadbandRadians) &&
             this.intake_state == other.intake_state &&
-            this.flywheel_state.isInRange(other.flywheel_state) && Math.abs(fourbarVelocity) < Math.PI / 90.0;
+            this.flywheel_state.isInRange(other.flywheel_state) && Math.abs(fourbarVelocity) < Math.PI / 45.0;
     }
 
     /**

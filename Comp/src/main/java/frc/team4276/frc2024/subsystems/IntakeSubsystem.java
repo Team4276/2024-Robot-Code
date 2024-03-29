@@ -166,6 +166,7 @@ public class IntakeSubsystem extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
+                try{
                 switch (mIntakeState) {
                     case IDLE:
                         currentSensor.starting = true;
@@ -225,6 +226,9 @@ public class IntakeSubsystem extends Subsystem {
                 if (mIntakeState != IntakeState.VOLTAGE) {
                     mPeriodicIO.voltage = mIntakeState.voltage;
                 }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+              }
             }
 
             @Override
