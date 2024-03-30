@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
+import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.statemachines.SuperstructureState;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem.IntakeState;
@@ -268,6 +269,8 @@ public class Superstructure extends Subsystem {
     public void writePeriodicOutputs() {
     }
 
+    private boolean hasNote = false;
+
     @Override
     public void outputTelemetry() {
         SmartDashboard.putBoolean("isFourbarVoltageControl", isFourBarVoltageControl);
@@ -277,6 +280,13 @@ public class Superstructure extends Subsystem {
 
         if (mGoalState != null) {
             SmartDashboard.putString("Fourbar Goal", mGoalState.name());
+        }
+
+        if(!hasNote && isHoldingNote()){
+            hasNote = true;
+            ControlBoard.getInstance().driver.shortRumble();
+        } else if(!isHoldingNote()){
+            hasNote = false;
         }
     }
 }

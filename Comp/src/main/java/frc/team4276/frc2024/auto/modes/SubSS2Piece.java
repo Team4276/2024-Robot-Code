@@ -32,12 +32,22 @@ public class SubSS2Piece extends AutoModeBase {
         mSuperstructure.setGoalState(GoalState.SUB_CLOSE);
         runAction(new WaitAction(2.0));
         mSuperstructure.SHOOT();
-        mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
+        runAction(new WaitAction(0.25));
         runAction(new ParallelAction(List.of(traj1,
             new SeriesAction(
-                new WaitAction(0.25)),
-                new LambdaAction(() -> mSuperstructure.setGoalState(GoalState.FASTAKE))
+                new WaitAction(0.0)),
+                new LambdaAction(() -> mSuperstructure.setGoalState(GoalState.SLOWTAKE))
             )));
+        runAction(new ParallelAction(List.of(traj2,
+            new SeriesAction(
+                new WaitAction(0.25)),
+                new LambdaAction(() -> mSuperstructure.setGoalState(GoalState.READY_LOW))
+            )));
+        mSuperstructure.setGoalState(GoalState.SUB_CLOSE);
+        runAction(new WaitAction(2.0));
+        mSuperstructure.SHOOT();
+        runAction(new WaitAction(0.25));
+        mSuperstructure.setGoalState(GoalState.READY_MIDDLE);
 
 
     }

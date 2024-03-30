@@ -5,6 +5,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
@@ -13,6 +14,9 @@ import frc.team4276.lib.drivers.Subsystem;
 public class ClimberSubsystem extends Subsystem {
     private CANSparkMax mRightMotor;
     private CANSparkMax mLeftMotor;
+
+    private DigitalInput mRightLimit;
+    private DigitalInput mLeftLimit;
 
     private RelativeEncoder mRightEncoder;
     private RelativeEncoder mLeftEncoder;
@@ -57,6 +61,7 @@ public class ClimberSubsystem extends Subsystem {
         mRightMotor.enableVoltageCompensation(12);
         mLeftMotor.enableVoltageCompensation(12);
 
+        mRightMotor.setInverted(false);
         mLeftMotor.setInverted(true);
 
         mRightEncoder.setAverageDepth(2);
@@ -68,7 +73,8 @@ public class ClimberSubsystem extends Subsystem {
         mRightEncoder.setVelocityConversionFactor(1);
         mLeftEncoder.setVelocityConversionFactor(1);
 
-        mRightMotor.follow(mLeftMotor, true);
+        mRightLimit = new DigitalInput(2);
+        mLeftLimit = new DigitalInput(3);
 
         mRightMotor.burnFlash();
         mLeftMotor.burnFlash();
@@ -133,12 +139,30 @@ public class ClimberSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        mLeftMotor.setVoltage(mDesiredVoltage);
+        if(mDesiredVoltage > 0.0){
+            if(mLeftLimit.get()){
+                mLeftMotor.setVoltage(0.0);
+            } else {
+                mLeftMotor.setVoltage(mDesiredVoltage);
+            }
+
+            if(mRightLimit.get()){
+                mRightMotor.setVoltage(0.0);
+            } else {
+                mRightMotor.setVoltage(mDesiredVoltage);
+            }
+
+        } else {
+            mLeftMotor.setVoltage(mDesiredVoltage);
+            mRightMotor.setVoltage(mDesiredVoltage);
+        }
     }
 
     @Override
     public void outputTelemetry() {
         SmartDashboard.putString("Climber State", mDesiredState.toString());
+        SmartDashboard.putBoolean("Right Climber Limit", mRightLimit.get());
+        SmartDashboard.putBoolean("Left Climber Limit", mLeftLimit.get());
     }
 
 }

@@ -41,6 +41,20 @@ public class DriveSubsystem extends Subsystem {
     LOCK_ON_TARGET
   }
 
+  public enum KinematicLimitState{
+    UNCAPPED(DriveConstants.kUncappedLimits),
+    DEMO(DriveConstants.kDemoLimits),
+    AUTO(DriveConstants.kAutoLimits),
+    SOURCE(DriveConstants.kSourceLimits),
+    SCORING(DriveConstants.kScoringLimits);
+
+    KinematicLimits limits;
+
+    KinematicLimitState(KinematicLimits limits){
+      this.limits = limits;
+    }
+  }
+
   public MAXSwerveModuleV2[] mModules;
 
   // The gyro sensor
@@ -49,7 +63,7 @@ public class DriveSubsystem extends Subsystem {
   private PeriodicIO mPeriodicIO;
   private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
-  private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
+  private KinematicLimitState mKinematicLimitState = KinematicLimitState.UNCAPPED;
 
   private PIDController mSnapController;
 
@@ -122,6 +136,10 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
+    if(mKinematicLimitState != KinematicLimitState.AUTO){
+      mKinematicLimitState = KinematicLimitState.AUTO;
+    }
+
     if (mControlState != DriveControlState.PATH_FOLLOWING && mControlState != DriveControlState.LOCK_ON_TARGET) {
       mControlState = DriveControlState.PATH_FOLLOWING;
     }
@@ -133,8 +151,8 @@ public class DriveSubsystem extends Subsystem {
     updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
   }
 
-  public void setKinematicLimits(KinematicLimits kinematicLimits) {
-    this.mKinematicLimits = kinematicLimits;
+  public void setKinematicLimits(KinematicLimitState limits) {
+    this.mKinematicLimitState = limits;
   }
 
   public void setHeadingSetpoint(double desHeadingDeg) {
@@ -146,6 +164,10 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public synchronized void teleopDrive(ChassisSpeeds speeds) {
+    if(mKinematicLimitState != KinematicLimitState.UNCAPPED || mKinematicLimitState != KinematicLimitState.DEMO){
+      mKinematicLimitState = KinematicLimitState.UNCAPPED;
+    }
+
     if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL
         && mControlState != DriveControlState.LOCK_ON_TARGET) {
       mControlState = DriveControlState.OPEN_LOOP;
@@ -257,7 +279,7 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public KinematicLimits getKinematicLimits() {
-    return mKinematicLimits;
+    return mKinematicLimitState.limits;
   }
 
   private class PeriodicIO {
@@ -396,16 +418,16 @@ public class DriveSubsystem extends Subsystem {
 
     // Limit rotational velocity
     wanted_speeds.omegaRadiansPerSecond = Math.signum(wanted_speeds.omegaRadiansPerSecond)
-        * Math.min(mKinematicLimits.kMaxAngularVelocity, Math.abs(wanted_speeds.omegaRadiansPerSecond));
+        * Math.min(mKinematicLimitState.limits.kMaxAngularVelocity, Math.abs(wanted_speeds.omegaRadiansPerSecond));
 
     // Limit translational velocity
     double velocity_magnitude = Math.hypot(des_chassis_speeds.vxMetersPerSecond,
         des_chassis_speeds.vyMetersPerSecond);
-    if (velocity_magnitude > mKinematicLimits.kMaxDriveVelocity) {
+    if (velocity_magnitude > mKinematicLimitState.limits.kMaxDriveVelocity) {
       wanted_speeds.vxMetersPerSecond = (wanted_speeds.vxMetersPerSecond / velocity_magnitude)
-          * mKinematicLimits.kMaxDriveVelocity;
+          * mKinematicLimitState.limits.kMaxDriveVelocity;
       wanted_speeds.vyMetersPerSecond = (wanted_speeds.vyMetersPerSecond / velocity_magnitude)
-          * mKinematicLimits.kMaxDriveVelocity;
+          * mKinematicLimitState.limits.kMaxDriveVelocity;
     }
 
     ModuleState[] prev_module_states = mPeriodicIO.des_module_states.clone(); // Get last setpoint to get differentials
@@ -423,7 +445,7 @@ public class DriveSubsystem extends Subsystem {
     double dy = wanted_speeds.vyMetersPerSecond - prev_chassis_speeds.vyMetersPerSecond;
     double domega = wanted_speeds.omegaRadiansPerSecond - prev_chassis_speeds.omegaRadiansPerSecond;
 
-    double max_velocity_step = mKinematicLimits.kMaxAccel * Constants.kLooperDt;
+    double max_velocity_step = mKinematicLimitState.limits.kMaxAccel * Constants.kLooperDt;
     double min_translational_scalar = 1.0;
 
     if (max_velocity_step < Double.MAX_VALUE * Constants.kLooperDt) {
@@ -438,7 +460,7 @@ public class DriveSubsystem extends Subsystem {
       min_translational_scalar *= max_velocity_step;
     }
 
-    double max_omega_step = mKinematicLimits.kMaxAngularAccel * Constants.kLooperDt;
+    double max_omega_step = mKinematicLimitState.limits.kMaxAngularAccel * Constants.kLooperDt;
     double min_omega_scalar = 1.0;
 
     if (max_omega_step < Double.MAX_VALUE * Constants.kLooperDt) {

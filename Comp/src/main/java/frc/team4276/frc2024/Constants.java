@@ -125,8 +125,8 @@ public final class Constants {
     static {
       kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
       kAutoLimits.kMaxAccel = kMaxAttainableAccel;
-      kAutoLimits.kMaxAngularVelocity = Double.MAX_VALUE; // Rad/Sec
-      kAutoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI
+      kAutoLimits.kMaxAngularVelocity = kMaxAngularVel; // Rad/Sec
+      kAutoLimits.kMaxAngularAccel = Math.toRadians(500.0); // 2 * Math.PI
       kAutoLimits.kName = "Auto";
 
     }
@@ -395,7 +395,7 @@ public final class Constants {
     public static final double kFourbarIntakeState = Math.toRadians(49.0);
     public static final double kFourbarSubCloseState = Math.toRadians(45.0);
     public static final double kFourbarAmpState = Math.toRadians(84.0); // 92.8
-    public static final double kFourbarPodiumState = Math.toRadians(52.0);
+    public static final double kFourbarPodiumState = Math.toRadians(115.0);
 
     public static final FlywheelState kNormalShot = new FlywheelState(DesiredFlywheelMode.RPM, -4500, -4500);
     public static final FlywheelState kWhatTheFlip = new FlywheelState(DesiredFlywheelMode.WHAT_THE_FLIP, 0.0, -3500);

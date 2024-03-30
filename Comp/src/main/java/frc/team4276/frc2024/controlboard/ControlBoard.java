@@ -26,9 +26,14 @@ public class ControlBoard {
     private ControlBoard() {
         driver = new BetterXboxController(OIConstants.kDriverControllerPort);
         operator = new BetterXboxController(OIConstants.kOpControllerPort);
-
+        
         climberSetting = new DigitalInput(6);
         fourbarSetting = new DigitalInput(7);
+    }
+
+    public void update(){
+        driver.update();
+        operator.update();
     }
 
     // Driver Controls

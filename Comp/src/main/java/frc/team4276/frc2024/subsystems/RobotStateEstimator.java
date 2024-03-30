@@ -65,6 +65,8 @@ public class RobotStateEstimator extends Subsystem {
     public void outputTelemetry(){
         SmartDashboard.putNumber("Robot X", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().x());
         SmartDashboard.putNumber("Robot Y", RobotState.getInstance().getCurrentFieldToVehicle().getTranslation().y());
+        SmartDashboard.putNumber("Distance from Speaker", RobotState.getInstance()
+            .getCurrentFieldToVehicle().getTranslation().distance(RobotState.getInstance().getPOIs().kSpeakerCenter));
     }
 
     

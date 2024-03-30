@@ -52,7 +52,6 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
     private FourBarFeedForward mFourbarFF;
     private TrapezoidProfile mTrapezoidProfile;
-    private ProfiledPIDController mProfiledPIDController;
 
     private SparkPIDController mSparkPIDController;
 
@@ -118,9 +117,6 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
         mFourbarFF = new FourBarFeedForward(constants.kFourBarFFConstants);
         mTrapezoidProfile = new TrapezoidProfile(new Constraints(constants.kMaxSpeed, constants.kMaxAccel));
-        mProfiledPIDController = new ProfiledPIDController(0.0, 0.0, 0.0,
-                new Constraints(constants.kMaxSpeed, constants.kMaxAccel), Constants.kLooperDt);
-        mProfiledPIDController.setTolerance(constants.kPosTol, constants.kVelTol);
 
         this.kMaxPosition = constants.kMaxPosition;
         this.kMinPosition = constants.kMinPosition;
@@ -168,12 +164,16 @@ public class SimpleFourbarSubsystem extends Subsystem {
         mPeriodicIO.demand = volts;
     }
 
-    public void setSmartMotionSetpoint(double position_radians) {
+    public void setSmartMotionSetpoint(double position_radians){
+        setSmartMotionSetpoint(position_radians, false);
+    }
+
+    public void setSmartMotionSetpoint(double position_radians, boolean forceReset) {
         if (mControlState != ControlState.SMART_MOTION) {
             mControlState = ControlState.SMART_MOTION;
         }
 
-        if (Util.epsilonEquals(mStateSetpoint.position, position_radians))
+        if (Util.epsilonEquals(mStateSetpoint.position, position_radians) && !forceReset)
             return;
 
         mProfileStartTime = mPeriodicIO.timestamp;
@@ -182,7 +182,6 @@ public class SimpleFourbarSubsystem extends Subsystem {
         mStateSetpoint = new State(Util.limit(position_radians, kMinPosition, kMaxPosition), 0.0);
         isMaintain = false;
         mSparkPIDController.setIAccum(0.0);
-        mProfiledPIDController.reset(mPeriodicIO.meas_state);
         start_state = mPeriodicIO.meas_state;
         start_state.velocity = 0.0;
     }
@@ -325,7 +324,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
                     if (!Util.epsilonEquals(mPeriodicIO.meas_position_units, mStateSetpoint.position,
                             Math.toRadians(22.5))) {
-                        setSmartMotionSetpoint(mStateSetpoint.position);
+                        setSmartMotionSetpoint(mStateSetpoint.position, true);
 
                         break;
                     }

@@ -257,6 +257,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     try {
+      mControlBoard.update();
+
       if (mControlBoard.wantZeroHeading()) {
         mDriveSubsystem.zeroHeading(zeroHeading.getDegrees());
       }
@@ -273,9 +275,9 @@ public class Robot extends TimedRobot {
       }
 
       if (mControlBoard.wantDemoLimits()) {
-        mDriveSubsystem.setKinematicLimits(DriveConstants.kDemoLimits);
+        mDriveSubsystem.setKinematicLimits(DriveSubsystem.KinematicLimitState.DEMO);
       } else {
-        mDriveSubsystem.setKinematicLimits(DriveConstants.kUncappedLimits);
+        mDriveSubsystem.setKinematicLimits(DriveSubsystem.KinematicLimitState.UNCAPPED);
       }
       
       // -------------------------------------------- TEMPORARY FOR CALIBRATION --------------------------------------------

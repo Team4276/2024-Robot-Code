@@ -11,11 +11,31 @@ public class BetterXboxController extends XboxController {
     }
 
     public void update(){
-        if(rumbleStartTime + 0.25 > Timer.getFPGATimestamp()){
+        if(isRumble && !hasRumble){
+            rumbleStartTime = Timer.getFPGATimestamp();
+            wantRumble = true;
+            hasRumble = true;
+
+        } else if(!isRumble){
+            hasRumble = false;
+
+        }
+
+        if(wantRumble){
+            if(rumbleStartTime + 0.25 < Timer.getFPGATimestamp()){
+                setRumble(RumbleType.kBothRumble, 0.25);
+
+            } else {
+                wantRumble = false;
+
+            }
+        } else {
             setRumble(RumbleType.kBothRumble, 0.0);
             rumbleStartTime = -1.0;
 
         }
+
+        
     }
 
     public boolean isPOVUPPressed(){
@@ -91,14 +111,11 @@ public class BetterXboxController extends XboxController {
     }
 
     private double rumbleStartTime = -1.0;
-    private boolean hasRumbled = false;
+    private boolean wantRumble = false;
+    private boolean isRumble = false;
+    private boolean hasRumble = false;
 
     public void shortRumble(){
-        if(!hasRumbled){
-            hasRumbled = true;
-            rumbleStartTime = Timer.getFPGATimestamp();
-            setRumble(RumbleType.kBothRumble, 0.25);
-
-        }
+        isRumble = true;
     }
 }
