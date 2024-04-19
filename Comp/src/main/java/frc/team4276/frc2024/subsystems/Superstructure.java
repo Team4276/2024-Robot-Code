@@ -40,7 +40,7 @@ public class Superstructure extends Subsystem {
 
     private double mDesiredFourBarVoltage = 0.0;
     private double mCommandedFourBarVoltage = 0.0;
-    private boolean isFourBarVoltageControl = false;
+    private boolean isFourBarVoltageControl = true;
 
     private FlywheelState mDesiredFlywheelState = FlywheelState.identity();
     private FlywheelState mCommandedFlywheelState = FlywheelState.identity();
