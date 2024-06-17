@@ -85,7 +85,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
         // mMaster.setEncoderLimit(kMinPosition, Direction.NEGATIVE, false, 0.1);
         // mMaster.setEncoderLimit(kMaxPosition, Direction.POSITIVE, true, 0.1);
 
-        mFollower = new CANSparkMax(9, MotorType.kBrushless);
+        mFollower = new CANSparkMax(13, MotorType.kBrushless);
         mFollower.restoreFactoryDefaults();
         mFollower.enableVoltageCompensation(constants.kVoltageCompensation);
         mFollower.setSmartCurrentLimit(constants.kSmartCurrentLimit);
@@ -300,7 +300,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
 
             case VOLTAGE:
                 // mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
-                // mMaster.setVoltage(mPeriodicIO.demand);
+                mMaster.setVoltage(mPeriodicIO.demand);
 
                 break;
 
@@ -335,7 +335,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
                     break;
                 }
 
-                // mMaster.setVoltage(mPeriodicIO.feed_forward);
+                mMaster.setVoltage(mPeriodicIO.feed_forward);
 
                 // SmartDashboard.putNumber("Test Trapezoid Des Position", des_state.position);
                 // SmartDashboard.putNumber("Test Trapezoid Des Velocity", des_state.velocity);
@@ -396,7 +396,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 // }
 
                 mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
-                // mMaster.setVoltage(mPeriodicIO.feed_forward);
+                mMaster.setVoltage(mPeriodicIO.feed_forward);
 
                 break;
 
@@ -429,7 +429,7 @@ public class SimpleFourbarSubsystem extends Subsystem {
                 prev_des_state.velocity = mPeriodicIO.velocity_test;
 
                 mMaster.updateEncoderForLimits(mPeriodicIO.meas_position_units);
-                // mMaster.setVoltage(mPeriodicIO.feed_forward);
+                mMaster.setVoltage(mPeriodicIO.feed_forward);
                 SmartDashboard.putNumber("Fourbar Feedforward Voltage", mPeriodicIO.feed_forward);
 
                 break;

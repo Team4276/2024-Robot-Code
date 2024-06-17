@@ -314,12 +314,12 @@ public final class Constants {
   public static final class SuperstructureConstants {
     public static final FourBarFeedForwardConstants kFourbarFFConstants = new FourBarFeedForwardConstants();
     static {
-      kFourbarFFConstants.kS = 0.185 * 2;
+      kFourbarFFConstants.kS = 0.185;
 
       kFourbarFFConstants.kMotorFreeSpeedRpm = 5676.0;
       kFourbarFFConstants.kGearRatio = 232.14;
       kFourbarFFConstants.kStallTorque = 3.28;
-      kFourbarFFConstants.kMotorAmnt = 1;
+      kFourbarFFConstants.kMotorAmnt = 2;
       kFourbarFFConstants.kEfficiency = 0.2155;
 
       kFourbarFFConstants.kBottomLength = Units.inchesToMeters(8.001578);
@@ -341,8 +341,8 @@ public final class Constants {
 
     public static final ServoMotorSubsystemConstants kFourBarConstants = new ServoMotorSubsystemConstants();
     static {
-      kFourBarConstants.kMasterConstants.id = 13;
-      kFourBarConstants.kMasterConstants.isInverted = true;
+      kFourBarConstants.kMasterConstants.id = 9;
+      kFourBarConstants.kMasterConstants.isInverted = false;
 
       // kFourBarConstants.kFollowerConstants[0].id = 13;
       // kFourBarConstants.kFollowerConstants[0].isInverted = true;
