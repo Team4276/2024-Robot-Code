@@ -61,7 +61,7 @@ public class LimeLight extends Subsystem {
 
     private LimeLight() {
         mNetworkTable = NetworkTableInstance.getDefault().getTable("limelight");
-
+        
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         mCameraMatrix = new Mat(3, 3, CV_64FC1);
@@ -79,11 +79,10 @@ public class LimeLight extends Subsystem {
         private int tagId;
         private Pose2d fieldToTag;
 
-        public VisionUpdate(double timestamp, Translation2d cameraToTarget, Apriltag apriltag) {
+        public VisionUpdate(double timestamp, Translation2d cameraToTarget, int tagId) {
             this.timestamp = timestamp;
             this.cameraToTarget = cameraToTarget;
-            this.tagId = apriltag.getId();
-            this.fieldToTag = apriltag.getTagInField();
+            this.fieldToTag = mTagMap.get(tagId).getTagInField();
         }
 
         public double getTimestamp() {
@@ -131,7 +130,6 @@ public class LimeLight extends Subsystem {
 
     /**
      * Returns the Tag Id
-     * 
      * @return
      */
     public int getTagId() {
@@ -160,32 +158,24 @@ public class LimeLight extends Subsystem {
         mPeriodicIO.tagId = (int) mNetworkTable.getEntry("tid").getNumber(-1).doubleValue();
         mPeriodicIO.targetDistanceToRobot = mNetworkTable.getEntry("targetpose_cameraspace")
                 .getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 });
-        mPeriodicIO.corners = mNetworkTable.getEntry("tcornxy").getNumberArray(new Number[] { 0, 0, 0, 0, 0 });
-        Apriltag apriltag = mTagMap.get(mPeriodicIO.tagId);
+        mPeriodicIO.corners = mNetworkTable.getEntry("tcornxy").getNumberArray(new Number[] { 0, 0, 0, 0, 0});
 
         // for (int i = 0; i < mPeriodicIO.corners.length; i++) {
-        // SmartDashboard.putNumber("Corner " + i,
-        // mPeriodicIO.corners[i].doubleValue());
+        //     SmartDashboard.putNumber("Corner " + i, mPeriodicIO.corners[i].doubleValue());
         // }
 
         if (mPeriodicIO.seesTarget) {
-            Translation2d cameraToTarget = null;
-
-            if (apriltag != null) {
-                cameraToTarget = getTargetDistance();
-            
-            }
-
-            if (cameraToTarget != null) {
+            if (mTagMap.keySet().contains(mPeriodicIO.tagId) && mPeriodicIO.targetDistanceToRobot != null) {
                 RobotState.getInstance().visionUpdate(
                         new VisionUpdate(timestamp - mPeriodicIO.latency,
-                                cameraToTarget.inverse(),
-                                apriltag));
+                                getTargetDistance().inverse(),
+                                mPeriodicIO.tagId));
 
             } else {
                 RobotState.getInstance().visionUpdate(null);
             }
 
+            
         }
 
     }
@@ -196,9 +186,9 @@ public class LimeLight extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        // SmartDashboard.putNumber("imageCaptureLatency",
-        // mPeriodicIO.imageCaptureLatency);
+        // SmartDashboard.putNumber("imageCaptureLatency", mPeriodicIO.imageCaptureLatency);
         // SmartDashboard.putNumber("latency", mPeriodicIO.latency);
+
 
     }
 
@@ -221,43 +211,30 @@ public class LimeLight extends Subsystem {
         });
     }
 
-    public Translation2d getTargetDistance() {
-        Translation2d xz_plane_translation = new Translation2d(mPeriodicIO.targetDistanceToRobot[2],
-                mPeriodicIO.targetDistanceToRobot[0]).rotateBy(LimelightConstants.kLimeLightTilt);
-        double x = xz_plane_translation.x();
-        double y = mPeriodicIO.targetDistanceToRobot[1];
-        double z = xz_plane_translation.y();
+    public Translation2d getTargetDistance(){
+        //TODO: fix this D:
+        double x = Math.cos(LimelightConstants.kLimeLightTilt.getRadians()) * mPeriodicIO.targetDistanceToRobot[2];
 
-        // find intersection with the goal
-        double differential_height = mTagMap.get(mPeriodicIO.tagId).getHeight() - LimelightConstants.kLensHeight;
-        if ((z > 0.0) == (differential_height > 0.0)) {
-            double scaling = differential_height / z;
-            double distance = Math.hypot(x, y) * scaling;
-            Rotation2d angle = new Rotation2d(x, y, true);
-            return new Translation2d(distance * angle.cos(), distance * angle.sin());
-        }
-
-        return null;
+        return new Translation2d(x, mPeriodicIO.targetDistanceToRobot[0]);
     }
 
     /**
      * Returns to the 2D Translation from the Camera to the Center of the April Tag
-     * 
      * @return
      */
     public synchronized Translation2d getCameraToTargetTranslation() {
-        // Get all Corners Normalized
-        List<TargetInfo> targetPoints = getTarget();
+        //Get all Corners Normalized
+        List<TargetInfo> targetPoints  = getTarget();
         if (targetPoints == null || targetPoints.size() < 4) {
             return null;
         }
-        // Project Each Corner into XYZ Space
+        //Project Each Corner into XYZ Space
         Translation2d cameraToTagTranslation = Translation2d.identity();
         List<Translation2d> cornerTranslations = new ArrayList<>(targetPoints.size());
         for (int i = 0; i < targetPoints.size(); i++) {
             Translation2d cameraToCorner;
 
-            // Add 3 Inches to the Height of Top Corners
+            //Add 3 Inches to the Height of Top Corners
             if (i < 2) {
                 cameraToCorner = getCameraToPointTranslation(targetPoints.get(i), true);
             } else {
@@ -270,7 +247,7 @@ public class LimeLight extends Subsystem {
             cameraToTagTranslation = cameraToTagTranslation.translateBy(cameraToCorner);
         }
 
-        // Divide by 4 to get the average Camera to Goal Translation
+        //Divide by 4 to get the average Camera to Goal Translation
         cameraToTagTranslation = cameraToTagTranslation.scale(0.25);
 
         return cameraToTagTranslation;
@@ -279,23 +256,20 @@ public class LimeLight extends Subsystem {
 
     /**
      * Pinhole Camera Calculations
-     * 
-     * @param target      Normalized Coordinates
+     * @param target Normalized Coordinates
      * @param isTopCorner whether the point we're receiving is a Top Corner
      * @return the 2D Translation from Camera to Goal
      */
     public synchronized Translation2d getCameraToPointTranslation(TargetInfo target, boolean isTopCorner) {
         // Compensate for camera pitch
-        Translation2d xz_plane_translation = new Translation2d(target.getX(), target.getZ()).rotateBy(
-                Rotation2d.fromDegrees(LimelightConstants.kLimelightConstants.getHorizontalPlaneToLens().getDegrees()));
+        Translation2d xz_plane_translation = new Translation2d(target.getX(), target.getZ()).rotateBy(Rotation2d.fromDegrees(LimelightConstants.kLimelightConstants.getHorizontalPlaneToLens().getDegrees()));
         double x = xz_plane_translation.x();
         double y = target.getY();
         double z = xz_plane_translation.y();
 
-        double offset = isTopCorner ? Units.inches_to_meters(3) : -Units.inches_to_meters(3);
+        double offset = isTopCorner ? Units.inches_to_meters(3) : - Units.inches_to_meters(3);
         // find intersection with the goal
-        double differential_height = mTagMap.get(target.getTagId()).getHeight() - LimelightConstants.kLensHeight
-                + offset;
+        double differential_height = mTagMap.get(target.getTagId()).getHeight() - LimelightConstants.kLensHeight + offset;
         if ((z > 0.0) == (differential_height > 0.0)) {
             double scaling = differential_height / z;
             double distance = Math.hypot(x, y) * scaling;
@@ -309,7 +283,6 @@ public class LimeLight extends Subsystem {
 
     /**
      * Get the Normalized Corners
-     * 
      * @return
      */
     public List<TargetInfo> getTarget() {
@@ -329,14 +302,14 @@ public class LimeLight extends Subsystem {
 
         }
 
+
         return targetInfos;
     }
 
     /**
      * Returns Normalized Undistorted View Plane Coordinate
-     * 
      * @param desiredTargetPixel Raw Pixel Value
-     * @param tagId              Tag ID
+     * @param tagId Tag ID
      * @return Normalized Target Info ready for Pinhole Calculations
      */
     public synchronized TargetInfo getRawTargetInfo(Translation2d desiredTargetPixel, int tagId) {
@@ -347,24 +320,22 @@ public class LimeLight extends Subsystem {
             UndistortMap undistortMap = LimelightConstants.kLimelightConstants.getUndistortMap();
             if (undistortMap == null) {
                 try {
-                    undistortedNormalizedPixelValues = undistortFromOpenCV(
-                            new double[] { desiredTargetPixel.x() / LimelightConstants.kResolutionWidth,
-                                    desiredTargetPixel.y() / LimelightConstants.kResolutionHeight });
+                    undistortedNormalizedPixelValues = undistortFromOpenCV(new double[]{desiredTargetPixel.x() / LimelightConstants.kResolutionWidth, desiredTargetPixel.y() / LimelightConstants.kResolutionHeight});
                 } catch (Exception e) {
                     DriverStation.reportError("Undistorting Point Throwing Error!", false);
                     return null;
                 }
             } else {
-                undistortedNormalizedPixelValues = undistortMap
-                        .pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
+                undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
             }
 
             double y_pixels = undistortedNormalizedPixelValues[0];
             double z_pixels = undistortedNormalizedPixelValues[1];
 
-            // Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
-            // OpenCV: Positive Downward and Right
-            // Robot: Positive Upward and Left
+
+            //Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
+            //OpenCV: Positive Downward and Right
+            //Robot: Positive Upward and Left
             double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
             double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
 
@@ -377,7 +348,6 @@ public class LimeLight extends Subsystem {
 
     /**
      * Stores each Corner received by LL as a Translation2d for further processing
-     * 
      * @param tcornxy array from LL with Pixel Coordinate
      * @return List of Corners
      */
@@ -405,15 +375,13 @@ public class LimeLight extends Subsystem {
 
         MatOfPoint2f coordMat = new MatOfPoint2f(coord);
 
-        if (coordMat.empty() || mCameraMatrix.empty() || mDistortionCoeffients.empty())
-            throw new Exception("Matrix Required For Undistortion Is Empty!");
+        if (coordMat.empty() || mCameraMatrix.empty() || mDistortionCoeffients.empty()) throw new Exception("Matrix Required For Undistortion Is Empty!");
 
         Point dstCoord = new Point();
         MatOfPoint2f dst = new MatOfPoint2f(dstCoord);
         Calib3d.undistortImagePoints(coordMat, dst, mCameraMatrix, mDistortionCoeffients);
 
-        if (dst.empty() || dst.rows() < 1 || dst.cols() < 1)
-            throw new Exception("Undistorted Point Matrix is Empty or undersized!");
+        if (dst.empty() || dst.rows() < 1 || dst.cols() < 1) throw new Exception("Undistorted Point Matrix is Empty or undersized!");
 
         return dst.get(0, 0);
     }
@@ -428,7 +396,6 @@ public class LimeLight extends Subsystem {
     }
 
     @Override
-    public void stop() {
-    }
+    public void stop() {}
 
 }

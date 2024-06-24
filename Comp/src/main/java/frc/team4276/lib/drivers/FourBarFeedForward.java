@@ -7,7 +7,7 @@ import frc.team4276.lib.util.Util;
 import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.geometry.Rotation2d;
 
-public class FourBarFeedForward {
+public class FourBarFeedForward implements FeedForwardCharacterization {
     // Constants
     private double kS; // Volts
     private final double kV; // Volts * s / rad
@@ -120,22 +120,27 @@ public class FourBarFeedForward {
         kEfficiency = efficiency;
     }
 
+    @Override
+    public double calculate(double pos, double vel, double accel) {
+        updateInsideAngles(pos);
+        updateRelevantAngles();
+        updateComs();
+
+        double gravity_voltage = calcGravityVoltage(pos);
+        double velocity_voltage = kV * vel;
+
+        SmartDashboard.putNumber("Fourbar Gravity Voltage", gravity_voltage);
+        SmartDashboard.putNumber("Fourbar Velocity Voltage", velocity_voltage);
+        return gravity_voltage + (kS * Math.signum(vel)) + velocity_voltage;
+    }
+
     /**
      * @param position_setpoint radians
      * @param velocity_setpoint radians / s
      * @return
      */
     public double calculate(double position_setpoint, double velocity_setpoint) {
-        updateInsideAngles(position_setpoint);
-        updateRelevantAngles();
-        updateComs();
-
-        double gravity_voltage = calcGravityVoltage(position_setpoint);
-        double velocity_voltage = kV * velocity_setpoint;
-
-        SmartDashboard.putNumber("Fourbar Gravity Voltage", gravity_voltage);
-        SmartDashboard.putNumber("Fourbar Velocity Voltage", velocity_voltage);
-        return gravity_voltage + (kS * Math.signum(velocity_setpoint)) + velocity_voltage;
+        return calculate(position_setpoint, velocity_setpoint, 0.0);
     }
 
     // private double calcAccelerationVoltage(){

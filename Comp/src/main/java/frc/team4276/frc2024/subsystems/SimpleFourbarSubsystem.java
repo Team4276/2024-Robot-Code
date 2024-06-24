@@ -20,7 +20,7 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.drivers.FourBarFeedForward;
-import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
+import frc.team4276.lib.drivers.OldServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.revlib.VIKCANSparkServoMotor;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;

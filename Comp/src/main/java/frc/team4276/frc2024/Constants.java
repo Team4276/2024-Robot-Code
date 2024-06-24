@@ -19,8 +19,9 @@ import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
 import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team4276.frc2024.subsystems.DriveSubsystem.KinematicLimits;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem.DesiredFlywheelMode;
+import frc.team4276.lib.drivers.FourBarFeedForward;
 import frc.team4276.lib.drivers.FourBarFeedForward.FourBarFeedForwardConstants;
-import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
+import frc.team4276.lib.drivers.OldServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.motion.ProfileFollower.ProfileFollowerConstants;
 
 import frc.team254.lib.geometry.Pose2d;
@@ -422,6 +423,17 @@ public final class Constants {
 
     public static double kTolerance = Math.toRadians(1.0);
 
+  }
+
+  
+  public static class Test{
+    public static frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants testconstants = new
+      frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants();
+
+    //TODO: Dont init in a static block
+    static {
+      testconstants.kFeedForwardCharacterization = new FourBarFeedForward(null);
+    }
   }
 
 }

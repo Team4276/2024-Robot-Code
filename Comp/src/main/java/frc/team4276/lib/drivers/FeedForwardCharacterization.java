@@ -9,4 +9,6 @@ package frc.team4276.lib.drivers;
  */
 public interface FeedForwardCharacterization {
     
+    public double calculate(double pos, double vel, double accel);
+    
 }
