@@ -33,7 +33,7 @@ public final class Constants {
 
     // Enables extra SmartDashboard Debugs
     // Don't use during competition
-    public static final boolean disableExtraTelemetry = false;
+    public static final boolean disableExtraTelemetry = false; //TODO: move into logger
 
     public static final class DebugConstants {
         public static final boolean writeSwerveErrors = true;
@@ -224,20 +224,6 @@ public final class Constants {
                 Math.pow(0.01, 1));
     }
 
-    public static final class SuperstructureConstants {
-        // Radians
-        public static final double kFourbarStowState = Math.toRadians(120.0);
-        public static final double kFourbarPrepState = Math.toRadians(90.0);
-        public static final double kFourbarIntakeState = Math.toRadians(49.0);
-        public static final double kFourbarSubCloseState = Math.toRadians(45.0);
-        public static final double kFourbarFerryState = Math.toRadians(45.0);
-
-        public static final int kNormalShotRPM = 3500;
-
-        public static final double kShotWaitTime = 0.5;
-        public static final double kExhaustWaitTime = 0.5;
-    }
-
     public static final class FourbarConstants {
         public static final FourBarFeedForward.FourBarFeedForwardConstants kFeedForwardConstants = new FourBarFeedForward.FourBarFeedForwardConstants();
         static {
@@ -351,12 +337,26 @@ public final class Constants {
         public static double kS_Top = 0.188;
         public static double kS_Bottom = 0.188;
         // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel
-        public static double kV_Top = 0.0020014125023555073743193198053;
-        public static double kV_Bottom = 0.0020014125023555073743193198053;
+        public static double kV_Top = 0.002;
+        public static double kV_Bottom = 0.002;
         public static double kA = 0;
 
         public static double kPrep = 2.0; // Volts
 
-        public static double kFlywheelAllowableError = 300.0;
+        public static double kFlywheelAllowableError = 300.0; //TODO: add wait for spin up logic
+    }
+
+    public static final class SuperstructureConstants {
+        // Radians
+        public static final double kFourbarStowState = Math.toRadians(120.0);
+        public static final double kFourbarPrepState = Math.toRadians(90.0);
+        public static final double kFourbarIntakeState = Math.toRadians(49.0);
+        public static final double kFourbarSubCloseState = Math.toRadians(45.0);
+        public static final double kFourbarFerryState = Math.toRadians(45.0);
+
+        public static final int kNormalShotRPM = 3500;
+
+        public static final double kShotWaitTime = 0.5;
+        public static final double kExhaustWaitTime = 0.5;
     }
 }

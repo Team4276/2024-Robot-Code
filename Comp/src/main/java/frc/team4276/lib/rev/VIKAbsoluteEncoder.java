@@ -10,6 +10,5 @@ public class VIKAbsoluteEncoder implements VIKEncoder {
     public VIKAbsoluteEncoder(CANSparkBase sparkMax){
         mEncoder = sparkMax.getAbsoluteEncoder();
     }
-
     
 }

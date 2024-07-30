@@ -30,6 +30,7 @@ public class CANSparkMaxFactory {
         return sparkMax;
     }
 
+    //TODO: create configurator for encoders
     public static VIKCANSparkMaxServo createDefaultServo(int id){
         VIKCANSparkMaxServo sparkMax = new VIKCANSparkMaxServo(id);
 
