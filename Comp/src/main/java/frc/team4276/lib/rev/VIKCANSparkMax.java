@@ -1,6 +1,8 @@
 package frc.team4276.lib.rev;
 
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
 
 public class VIKCANSparkMax extends CANSparkMax {
     public VIKCANSparkMax(int deviceId) {
@@ -15,6 +17,10 @@ public class VIKCANSparkMax extends CANSparkMax {
         IdleMode mode = brake ? IdleMode.kBrake : IdleMode.kCoast;
 
         setIdleMode(mode);
+    }
+
+    public void setReference(double value, CANSparkBase.ControlType ctrl, int pidSlot, double arbFeedforward, SparkPIDController.ArbFFUnits arbFFUnits) {
+        getPIDController().setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);
     }
 
 }

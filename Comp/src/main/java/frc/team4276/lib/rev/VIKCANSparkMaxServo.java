@@ -47,8 +47,9 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     private double profile_timestamp_fuse;
     private double[] profile_start_fuse = { Double.NaN, Double.NaN };
 
-    //TODO: fix looper closing logic
     private Notifier looper = new Notifier(this::updateFuse);
+
+    private boolean isFuseMotion = false;
 
     /**
      * @return true if successful
@@ -57,8 +58,10 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         if (kFuseMotionFF == null)
             return false;
 
-        if (this.setpoint_fuse[0] == setpoint)
+        if (isFuseMotion && setpoint_fuse[0] == setpoint)
             return true;
+
+        isFuseMotion = true;
 
         this.setpoint_fuse[0] = setpoint;
         profile_timestamp_fuse = Timer.getFPGATimestamp();
@@ -71,6 +74,11 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     }
 
     private void updateFuse() {
+        if(!isFuseMotion){
+            looper.stop();
+            return;
+        }
+
         double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
                 profile_start_fuse, setpoint_fuse);
 
@@ -78,5 +86,20 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
                 kFuseMotionFF.calculate(state[0], state[1]), ArbFFUnits.kVoltage);
 
     }
+
+    @Override
+    public void setVoltage(double outputVolts) {
+        isFuseMotion = false;
+        super.setVoltage(outputVolts);
+    }
+
+    @Override
+    public void setReference(double value, ControlType ctrl, int pidSlot, double arbFeedforward,
+            ArbFFUnits arbFFUnits) {
+        isFuseMotion = false;
+        super.setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);
+    }
+
+    
 
 }
