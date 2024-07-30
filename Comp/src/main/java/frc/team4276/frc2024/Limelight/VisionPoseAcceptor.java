@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team254.lib.geometry.Pose2d;
 
-//TODO: change the logic for this lol
+//TODO: calibrate
 public class VisionPoseAcceptor {
     public boolean shouldAcceptVision(Pose2d vehicleToTag, ChassisSpeeds speeds) {
         if (DriverStation.isAutonomous()) {

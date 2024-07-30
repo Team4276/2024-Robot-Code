@@ -2,8 +2,6 @@ package frc.team4276.frc2024.auto.actions;
 
 import java.lang.Math;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -11,14 +9,13 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 
-import frc.team4276.frc2024.Constants.AutoConstants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.lib.drivers.EmptySubsystem;
 import frc.team4276.frc2024.RobotState;
 
-
+import frc.team254.lib.geometry.Pose2d;
 
 public class PPSwerveTrajectoryAction implements Action {
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
@@ -35,25 +32,25 @@ public class PPSwerveTrajectoryAction implements Action {
     public PPSwerveTrajectoryAction(String name) {
         path = PathPlannerPath.fromPathFile(name);
 
-        Alliance alliance = AllianceChooser.getInstance().getAlliance();
+        boolean isRed = AllianceChooser.getInstance().isAllianceRed();
 
         mCommand = new FollowPathHolonomic(
             path, 
             mRobotState::getWPICurrentFieldToVehicle, 
             mDriveSubsystem::getWPIMeasSpeeds, 
             mDriveSubsystem::updatePPPathFollowingSetpoint, 
-            AutoConstants.kTranslationPIDConstants, 
-            AutoConstants.kRotationPIDConstants, 
+            DriveConstants.kAutoTranslationPIDConstants, 
+            DriveConstants.kAutoRotationPIDConstants, 
             DriveConstants.kMaxVel, 
             DriveConstants.kTrackWidth * Math.sqrt(2) / 2, 
             new ReplanningConfig(), 
-            () -> alliance == Alliance.Red, 
+            () -> isRed, 
             new EmptySubsystem());
 
-        initialPose = alliance == Alliance.Red ? path.flipPath().getPreviewStartingHolonomicPose() 
-            : path.getPreviewStartingHolonomicPose();        
+        initialPose = Pose2d.fromWPI(isRed ? path.flipPath().getPreviewStartingHolonomicPose() 
+            : path.getPreviewStartingHolonomicPose());        
 
-        SmartDashboard.putString("Loaded path with alliance", alliance.name());
+        SmartDashboard.putString("Loaded path with alliance", isRed ? "Red" : "Blue");
     }
 
     @Override

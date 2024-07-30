@@ -1,10 +1,14 @@
 package frc.team4276.frc2024.controlboard;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
+import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DigitalInput;
+
 import frc.team1678.lib.Util;
 
 public class ControlBoard {
@@ -27,8 +31,8 @@ public class ControlBoard {
         driver = new BetterXboxController(OIConstants.kDriverControllerPort);
         operator = new BetterXboxController(OIConstants.kOpControllerPort);
         
-        climberSetting = new DigitalInput(6);
-        fourbarSetting = new DigitalInput(7);
+        climberSetting = new DigitalInput(Ports.CLIMBER_BRAKE_SWITCH);
+        fourbarSetting = new DigitalInput(Ports.FOURBAR_BRAKE_SWITCH);
     }
 
     public void update(){
@@ -80,94 +84,59 @@ public class ControlBoard {
     }
 
     boolean isDemo = false;
-    boolean hasPressed = false;
+    boolean hasReleased = false;
     public boolean wantDemoLimits(){
-        if(hasPressed && !driver.isPOVUPPressed()){
-            hasPressed = false;
-            if(isDemo){
-                isDemo = false;
-            } else {
-                isDemo = true;
-            }
+        if(!driver.isPOVUPPressed()){
+            hasReleased = true;
             
-        } 
+        }
 
-        if(driver.isPOVUPPressed()){
-            hasPressed = true;
+        if(driver.isPOVUPPressed() && hasReleased){
+            hasReleased = false;
+            isDemo = !isDemo;
         }
 
         return isDemo;
     }
 
-    public boolean wantSlowtake(){
-        return driver.getRightBumper();
-    }
-
-    public boolean wantFastake(){
+    public boolean wantIntake(){
         return driver.getRT();
     }
     
-    public boolean wantPoop(){
+    public boolean wantExhaust(){
         return driver.getBButton();
     }
 
-    public boolean wantSLowerClimber(){
+    public boolean wantSlowLowerClimber(){
         return driver.getLeftBumper();
     }
 
-    public boolean wantFLowerClimber(){
+    public boolean wantLowerClimber(){
         return driver.getLT();
     }
 
+    public boolean wantAutoLock(){
+        return driver.getYButton();
+    }
 
     // Operator Controls
+    public boolean wantClimbMode(){
+        return true;
+    }
+
     public boolean wantStow(){
         return operator.getLeftStickButtonPressed();
     }
 
-    public boolean wantReadyMiddle(){
+    public boolean wantPrep(){
         return operator.isPOVUPPressed();
     }
 
-    public boolean wantReadyLow(){
-        return operator.isPOVDOWNPressed();
-    }
-
-    public boolean wantSubClose(){
-        return operator.isPOVRIGHTPressed();
-    }
-
-    public boolean wantPodium(){
-        return operator.isPOVLEFTPressed();
-    }
-
-    public boolean wantAmp(){
-        return operator.getYButtonPressed();
-    }
-
-    public boolean wantAutoLock(){
+    public boolean wantDynamic(){
         return operator.getLeftBumperPressed();
     }
 
-    // public boolean wantScore(){
-    //     return operator.getRT();
-    // }
-
-    private boolean wantAutoScore = false;
-
-    public boolean wantAutoScore(){
-        if(!operator.getBButton()) return wantAutoScore;
-
-        if(wantAutoScore){
-            wantAutoScore = false;
-        } else {
-            wantAutoScore = true;
-        }
-
-        return wantAutoScore;
-    }
-
-    public boolean wantFoot(){
+    public boolean wantShoot(){
         return operator.getRT();
     }
 
@@ -178,11 +147,6 @@ public class ControlBoard {
     public boolean wantRaiseClimber(){
         return operator.getRightBumper();
     }
-
-    public boolean wantQueuedState(){
-        return operator.getLT();
-    }
-
 
     // Robot Button Board
     public boolean wantClimberCoastMode(){

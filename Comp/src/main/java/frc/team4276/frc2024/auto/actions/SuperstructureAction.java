@@ -2,6 +2,7 @@ package frc.team4276.frc2024.auto.actions;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.frc2024.subsystems.Superstructure;
+import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 
 public class SuperstructureAction implements Action {
     protected final Superstructure mSuperstructure = Superstructure.getInstance();
@@ -31,13 +32,9 @@ public class SuperstructureAction implements Action {
     @Override
     public boolean isFinished() {
         if (mTimeout >= 0 && Timer.getFPGATimestamp() - mStartTime >= mTimeout) return true;
-        return mDesiredState.state.isShootingState ? !mSuperstructure.isHoldingNote() : mSuperstructure.atGoal();
+        return mDesiredState == GoalState.SHOOT && !mSuperstructure.isHoldingNote();
     }
 
     @Override
-    public void done() {
-        if(mDesiredState.state.isShootingState && mSuperstructure.isHoldingNote()){
-            mSuperstructure.SHOOT();
-        }
-    }
+    public void done() {}
 }

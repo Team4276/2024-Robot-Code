@@ -1,36 +1,38 @@
 package frc.team4276.frc2024.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+import frc.team4276.frc2024.Ports;
 import frc.team4276.lib.drivers.Subsystem;
+import frc.team4276.lib.rev.VIKCANSparkMax;
+import frc.team4276.lib.rev.CANSparkMaxFactory;
 
 public class ClimberSubsystem extends Subsystem {
-    private CANSparkMax mRightMotor;
-    private CANSparkMax mLeftMotor;
+    private VIKCANSparkMax mRightMotor;
+    private VIKCANSparkMax mLeftMotor;
 
     private DigitalInput mRightLimit;
     private DigitalInput mLeftLimit;
 
-    private RelativeEncoder mRightEncoder;
-    private RelativeEncoder mLeftEncoder;
-
     private double mDesiredVoltage;
 
-    public enum DesiredState {
-        IDLE,
-        RAISE,
-        F_LOWER,
-        S_LOWER
+    public enum State {
+        IDLE(0.0),
+        RAISE(3.0),
+        LOWER(-7.0),
+        SLOW_LOWER(-4.0);
+
+        public double voltage;
+
+        State(double voltage) {
+            this.voltage = voltage;
+        }
     }
 
-    private DesiredState mDesiredState = DesiredState.IDLE;
+    private State mState = State.IDLE;
     
     private static ClimberSubsystem mInstance;
 
@@ -43,57 +45,35 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     private ClimberSubsystem(){
-        mRightMotor = new CANSparkMax(15, MotorType.kBrushless);
-        mLeftMotor = new CANSparkMax(14, MotorType.kBrushless);
-
-        mRightEncoder = mRightMotor.getEncoder();
-        mLeftEncoder = mLeftMotor.getEncoder();
-
-        mRightMotor.restoreFactoryDefaults();
-        mLeftMotor.restoreFactoryDefaults();
-
-        mRightMotor.setIdleMode(IdleMode.kBrake);
-        mLeftMotor.setIdleMode(IdleMode.kBrake);
-
-        mRightMotor.setSmartCurrentLimit(40);
-        mLeftMotor.setSmartCurrentLimit(40);
-
-        mRightMotor.enableVoltageCompensation(12);
-        mLeftMotor.enableVoltageCompensation(12);
-
+        mRightMotor = CANSparkMaxFactory.createDefault(Ports.CLIMBER_RIGHT);
         mRightMotor.setInverted(false);
-        mLeftMotor.setInverted(true);
-
-        mRightEncoder.setAverageDepth(2);
-        mLeftEncoder.setAverageDepth(2);
-
-        mRightEncoder.setMeasurementPeriod(10);
-        mLeftEncoder.setMeasurementPeriod(10);
-
-        mRightEncoder.setVelocityConversionFactor(1);
-        mLeftEncoder.setVelocityConversionFactor(1);
-
-        mRightLimit = new DigitalInput(2);
-        mLeftLimit = new DigitalInput(3);
-
+        mRightMotor.setWantBrakeMode(true);
+        mRightMotor.setSmartCurrentLimit(40);
         mRightMotor.burnFlash();
+
+        mLeftMotor = CANSparkMaxFactory.createDefault(Ports.CLIMBER_LEFT);
+        mLeftMotor.setInverted(true);
+        mLeftMotor.setWantBrakeMode(true);
+        mLeftMotor.setSmartCurrentLimit(40);
         mLeftMotor.burnFlash();
+        
+
+        mRightLimit = new DigitalInput(Ports.CLIMBER_LIMIT_RIGHT);
+        mLeftLimit = new DigitalInput(Ports.CLIMBER_LIMIT_LEFT);
     }
 
-    public void setDesiredState(DesiredState state){
-        mDesiredState = state;
+    public void setDesiredState(State state){
+        mState = state;
     }
 
-    public void setIdleMode(IdleMode mode){
-        if(mode == mLeftMotor.getIdleMode()) return;
-
-        mRightMotor.setIdleMode(mode);
-        mLeftMotor.setIdleMode(mode);
+    public void setWantBrakeMode(boolean brake){
+        mRightMotor.setWantBrakeMode(brake);
+        mLeftMotor.setWantBrakeMode(brake);
     }
 
     @Override
     public void stop() {
-        mDesiredState = DesiredState.IDLE;
+        mState = State.IDLE;
     }
     
     @Override
@@ -101,35 +81,12 @@ public class ClimberSubsystem extends Subsystem {
         enabledLooper.register(new Loop() {
             @Override
             public void onStart(double timestamp) {
-                setIdleMode(IdleMode.kBrake);
+                setWantBrakeMode(true);
             }
 
             @Override
             public void onLoop(double timestamp) {
-                try{
-                switch (mDesiredState) {
-                    case IDLE:
-                        mDesiredVoltage = 0.0;
-
-                        break;
-                    case RAISE:
-                        mDesiredVoltage = 3.0;
-
-                        break;
-                    case F_LOWER:
-                        mDesiredVoltage = -7.0;
-
-                        break;
-                    case S_LOWER:
-                        mDesiredVoltage = -4.0;
-
-                        break;
-                    default:
-                        break;
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-              }
+                mDesiredVoltage = mState.voltage;
             }
 
             @Override
@@ -139,28 +96,13 @@ public class ClimberSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        if(mDesiredVoltage > 0.0){
-            if(mLeftLimit.get()){
-                mLeftMotor.setVoltage(0.0);
-            } else {
-                mLeftMotor.setVoltage(mDesiredVoltage);
-            }
-
-            if(mRightLimit.get()){
-                mRightMotor.setVoltage(0.0);
-            } else {
-                mRightMotor.setVoltage(mDesiredVoltage);
-            }
-
-        } else {
-            mLeftMotor.setVoltage(mDesiredVoltage);
-            mRightMotor.setVoltage(mDesiredVoltage);
-        }
+        mLeftMotor.setVoltage(mLeftLimit.get() ? Math.max(0, mDesiredVoltage) : mDesiredVoltage);
+        mRightMotor.setVoltage(mRightLimit.get() ? Math.max(0, mDesiredVoltage) : mDesiredVoltage);
     }
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putString("Climber State", mDesiredState.toString());
+        SmartDashboard.putString("Climber State", mState.toString());
         SmartDashboard.putBoolean("Right Climber Limit", mRightLimit.get());
         SmartDashboard.putBoolean("Left Climber Limit", mLeftLimit.get());
     }

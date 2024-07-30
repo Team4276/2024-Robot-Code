@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AllianceChooser {
     // unnecessary abstraction FTW
+    //TODO: move to RobotState or Robot
 
     private SendableChooser<Alliance> mChooser;
 
@@ -39,6 +40,7 @@ public class AllianceChooser {
         return mChooser.getSelected();
     }
 
+    /** Since last call*/
     public boolean isAllianceChanged(){
         if (mAlliance != getAlliance()){
             mAlliance = getAlliance();
@@ -46,5 +48,9 @@ public class AllianceChooser {
         }
 
         return false;
+    }
+
+    public boolean isAllianceRed(){
+        return getAlliance() == Alliance.Red;
     }
 }

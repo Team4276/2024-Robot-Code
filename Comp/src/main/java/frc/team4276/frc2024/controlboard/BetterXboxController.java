@@ -10,32 +10,25 @@ public class BetterXboxController extends XboxController {
         super(port);
     }
 
+    //TODO: test rumbles
+    private boolean isRumbling = false;
+    private double rumbleEndTime = -1;
+
+    public void setRumble(double time){
+        if(!isRumbling){
+            rumbleEndTime = time + Timer.getFPGATimestamp();
+            isRumbling = true;
+        }
+    }
+
     public void update(){
-        if(isRumble && !hasRumble){
-            rumbleStartTime = Timer.getFPGATimestamp();
-            wantRumble = true;
-            hasRumble = true;
-
-        } else if(!isRumble){
-            hasRumble = false;
-
+        if(Timer.getFPGATimestamp() < rumbleEndTime){
+            setRumble(RumbleType.kBothRumble, 1.0);
+            return;
         }
 
-        if(wantRumble){
-            if(rumbleStartTime + 0.25 < Timer.getFPGATimestamp()){
-                setRumble(RumbleType.kBothRumble, 0.25);
-
-            } else {
-                wantRumble = false;
-
-            }
-        } else {
-            setRumble(RumbleType.kBothRumble, 0.0);
-            rumbleStartTime = -1.0;
-
-        }
-
-        
+        setRumble(RumbleType.kBothRumble, 0.0);
+        isRumbling = false;
     }
 
     public boolean isPOVUPPressed(){
@@ -108,14 +101,5 @@ public class BetterXboxController extends XboxController {
 
     public double getRightXDeadband(){
         return MathUtil.applyDeadband(getRightX(), OIConstants.kJoystickDeadband);
-    }
-
-    private double rumbleStartTime = -1.0;
-    private boolean wantRumble = false;
-    private boolean isRumble = false;
-    private boolean hasRumble = false;
-
-    public void shortRumble(){
-        isRumble = true;
     }
 }

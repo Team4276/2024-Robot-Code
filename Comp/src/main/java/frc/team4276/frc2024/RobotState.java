@@ -23,6 +23,7 @@ import frc.team254.lib.util.InterpolatingTreeMap;
 
 public class RobotState {
     private static RobotState mInstance;
+    
     private Optional<VisionUpdate> mLatestVisionUpdate;
     private UnscentedKalmanFilter<N2, N2, N2> mKalmanFilter;
 

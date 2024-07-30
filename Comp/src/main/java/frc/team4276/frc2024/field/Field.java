@@ -58,11 +58,17 @@ public class Field {
         static {
             kAprilTagMap.put(1, kAprilTag1);
             kAprilTagMap.put(2, kAprilTag2);
+            kAprilTagMap.put(3, kAprilTag3);
+            kAprilTagMap.put(4, kAprilTag4);
+            kAprilTagMap.put(5, kAprilTag5);
             kAprilTagMap.put(6, kAprilTag6);
             kAprilTagMap.put(7, kAprilTag7);
             kAprilTagMap.put(8, kAprilTag8);
             kAprilTagMap.put(9, kAprilTag9);
             kAprilTagMap.put(10, kAprilTag10);
+            kAprilTagMap.put(11, kAprilTag11);
+            kAprilTagMap.put(12, kAprilTag12);
+            kAprilTagMap.put(13, kAprilTag13);
             kAprilTagMap.put(14, kAprilTag14);
             kAprilTagMap.put(15, kAprilTag15);
             kAprilTagMap.put(16, kAprilTag16);
@@ -92,13 +98,18 @@ public class Field {
             kAprilTagMap.put(3, kAprilTag3);
             kAprilTagMap.put(4, kAprilTag4);
             kAprilTagMap.put(5, kAprilTag5);
+            kAprilTagMap.put(6, kAprilTag6);
+            kAprilTagMap.put(7, kAprilTag7);
+            kAprilTagMap.put(8, kAprilTag8);
             kAprilTagMap.put(9, kAprilTag9);
             kAprilTagMap.put(10, kAprilTag10);
             kAprilTagMap.put(11, kAprilTag11);
             kAprilTagMap.put(12, kAprilTag12);
             kAprilTagMap.put(13, kAprilTag13);
+            kAprilTagMap.put(14, kAprilTag14);
+            kAprilTagMap.put(15, kAprilTag15);
+            kAprilTagMap.put(16, kAprilTag16);
         }
-
         public static final POIs kPOIs = new POIs();
 
         static {

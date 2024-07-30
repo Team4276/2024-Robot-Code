@@ -98,6 +98,21 @@ public class ChassisSpeeds {
                 omegaRadiansPerSecond);
     }
 
+    public static ChassisSpeeds fromFieldRelativeSpeeds(
+            double vxMetersPerSecond,
+            double vyMetersPerSecond,
+            double omegaRadiansPerSecond,
+            Rotation2d robotAngle,
+            boolean isRedAlliance) {
+                if (isRedAlliance){
+                    robotAngle.rotateBy(Rotation2d.fromDegrees(180.0));
+                }
+        return new ChassisSpeeds(
+                vxMetersPerSecond * robotAngle.getCos() + vyMetersPerSecond * robotAngle.getSin(),
+                -vxMetersPerSecond * robotAngle.getSin() + vyMetersPerSecond * robotAngle.getCos(),
+                omegaRadiansPerSecond);
+    }
+
     public static ChassisSpeeds fromRobotRelativeSpeeds(
             double vxMetersPerSecond,
             double vyMetersPerSecond,

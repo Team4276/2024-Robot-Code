@@ -1,13 +1,12 @@
-package frc.team4276.lib.drivers;
+package frc.team4276.lib.characterizations;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import frc.team4276.lib.util.Util;
 
 import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.geometry.Rotation2d;
 
-public class FourBarFeedForward implements FeedForwardCharacterization {
+public class FourBarFeedForward implements IFeedForward {
     // Constants
     private double kS; // Volts
     private final double kV; // Volts * s / rad
@@ -134,6 +133,7 @@ public class FourBarFeedForward implements FeedForwardCharacterization {
         return gravity_voltage + (kS * Math.signum(vel)) + velocity_voltage;
     }
 
+    @Override
     /**
      * @param position_setpoint radians
      * @param velocity_setpoint radians / s
