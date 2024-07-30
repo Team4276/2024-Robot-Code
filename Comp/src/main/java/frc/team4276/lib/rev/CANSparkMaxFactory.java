@@ -2,6 +2,7 @@ package frc.team4276.lib.rev;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+
 import com.revrobotics.SparkPIDController;
 
 //TODO: check defaults
@@ -17,21 +18,20 @@ public class CANSparkMaxFactory {
         sparkMax.restoreFactoryDefaults();
 
         // Clean up CAN usage
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 1000);
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Applied Output / Faults
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Voltage / Temp / Current / Internal Encoder Vel
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Internal Encoder Pos
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000); // Analog Sensor
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000); // Alternate Encoder
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000); // Duty Cycle Absolute Encoder Pos
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000); // Duty Cycle Absolute Encoder Vel / Sen Freq
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 1000); // No Documentation
 
         sparkMax.enableVoltageCompensation(12.0);
 
         return sparkMax;
     }
 
-    //TODO: create configurator for encoders
     public static VIKCANSparkMaxServo createDefaultServo(int id){
         VIKCANSparkMaxServo sparkMax = new VIKCANSparkMaxServo(id);
 
@@ -84,5 +84,21 @@ public class CANSparkMaxFactory {
         controller.setIZone(config.kIZone, config.kSlotId);
         controller.setIMaxAccum(config.kIMaxAccum, config.kSlotId);
         controller.setOutputRange(config.kPIDOutputRange, config.kPIDOutputRange, config.kSlotId);
+    }
+
+    public static void configAnalogSensor(VIKCANSparkMax motor, double periodSec) {
+        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus3, periodSec);
+
+    }
+
+    public static void configAlternateEncoder(VIKCANSparkMax motor, double periodSec) {
+        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, periodSec);
+
+    }
+
+    public static void configAbsoluteEncoder(VIKCANSparkMax motor, double periodSec) {
+        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, periodSec);
+        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, periodSec);
+
     }
 }

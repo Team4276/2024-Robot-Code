@@ -1,12 +1,12 @@
 package frc.team4276.frc2024.subsystems;
 
 import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
+import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
 
 public class FourbarSubsystem extends ServoMotorSubsystem {
@@ -23,7 +23,6 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
         return mInstance;
     }
 
-    //TODO: config status frames
     private FourbarSubsystem(ServoMotorSubsystem.ServoMotorSubsystemConstants constants,
             RevUtil.SparkAbsoluteEncoderConfig encoderConfig) {
         super(constants);
@@ -41,6 +40,8 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
         mMaster.getPIDController().setFeedbackDevice(mAbsoluteEncoder);
 
         mMaster.configFuseMotion(mConstants.kFuseMotionConfig, mPositionSupplier, mVelocitySupplier);
+
+        CANSparkMaxFactory.configAbsoluteEncoder(mMaster, mConstants.kFuseMotionConfig.kLooperDt);
 
         burnFlash();
     }

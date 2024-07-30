@@ -23,4 +23,8 @@ public class VIKCANSparkMax extends CANSparkMax {
         getPIDController().setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);
     }
 
+    public void setPeriodicFramePeriodSec(PeriodicFrame frame, double periodSec) {
+        setPeriodicFramePeriod(frame, (int)(periodSec * 1000));
+    }
+
 }
