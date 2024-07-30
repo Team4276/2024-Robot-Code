@@ -133,16 +133,6 @@ public class FourBarFeedForward implements IFeedForward {
         return gravity_voltage + (kS * Math.signum(vel)) + velocity_voltage;
     }
 
-    @Override
-    /**
-     * @param position_setpoint radians
-     * @param velocity_setpoint radians / s
-     * @return
-     */
-    public double calculate(double position_setpoint, double velocity_setpoint) {
-        return calculate(position_setpoint, velocity_setpoint, 0.0);
-    }
-
     // private double calcAccelerationVoltage(){
         
     //     // total COM distance * total mass * efficiency * nominal voltage

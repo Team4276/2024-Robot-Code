@@ -83,7 +83,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
                 profile_start_fuse, setpoint_fuse);
 
         getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
-                kFuseMotionFF.calculate(state[0], state[1]), ArbFFUnits.kVoltage);
+                kFuseMotionFF.calculate(state[0], state[1], 0.0), ArbFFUnits.kVoltage);
 
     }
 

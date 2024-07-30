@@ -62,7 +62,8 @@ public class FlywheelSubsystem extends Subsystem {
         mBottomMotor.burnFlash();
 
         mTopFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Top, FlywheelConstants.kV_Top, FlywheelConstants.kA);
-        mBottomFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Bottom, FlywheelConstants.kV_Bottom, FlywheelConstants.kA);
+        mBottomFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Bottom, FlywheelConstants.kV_Bottom,
+                FlywheelConstants.kA);
     }
 
     public void setOpenLoop(double voltage) {
@@ -88,7 +89,20 @@ public class FlywheelSubsystem extends Subsystem {
         }
 
         mPeriodicIO.top_demand = top_RPM;
-        mPeriodicIO.top_demand = bottom_RPM;
+        mPeriodicIO.bottom_demand = bottom_RPM;
+    }
+
+    public boolean isSpunUp() {
+        return isTopSpunUp() && isBottomSpunUp();
+    }
+
+    public boolean isTopSpunUp() {
+        return Math.abs(mPeriodicIO.curr_top_RPM - mPeriodicIO.top_demand) < FlywheelConstants.kFlywheelTolerance;
+    }
+
+    public boolean isBottomSpunUp() {
+        return Math.abs(
+                mPeriodicIO.curr_bottom_RPM - mPeriodicIO.bottom_demand) < FlywheelConstants.kFlywheelTolerance;
     }
 
     @Override
@@ -137,7 +151,7 @@ public class FlywheelSubsystem extends Subsystem {
     public void writePeriodicOutputs() {
         if (mIsOpenLoop) {
             mTopMotor.setVoltage(mPeriodicIO.top_demand);
-            mBottomMotor.setVoltage(mPeriodicIO.top_demand);
+            mBottomMotor.setVoltage(mPeriodicIO.bottom_demand);
 
         } else {
             mTopMotor.setVoltage(mTopFF.calculate(mPeriodicIO.top_demand));

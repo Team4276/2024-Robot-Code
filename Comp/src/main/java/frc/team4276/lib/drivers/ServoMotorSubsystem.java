@@ -37,6 +37,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         public SparkLimitSwitch.Type kForwardLimitPolarity = null; // Null for disable
         public SparkLimitSwitch.Type kReverseLimitPolarity = null; // Null for disable
 
+        public int kSlotIdSmartMotionCruise = 0;
+        public int kSlotIdSmartMotionMaintain = 1;
+        public int kSlotIdFuseMotion = 2;
+
         public CANSparkMaxFactory.CANSparkMaxPIDFConfig[] kPidfConfigs = new CANSparkMaxFactory.CANSparkMaxPIDFConfig[0];
 
         public VIKCANSparkMaxServo.FuseMotionConfig kFuseMotionConfig = new VIKCANSparkMaxServo.FuseMotionConfig();
@@ -60,7 +64,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     public ServoMotorSubsystem(ServoMotorSubsystemConstants constants) {
         mConstants = constants;
         mMaster = CANSparkMaxFactory.createDefaultServo(mConstants.kMasterConstants.id);
-        mFollowers = new VIKCANSparkMax[mConstants.kFollowerConstants.length]; //TODO: check faster follower updates
+        mFollowers = new VIKCANSparkMax[mConstants.kFollowerConstants.length]; // TODO: check faster follower updates
 
         if (mConstants.kForwardLimitPolarity != null) {
             mForwardLimitSwitch = mMaster.getForwardLimitSwitch(mConstants.kForwardLimitPolarity);
@@ -85,7 +89,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             pidfContoller.setSmartMotionAllowedClosedLoopError(mConstants.kTol, i);
         }
 
-        if(mConstants.kIsCircular){ //TODO: check if init order matters (encoder)
+        if (mConstants.kIsCircular) { // TODO: check if init order matters (encoder)
             pidfContoller.setPositionPIDWrappingEnabled(mConstants.kIsCircular);
             pidfContoller.setPositionPIDWrappingMaxInput(mConstants.kMaxPosition);
             pidfContoller.setPositionPIDWrappingMinInput(mConstants.kMinPosition);
@@ -110,17 +114,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mMaster.burnFlash();
     }
 
-    protected void burnFlash(){
+    protected void burnFlash() {
         mMaster.burnFlash();
         for (VIKCANSparkMax follower : mFollowers) {
             follower.burnFlash();
         }
     }
-
-    //TODO: sync with constants
-    protected int mSlotIdSmartMotionCruise = 0;
-    protected int mSlotIdSmartMotionMaintain = 1;
-    protected int mSlotIdFuseMotion = 2;
 
     protected PeriodicIO mPeriodicIO;
 
@@ -232,12 +231,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
                 if (mIsMaintain) {
                     mMaster.getPIDController().setReference(mPeriodicIO.demand, CANSparkBase.ControlType.kSmartMotion,
-                            mSlotIdSmartMotionCruise,
+                            mConstants.kSlotIdSmartMotionCruise,
                             mConstants.kS, SparkPIDController.ArbFFUnits.kVoltage);
 
                 } else {
                     mMaster.getPIDController().setReference(mPeriodicIO.demand, CANSparkBase.ControlType.kPosition,
-                            mSlotIdSmartMotionMaintain,
+                            mConstants.kSlotIdSmartMotionMaintain,
                             mConstants.kS, SparkPIDController.ArbFFUnits.kVoltage);
 
                 }

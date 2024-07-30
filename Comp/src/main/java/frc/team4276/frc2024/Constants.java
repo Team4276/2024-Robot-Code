@@ -276,6 +276,10 @@ public final class Constants {
             kSubsystemConstants.kTol = Math.toRadians(1.0);
             kSubsystemConstants.kForwardLimitPolarity = SparkLimitSwitch.Type.kNormallyOpen;
             kSubsystemConstants.kReverseLimitPolarity = SparkLimitSwitch.Type.kNormallyOpen;
+            
+            kSubsystemConstants.kSlotIdSmartMotionCruise = 0;
+            kSubsystemConstants.kSlotIdSmartMotionMaintain = 1;
+            kSubsystemConstants.kSlotIdFuseMotion = 2;
 
             kSubsystemConstants.kPidfConfigs = new CANSparkMaxFactory.CANSparkMaxPIDFConfig[3];
 
@@ -310,7 +314,7 @@ public final class Constants {
             kSubsystemConstants.kPidfConfigs[2].kPIDOutputRange = 1.0;
 
             kSubsystemConstants.kFuseMotionConfig = new VIKCANSparkMaxServo.FuseMotionConfig();
-            kSubsystemConstants.kFuseMotionConfig.kProfileSlot = 2;
+            kSubsystemConstants.kFuseMotionConfig.kProfileSlot = kSubsystemConstants.kSlotIdFuseMotion;
             kSubsystemConstants.kFuseMotionConfig.kFeedForward = new FourBarFeedForward(kFeedForwardConstants);
             kSubsystemConstants.kFuseMotionConfig.kLooperDt = Constants.kLooperDt;
             kSubsystemConstants.kFuseMotionConfig.kMaxVel = kSubsystemConstants.kMaxVel;
@@ -343,7 +347,7 @@ public final class Constants {
 
         public static double kPrep = 2.0; // Volts
 
-        public static double kFlywheelAllowableError = 300.0; //TODO: add wait for spin up logic
+        public static double kFlywheelTolerance = 300.0; // RPM
     }
 
     public static final class SuperstructureConstants {

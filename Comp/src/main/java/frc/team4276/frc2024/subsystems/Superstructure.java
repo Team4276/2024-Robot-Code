@@ -29,7 +29,7 @@ public class Superstructure extends Subsystem {
 
     private double mScoringOffset = 0.0;
 
-    private boolean mIsHoldingNote = false; //TODO: test note detection reliability
+    private boolean mIsHoldingNote = false; // TODO: test note detection reliability
 
     private boolean mIsFerry = false;
     private boolean mIsDymanic = false;
@@ -136,17 +136,19 @@ public class Superstructure extends Subsystem {
     }
 
     private void updateManual() {
-        //TODO: implement
+        // TODO: implement
     }
 
     private double mNoteDetectTime = -1.0;
+    private boolean isSpunUp = false;
 
     private void updateNomimnal(double timestamp) {
         switch (mGoalState) {
             case SHOOT:
                 mIntakeSubsystem.setState(IntakeSubsystem.State.SHOOT);
 
-                if (!mIsHoldingNote) break;
+                if (!mIsHoldingNote)
+                    break;
 
                 if (mFrontBeam.wasCleared()) {
                     mNoteDetectTime = timestamp;
@@ -200,6 +202,12 @@ public class Superstructure extends Subsystem {
 
                 if (mIsFerry) {
                     mFourbarSubsystem.setFuseMotionSetpoint(Constants.SuperstructureConstants.kFourbarFerryState);
+                }
+
+                if (mFlywheelSubsystem.isSpunUp() && !isSpunUp) {
+                    ControlBoard.getInstance().driver.setRumble(1.0);
+                    ControlBoard.getInstance().operator.setRumble(1.0);
+                    isSpunUp = true;
                 }
 
                 break;
@@ -260,7 +268,8 @@ public class Superstructure extends Subsystem {
     }
 
     @Override
-    public void writePeriodicOutputs() {}
+    public void writePeriodicOutputs() {
+    }
 
     private boolean hadNote = false;
 

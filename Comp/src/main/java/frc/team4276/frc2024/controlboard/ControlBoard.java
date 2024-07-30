@@ -11,6 +11,7 @@ import frc.team254.lib.geometry.Translation2d;
 
 import frc.team1678.lib.Util;
 
+//TODO: add feedback class
 public class ControlBoard { //TODO: config
     public final BetterXboxController driver;
     public final BetterXboxController operator;
