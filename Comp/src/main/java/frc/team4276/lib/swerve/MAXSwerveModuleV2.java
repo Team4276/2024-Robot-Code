@@ -20,6 +20,7 @@ import frc.team254.lib.util.Util;
 
 import frc.team1678.lib.swerve.ModuleState;
 
+//TODO: remmember why there is a v3
 public class MAXSwerveModuleV2 extends Subsystem {
   private final CANSparkMax m_drivingSparkMax;
   private final CANSparkMax m_turningSparkMax;

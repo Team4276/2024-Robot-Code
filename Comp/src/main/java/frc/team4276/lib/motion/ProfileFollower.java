@@ -4,6 +4,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
 import frc.team254.lib.util.Util;
 
+//TODO: implement
 public class ProfileFollower{
     protected double mKp;
     protected double mKi;

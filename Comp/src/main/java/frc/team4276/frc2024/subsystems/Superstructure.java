@@ -24,7 +24,7 @@ public class Superstructure extends Subsystem {
 
     private boolean mIsManual = false;
 
-    private GoalState mRequestedState;
+    private GoalState mRequestedState = GoalState.IDLE;
     private GoalState mGoalState = GoalState.IDLE;
 
     private double mScoringOffset = 0.0;
@@ -105,8 +105,6 @@ public class Superstructure extends Subsystem {
         mGoalState = mRequestedState;
     }
 
-    private double mNoteDetectTime = -1.0;
-
     @Override
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
@@ -138,8 +136,10 @@ public class Superstructure extends Subsystem {
     }
 
     private void updateManual() {
-
+        //TODO: implement
     }
+
+    private double mNoteDetectTime = -1.0;
 
     private void updateNomimnal(double timestamp) {
         switch (mGoalState) {

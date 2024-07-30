@@ -1,5 +1,7 @@
 package frc.team4276.frc2024.Limelight;
 
+//TODO: remove; use limelight firmware
+
 // import frc.team4276.frc2024.Limelight.precomputedmaps.*;
 // import frc.team4276.frc2024.Constants;
 

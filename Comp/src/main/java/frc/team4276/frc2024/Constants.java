@@ -341,6 +341,13 @@ public final class Constants {
     }
 
     public static class FlywheelConstants {
+        public static IdleMode kIdleMode = IdleMode.kBrake;
+        public static int kSmartCurrentLimit = 40;
+        
+        public static int kAvgSamplingDepth = 8;
+        public static int kMeasurementPeriod = 10;
+        public static double kUnitsPerRotation = 1.0;
+
         public static double kS_Top = 0.188;
         public static double kS_Bottom = 0.188;
         // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel

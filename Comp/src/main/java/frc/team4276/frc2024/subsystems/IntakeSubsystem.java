@@ -44,6 +44,7 @@ public class IntakeSubsystem extends Subsystem {
         return mInstance;
     }
 
+    // Fill constants
     private IntakeSubsystem() {
         mMotor = CANSparkMaxFactory.createDefault(Ports.INTAKE);
         mMotor.setSmartCurrentLimit(40);

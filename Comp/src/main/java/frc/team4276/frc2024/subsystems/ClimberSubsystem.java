@@ -56,7 +56,6 @@ public class ClimberSubsystem extends Subsystem {
         mLeftMotor.setWantBrakeMode(true);
         mLeftMotor.setSmartCurrentLimit(40);
         mLeftMotor.burnFlash();
-        
 
         mRightLimit = new DigitalInput(Ports.CLIMBER_LIMIT_RIGHT);
         mLeftLimit = new DigitalInput(Ports.CLIMBER_LIMIT_LEFT);
@@ -90,7 +89,9 @@ public class ClimberSubsystem extends Subsystem {
             }
 
             @Override
-            public void onStop(double timestamp) {}
+            public void onStop(double timestamp) {
+                stop();
+            }
         });
     }
 

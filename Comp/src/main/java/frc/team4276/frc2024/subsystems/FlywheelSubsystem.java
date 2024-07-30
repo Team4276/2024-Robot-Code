@@ -29,51 +29,47 @@ public class FlywheelSubsystem extends Subsystem {
 
     private static FlywheelSubsystem mInstance;
 
-    public static FlywheelSubsystem getInstance(){
-        if (mInstance == null){
+    public static FlywheelSubsystem getInstance() {
+        if (mInstance == null) {
             mInstance = new FlywheelSubsystem();
         }
 
         return mInstance;
     }
 
-    private FlywheelSubsystem(){
+    private FlywheelSubsystem() {
         mTopMotor = CANSparkMaxFactory.createDefault(Ports.FLYWHEEL_TOP);
-        mBottomMotor = CANSparkMaxFactory.createDefault(Ports.FLYWHEEL_BOTTOM);
-
         mTopMotor.setInverted(false);
-        mBottomMotor.setInverted(true);
+        mTopMotor.setIdleMode(FlywheelConstants.kIdleMode);
+        mTopMotor.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
 
         mTopEncoder = mTopMotor.getEncoder();
+        mTopEncoder.setAverageDepth(FlywheelConstants.kAvgSamplingDepth);
+        mTopEncoder.setMeasurementPeriod(FlywheelConstants.kMeasurementPeriod);
+        mTopEncoder.setVelocityConversionFactor(FlywheelConstants.kUnitsPerRotation);
+
+        mBottomMotor = CANSparkMaxFactory.createDefault(Ports.FLYWHEEL_BOTTOM);
+        mBottomMotor.setInverted(true);
+        mBottomMotor.setIdleMode(FlywheelConstants.kIdleMode);
+        mBottomMotor.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
+
         mBottomEncoder = mBottomMotor.getEncoder();
-        
-        mTopMotor.setWantBrakeMode(true);
-        mBottomMotor.setWantBrakeMode(true);
-
-        mTopMotor.setSmartCurrentLimit(40);
-        mBottomMotor.setSmartCurrentLimit(40);
-
-        mTopEncoder.setAverageDepth(8);
-        mBottomEncoder.setAverageDepth(8);
-
-        mTopEncoder.setMeasurementPeriod(10);
-        mBottomEncoder.setMeasurementPeriod(10);
-
-        mTopEncoder.setVelocityConversionFactor(1);
-        mBottomEncoder.setVelocityConversionFactor(1);
+        mBottomEncoder.setAverageDepth(FlywheelConstants.kAvgSamplingDepth);
+        mBottomEncoder.setMeasurementPeriod(FlywheelConstants.kMeasurementPeriod);
+        mBottomEncoder.setVelocityConversionFactor(FlywheelConstants.kUnitsPerRotation);
 
         mTopMotor.burnFlash();
         mBottomMotor.burnFlash();
 
-        mTopFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Top,FlywheelConstants.kV_Top,FlywheelConstants.kA);
-        mBottomFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Bottom,FlywheelConstants.kV_Bottom,FlywheelConstants.kA);
+        mTopFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Top, FlywheelConstants.kV_Top, FlywheelConstants.kA);
+        mBottomFF = new SimpleMotorFeedforward(FlywheelConstants.kS_Bottom, FlywheelConstants.kV_Bottom, FlywheelConstants.kA);
     }
 
-    public void setOpenLoop(double voltage){
+    public void setOpenLoop(double voltage) {
         setOpenLoop(voltage, voltage);
     }
 
-    public void setOpenLoop(double des_top_voltage, double des_bottom_voltage){
+    public void setOpenLoop(double des_top_voltage, double des_bottom_voltage) {
         if (!mIsOpenLoop) {
             mIsOpenLoop = true;
         }
@@ -82,11 +78,11 @@ public class FlywheelSubsystem extends Subsystem {
         mPeriodicIO.bottom_demand = des_bottom_voltage;
     }
 
-    public void setTargetRPM(double RPM){
+    public void setTargetRPM(double RPM) {
         setTargetRPM(RPM, RPM);
     }
 
-    public void setTargetRPM(double top_RPM, double bottom_RPM){
+    public void setTargetRPM(double top_RPM, double bottom_RPM) {
         if (mIsOpenLoop) {
             mIsOpenLoop = false;
         }
@@ -121,29 +117,32 @@ public class FlywheelSubsystem extends Subsystem {
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
-            public void onStart(double timestamp) {}
+            public void onStart(double timestamp) {
+                setOpenLoop(0.0);
+            }
 
             @Override
-            public void onLoop(double timestamp) {}
+            public void onLoop(double timestamp) {
+            }
 
             @Override
             public void onStop(double timestamp) {
                 stop();
             }
         });
-        
+
     }
 
     @Override
     public void writePeriodicOutputs() {
-        if(mIsOpenLoop){
+        if (mIsOpenLoop) {
             mTopMotor.setVoltage(mPeriodicIO.top_demand);
             mBottomMotor.setVoltage(mPeriodicIO.top_demand);
 
         } else {
             mTopMotor.setVoltage(mTopFF.calculate(mPeriodicIO.top_demand));
             mTopMotor.setVoltage(mBottomFF.calculate(mPeriodicIO.bottom_demand));
-            
+
         }
     }
 

@@ -1,6 +1,7 @@
 package frc.team4276.frc2024.subsystems;
 
 import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
@@ -22,6 +23,7 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
         return mInstance;
     }
 
+    //TODO: config status frames
     private FourbarSubsystem(ServoMotorSubsystem.ServoMotorSubsystemConstants constants,
             RevUtil.SparkAbsoluteEncoderConfig encoderConfig) {
         super(constants);

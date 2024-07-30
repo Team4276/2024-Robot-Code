@@ -3,9 +3,6 @@ package frc.team4276.lib.util;
 import frc.team254.lib.geometry.Rotation2d;
 
 public class Util {
-    // Utility class; do not instantiate
-    private Util(){}
-
     /**
      * @param side1
      * @param side2

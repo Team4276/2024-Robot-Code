@@ -47,6 +47,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     private double profile_timestamp_fuse;
     private double[] profile_start_fuse = { Double.NaN, Double.NaN };
 
+    //TODO: fix looper closing logic
     private Notifier looper = new Notifier(this::updateFuse);
 
     /**

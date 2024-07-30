@@ -1,5 +1,6 @@
 package frc.team4276.lib.motion;
 
+//TODO: implement
 public class MotionState {
     protected final double time;
     protected final double pos;
