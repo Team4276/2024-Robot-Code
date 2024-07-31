@@ -37,7 +37,7 @@ import frc.team1678.lib.loops.Loop;
 
 import static frc.team4276.lib.util.CvType.CV_64FC1;
 
-public class LimeLight extends Subsystem {
+public class LimeLight extends Subsystem { // TODO: fix race conditions
     private final NetworkTable mNetworkTable;
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();

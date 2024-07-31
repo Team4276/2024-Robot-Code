@@ -149,6 +149,15 @@ public class ControlBoard { //TODO: config
         return operator.getRightBumper();
     }
 
+    private boolean wasIdle = false;
+    public boolean wantIdle(){
+        if(operator.getBButtonPressed()) {
+            wasIdle = !wasIdle;
+        }
+
+        return wasIdle;
+    }
+
     // Robot Button Board
     public boolean wantClimberCoastMode(){
         return climberSetting.get();

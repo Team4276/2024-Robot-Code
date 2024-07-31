@@ -29,7 +29,7 @@ import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team1678.lib.swerve.ModuleState;
 import frc.team1678.lib.swerve.SwerveDriveOdometry;
 
-public class DriveSubsystem extends Subsystem {
+public class DriveSubsystem extends Subsystem { // TODO: organize
     public enum DriveControlState {
         FORCE_ORIENT,
         OPEN_LOOP,
@@ -107,7 +107,7 @@ public class DriveSubsystem extends Subsystem {
 
     }
 
-    public void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
+    public synchronized void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
         if (mKinematicLimits != DriveConstants.kAutoLimits) {
             mKinematicLimits = DriveConstants.kAutoLimits;
         }
@@ -119,20 +119,20 @@ public class DriveSubsystem extends Subsystem {
         updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
     }
 
-    public void setKinematicLimits(KinematicLimits limits) {
+    public synchronized void setKinematicLimits(KinematicLimits limits) {
         this.mKinematicLimits = limits;
     }
 
     // TODO: simplify tracking logic
-    public void overrideHeading(boolean overrideHeading) {
+    public synchronized void overrideHeading(boolean overrideHeading) {
         mOverrideHeading = overrideHeading;
     }
 
-    public void feedTrackingSetpoint(Rotation2d angle) {
+    public synchronized void feedTrackingSetpoint(Rotation2d angle) {
         mTrackingAngle = angle;
     }
 
-    public void setHeadingSetpoint(Rotation2d angle) {
+    public synchronized void setHeadingSetpoint(Rotation2d angle) {
         if (mControlState != DriveControlState.HEADING_CONTROL) {
             mControlState = DriveControlState.HEADING_CONTROL;
         }
@@ -142,7 +142,7 @@ public class DriveSubsystem extends Subsystem {
         }
     }
 
-    public void teleopDrive(ChassisSpeeds speeds) {
+    public synchronized void teleopDrive(ChassisSpeeds speeds) {
         if (mKinematicLimits != DriveConstants.kUncappedLimits || mKinematicLimits != DriveConstants.kDemoLimits) {
             mKinematicLimits = DriveConstants.kUncappedLimits;
         }
@@ -204,7 +204,7 @@ public class DriveSubsystem extends Subsystem {
      *
      * @param desiredStates The desired SwerveModule states.
      */
-    public void setModuleStates(ModuleState[] desiredStates) {
+    public synchronized void setModuleStates(ModuleState[] desiredStates) {
         mPeriodicIO.des_module_states = desiredStates;
     }
 
@@ -216,20 +216,20 @@ public class DriveSubsystem extends Subsystem {
     }
 
     /** Zeroes yaw with given degrees */
-    public void resetHeading(double reset) {
+    public synchronized void resetHeading(double reset) {
         mPigeon.setYaw(reset);
         RobotState.getInstance().reset();
     }
 
-    public Rotation2d getHeading() {
+    public synchronized Rotation2d getHeading() {
         return mPeriodicIO.heading;
     }
 
-    public Rotation2d getPitch() {
+    public synchronized Rotation2d getPitch() {
         return mPeriodicIO.pitch;
     }
 
-    public ChassisSpeeds getMeasSpeeds() {
+    public synchronized ChassisSpeeds getMeasSpeeds() {
         return mPeriodicIO.meas_chassis_speeds;
     }
 
@@ -237,15 +237,15 @@ public class DriveSubsystem extends Subsystem {
         return getMeasSpeeds().toWPI();
     }
 
-    public ModuleState[] getModuleStates() {
+    public synchronized ModuleState[] getModuleStates() {
         return mPeriodicIO.meas_module_states;
     }
 
-    public DriveControlState getDriveControlState() {
+    public synchronized DriveControlState getDriveControlState() {
         return mControlState;
     }
 
-    public KinematicLimits getKinematicLimits() {
+    public synchronized KinematicLimits getKinematicLimits() {
         return mKinematicLimits;
     }
 
@@ -253,7 +253,7 @@ public class DriveSubsystem extends Subsystem {
         return RobotState.getInstance().getCurrentFieldToVehicle();
     }
 
-    public void resetOdometry(Pose2d initialPose) {
+    public synchronized void resetOdometry(Pose2d initialPose) {
         DriveSubsystem.getInstance().resetHeading(initialPose.getRotation().getDegrees());
         mOdometry.resetPosition(DriveSubsystem.getInstance().getModuleStates(), initialPose.toWPI());
         RobotState.getInstance().reset(Timer.getFPGATimestamp(), initialPose);
@@ -282,7 +282,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     @Override
-    public void readPeriodicInputs() {
+    public synchronized void readPeriodicInputs() {
 
         for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
             mPeriodicIO.meas_module_states[i] = mModules[i].getState();
@@ -343,7 +343,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     @Override
-    public void writePeriodicOutputs() {
+    public synchronized void writePeriodicOutputs() {
         for (int i = 0; i < mModules.length; i++) {
             if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
@@ -356,7 +356,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     @Override
-    public void outputTelemetry() {
+    public synchronized void outputTelemetry() {
         // for (int i = 0; i < mModules.length; i++) {
         // SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
         // mModules[i].getDriveSetpoint());

@@ -54,7 +54,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     /**
      * @return true if successful
      */
-    public boolean setFuseMotionSetpoint(double setpoint) {
+    public synchronized boolean setFuseMotionSetpoint(double setpoint) {
         if (kFuseMotionFF == null)
             return false;
 
@@ -73,7 +73,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         return true;
     }
 
-    private void updateFuse() {
+    private synchronized void updateFuse() {
         if(!isFuseMotion){
             looper.stop();
             return;
@@ -88,13 +88,13 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     }
 
     @Override
-    public void setVoltage(double outputVolts) {
+    public synchronized void setVoltage(double outputVolts) {
         isFuseMotion = false;
         super.setVoltage(outputVolts);
     }
 
     @Override
-    public void setReference(double value, ControlType ctrl, int pidSlot, double arbFeedforward,
+    public synchronized void setReference(double value, ControlType ctrl, int pidSlot, double arbFeedforward,
             ArbFFUnits arbFFUnits) {
         isFuseMotion = false;
         super.setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);

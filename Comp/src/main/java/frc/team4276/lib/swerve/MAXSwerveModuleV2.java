@@ -166,9 +166,6 @@ public class MAXSwerveModuleV2 extends Subsystem {
       // ModuleState optimizedDesiredState =
       // ModuleState.optimize(correctedDesiredState.angle, getState());
 
-      driveSetpoint = optimizedDesiredState.speedMetersPerSecond;
-      turnSetpoint = optimizedDesiredState.angle.getRadians();
-
       // Command driving and turning SPARKS MAX towards their respective setpoints.
       m_drivingPIDController.setReference(optimizedDesiredState.speedMetersPerSecond,
           CANSparkMax.ControlType.kVelocity);
@@ -176,17 +173,6 @@ public class MAXSwerveModuleV2 extends Subsystem {
 
       m_desiredState = desiredState;
     }
-  }
-
-  private double driveSetpoint;
-  private double turnSetpoint;
-
-  public double getDriveSetpoint() {
-    return driveSetpoint;
-  }
-
-  public double getTurnSetpoint() {
-    return turnSetpoint;
   }
 
   /** Zeroes all the SwerveModule encoders. */
@@ -198,9 +184,5 @@ public class MAXSwerveModuleV2 extends Subsystem {
     m_drivingSparkMax.set(0);
     m_turningSparkMax.set(0);
 
-  } 
-
-  public double getMotorSpeed(){
-    return m_drivingEncoder.getVelocity();
   }
 }

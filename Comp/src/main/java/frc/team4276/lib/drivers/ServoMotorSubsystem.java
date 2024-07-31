@@ -134,7 +134,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     }
 
-    public void setVoltage(double voltage) {
+    public synchronized void setVoltage(double voltage) {
         if (mControlState != ControlState.VOLTAGE) {
             mControlState = ControlState.VOLTAGE;
         }
@@ -142,7 +142,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mPeriodicIO.demand = voltage;
     }
 
-    public void setSmartMotionSetpoint(double position) {
+    public synchronized void setSmartMotionSetpoint(double position) {
         if (mControlState != ControlState.SMART_MOTION) {
             mControlState = ControlState.SMART_MOTION;
         } else if (mPeriodicIO.demand == position) {
@@ -152,7 +152,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mPeriodicIO.demand = constrainUnits(position);
     }
 
-    public void setFuseMotionSetpoint(double position) {
+    public synchronized void setFuseMotionSetpoint(double position) {
         if (mControlState != ControlState.FUSE_MOTION) {
             mControlState = ControlState.FUSE_MOTION;
         } else if (mPeriodicIO.demand == position) {
@@ -194,7 +194,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     }
 
     @Override
-    public void readPeriodicInputs() {
+    public synchronized void readPeriodicInputs() {
         mPeriodicIO.meas_master_voltage = mMaster.getAppliedVoltage();
         mPeriodicIO.meas_position = mPositionSupplier.get();
         mPeriodicIO.meas_velocity = mVelocitySupplier.get();
@@ -219,7 +219,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     }
 
     @Override
-    public void writePeriodicOutputs() {
+    public synchronized void writePeriodicOutputs() {
         switch (mControlState) {
             case VOLTAGE:
                 mMaster.setVoltage(mPeriodicIO.demand);
@@ -254,7 +254,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     }
 
     @Override
-    public void outputTelemetry() {
+    public synchronized void outputTelemetry() {
         SmartDashboard.putNumber(mConstants.kName + " Measured Voltage", mPeriodicIO.meas_master_voltage);
         SmartDashboard.putNumber(mConstants.kName + " Measured Position", mPeriodicIO.meas_position);
         SmartDashboard.putNumber(mConstants.kName + " Measured Velocity", mPeriodicIO.meas_velocity);

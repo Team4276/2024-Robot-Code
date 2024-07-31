@@ -37,7 +37,7 @@ public class IntakeSubsystem extends Subsystem {
 
     private static IntakeSubsystem mInstance;
 
-    public static synchronized IntakeSubsystem getInstance() {
+    public static IntakeSubsystem getInstance() {
         if (mInstance == null) {
             mInstance = new IntakeSubsystem();
         }

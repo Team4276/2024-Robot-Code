@@ -62,7 +62,7 @@ public class ClimberSubsystem extends Subsystem {
         mLeftLimit = new DigitalInput(Ports.CLIMBER_LIMIT_LEFT);
     }
 
-    public void setDesiredState(State state){
+    public synchronized void setDesiredState(State state){
         mState = state;
     }
 
@@ -77,7 +77,7 @@ public class ClimberSubsystem extends Subsystem {
     }
     
     @Override
-    public void registerEnabledLoops(ILooper enabledLooper) {
+    public synchronized void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
             public void onStart(double timestamp) {
@@ -103,7 +103,7 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     @Override
-    public void outputTelemetry() {
+    public synchronized void outputTelemetry() {
         SmartDashboard.putString("Climber State", mState.toString());
         SmartDashboard.putBoolean("Right Climber Limit", mRightLimit.get());
         SmartDashboard.putBoolean("Left Climber Limit", mLeftLimit.get());

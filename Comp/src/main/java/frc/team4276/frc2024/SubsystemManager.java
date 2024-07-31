@@ -76,6 +76,7 @@ public class SubsystemManager implements ILooper {
             /*if (!LoggingSystem.disableLogger) {
                 ls.queueLogs();
             }*/
+            outputToSmartDashboard();
         }
 
         @Override

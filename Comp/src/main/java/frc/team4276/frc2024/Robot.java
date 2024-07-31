@@ -44,15 +44,15 @@ public class Robot extends TimedRobot {
 
     private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
     private final ControlBoard mControlBoard = ControlBoard.getInstance();
-
-    private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
-    private final LimeLight mLimeLight = LimeLight.getInstance();
-    private final IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
-    private final FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
-    private final FourbarSubsystem mFourbarSubsystem = FourbarSubsystem.getInstance();
-    private final ClimberSubsystem mClimberSubsystem = ClimberSubsystem.getInstance();
-
+    
     private final Superstructure mSuperstructure = Superstructure.getInstance();
+
+    private DriveSubsystem mDriveSubsystem;
+    private LimeLight mLimeLight;
+    private IntakeSubsystem mIntakeSubsystem;
+    private FlywheelSubsystem mFlywheelSubsystem;
+    private FourbarSubsystem mFourbarSubsystem;
+    private ClimberSubsystem mClimberSubsystem;
 
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
@@ -68,6 +68,12 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         try {
+            mDriveSubsystem = DriveSubsystem.getInstance();
+            mLimeLight = LimeLight.getInstance();
+            mIntakeSubsystem = IntakeSubsystem.getInstance();
+            mFlywheelSubsystem = FlywheelSubsystem.getInstance();
+            mFourbarSubsystem = FourbarSubsystem.getInstance();
+            mClimberSubsystem = ClimberSubsystem.getInstance();
 
             CameraServer.startAutomaticCapture();
 
@@ -104,7 +110,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        mSubsystemManager.outputToSmartDashboard();
         mEnabledLooper.outputToSmartDashboard();
 
     }
@@ -266,7 +271,10 @@ public class Robot extends TimedRobot {
 
             }
 
-            if (mControlBoard.wantIntake()) {
+            if (mControlBoard.wantIdle()) {
+                mSuperstructure.setGoalState(Superstructure.GoalState.IDLE);
+
+            } else if (mControlBoard.wantIntake()) {
                 mSuperstructure.setGoalState(Superstructure.GoalState.INTAKE);
 
             } else if (mControlBoard.wantShoot()) {

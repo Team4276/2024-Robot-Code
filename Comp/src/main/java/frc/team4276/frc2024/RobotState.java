@@ -22,7 +22,7 @@ import frc.team254.lib.util.InterpolatingDouble;
 import frc.team254.lib.util.InterpolatingTreeMap;
 
 //TODO: figure this out lol
-public class RobotState {
+public class RobotState { //TODO: fix race conditions
     private static RobotState mInstance;
     
     private Optional<VisionUpdate> mLatestVisionUpdate;

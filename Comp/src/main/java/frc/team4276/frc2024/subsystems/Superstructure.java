@@ -14,13 +14,13 @@ import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 
 public class Superstructure extends Subsystem {
-    private DriveSubsystem mDriveSubsystem;
-    private FlywheelSubsystem mFlywheelSubsystem;
-    private IntakeSubsystem mIntakeSubsystem;
-    private FourbarSubsystem mFourbarSubsystem;
+    private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
+    private FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
+    private IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
+    private FourbarSubsystem mFourbarSubsystem = FourbarSubsystem.getInstance();
 
-    private BeamBreak mFrontBeam;
-    private BeamBreak mBackBeam;
+    private BeamBreak mFrontBeam  = new BeamBreak(Ports.BEAM_FRONT);
+    private BeamBreak mBackBeam = new BeamBreak(Ports.BEAM_BACK);
 
     private boolean mIsManual = false;
 
@@ -35,6 +35,9 @@ public class Superstructure extends Subsystem {
     private boolean mIsDymanic = false;
     private boolean mIsPrep = false;
 
+    private ManualInput mRequestedManualInput = new ManualInput();
+    private ManualInput mManualInput = new ManualInput();
+
     public enum GoalState {
         IDLE,
         STOW,
@@ -43,6 +46,12 @@ public class Superstructure extends Subsystem {
         SHOOT,
         EXHAUST
 
+    }
+
+    private class ManualInput {
+        double flywheel_voltage;
+        IntakeSubsystem.State intake_state;
+        double fourbar_voltage;
     }
 
     private static Superstructure mInstance;
@@ -55,58 +64,67 @@ public class Superstructure extends Subsystem {
         return mInstance;
     }
 
-    private Superstructure() {
-        mDriveSubsystem = DriveSubsystem.getInstance();
-        mFlywheelSubsystem = FlywheelSubsystem.getInstance();
-        mIntakeSubsystem = IntakeSubsystem.getInstance();
-        mFourbarSubsystem = FourbarSubsystem.getInstance();
-
-        mFrontBeam = new BeamBreak(Ports.BEAM_FRONT);
-        mBackBeam = new BeamBreak(Ports.BEAM_BACK);
-    }
-
     public void offsetScoring(double delta_offset) {
         mScoringOffset += delta_offset;
     }
 
-    public void setGoalState(GoalState state) {
+    public synchronized void setGoalState(GoalState state) {
         mRequestedState = state;
     }
 
-    public void setFerry(boolean isFerry) {
+    public synchronized void setFerry(boolean isFerry) {
         mIsFerry = isFerry;
     }
 
-    public void setPrep(boolean isPrep) {
+    public synchronized void setPrep(boolean isPrep) {
         mIsPrep = isPrep;
     }
 
-    public void setDynamic(boolean isDynamic) {
+    public synchronized void setDynamic(boolean isDynamic) {
         mIsDymanic = isDynamic;
     }
 
-    public GoalState getGoalState() {
-        return mGoalState;
+    public synchronized void setManual(boolean isManual) {
+        mIsManual = isManual;
     }
 
-    public boolean isHoldingNote() {
+    public synchronized boolean isHoldingNote() {
         return mIsHoldingNote;
     }
 
-    public void overrideNoteStatus(boolean holdingNote) {
+    public synchronized void overrideNoteStatus(boolean holdingNote) {
         mIsHoldingNote = holdingNote;
     }
 
-    @Override
-    public void readPeriodicInputs() {
-        mFrontBeam.update();
-        mBackBeam.update();
+    public synchronized void setManualFlywheelVoltage(double voltage) {
+        mRequestedManualInput.flywheel_voltage = voltage;
+    }
 
-        mGoalState = mRequestedState;
+    public synchronized void setManualIntakeState(IntakeSubsystem.State state) {
+        mRequestedManualInput.intake_state = state;
+    }
+
+    public synchronized void setManualFourbarVoltage(double voltage) {
+        mRequestedManualInput.fourbar_voltage = voltage;
     }
 
     @Override
-    public void registerEnabledLoops(ILooper enabledLooper) {
+    public synchronized void readPeriodicInputs() {
+        mFrontBeam.update();
+        mBackBeam.update();
+
+        if (mIsManual) {
+            mGoalState = GoalState.IDLE;
+            mManualInput = mRequestedManualInput;
+            return;
+        }
+
+        mGoalState = mRequestedState;
+        mManualInput = new ManualInput();
+    }
+
+    @Override
+    public synchronized void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
             public void onStart(double timestamp) {
@@ -136,7 +154,9 @@ public class Superstructure extends Subsystem {
     }
 
     private void updateManual() {
-        // TODO: implement
+        mFlywheelSubsystem.setOpenLoop(mManualInput.flywheel_voltage);
+        mIntakeSubsystem.setState(mManualInput.intake_state);
+        mFourbarSubsystem.setVoltage(mManualInput.fourbar_voltage);
     }
 
     private double mNoteDetectTime = -1.0;
@@ -269,12 +289,12 @@ public class Superstructure extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-    }
+    } // Leave empty
 
     private boolean hadNote = false;
 
     @Override
-    public void outputTelemetry() {
+    public synchronized void outputTelemetry() {
         SmartDashboard.putNumber("Scoring Offset", mScoringOffset);
 
         SmartDashboard.putBoolean("Is Holding Note", mIsHoldingNote);
