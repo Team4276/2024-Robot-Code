@@ -5,7 +5,6 @@
 package frc.team4276.lib.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Timer;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -13,11 +12,9 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.REVLibError;
 
 import frc.team4276.frc2024.Constants.ModuleConstants;
 import frc.team4276.lib.drivers.Subsystem;
-import frc.team4276.frc2024.Constants.DebugConstants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 
 import frc.team254.lib.util.Util;
@@ -34,9 +31,6 @@ public class MAXSwerveModuleV3 extends Subsystem {
   private final SparkPIDController m_drivingPIDController;
   private final SparkPIDController m_turningPIDController;
 
-  private final int kDrivingCANId;
-  private final int kTurningCANId;
-
   private double mChassisAngularOffset = 0.0;
 
   /**
@@ -48,9 +42,6 @@ public class MAXSwerveModuleV3 extends Subsystem {
   public MAXSwerveModuleV3(int drivingCANId, int turningCANId, double chassisAngularOffset) {
     m_drivingSparkMax = new CANSparkMax(drivingCANId, MotorType.kBrushless);
     m_turningSparkMax = new CANSparkMax(turningCANId, MotorType.kBrushless);
-
-    kDrivingCANId = drivingCANId;
-    kTurningCANId = turningCANId;
 
     // Factory reset, so we get the SPARKS MAX to a known state before configuring
     // them. This is useful in case a SPARK MAX is swapped out.
@@ -159,28 +150,8 @@ public class MAXSwerveModuleV3 extends Subsystem {
       angle.rotateBy(new Rotation2d(Math.PI));
     }
 
-    if (DebugConstants.writeSwerveErrors) {
-      double timestamp = Timer.getFPGATimestamp();
-      REVLibError e1 = m_drivingPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
-      REVLibError e2 = m_turningPIDController.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition);
-
-      checkMotorCommands(e1, e2, timestamp);
-      return;
-    }
-
     m_drivingPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
     m_turningPIDController.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition);
-  }
-
-  private void checkMotorCommands(REVLibError e1, REVLibError e2, double timestamp) {
-    if(e1 == REVLibError.kOk && e2 == REVLibError.kOk){
-      return;
-    }
-
-    System.out.println("Driving Motor ID:" + kDrivingCANId + 
-      " returned " + e1.toString() + " at " + timestamp);
-    System.out.println("Turning Motor ID:" + kTurningCANId + 
-      " returned " + e2.toString() + " at " + timestamp);
   }
 
   /** Zeroes all the SwerveModule encoders. */
