@@ -39,7 +39,10 @@ public final class Constants {
         // set to "DriverStation" to log to driver station or set to "Standard Out" to
         // log to the standard output
         public static String printOutput = "Standard Out";
-    }
+      //TODO: find what directory to put logs in
+    public static String logDirectory = "";
+
+  }
 
     public static final class DriveConstants {
         public static final double kTrackWidth = Units.inchesToMeters(23.5);
