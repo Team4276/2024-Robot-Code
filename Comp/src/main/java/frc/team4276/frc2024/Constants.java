@@ -266,6 +266,7 @@ public final class Constants {
             kSubsystemConstants.kMasterConstants.isInverted = false;
 
             kSubsystemConstants.kFollowerConstants = new ServoMotorSubsystem.ServoMotorConfig[1];
+
             kSubsystemConstants.kFollowerConstants[0] = new ServoMotorSubsystem.ServoMotorConfig();
             kSubsystemConstants.kFollowerConstants[0].id = Ports.FOURBAR_FOLLOWER;
             kSubsystemConstants.kFollowerConstants[0].isInverted = true;
@@ -288,6 +289,7 @@ public final class Constants {
 
             kSubsystemConstants.kPidfConfigs = new CANSparkMaxFactory.CANSparkMaxPIDFConfig[3];
 
+            kSubsystemConstants.kPidfConfigs[0] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[0].kSlotId = 0; // Smart Motion Cruise
             kSubsystemConstants.kPidfConfigs[0].kP = 0.0;
             kSubsystemConstants.kPidfConfigs[0].kI = 0.0;
@@ -298,6 +300,7 @@ public final class Constants {
             kSubsystemConstants.kPidfConfigs[0].kIMaxAccum = 0.0;
             kSubsystemConstants.kPidfConfigs[0].kPIDOutputRange = 1.0;
 
+            kSubsystemConstants.kPidfConfigs[1] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[1].kSlotId = 1; // Smart Motion Maintain
             kSubsystemConstants.kPidfConfigs[1].kP = 0.0;
             kSubsystemConstants.kPidfConfigs[1].kI = 0.0;
@@ -308,6 +311,7 @@ public final class Constants {
             kSubsystemConstants.kPidfConfigs[1].kIMaxAccum = 0.0;
             kSubsystemConstants.kPidfConfigs[1].kPIDOutputRange = 1.0;
 
+            kSubsystemConstants.kPidfConfigs[2] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[2].kSlotId = 2; // Fuse Motion
             kSubsystemConstants.kPidfConfigs[2].kP = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kI = 0.0;
