@@ -9,20 +9,15 @@ import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
-import frc.team4276.frc2024.Constants.LimelightConstants;
 import frc.team4276.frc2024.Constants.RobotStateConstants;
-import frc.team4276.frc2024.Limelight.VisionPoseAcceptor;
 import frc.team4276.frc2024.field.Field;
-import frc.team4276.frc2024.subsystems.DriveSubsystem;
-import frc.team4276.frc2024.subsystems.LimeLight.VisionUpdate;
-
+import frc.team4276.frc2024.subsystems.vision.VisionPoseAcceptor;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.util.InterpolatingDouble;
 import frc.team254.lib.util.InterpolatingTreeMap;
 
-//TODO: figure this out lol
-public class RobotState { //TODO: fix race conditions
+public class RobotState {
     private static RobotState mInstance;
     
     private Optional<VisionUpdate> mLatestVisionUpdate;
@@ -57,32 +52,37 @@ public class RobotState { //TODO: fix race conditions
         odom_to_vehicle_.put(new InterpolatingDouble(start_time), initial_odom_to_vehicle);
         field_to_odom_ = new InterpolatingTreeMap<>(kObservationBufferSize);
         field_to_odom_.put(new InterpolatingDouble(start_time), getInitialFieldToOdom().getTranslation());
-        // vehicle_velocity_predicted_ = Twist2d.identity();
-        // vehicle_velocity_measured_ = Twist2d.identity();
-        // vehicle_velocity_measured_filtered_ = new MovingAverageTwist2d(25);
         mLatestVisionUpdate = Optional.empty();
-        // mDisplayVisionPose = Pose2d.identity();
-        // mSetpointPose = Pose2d.identity();
         mPoseAcceptor = new VisionPoseAcceptor();
-
-        // mField2d = new Field2d();
-        // mField2d.setRobotPose(Constants.kWidthField2d, Constants.kHeightField2d, new
-        // edu.wpi.first.math.geometry.Rotation2d(0));
-        // mField2d.getObject("vision").setPose(Constants.kWidthField2d,
-        // Constants.kHeightField2d, new edu.wpi.first.math.geometry.Rotation2d(0));
-        // mField2d.getObject("fused").setPose(Constants.kWidthField2d,
-        // Constants.kHeightField2d, new edu.wpi.first.math.geometry.Rotation2d(0));
     }
 
-    public Field.POIs getPOIs(){
+    public static class VisionUpdate {
+        private double timestamp;
+        private Translation2d fieldToRobot;
+
+        public VisionUpdate(double timestamp, Translation2d fieldToRobot) {
+            this.timestamp = timestamp;
+            this.fieldToRobot = fieldToRobot;
+        }
+
+        public double getTimestamp() {
+            return timestamp;
+        }
+
+        public Translation2d getCameraToTag() {
+            return fieldToRobot;
+        }
+    }
+
+    public synchronized Field.POIs getPOIs(){
         return mPOIs;
     }
 
-    public void setBlue(){
+    public synchronized void setBlue(){
         mPOIs = Field.Blue.kPOIs;
     }
 
-    public void setRed(){
+    public synchronized void setRed(){
         mPOIs = Field.Red.kPOIs;
     }
 
@@ -106,38 +106,40 @@ public class RobotState { //TODO: fix race conditions
         mHasBeenEnabled = hasBeenEnabled;
     }
 
-    public void visionUpdate(VisionUpdate update) {
+    public synchronized void visionUpdate(VisionUpdate update) {
         mLatestVisionUpdate = Optional.ofNullable(update);
         if (!mLatestVisionUpdate.isEmpty()) {
             double visionTimestamp = mLatestVisionUpdate.get().getTimestamp();
 
             Pose2d odomToVehicle = getOdomToVehicle(visionTimestamp);
 
-            Pose2d camToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTag());
+            // Pose2d camToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTag());
 
-            Pose2d vehicleToTag = Pose2d.fromTranslation(
-                    LimelightConstants.kLimeLightRobotOffset.transformBy(camToTag)
-                            .getTranslation().rotateBy(odomToVehicle.getRotation()));
+            // Pose2d vehicleToTag = Pose2d.fromTranslation(
+            //         LimelightConstants.kLimeLightRobotOffset.transformBy(camToTag)
+            //                 .getTranslation().rotateBy(odomToVehicle.getRotation()));
 
-            Pose2d visionFieldToVehicle = mLatestVisionUpdate.get().getTagInField().transformBy(vehicleToTag.inverse());
+            // Pose2d visionFieldToVehicle = mLatestVisionUpdate.get().getTagInField().transformBy(vehicleToTag.inverse());
 
-            if (!mPoseAcceptor.shouldAcceptVision(vehicleToTag, DriveSubsystem.getInstance().getMeasSpeeds())){
-                return;
-            }
+            Translation2d fieldToRobot = mLatestVisionUpdate.get().fieldToRobot;
+
+            // if (!mPoseAcceptor.shouldAcceptVision(vehicleToTag, DriveSubsystem.getInstance().getMeasSpeeds())){
+            //     return;
+            // }
             boolean disabledAndNeverEnabled = DriverStation.isDisabled() && !mHasBeenEnabled;
             if (initial_field_to_odom_.isEmpty() || disabledAndNeverEnabled) {
                 var odom_to_vehicle_translation = disabledAndNeverEnabled ?
                 Translation2d.identity() :
                 getOdomToVehicle(visionTimestamp).getTranslation();
                 field_to_odom_.put(new InterpolatingDouble(visionTimestamp),
-                visionFieldToVehicle.getTranslation().translateBy(odom_to_vehicle_translation.inverse()));
+                fieldToRobot.getTranslation().translateBy(odom_to_vehicle_translation.inverse()));
                 initial_field_to_odom_ = Optional.of(field_to_odom_.lastEntry().getValue());
                 mKalmanFilter.setXhat(0, field_to_odom_.lastEntry().getValue().x());
                 mKalmanFilter.setXhat(1, field_to_odom_.lastEntry().getValue().y());
                 // mDisplayVisionPose = visionFieldToVehicle;
 
             } else if (DriverStation.isEnabled()) {
-                var field_to_odom = visionFieldToVehicle.getTranslation()
+                var field_to_odom = fieldToRobot.getTranslation()
                         .translateBy(odomToVehicle.getTranslation().inverse());
                 if (DriverStation.isAutonomous()) {
                     final double kMaxDistanceToAccept = 4.0;

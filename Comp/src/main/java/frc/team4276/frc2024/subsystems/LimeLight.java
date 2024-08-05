@@ -73,13 +73,13 @@ public class LimeLight extends Subsystem { // TODO: fix race conditions
      * Allows us to maintain the timestamp of a vision capture along with the
      * corresponding 2d Translation from Camera to Goal
      */
-    public static class VisionUpdate {
+    public static class LLVisionUpdate {
         private double timestamp;
         private Translation2d cameraToTarget;
         private int tagId;
         private Pose2d fieldToTag;
 
-        public VisionUpdate(double timestamp, Translation2d cameraToTarget, int tagId) {
+        public LLVisionUpdate(double timestamp, Translation2d cameraToTarget, int tagId) {
             this.timestamp = timestamp;
             this.cameraToTarget = cameraToTarget;
             this.fieldToTag = mTagMap.get(tagId).getTagInField();
@@ -164,19 +164,19 @@ public class LimeLight extends Subsystem { // TODO: fix race conditions
         //     SmartDashboard.putNumber("Corner " + i, mPeriodicIO.corners[i].doubleValue());
         // }
 
-        if (mPeriodicIO.seesTarget) {
-            if (mTagMap.keySet().contains(mPeriodicIO.tagId) && mPeriodicIO.targetDistanceToRobot != null) {
-                RobotState.getInstance().visionUpdate(
-                        new VisionUpdate(timestamp - mPeriodicIO.latency,
-                                getTargetDistance().inverse(),
-                                mPeriodicIO.tagId));
+        // if (mPeriodicIO.seesTarget) {
+        //     if (mTagMap.keySet().contains(mPeriodicIO.tagId) && mPeriodicIO.targetDistanceToRobot != null) {
+        //         RobotState.getInstance().visionUpdate(
+        //                 new LLVisionUpdate(timestamp - mPeriodicIO.latency,
+        //                         getTargetDistance().inverse(),
+        //                         mPeriodicIO.tagId));
 
-            } else {
-                RobotState.getInstance().visionUpdate(null);
-            }
+        //     } else {
+        //         RobotState.getInstance().visionUpdate(null);
+        //     }
 
             
-        }
+        // }
 
     }
 
