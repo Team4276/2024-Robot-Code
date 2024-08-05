@@ -112,6 +112,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         }
 
         mMaster.burnFlash();
+
+        mPeriodicIO = new PeriodicIO();
     }
 
     protected void burnFlash() {
