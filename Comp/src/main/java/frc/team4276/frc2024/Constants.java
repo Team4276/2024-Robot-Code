@@ -35,11 +35,12 @@ public final class Constants {
     // Don't use during competition
     public static final boolean disableExtraTelemetry = false; //TODO: move into logger
 
-    public static final class DebugConstants {
-        // set to "DriverStation" to log to driver station or set to "Standard Out" to
-        // log to the standard output
-        public static String printOutput = "Standard Out";
-      //TODO: find what directory to put logs in
+  public static final class DebugConstants {
+    public static final boolean writeSwerveErrors = true;
+    // set to "DriverStation" to log to driver station or set to "Standard Out" to
+    // log to the standard output
+    public static String printOutput = "Standard Out";
+    //TODO: find what directory to put logs in it needs to end with a slash
     public static String logDirectory = "";
 
   }

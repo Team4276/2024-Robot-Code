@@ -3,29 +3,58 @@ package frc.team4276.frc2024.Logging;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
+
+import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.frc2024.Constants.DebugConstants;
 
 public class RobotFileLogger {
+/*
+ * example usage:
+ *    RobotFileLogger logger = new RobotFileLogger("test.log", true);
+ *    logger.writeToFile("test", RobotFileLogger.DebugLevel.DEBUG);
+ */
     private File logFile;
     private FileWriter writer;
     private String logPath;
     private static String logDirectory = DebugConstants.logDirectory;
     private boolean fileIsBeingAccessed;
 
-    public RobotFileLogger(String fileName) {
+    public enum DebugLevel {
+        ERROR("error"),
+        WARNING("warning"),
+        INFO("info"),
+        DEBUG("debug");
+    
+        private final String levelString;
+    
+        DebugLevel(String levelString) {
+            this.levelString = levelString;
+        }
+    
+        public String getLevelString() {
+            return levelString;
+        }
+    }    //ten digit unique session id
+    private static long sessionID = 1000000000L + (long)(new Random().nextDouble() * 9000000000L);
+    //if clearFile is true this will clear the file before it begins writing 
+    public RobotFileLogger(String fileName, boolean clearFile) {
         logPath = logDirectory + fileName;
         logFile = new File(logPath);
         try {
             logFile.createNewFile();
-            writer = new FileWriter(logPath);
+            writer = new FileWriter(logPath, true);
         } catch (IOException e) {
             PrintLogger.print("Exception thrown while creating file logger, file logging will not be available: " + "\n" + e.getMessage());
             writer = null;
         }
+        if(clearFile){
+           clearFile();
+        }
     }
 
     public synchronized void clearFile() {
-        if (fileIsBeingAccessed) {
+        while (fileIsBeingAccessed) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -50,7 +79,7 @@ public class RobotFileLogger {
     }
 
     public synchronized void deleteFile() {
-        if (fileIsBeingAccessed) {
+        while (fileIsBeingAccessed) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -72,9 +101,9 @@ public class RobotFileLogger {
         notifyAll();
     }
 
-    public synchronized boolean writeToFile(String str) {
+    public synchronized boolean writeToFile(String str, DebugLevel level ) {
     
-        if (fileIsBeingAccessed) {
+        while (fileIsBeingAccessed) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -88,6 +117,7 @@ public class RobotFileLogger {
         fileIsBeingAccessed = true;
         str = str + "\n";
         try {
+            writer.write("[Time:" + "" +Timer.getFPGATimestamp() + " Session ID:" + sessionID + " Level:"+ level.levelString + "] ");
             writer.write(str);
             writer.flush();
         } catch (IOException e) {
