@@ -8,15 +8,15 @@ import java.util.Random;
 import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.frc2024.Constants.DebugConstants;
 
-public class RobotFileLogger {
+public class LoggableRobotFile {
 /*
  * example usage:
  *    RobotFileLogger logger = new RobotFileLogger("test.log", true);
  *    logger.writeToFile("test", RobotFileLogger.DebugLevel.DEBUG);
  */
-    private File logFile;
+    private final File logFile;
     private FileWriter writer;
-    private String logPath;
+    private final String logPath;
     private static String logDirectory = DebugConstants.logDirectory;
     private boolean fileIsBeingAccessed;
 
@@ -38,7 +38,7 @@ public class RobotFileLogger {
     }    //ten digit unique session id
     private static long sessionID = 1000000000L + (long)(new Random().nextDouble() * 9000000000L);
     //if clearFile is true this will clear the file before it begins writing 
-    public RobotFileLogger(String fileName, boolean clearFile) {
+    public LoggableRobotFile(String fileName, boolean clearFile) {
         logPath = logDirectory + fileName;
         logFile = new File(logPath);
         try {

@@ -40,7 +40,8 @@ public final class Constants {
     // set to "DriverStation" to log to driver station or set to "Standard Out" to
     // log to the standard output
     public static String printOutput = "Standard Out";
-    //TODO: find what directory to put logs in it needs to end with a slash
+    //TODO: find what directory to put logs in
+    // Must end with a slash
     public static String logDirectory = "";
 
   }
