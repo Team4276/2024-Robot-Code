@@ -22,8 +22,6 @@ import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.FourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
-import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
-import frc.team4276.frc2024.statemachines.FlywheelState;
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 
@@ -60,8 +58,6 @@ public class Robot extends TimedRobot {
 
     private final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
     private AutoModeExecutor mAutoModeExecutor;
-
-  private final AllianceChooser mAllianceChooser = AllianceChooser.getInstance();
 
     /**
      * This function is run when the robot is first started up and should be used
