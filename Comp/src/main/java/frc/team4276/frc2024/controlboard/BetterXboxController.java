@@ -14,7 +14,7 @@ public class BetterXboxController extends XboxController {
     private boolean isRumbling = false;
     private double rumbleEndTime = -1;
 
-    public void setRumble(double time){
+    public void rumble(double time){
         if(!isRumbling){
             rumbleEndTime = time + Timer.getFPGATimestamp();
             isRumbling = true;

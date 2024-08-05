@@ -49,9 +49,9 @@ public class Superstructure extends Subsystem {
     }
 
     private class ManualInput {
-        double flywheel_voltage;
-        IntakeSubsystem.State intake_state;
-        double fourbar_voltage;
+        double flywheel_voltage = 0.0;
+        IntakeSubsystem.State intake_state = IntakeSubsystem.State.IDLE;
+        double fourbar_voltage = 0.0;
     }
 
     private static Superstructure mInstance;
@@ -92,10 +92,6 @@ public class Superstructure extends Subsystem {
         return mIsHoldingNote;
     }
 
-    public synchronized void overrideNoteStatus(boolean holdingNote) {
-        mIsHoldingNote = holdingNote;
-    }
-
     public synchronized void setManualFlywheelVoltage(double voltage) {
         mRequestedManualInput.flywheel_voltage = voltage;
     }
@@ -112,6 +108,18 @@ public class Superstructure extends Subsystem {
     public synchronized void readPeriodicInputs() {
         mFrontBeam.update();
         mBackBeam.update();
+
+        if(mGoalState != GoalState.READY) {
+            hasRumbled = false;
+        }
+
+        if(mGoalState != GoalState.SHOOT) {
+            mNoteDetectTime = -1.0;
+        }
+
+        if(mNoteDetectTime == -1.0) {
+            mIsHoldingNote = mFrontBeam.get();
+        }
 
         if (mIsManual) {
             mGoalState = GoalState.IDLE;
@@ -160,7 +168,7 @@ public class Superstructure extends Subsystem {
     }
 
     private double mNoteDetectTime = -1.0;
-    private boolean isSpunUp = false;
+    private boolean hasRumbled = false;
 
     private void updateNomimnal(double timestamp) {
         switch (mGoalState) {
@@ -178,24 +186,21 @@ public class Superstructure extends Subsystem {
 
                 if (mNoteDetectTime > 0.0
                         && timestamp - mNoteDetectTime > Constants.SuperstructureConstants.kShotWaitTime) {
-                    mIsHoldingNote = false;
                     mNoteDetectTime = -1.0;
                 }
 
                 break;
             case INTAKE:
-                mFlywheelSubsystem.setOpenLoop(0.0);
                 mIntakeSubsystem.setState(IntakeSubsystem.State.INTAKE);
                 mFourbarSubsystem.setFuseMotionSetpoint(Constants.SuperstructureConstants.kFourbarIntakeState);
 
-                if (mFrontBeam.wasCleared()) {
-                    mIntakeSubsystem.setState(IntakeSubsystem.State.DEFEED);
+                if (mBackBeam.wasCleared()) {
+                    mIntakeSubsystem.setState(IntakeSubsystem.State.SLOW_FEED);
                     break;
                 }
 
-                if (mIntakeSubsystem.getState() == IntakeSubsystem.State.DEFEED && mFrontBeam.wasTripped()) {
+                if (mFrontBeam.wasTripped()) {
                     mIntakeSubsystem.setState(IntakeSubsystem.State.IDLE);
-                    mIsHoldingNote = true;
                 }
 
                 break;
@@ -224,27 +229,22 @@ public class Superstructure extends Subsystem {
                     mFourbarSubsystem.setFuseMotionSetpoint(Constants.SuperstructureConstants.kFourbarFerryState);
                 }
 
-                if (mFlywheelSubsystem.isSpunUp() && !isSpunUp) {
-                    ControlBoard.getInstance().driver.setRumble(1.0);
-                    ControlBoard.getInstance().operator.setRumble(1.0);
-                    isSpunUp = true;
+                if (mFlywheelSubsystem.isSpunUp()) {
+                    if(!hasRumbled){ 
+                        ControlBoard.getInstance().driver.rumble(1.0);
+                        ControlBoard.getInstance().operator.rumble(1.0);
+                        
+                        hasRumbled = true;
+                    }
+                } else {
+                    hasRumbled = false;
+
                 }
 
                 break;
             case EXHAUST:
                 mIntakeSubsystem.setState(IntakeSubsystem.State.EXHAUST);
                 mFourbarSubsystem.setFuseMotionSetpoint(Constants.SuperstructureConstants.kFourbarPrepState);
-
-                if (mBackBeam.wasCleared()) {
-                    mNoteDetectTime = timestamp;
-
-                }
-
-                if (mNoteDetectTime > 0.0
-                        && timestamp - mNoteDetectTime > Constants.SuperstructureConstants.kExhaustWaitTime) {
-                    mIsHoldingNote = false;
-                    mNoteDetectTime = -1.0;
-                }
 
                 break;
             case IDLE:
@@ -304,9 +304,11 @@ public class Superstructure extends Subsystem {
         }
 
         if (!hadNote && mIsHoldingNote) {
+            ControlBoard.getInstance().driver.rumble(1.0);
+            ControlBoard.getInstance().operator.rumble(1.0);
+
             hadNote = true;
-            ControlBoard.getInstance().driver.setRumble(1.0);
-            ControlBoard.getInstance().operator.setRumble(1.0);
+            
         } else if (!mIsHoldingNote) {
             hadNote = false;
         }
