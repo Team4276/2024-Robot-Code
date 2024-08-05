@@ -266,6 +266,7 @@ public final class Constants {
             kSubsystemConstants.kMasterConstants.isInverted = false;
 
             kSubsystemConstants.kFollowerConstants = new ServoMotorSubsystem.ServoMotorConfig[1];
+            kSubsystemConstants.kFollowerConstants[0] = new ServoMotorSubsystem.ServoMotorConfig();
             kSubsystemConstants.kFollowerConstants[0].id = Ports.FOURBAR_FOLLOWER;
             kSubsystemConstants.kFollowerConstants[0].isInverted = true;
 
