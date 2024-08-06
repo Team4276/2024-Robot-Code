@@ -39,10 +39,13 @@ public final class Constants {
     public static final boolean writeSwerveErrors = true;
     // set to "DriverStation" to log to driver station or set to "Standard Out" to
     // log to the standard output
-    public static String printOutput = "DriverStation";
+    public static String printOutput = "Standard Out";
+
+
     //TODO: find what directory to put logs in
     // Must end with a slash
-    public static String logDirectory = "C:\\Users\\Boden\\Downloads\\downloaded\\";
+    //warning do not run the logger with this blank or it will TRY to nuke your root dir fail safes should stop it but still scary 
+    public static String logDirectory = "";
     //max file size of the log directory
     public static double maxDirSize = 20;
     //size to reduce the directory by

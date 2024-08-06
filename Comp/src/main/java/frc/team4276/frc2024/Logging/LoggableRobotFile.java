@@ -16,8 +16,10 @@ import frc.team4276.frc2024.Constants.DebugConstants;
 public class LoggableRobotFile {
     /*
      * example usage:
-     *    RobotFileLogger logger = new RobotFileLogger("test", true);
-     *    logger.writeToFile("test", RobotFileLogger.DebugLevel.DEBUG);
+     *    //class will handle the file extensions for you do not add a file extension
+     *    RobotFileLogger logger = new RobotFileLogger("test");
+     *    logger.init();
+     *    logger.writeToFile("testing", RobotFileLogger.DebugLevel.DEBUG);
      */
     private final File logFile;
     private FileWriter writer;
@@ -53,6 +55,7 @@ public class LoggableRobotFile {
     }
 
     public void init() {
+        assert DebugConstants.maxDirSize > DebugConstants.reductionSize : "maxDirSize must be greater then reduction size";
         try {
             checkAndReduceDirectorySize(Paths.get(logDirectory));
             logFile.createNewFile();
@@ -140,7 +143,7 @@ public class LoggableRobotFile {
     public String getFilePath() {
         return logPath;
     }
-
+//helper functions
     private static void checkAndReduceDirectorySize(Path dir) throws IOException {
     if(getDirectorySizeInMB(dir) >= DebugConstants.maxDirSize){
         while (getDirectorySizeInMB(dir) > DebugConstants.maxDirSize - DebugConstants.reductionSize && !areAllFilesNotRlog(dir)) {
@@ -226,7 +229,7 @@ public class LoggableRobotFile {
         }
     }
     
-    public static boolean areAllFilesNotRlog(Path dir) throws IOException {
+    private static boolean areAllFilesNotRlog(Path dir) throws IOException {
         final boolean[] noneRlog = {true};
 
         Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {

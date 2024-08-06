@@ -67,9 +67,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         try {
-            LoggableRobotFile logger = new LoggableRobotFile("test");
-            logger.init();
-            logger.writeToFile("testing", LoggableRobotFile.DebugLevel.DEBUG);
             mDriveSubsystem = DriveSubsystem.getInstance();
             mLimeLight = LimeLight.getInstance();
             mIntakeSubsystem = IntakeSubsystem.getInstance();
@@ -78,7 +75,7 @@ public class Robot extends TimedRobot {
             mClimberSubsystem = ClimberSubsystem.getInstance();
 
             CameraServer.startAutomaticCapture();
-
+            
             // Set subsystems
             mSubsystemManager.setSubsystems(
                     mDriveSubsystem,
