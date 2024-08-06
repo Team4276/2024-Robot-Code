@@ -24,7 +24,7 @@ import frc.team4276.frc2024.subsystems.FourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
-
+import frc.team4276.frc2024.Logging.LoggableRobotFile;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 
@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
             mClimberSubsystem = ClimberSubsystem.getInstance();
 
             CameraServer.startAutomaticCapture();
-
+            
             // Set subsystems
             mSubsystemManager.setSubsystems(
                     mDriveSubsystem,
