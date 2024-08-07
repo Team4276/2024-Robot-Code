@@ -6,6 +6,7 @@ package frc.team4276.frc2024;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -369,7 +370,7 @@ public final class Constants {
     public static final class SuperstructureConstants {
         // Radians
         public static final double kFourbarStowState = Math.toRadians(120.0);
-        public static final double kFourbarPrepState = Math.toRadians(90.0);
+        public static final double kFourbarPrepState = Math.toRadians(106.7);
         public static final double kFourbarIntakeState = Math.toRadians(49.0);
         public static final double kFourbarSubCloseState = Math.toRadians(45.0);
         public static final double kFourbarFerryState = Math.toRadians(45.0);
@@ -378,5 +379,12 @@ public final class Constants {
 
         public static final double kShotWaitTime = 0.5;
         public static final double kExhaustWaitTime = 0.5;
+    }
+
+    public static final class VisionConstants {
+        public static final String kFrontCameraName = "ERROR_ASSIGN_A_NAME";
+        public static final Transform3d kFrontCameraOffset = new Transform3d();
+
+        public static final double kPureVisionBufferTime = 1.0;
     }
 }

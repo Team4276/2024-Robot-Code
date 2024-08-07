@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
@@ -22,9 +21,9 @@ import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.FourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
+import frc.team4276.frc2024.subsystems.vision.VisionDeviceManager;
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
-import frc.team4276.frc2024.Logging.LoggableRobotFile;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 
@@ -48,6 +47,7 @@ public class Robot extends TimedRobot {
 
     private DriveSubsystem mDriveSubsystem;
     private LimeLight mLimeLight;
+    private VisionDeviceManager mVisionDeviceManager;
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
         try {
             mDriveSubsystem = DriveSubsystem.getInstance();
             mLimeLight = LimeLight.getInstance();
+            mVisionDeviceManager = VisionDeviceManager.getInstance();
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
@@ -84,13 +85,12 @@ public class Robot extends TimedRobot {
                     mFlywheelSubsystem,
                     mFourbarSubsystem,
                     mLimeLight,
+                    mVisionDeviceManager,
                     mClimberSubsystem);
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
             RobotState.getInstance().resetKalmanFilters();
-
-            SmartDashboard.putNumber("Fourbar des voltage input", 0.0);
 
         } catch (Throwable t) {
             throw t;

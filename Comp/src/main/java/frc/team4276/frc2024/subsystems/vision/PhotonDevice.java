@@ -40,6 +40,7 @@ public class PhotonDevice extends Subsystem {
         if(estimatedRobotPose.isPresent()) {
             RobotState.getInstance().visionUpdate(new RobotState.VisionUpdate(estimatedRobotPose.get().timestampSeconds, 
                 new Translation2d(estimatedRobotPose.get().estimatedPose.getX(), estimatedRobotPose.get().estimatedPose.getY())));
+
         }
     }
 
