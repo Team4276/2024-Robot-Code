@@ -46,7 +46,7 @@ public final class Constants {
     //TODO: find what directory to put logs in
     // Must end with a slash
     //warning do not run the logger with this blank or it will TRY to nuke your root dir fail safes should stop it but still scary 
-    public static String logDirectory = "";
+    public static String logDirectory = "/home/lvuser/logs/";
     //max file size of the log directory
     public static double maxDirSize = 20;
     //size to reduce the directory by
