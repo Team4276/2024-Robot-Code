@@ -272,4 +272,12 @@ public class Translation2d implements ITranslation2d<Translation2d> {
     public Translation2d getTranslation() {
         return this;
     }
+
+    public edu.wpi.first.math.geometry.Translation2d toWPI() {
+        return new edu.wpi.first.math.geometry.Translation2d(this.x_, this.y_);
+    }
+
+    public static Translation2d fromWPI(edu.wpi.first.math.geometry.Translation2d other) {
+        return new Translation2d(other.getX(), other.getY());
+    }
 }

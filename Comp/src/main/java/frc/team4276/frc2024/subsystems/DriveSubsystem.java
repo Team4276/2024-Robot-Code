@@ -250,7 +250,7 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
     }
 
     public Pose2d getPose() {
-        return RobotState.getInstance().getCurrentFieldToVehicle();
+        return RobotState.getInstance().getLatestFieldToVehicle();
     }
 
     public synchronized void resetOdometry(Pose2d initialPose) {

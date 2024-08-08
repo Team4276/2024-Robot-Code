@@ -230,10 +230,11 @@ public final class Constants {
                 .getConstantsForId("test");
     }
 
+    //TODO: tune (though these are probably accurate)
     public static final class RobotStateConstants {
-        public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.04, 1), Math.pow(0.04, 1));
-        public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.01, 1),
-                Math.pow(0.01, 1));
+        public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.07, 1), Math.pow(0.07, 1));
+        public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.03, 1),
+                Math.pow(0.03, 1));
     }
 
     public static final class FourbarConstants {

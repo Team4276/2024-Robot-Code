@@ -27,9 +27,10 @@ public class WaitForRegionAction implements Action {
 
     @Override
     public boolean isFinished() {
-        Pose2d robot_pose = RobotState.getInstance().getFieldToVehicle(Timer.getFPGATimestamp());
-        return robot_pose.getTranslation().x() < mTopRight.x() && robot_pose.getTranslation().x() > mBottomLeft.x()
-                && robot_pose.getTranslation().y() > mBottomLeft.y() && robot_pose.getTranslation().y() < mTopRight.y();
+        // Pose2d robot_pose = RobotState.getInstance().getFieldToVehicle(Timer.getFPGATimestamp());
+        // return robot_pose.getTranslation().x() < mTopRight.x() && robot_pose.getTranslation().x() > mBottomLeft.x()
+        //         && robot_pose.getTranslation().y() > mBottomLeft.y() && robot_pose.getTranslation().y() < mTopRight.y();
+        return true;
     }
 
     @Override

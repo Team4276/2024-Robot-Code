@@ -36,7 +36,7 @@ public class PPSwerveTrajectoryAction implements Action {
 
         mCommand = new FollowPathHolonomic(
             path, 
-            mRobotState::getWPICurrentFieldToVehicle, 
+            mRobotState::getWPILatestFieldToVehicle, 
             mDriveSubsystem::getWPIMeasSpeeds, 
             mDriveSubsystem::updatePPPathFollowingSetpoint, 
             DriveConstants.kAutoTranslationPIDConstants, 
