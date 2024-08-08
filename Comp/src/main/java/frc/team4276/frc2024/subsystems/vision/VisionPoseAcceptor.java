@@ -5,7 +5,7 @@ import frc.team1678.lib.swerve.ChassisSpeeds;
 //TODO: calibrate
 public class VisionPoseAcceptor {
     public boolean shouldAcceptVision(ChassisSpeeds speeds) {
-        if (Math.abs(speeds.omegaRadiansPerSecond) >= 1.0) {
+        if (Math.abs(speeds.omegaRadiansPerSecond) >= 2.0) {
             return false;
         }
 

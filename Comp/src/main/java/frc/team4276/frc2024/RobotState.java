@@ -3,30 +3,24 @@ package frc.team4276.frc2024;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.StateSpaceUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
 
-import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.field.Field;
 import frc.team4276.frc2024.subsystems.vision.VisionPoseAcceptor;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
-import frc.team254.lib.util.InterpolatingDouble;
-import frc.team254.lib.util.InterpolatingTreeMap;
 
-//TODO: refactor variable names
 public class RobotState {
-    private Translation2d mEstimatedPose = Translation2d.identity();
+    private Translation2d mEstimatedPose = Translation2d.identity(); //TODO: check this stupid vector math
 
     private ExtendedKalmanFilter<N2, N2, N2> mKalmanFilter;
 
@@ -60,6 +54,7 @@ public class RobotState {
     public synchronized void reset(double start_time, Pose2d initial_pose) {
         mOdomPoseBuffer.clear();
         mOdomPoseBuffer.addSample(start_time, initial_pose.toWPI());
+        mEstimatedPose = initial_pose.getTranslation();
     }
 
     public synchronized void reset() {
@@ -73,7 +68,8 @@ public class RobotState {
                 Nat.N2(), // Dimensions of vision (x, y)
                 (x, u) -> u, // The derivative of the output is predicted shift (always 0)
                 (x, u) -> x, // The output is position (x, y)
-                Constants.RobotStateConstants.kStateStdDevs, // Standard deviation of position (uncertainty propagation with no vision)
+                Constants.RobotStateConstants.kStateStdDevs, // Standard deviation of position (uncertainty propagation
+                                                             // with no vision)
                 Constants.RobotStateConstants.kLocalMeasurementStdDevs, // Standard deviation of vision measurements
                 Constants.kLooperDt);
     }
@@ -103,52 +99,42 @@ public class RobotState {
     public static class VisionUpdate {
         public final double timestamp;
         public final Translation2d fieldToVis;
+        public final double distStDev;
 
-        public VisionUpdate(double timestamp, Translation2d fieldToVis) {
+        public VisionUpdate(double timestamp, Translation2d fieldToVis, double distStDev) {
             this.timestamp = timestamp;
             this.fieldToVis = fieldToVis;
+            this.distStDev = distStDev;
         }
     }
 
+    //TODO: fix first vision update logic
     public synchronized void visionUpdate(VisionUpdate update) {
         double visionTimestamp = update.timestamp;
 
-        try {
-            if (mOdomPoseBuffer.getInternalBuffer().lastKey() - kObservationBufferTime > visionTimestamp)
-                return;
-
-        } catch (NoSuchElementException e) {
+        if (mOdomPoseBuffer.getInternalBuffer().lastKey() - kObservationBufferTime > visionTimestamp)
             return;
-        }
 
         Optional<edu.wpi.first.math.geometry.Pose2d> sample = mOdomPoseBuffer.getSample(visionTimestamp);
 
         if (sample.isEmpty())
             return;
 
-        Transform2d sampleToOdom = new Transform2d(sample.get(), mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue());
-
-        //TODO: fix logic
+        // TODO: fix logic
         if (!mPoseAcceptor.shouldAcceptVision(DriveSubsystem.getInstance().getMeasSpeeds()))
             return;
 
-        boolean disabledAndNeverEnabled = DriverStation.isDisabled() && !mHasBeenEnabled;
-        // if (initial_field_to_odom_.isEmpty() || disabledAndNeverEnabled) {
-        //     var odom_to_vehicle_translation = disabledAndNeverEnabled ? Translation2d.identity()
-        //             : getOdomToVehicle(visionTimestamp).getTranslation();
-        //     field_to_odom_.put(new InterpolatingDouble(visionTimestamp),
-        //             update.fieldToVis.translateBy(odom_to_vehicle_translation.inverse()));
-        //     initial_field_to_odom_ = Optional.of(field_to_odom_.lastEntry().getValue());
+        mEstimatedPose = update.fieldToVis.translateBy(Translation2d.fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue()
+                .getTranslation().minus(sample.get().getTranslation())));
 
-        //     return;
-
-        // }
-
-        mEstimatedPose = update.fieldToVis.translateBy(Translation2d.fromWPI(sampleToOdom.getTranslation()));
+        if (DriverStation.isDisabled() && !mHasBeenEnabled) // Don't filter
+            return;
 
         try {
-            mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0), 
-                VecBuilder.fill(mEstimatedPose.x(), mEstimatedPose.y()), null);
+            mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0),
+                    VecBuilder.fill(mEstimatedPose.getTranslation().x(), mEstimatedPose.getTranslation().x()),
+                    StateSpaceUtil.makeCovarianceMatrix(Nat.N2(), VecBuilder.fill(update.distStDev, update.distStDev)));
+            mEstimatedPose.translateBy(new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1)));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,7 +142,8 @@ public class RobotState {
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {
-        return new Pose2d(mEstimatedPose, Rotation2d.fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getRotation()));
+        return new Pose2d(mEstimatedPose,
+                Rotation2d.fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getRotation()));
     }
 
     public synchronized edu.wpi.first.math.geometry.Pose2d getWPILatestFieldToVehicle() {

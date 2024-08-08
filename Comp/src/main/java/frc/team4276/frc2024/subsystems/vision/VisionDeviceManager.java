@@ -17,7 +17,7 @@ public class VisionDeviceManager extends Subsystem {
     }
 
     private VisionDeviceManager(){
-        mFrontCamera = new PhotonDevice(VisionConstants.kFrontCameraName, VisionConstants.kFrontCameraOffset);
+        mFrontCamera = new PhotonDevice(VisionConstants.kFrontCameraConstants);
     }
 
     @Override

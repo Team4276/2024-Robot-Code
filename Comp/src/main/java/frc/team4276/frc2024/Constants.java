@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.vision.PhotonDevice.PhotonDeviceConstants;
 import frc.team4276.lib.characterizations.FourBarFeedForward;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
@@ -383,12 +384,16 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final String kBackCameraName = "PI_CAM_3";
-        public static final Transform3d kBackCameraOffset = new Transform3d();
+        public static final PhotonDeviceConstants kFrontCameraConstants = new PhotonDeviceConstants();
+        static {
+            kFrontCameraConstants.kCameraName = "Arducam_OV9281_USB_Camera";
+            kFrontCameraConstants.kRobotToCamera = new Transform3d();
+        }
 
-        public static final String kFrontCameraName = "Arducam_OV9281_USB_Camera";
-        public static final Transform3d kFrontCameraOffset = new Transform3d();
-
-        public static final double kPureVisionBufferTime = 1.0;
+        public static final PhotonDeviceConstants kBackCameraConstants = new PhotonDeviceConstants();
+        static {
+            kBackCameraConstants.kCameraName = "PI_CAM_3";
+            kBackCameraConstants.kRobotToCamera = new Transform3d();
+        }
     }
 }
