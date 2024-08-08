@@ -17,16 +17,16 @@ public class VisionDeviceManager extends Subsystem {
     }
 
     private VisionDeviceManager(){
-        // mFrontCamera = new PhotonDevice(VisionConstants.kFrontCameraName, VisionConstants.kFrontCameraOffset);
+        mFrontCamera = new PhotonDevice(VisionConstants.kFrontCameraName, VisionConstants.kFrontCameraOffset);
     }
 
     @Override
     public void readPeriodicInputs() {
-        // mFrontCamera.readPeriodicInputs();
+        mFrontCamera.readPeriodicInputs();
     }
 
     @Override
     public void writePeriodicOutputs() {
-        // mFrontCamera.writePeriodicOutputs();
+        mFrontCamera.writePeriodicOutputs();
     }
 }

@@ -9,6 +9,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team254.lib.geometry.Translation2d;
@@ -33,7 +34,8 @@ public class PhotonDevice extends Subsystem {
     public void readPeriodicInputs() {
         PhotonPipelineResult result = mCamera.getLatestResult();
 
-        if(!result.hasTargets()) return;
+        if(!result.hasTargets()) 
+            return;
 
         Optional<EstimatedRobotPose> estimatedRobotPose = mPoseEstimator.update(result);
 
@@ -41,6 +43,8 @@ public class PhotonDevice extends Subsystem {
             RobotState.getInstance().visionUpdate(new RobotState.VisionUpdate(estimatedRobotPose.get().timestampSeconds, 
                 new Translation2d(estimatedRobotPose.get().estimatedPose.getX(), estimatedRobotPose.get().estimatedPose.getY())));
 
+            SmartDashboard.putNumber("PhotonCamera X", estimatedRobotPose.get().estimatedPose.getX());
+            SmartDashboard.putNumber("PhotonCamera Y", estimatedRobotPose.get().estimatedPose.getY());
         }
     }
 

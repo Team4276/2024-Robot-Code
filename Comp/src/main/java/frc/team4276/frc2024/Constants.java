@@ -382,7 +382,10 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final String kFrontCameraName = "ERROR_ASSIGN_A_NAME";
+        public static final String kBackCameraName = "PI_CAM_3";
+        public static final Transform3d kBackCameraOffset = new Transform3d();
+
+        public static final String kFrontCameraName = "Arducam_OV9281_USB_Camera";
         public static final Transform3d kFrontCameraOffset = new Transform3d();
 
         public static final double kPureVisionBufferTime = 1.0;
