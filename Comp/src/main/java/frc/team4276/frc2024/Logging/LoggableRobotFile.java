@@ -13,7 +13,7 @@ import java.util.Random;
 import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.frc2024.Constants.DebugConstants;
 
-public class LoggableRobotFile {
+ public class  LoggableRobotFile implements Runnable  {
     /*
      * example usage:
      *    //class will handle the file extensions for you do not add a file extension
@@ -26,7 +26,9 @@ public class LoggableRobotFile {
     private final String logPath;
     private static String logDirectory = DebugConstants.logDirectory;
     private boolean fileIsBeingAccessed;
-
+    private String outString;
+    private DebugLevel outDebug;
+    private boolean newData;
     public enum DebugLevel {
         ERROR("error"),
         WARNING("warning"),
@@ -61,20 +63,28 @@ public class LoggableRobotFile {
             logFile.createNewFile();
             writer = new FileWriter(logPath, true);
         } catch (IOException e) {
-            PrintLogger.print("Exception thrown while creating file logger, file logging will not be available: " + "\n" + e.getMessage());
+            PrintLogger.print("Exception thrown while creating file logger, file logging will not be available: " + "\n" + e.getStackTrace());
             writer = null;
         }
     }
-
-    public synchronized void clearFile() {
-        while (fileIsBeingAccessed) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+    public void setDebugSetString(String str, DebugLevel level){
+        outString = str;
+        outDebug = level;
+        newData = true;
+    }
+    public void run(){
+        while(true){
+            if(Thread.currentThread().isInterrupted()){
                 return;
             }
+            if(newData == true){
+                writeToFile(outString, outDebug);
+                newData = false;
+            }
+        
         }
+    }
+    public void clearFile() {
         fileIsBeingAccessed = true;
         if (writer != null) {
             try {
@@ -88,18 +98,9 @@ public class LoggableRobotFile {
             }
         }
         fileIsBeingAccessed = false;
-        notifyAll();
     }
 
-    public synchronized void deleteFile() {
-        while (fileIsBeingAccessed) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-        }
+    public void deleteFile() {
         fileIsBeingAccessed = true;
         if (writer != null) {
             try {
@@ -111,18 +112,9 @@ public class LoggableRobotFile {
         logFile.delete();
         writer = null;
         fileIsBeingAccessed = false;
-        notifyAll();
     }
 
-    public synchronized boolean writeToFile(String str, DebugLevel level ) {
-        while (fileIsBeingAccessed) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return false;
-            }
-        }
+    public boolean writeToFile(String str, DebugLevel level ) {
         if(writer == null){
             return false;
         }
@@ -134,14 +126,18 @@ public class LoggableRobotFile {
             writer.flush();
         } catch (IOException e) {
             PrintLogger.print("Exception thrown while attempting to write to log file: " + "\n" + e.getMessage());
+            return false;
         }
         fileIsBeingAccessed = false;
-        notifyAll();
         return true;
     }
 
     public String getFilePath() {
         return logPath;
+    }
+    public boolean isFileInUse(){
+        return fileIsBeingAccessed;
+        
     }
 //helper functions
     private static void checkAndReduceDirectorySize(Path dir) throws IOException {

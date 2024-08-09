@@ -36,7 +36,9 @@ public class PhotonDevice extends Subsystem {
 
         mPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS);
     }
-
+    public boolean getConnected(){
+        return mCamera.isConnected();
+    }
     //TODO: check vision readings vs gyro; check height reading (citrus ignore)
     @Override
     public void readPeriodicInputs() {

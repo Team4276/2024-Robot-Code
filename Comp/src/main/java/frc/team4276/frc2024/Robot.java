@@ -8,7 +8,8 @@ import java.util.Optional;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-
+import frc.team4276.frc2024.Logging.LoggableRobotFile;
+import frc.team4276.frc2024.Logging.LoggableThread;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -26,6 +27,7 @@ import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
+
 
 //TODO: refactor imports
 
@@ -58,6 +60,8 @@ public class Robot extends TimedRobot {
 
     private final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
     private AutoModeExecutor mAutoModeExecutor;
+    private LoggableThread logThread = new LoggableThread("ThreadTest");
+
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -66,6 +70,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        logThread.init();
         try {
             mDriveSubsystem = DriveSubsystem.getInstance();
             mLimeLight = LimeLight.getInstance();
@@ -109,6 +114,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        logThread.logAsync("testing", LoggableRobotFile.DebugLevel.INFO);
         mEnabledLooper.outputToSmartDashboard();
 
     }
