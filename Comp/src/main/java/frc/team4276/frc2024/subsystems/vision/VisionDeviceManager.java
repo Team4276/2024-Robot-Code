@@ -17,17 +17,17 @@ public class VisionDeviceManager extends Subsystem {
     }
 
     private VisionDeviceManager(){
-        mFrontCamera = new PhotonDevice(VisionConstants.kFrontCameraConstants);
+        // mFrontCamera = new PhotonDevice(VisionConstants.kFrontCameraConstants);
     }
 
     @Override
     public void readPeriodicInputs() {
-        mFrontCamera.readPeriodicInputs();
+        // mFrontCamera.readPeriodicInputs();
     }
 
     @Override
     public void writePeriodicOutputs() {
-        mFrontCamera.writePeriodicOutputs();
+        // mFrontCamera.writePeriodicOutputs();
     }
 
     public boolean getConencted(){

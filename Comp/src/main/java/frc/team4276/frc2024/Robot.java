@@ -17,7 +17,6 @@ import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
-import frc.team4276.frc2024.subsystems.LimeLight;
 import frc.team4276.frc2024.subsystems.FourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.vision.VisionDeviceManager;
@@ -46,7 +45,6 @@ public class Robot extends TimedRobot {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
     private DriveSubsystem mDriveSubsystem;
-    private LimeLight mLimeLight;
     private VisionDeviceManager mVisionDeviceManager;
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
@@ -69,7 +67,6 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             mDriveSubsystem = DriveSubsystem.getInstance();
-            mLimeLight = LimeLight.getInstance();
             mVisionDeviceManager = VisionDeviceManager.getInstance();
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
@@ -85,7 +82,6 @@ public class Robot extends TimedRobot {
                     mIntakeSubsystem,
                     mFlywheelSubsystem,
                     mFourbarSubsystem,
-                    mLimeLight,
                     mVisionDeviceManager,
                     mClimberSubsystem);
 
@@ -111,6 +107,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         mEnabledLooper.outputToSmartDashboard();
+        mControlBoard.update();
 
     }
 
@@ -123,8 +120,6 @@ public class Robot extends TimedRobot {
             mEnabledLooper.stop();
             mDisabledLooper.start();
             mSubsystemManager.stop();
-            mLimeLight.start();
-            // mLimeLight.setDisableProcessing(false);
 
         } catch (Throwable t) {
             throw t;
@@ -147,10 +142,8 @@ public class Robot extends TimedRobot {
         try {
             if (AllianceChooser.getInstance().isAllianceRed()) {
                 RobotState.getInstance().setRed();
-                mLimeLight.setRedTagMap();
             } else {
                 RobotState.getInstance().setBlue();
-                mLimeLight.setBlueTagMap();
             }
 
             mAutoModeSelector.updateModeCreator(AllianceChooser.getInstance().isAllianceChanged());
@@ -192,18 +185,19 @@ public class Robot extends TimedRobot {
             if (autoMode.isPresent()) {
                 mAutoModeExecutor.setAutoMode(autoMode.get());
 
-                // TODO: Reset with vision
                 mDriveSubsystem.resetOdometry(autoMode.get().getStartingPose());
             } else {
                 mDriveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d(0.0)));
 
             }
 
+            if(Constants.RobotStateConstants.kVisionResetsHeading) {
+                mDriveSubsystem.resetHeading(RobotState.getInstance().getHeadingFromVision().getDegrees());
+
+            }
+
             mEnabledLooper.start();
             mAutoModeExecutor.start();
-
-            // mLimeLight.setDisableProcessing(false);
-            RobotState.getInstance().setHasBeenEnabled(true);
 
         } catch (Throwable t) {
             throw t;
@@ -221,10 +215,6 @@ public class Robot extends TimedRobot {
             mDisabledLooper.stop();
             mEnabledLooper.start();
 
-            // mLimeLight.setDisableProcessing(false);
-
-            RobotState.getInstance().setHasBeenEnabled(true);
-
         } catch (Throwable t) {
             throw t;
         }
@@ -234,8 +224,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         try {
-            mControlBoard.update();
-
             if (mControlBoard.wantZeroHeading()) {
                 mDriveSubsystem.resetHeading(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
             }

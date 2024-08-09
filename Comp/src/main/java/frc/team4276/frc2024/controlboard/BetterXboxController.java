@@ -10,7 +10,6 @@ public class BetterXboxController extends XboxController {
         super(port);
     }
 
-    //TODO: test rumbles
     private boolean isRumbling = false;
     private double rumbleEndTime = -1;
 
