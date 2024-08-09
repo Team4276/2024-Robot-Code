@@ -12,7 +12,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.frc2024.Constants.DebugConstants;
-
+//can still be used single threaded 
+/*
+ * example usage:
+ *    //class will handle the file extensions for you do not add a file extension
+ *    RobotFileLogger logger = new RobotFileLogger("test");
+ *    logger.init();
+ *    logger.writeToFile("testing", RobotFileLogger.DebugLevel.DEBUG);
+ */
 public class LoggableRobotFile implements Runnable {
     private final File logFile;
     private FileWriter writer;
@@ -56,7 +63,7 @@ public class LoggableRobotFile implements Runnable {
         assert DebugConstants.logDirectory != "" : "logDirectory cannot be blank";
         if(logDirectory.lastIndexOf("/") != logDirectory.length() - 1){
             PrintLogger.print("logDirectory must end with a slash, logging will not be avaliable");
-            //return;
+            return;
         }
         try {
             checkAndReduceDirectorySize(Paths.get(logDirectory));
@@ -76,20 +83,18 @@ public class LoggableRobotFile implements Runnable {
     }
 
     public synchronized void run() {
-        while (!stopThread) {
+        while (true) {
             try {
                 while (!isNewData) {
-                    wait(); // Wait until new data is available
+                    wait(); 
                 }
                 if (isNewData) {
                     writeToFile(outString, outDebug);
                     isNewData = false;
                 }
             } catch (InterruptedException e) {
-                if (stopThread) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
+                Thread.currentThread().interrupt();
+                return;
             }
         }
     }
@@ -221,7 +226,7 @@ public class LoggableRobotFile implements Runnable {
     private static boolean validRlog(String fileName) {
         return fileName.toLowerCase().endsWith(".rlog");
     }
-
+    //os will deny multiple locks on a file 
     private static boolean isFileInUse(Path filePath) throws IOException {
         try (FileChannel fileChannel = FileChannel.open(filePath, StandardOpenOption.WRITE)) {
             fileChannel.tryLock();

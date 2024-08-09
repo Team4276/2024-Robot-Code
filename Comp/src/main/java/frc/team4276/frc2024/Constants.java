@@ -47,8 +47,7 @@ public final class Constants {
     //TODO: find what directory to put logs in
     // Must end with a slash
     // Do not leave blank
-    //public static final String logDirectory = "/home/lvuser/logs/";
-    public static final String logDirectory = "C:\\Users\\Boden\\Downloads\\downloaded\\";
+    public static final String logDirectory = "/home/lvuser/logs/";
     //max file size of the log directory
     public static final double maxDirSize = 20;
     //size to reduce the directory by

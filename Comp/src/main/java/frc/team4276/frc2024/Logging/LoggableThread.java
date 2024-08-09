@@ -9,17 +9,21 @@ import frc.team4276.frc2024.Logging.LoggableRobotFile.DebugLevel;
  *  //buzz will wait for fizz to be printed 
  *  logThread.logAsync("buzz", LoggableRobotFile.DebugLevel.INFO);
  */
+ //all member functions are safe to call during async operation 
+ //TODO: test on roborio 
 public class LoggableThread {
     private LoggableRobotFile mLogger;
     private Thread mThread;
-
-    public LoggableThread(String fileName) {
+    private String threadName;
+    public LoggableThread(String fileName, String ThreadName) {
+        threadName = ThreadName;
         mLogger = new LoggableRobotFile(fileName);
     }
 
     public void init() {
         mLogger.init();
         mThread = new Thread(mLogger);
+        mThread.setName(threadName);
         mThread.start(); 
     }
 
@@ -28,7 +32,6 @@ public class LoggableThread {
         while (mLogger.isFileInUse() || mLogger.isNewData) {}
         mLogger.setDebugSetString(str, level);
     }
-
     public void deleteFile() {
         stopLogging();
         try {
@@ -39,7 +42,6 @@ public class LoggableThread {
             e.printStackTrace();
         }
     }
-
     public void clearFile() {
         while (mLogger.isFileInUse()) {}
         mLogger.clearFile();
@@ -58,13 +60,13 @@ public class LoggableThread {
         }
     }
 
+    public boolean isRunning() {
+        return mThread != null && mThread.isAlive();
+    }
+
     private void stopLogging() {
         if (mThread != null) {
             mThread.interrupt();
         }
-    }
-
-    public boolean isRunning() {
-        return mThread != null && mThread.isAlive();
     }
 }
