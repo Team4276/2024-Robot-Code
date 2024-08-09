@@ -29,4 +29,8 @@ public class VisionDeviceManager extends Subsystem {
     public void writePeriodicOutputs() {
         // mFrontCamera.writePeriodicOutputs();
     }
+
+    public boolean getConencted(){
+        return mFrontCamera.getConnected();
+    }
 }

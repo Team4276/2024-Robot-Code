@@ -41,7 +41,7 @@ public final class Constants {
     public static final String printOutput = "Standard Out";
 
     // Must end with a slash
-    //warning do not run the logger with this blank or it will TRY to nuke your root dir fail safes should stop it but still scary 
+    // Do not leave blank
     public static final String logDirectory = "/home/lvuser/logs/";
     //max file size of the log directory
     public static final double maxDirSize = 20;
