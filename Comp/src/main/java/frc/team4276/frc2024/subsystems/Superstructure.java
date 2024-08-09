@@ -81,7 +81,7 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setDynamic(boolean isDynamic) {
-        mIsDymanic = isDynamic;
+        // mIsDymanic = isDynamic;
     }
 
     public synchronized void setManual(boolean isManual) {

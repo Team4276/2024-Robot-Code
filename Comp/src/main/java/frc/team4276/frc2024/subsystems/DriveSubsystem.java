@@ -47,8 +47,6 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
     private PeriodicIO mPeriodicIO;
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
-    private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
-
     private HeadingController mHeadingController;
 
     private boolean mOverrideHeading = false;
@@ -62,6 +60,8 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
         public double kMaxAngularAccel = Double.MAX_VALUE; // rad/s^2
         public String kName = "Default";
     }
+
+    private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
 
     private static DriveSubsystem mInstance;
 

@@ -106,6 +106,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         mEnabledLooper.outputToSmartDashboard();
+        mControlBoard.update();
 
     }
 
@@ -222,8 +223,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         try {
-            mControlBoard.update();
-
             if (mControlBoard.wantZeroHeading()) {
                 mDriveSubsystem.resetHeading(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
             }
