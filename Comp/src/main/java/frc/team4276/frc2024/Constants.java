@@ -16,7 +16,6 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.CANSparkBase.IdleMode;
 
-import frc.team4276.frc2024.Limelight.LimelightConstantsFactory;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.vision.PhotonDevice.PhotonDeviceConstants;
 import frc.team4276.lib.characterizations.FourBarFeedForward;
@@ -24,8 +23,6 @@ import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
-import frc.team254.lib.geometry.Pose2d;
-import frc.team254.lib.geometry.Rotation2d;
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
 
 public final class Constants {
@@ -35,23 +32,21 @@ public final class Constants {
 
     // Enables extra SmartDashboard Debugs
     // Don't use during competition
-    public static final boolean disableExtraTelemetry = false; //TODO: move into logger
+    public static final boolean disableExtraTelemetry = false; //TODO: move into shuffleboard
 
   public static final class DebugConstants {
     public static final boolean writeSwerveErrors = true;
     // set to "DriverStation" to log to driver station or set to "Standard Out" to
     // log to the standard output
-    public static String printOutput = "Standard Out";
+    public static final String printOutput = "Standard Out";
 
-
-    //TODO: find what directory to put logs in
     // Must end with a slash
     //warning do not run the logger with this blank or it will TRY to nuke your root dir fail safes should stop it but still scary 
-    public static String logDirectory = "/home/lvuser/logs/";
+    public static final String logDirectory = "/home/lvuser/logs/";
     //max file size of the log directory
-    public static double maxDirSize = 20;
+    public static final double maxDirSize = 20;
     //size to reduce the directory by
-    public static double reductionSize = 5;
+    public static final double reductionSize = 5;
 
   }
 
@@ -211,28 +206,10 @@ public final class Constants {
         public static final double kFreeSpeedRpm = 5676;
     }
 
-    public static final class LimelightConstants {
-        public static final int kImageCaptureLatency = 11;
-        public static final int kLimelightTransmissionTimeLatency = 0;
-
-        public static final double kMaxAcceptibleTargetDist = 10;
-
-        public static final boolean disableAfterTeleop = !isComp;
-
-        public static final Pose2d kLimeLightRobotOffset = new Pose2d(Units.inchesToMeters(-8.0),
-                Units.inchesToMeters(6.375), new Rotation2d(0.0));
-        public static final Rotation2d kLimeLightTilt = new Rotation2d(20.0);
-
-        public static final double kLensHeight = Units.inchesToMeters(9.375);
-
-        public static final double kResolutionWidth = 1280;
-        public static final double kResolutionHeight = 960;
-        public static final frc.team254.lib.limelight.LimelightConstants kLimelightConstants = LimelightConstantsFactory
-                .getConstantsForId("test");
-    }
-
     //TODO: tune (though these are probably accurate)
     public static final class RobotStateConstants {
+        public static final boolean kVisionResetsHeading = false;
+
         public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.07, 1), Math.pow(0.07, 1));
         public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.03, 1),
                 Math.pow(0.03, 1));

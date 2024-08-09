@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AllianceChooser {
     // unnecessary abstraction FTW
-    //TODO: move to RobotState or Robot
+    //TODO: move to Robot
 
     private SendableChooser<Alliance> mChooser;
 

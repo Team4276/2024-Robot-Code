@@ -158,7 +158,7 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
                 mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
                         speeds.vxMetersPerSecond,
                         speeds.vyMetersPerSecond,
-                        mHeadingController.update(mPeriodicIO.heading.getRadians(), Timer.getFPGATimestamp()));
+                        mHeadingController.update(mPeriodicIO.heading.getRadians(), mPeriodicIO.timestamp));
                 return;
             }
         }
@@ -216,9 +216,8 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
     }
 
     /** Zeroes yaw with given degrees */
-    public synchronized void resetHeading(double reset) {
-        mPigeon.setYaw(reset);
-        RobotState.getInstance().reset();
+    public synchronized void resetHeading(double reset_degrees) {
+        resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(reset_degrees)));
     }
 
     public synchronized Rotation2d getHeading() {
@@ -254,13 +253,14 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
     }
 
     public synchronized void resetOdometry(Pose2d initialPose) {
-        DriveSubsystem.getInstance().resetHeading(initialPose.getRotation().getDegrees());
+        mPigeon.setYaw(initialPose.getRotation().getDegrees());
         mOdometry.resetPosition(DriveSubsystem.getInstance().getModuleStates(), initialPose.toWPI());
         RobotState.getInstance().reset(Timer.getFPGATimestamp(), initialPose);
     }
 
     private class PeriodicIO {
         // Inputs/Desired States
+        double timestamp = Timer.getFPGATimestamp();
         ChassisSpeeds des_chassis_speeds = ChassisSpeeds.identity();
         ChassisSpeeds meas_chassis_speeds = ChassisSpeeds.identity();
         ModuleState[] meas_module_states = new ModuleState[] {
@@ -283,6 +283,7 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
 
     @Override
     public synchronized void readPeriodicInputs() {
+        mPeriodicIO.timestamp = Timer.getFPGATimestamp();
 
         for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
             mPeriodicIO.meas_module_states[i] = mModules[i].getState();
@@ -328,7 +329,7 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
                                 mPeriodicIO.heading.toWPI(),
                                 mPeriodicIO.meas_module_states);
                         RobotState.getInstance().addOdomObservations(
-                                timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
+                                mPeriodicIO.timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
                     }
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -386,7 +387,7 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
         ChassisSpeeds wanted_speeds;
         if (mOverrideHeading) {
             setHeadingSetpoint(mTrackingAngle);
-            double new_omega = mHeadingController.update(mPeriodicIO.heading.getRadians(), Timer.getFPGATimestamp());
+            double new_omega = mHeadingController.update(mPeriodicIO.heading.getRadians(), mPeriodicIO.timestamp);
             wanted_speeds = new ChassisSpeeds(twist_vel.dx, twist_vel.dy, new_omega);
 
         } else {

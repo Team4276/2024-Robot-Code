@@ -44,7 +44,6 @@ public class ClimberSubsystem extends Subsystem {
         return mInstance;
     }
 
-    //TODO: test spooling consistancy; could implement as servo?
     private ClimberSubsystem(){
         mRightMotor = CANSparkMaxFactory.createDefault(Ports.CLIMBER_RIGHT);
         mRightMotor.setInverted(false);

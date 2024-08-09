@@ -37,7 +37,6 @@ public class PhotonDevice extends Subsystem {
         mPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS);
     }
 
-    //TODO: check vision readings vs gyro; check height reading (citrus ignore)
     @Override
     public void readPeriodicInputs() {
         PhotonPipelineResult result = mCamera.getLatestResult();
@@ -72,8 +71,11 @@ public class PhotonDevice extends Subsystem {
                 new Translation2d(estimatedRobotPose.get().estimatedPose.getX(), estimatedRobotPose.get().estimatedPose.getY()),
                 distStDev));
 
+            RobotState.getInstance().visionHeadingUpdate(estimatedRobotPose.get().estimatedPose.getRotation().getZ());
+
             SmartDashboard.putNumber("PhotonCamera X", estimatedRobotPose.get().estimatedPose.getX());
             SmartDashboard.putNumber("PhotonCamera Y", estimatedRobotPose.get().estimatedPose.getY());
+            SmartDashboard.putNumber("PhotonCamera Heading", estimatedRobotPose.get().estimatedPose.getRotation().getZ());
         }
     }
 

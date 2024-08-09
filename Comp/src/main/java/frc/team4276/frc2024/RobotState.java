@@ -1,12 +1,7 @@
 package frc.team4276.frc2024;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.StateSpaceUtil;
 import edu.wpi.first.math.VecBuilder;
@@ -20,17 +15,17 @@ import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
 
 public class RobotState {
-    private Translation2d mEstimatedPose = Translation2d.identity(); //TODO: check this stupid vector math
+    private Translation2d mEstimatedPose = Translation2d.identity();
+    private Rotation2d mEstimatedHeading = null;
 
     private ExtendedKalmanFilter<N2, N2, N2> mKalmanFilter;
+    private boolean mHasUpdated = false;
 
     private VisionPoseAcceptor mPoseAcceptor;
 
     private static final double kObservationBufferTime = 1.0;
 
     private final TimeInterpolatableBuffer<edu.wpi.first.math.geometry.Pose2d> mOdomPoseBuffer;
-
-    private boolean mHasBeenEnabled = false;
 
     private Field.POIs mPOIs;
 
@@ -55,10 +50,7 @@ public class RobotState {
         mOdomPoseBuffer.clear();
         mOdomPoseBuffer.addSample(start_time, initial_pose.toWPI());
         mEstimatedPose = initial_pose.getTranslation();
-    }
-
-    public synchronized void reset() {
-        reset(Timer.getFPGATimestamp(), Pose2d.identity());
+        mEstimatedHeading = null;
     }
 
     public synchronized void resetKalmanFilters() {
@@ -86,8 +78,8 @@ public class RobotState {
         mPOIs = Field.Red.kPOIs;
     }
 
-    public synchronized void setHasBeenEnabled(boolean hasBeenEnabled) {
-        mHasBeenEnabled = hasBeenEnabled;
+    public synchronized void visionHeadingUpdate(double heading_rad) {
+        mEstimatedHeading = Rotation2d.fromRadians(heading_rad);
     }
 
     public synchronized void addOdomObservations(double timestamp, Pose2d odom_to_robot) {
@@ -108,27 +100,27 @@ public class RobotState {
         }
     }
 
-    //TODO: fix first vision update logic
     public synchronized void visionUpdate(VisionUpdate update) {
         double visionTimestamp = update.timestamp;
 
         if (mOdomPoseBuffer.getInternalBuffer().lastKey() - kObservationBufferTime > visionTimestamp)
             return;
 
-        Optional<edu.wpi.first.math.geometry.Pose2d> sample = mOdomPoseBuffer.getSample(visionTimestamp);
+        Pose2d sample = Pose2d.fromWPI(mOdomPoseBuffer.getSample(visionTimestamp).get());
 
-        if (sample.isEmpty())
-            return;
-
-        // TODO: fix logic
         if (!mPoseAcceptor.shouldAcceptVision(DriveSubsystem.getInstance().getMeasSpeeds()))
             return;
 
         mEstimatedPose = update.fieldToVis.translateBy(Translation2d.fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue()
-                .getTranslation().minus(sample.get().getTranslation())));
+                .getTranslation()).translateBy(sample.getTranslation().inverse()));
 
-        if (DriverStation.isDisabled() && !mHasBeenEnabled) // Don't filter
+        if(!mHasUpdated) {
+            mKalmanFilter.setXhat(0, mEstimatedPose.x());
+            mKalmanFilter.setXhat(1, mEstimatedPose.y());
+
+            mHasUpdated = true;
             return;
+        }
 
         try {
             mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0),
@@ -139,6 +131,14 @@ public class RobotState {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // Use on enabled init
+    public synchronized Rotation2d getHeadingFromVision() {
+        if(mEstimatedHeading == null) {
+            return getLatestFieldToVehicle().getRotation();
+        }
+        return mEstimatedHeading;
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {
