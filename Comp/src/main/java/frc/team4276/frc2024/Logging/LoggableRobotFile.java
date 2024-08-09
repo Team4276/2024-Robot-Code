@@ -13,14 +13,7 @@ import java.util.Random;
 import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.frc2024.Constants.DebugConstants;
 
- public class  LoggableRobotFile implements Runnable  {
-    /*
-     * example usage:
-     *    //class will handle the file extensions for you do not add a file extension
-     *    RobotFileLogger logger = new RobotFileLogger("test");
-     *    logger.init();
-     *    logger.writeToFile("testing", RobotFileLogger.DebugLevel.DEBUG);
-     */
+public class LoggableRobotFile implements Runnable {
     private final File logFile;
     private FileWriter writer;
     private final String logPath;
@@ -28,7 +21,9 @@ import frc.team4276.frc2024.Constants.DebugConstants;
     private boolean fileIsBeingAccessed;
     private String outString;
     private DebugLevel outDebug;
-    private boolean newData;
+    public boolean isNewData;
+    private boolean stopThread = false;
+
     public enum DebugLevel {
         ERROR("error"),
         WARNING("warning"),
@@ -46,8 +41,7 @@ import frc.team4276.frc2024.Constants.DebugConstants;
         }
     }
 
-    // ten digit unique session id
-    private static long sessionID = 1000000000L + (long)(new Random().nextDouble() * 9000000000L);
+    private static long sessionID = 1000000000L + (long) (new Random().nextDouble() * 9000000000L);
 
     public LoggableRobotFile(String fileName) {
         fileName = fileName + ".rlog";
@@ -57,7 +51,13 @@ import frc.team4276.frc2024.Constants.DebugConstants;
     }
 
     public void init() {
-        assert DebugConstants.maxDirSize > DebugConstants.reductionSize : "maxDirSize must be greater then reduction size";
+        //no dead code just because of a condition on a constant 
+        assert DebugConstants.maxDirSize > DebugConstants.reductionSize : "maxDirSize must be greater than reduction size";
+        assert DebugConstants.logDirectory != "" : "logDirectory cannot be blank";
+        if(logDirectory.lastIndexOf("/") != logDirectory.length() - 1){
+            PrintLogger.print("logDirectory must end with a slash, logging will not be avaliable");
+            //return;
+        }
         try {
             checkAndReduceDirectorySize(Paths.get(logDirectory));
             logFile.createNewFile();
@@ -67,28 +67,37 @@ import frc.team4276.frc2024.Constants.DebugConstants;
             writer = null;
         }
     }
-    public void setDebugSetString(String str, DebugLevel level){
+
+    public synchronized void setDebugSetString(String str, DebugLevel level) {
         outString = str;
         outDebug = level;
-        newData = true;
+        isNewData = true;
+        notifyAll(); // Notify that new data is available
     }
-    public void run(){
-        while(true){
-            if(Thread.currentThread().isInterrupted()){
-                return;
+
+    public synchronized void run() {
+        while (!stopThread) {
+            try {
+                while (!isNewData) {
+                    wait(); // Wait until new data is available
+                }
+                if (isNewData) {
+                    writeToFile(outString, outDebug);
+                    isNewData = false;
+                }
+            } catch (InterruptedException e) {
+                if (stopThread) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
             }
-            if(newData == true){
-                writeToFile(outString, outDebug);
-                newData = false;
-            }
-        
         }
     }
-    public void clearFile() {
+
+    public synchronized void clearFile() {
         fileIsBeingAccessed = true;
         if (writer != null) {
             try {
-                // deletes and recreates the file
                 writer.close();
                 logFile.delete();
                 logFile.createNewFile();
@@ -100,7 +109,7 @@ import frc.team4276.frc2024.Constants.DebugConstants;
         fileIsBeingAccessed = false;
     }
 
-    public void deleteFile() {
+    public synchronized void deleteFile() {
         fileIsBeingAccessed = true;
         if (writer != null) {
             try {
@@ -114,45 +123,44 @@ import frc.team4276.frc2024.Constants.DebugConstants;
         fileIsBeingAccessed = false;
     }
 
-    public boolean writeToFile(String str, DebugLevel level ) {
-        if(writer == null){
+    public synchronized boolean writeToFile(String str, DebugLevel level) {
+        if (writer == null) {
             return false;
         }
         fileIsBeingAccessed = true;
         str = str + "\n";
         try {
-            writer.write("[Time:" + "" +Timer.getFPGATimestamp() + " Session ID:" + sessionID + " Level:"+ level.levelString + "] ");
+            writer.write("[Time:" + Timer.getFPGATimestamp() + " Session ID:" + sessionID + " Level:" + level.getLevelString() + "] ");
             writer.write(str);
             writer.flush();
         } catch (IOException e) {
             PrintLogger.print("Exception thrown while attempting to write to log file: " + "\n" + e.getMessage());
             return false;
+        } finally {
+            fileIsBeingAccessed = false;
+            notifyAll(); // Notify that file access is complete
         }
-        fileIsBeingAccessed = false;
         return true;
     }
 
     public String getFilePath() {
         return logPath;
     }
-    public boolean isFileInUse(){
-        return fileIsBeingAccessed;
-        
-    }
-//helper functions
-    private static void checkAndReduceDirectorySize(Path dir) throws IOException {
-    if(getDirectorySizeInMB(dir) >= DebugConstants.maxDirSize){
-        while (getDirectorySizeInMB(dir) > DebugConstants.maxDirSize - DebugConstants.reductionSize && !areAllFilesNotRlog(dir)) {
 
-            String oldestFilePath = findOldestRlogFile(dir);
-            //dont want to delete files being used by other threads
-            if(isFileInUse(Paths.get(oldestFilePath)) || !validRlog(oldestFilePath)){
-                continue;
-            }
-            Files.delete(Paths.get(oldestFilePath));
-        }
+    public synchronized boolean isFileInUse() {
+        return fileIsBeingAccessed;
     }
-    
+
+    private static void checkAndReduceDirectorySize(Path dir) throws IOException {
+        if (getDirectorySizeInMB(dir) >= DebugConstants.maxDirSize) {
+            while (getDirectorySizeInMB(dir) > DebugConstants.maxDirSize - DebugConstants.reductionSize && !areAllFilesNotRlog(dir)) {
+                String oldestFilePath = findOldestRlogFile(dir);
+                if (isFileInUse(Paths.get(oldestFilePath)) || !validRlog(oldestFilePath)) {
+                    continue;
+                }
+                Files.delete(Paths.get(oldestFilePath));
+            }
+        }
     }
 
     private static double getDirectorySizeInMB(Path dir) throws IOException {
@@ -170,7 +178,7 @@ import frc.team4276.frc2024.Constants.DebugConstants;
 
         return totalSize[0] / (1024.0 * 1024.0);
     }
-    //finds the oldest log
+
     private static String findOldestRlogFile(Path dir) throws IOException {
         final Path[] oldestFile = {null};
         final long[] oldestTime = {Long.MAX_VALUE};
@@ -200,7 +208,6 @@ import frc.team4276.frc2024.Constants.DebugConstants;
 
     private static String addTimestampAndSessionID(String fileName, String sessionID) {
         LocalTime currentTime = LocalTime.now();
-        //using colons instead of dashes causes the createfile to fail.....
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH-mm-ss");
         String formattedTime = currentTime.format(formatter);
 
@@ -210,21 +217,20 @@ import frc.team4276.frc2024.Constants.DebugConstants;
 
         return namePart + "[" + formattedTime + "][" + sessionID + "]" + extensionPart;
     }
+
     private static boolean validRlog(String fileName) {
         return fileName.toLowerCase().endsWith(".rlog");
     }
-    //checks if a file is being used by trying to get a lock makes sure we dont delete logs that are being used 
+
     private static boolean isFileInUse(Path filePath) throws IOException {
         try (FileChannel fileChannel = FileChannel.open(filePath, StandardOpenOption.WRITE)) {
             fileChannel.tryLock();
-            return false; 
+            return false;
         } catch (OverlappingFileLockException e) {
-            return true; 
-        } catch (IOException e) {
-            throw e;
+            return true;
         }
     }
-    
+
     private static boolean areAllFilesNotRlog(Path dir) throws IOException {
         final boolean[] noneRlog = {true};
 

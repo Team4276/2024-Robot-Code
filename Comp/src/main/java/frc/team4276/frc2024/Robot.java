@@ -114,7 +114,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        logThread.logAsync("testing", LoggableRobotFile.DebugLevel.INFO);
+        logThread.logAsync("fizz", LoggableRobotFile.DebugLevel.INFO);
+        logThread.deleteFile();
+        logThread.logAsync("buzz", LoggableRobotFile.DebugLevel.INFO);
         mEnabledLooper.outputToSmartDashboard();
 
     }
