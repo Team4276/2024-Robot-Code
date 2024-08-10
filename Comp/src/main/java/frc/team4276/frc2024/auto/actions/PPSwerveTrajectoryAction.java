@@ -50,7 +50,7 @@ public class PPSwerveTrajectoryAction implements Action {
         initialPose = Pose2d.fromWPI(isRed ? path.flipPath().getPreviewStartingHolonomicPose() 
             : path.getPreviewStartingHolonomicPose());        
 
-        SmartDashboard.putString("Loaded path with alliance", isRed ? "Red" : "Blue");
+        SmartDashboard.putString("Comp/Loaded path with alliance", isRed ? "Red" : "Blue");
     }
 
     @Override

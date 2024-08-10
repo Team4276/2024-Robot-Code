@@ -106,7 +106,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putString("Intake State", mState.name());
-        SmartDashboard.putNumber("Feeder RPM:", mRelativeEncoder.getVelocity());
+        SmartDashboard.putString("Comp/Intake State", mState.name());
+        SmartDashboard.putNumber("Debug/Feeder RPM:", mRelativeEncoder.getVelocity());
     }
 }

@@ -31,7 +31,17 @@ public class AutoModeSelector {
 
     private static SendableChooser<DesiredMode> mModeChooser = new SendableChooser<>();
 
-    public AutoModeSelector() {
+    private static AutoModeSelector mInstance;
+
+    public static AutoModeSelector getInstance() {
+        if(mInstance == null) {
+            mInstance = new AutoModeSelector();
+        }
+
+        return mInstance;
+    }
+
+    private AutoModeSelector() {
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Example", DesiredMode.EXAMPLE);
         mModeChooser.addOption("Spin test", DesiredMode.SPIN_TEST);
@@ -39,7 +49,7 @@ public class AutoModeSelector {
         mModeChooser.addOption("Mid 3 Piece Stage", DesiredMode.MID_3PIECE_STAGE);
         mModeChooser.addOption("Taxi", DesiredMode.TAXI);
         mModeChooser.addOption("Box Box", DesiredMode.BOX_BOX);
-        SmartDashboard.putData("Auto Mode", mModeChooser);
+        SmartDashboard.putData("Comp/Auto Mode", mModeChooser);
 
     }
 
@@ -94,7 +104,7 @@ public class AutoModeSelector {
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putString("AutoModeSelected", mCachedDesiredMode.name());
+        SmartDashboard.putString("Comp/AutoModeSelected", mCachedDesiredMode.name());
     }
 
     public Optional<AutoModeBase> getAutoMode() {

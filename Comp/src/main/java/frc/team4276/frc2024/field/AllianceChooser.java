@@ -22,11 +22,11 @@ public class AllianceChooser {
 
     private AllianceChooser(){
         mChooser = new SendableChooser<Alliance>();
-        
+
         mChooser.setDefaultOption("Blue", Alliance.Blue);
         mChooser.addOption("Red", Alliance.Red);
 
-        SmartDashboard.putData(mChooser);
+        SmartDashboard.putData("Comp/Alliance Chooser", mChooser);
     }
 
     public Alliance getAlliance(){

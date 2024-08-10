@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
     private DriveSubsystem mDriveSubsystem;
-    private VisionDeviceManager mVisionDeviceManager;
+    // private VisionDeviceManager mVisionDeviceManager;
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
 
-    private final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
+    private final AutoModeSelector mAutoModeSelector = AutoModeSelector.getInstance();;
     private AutoModeExecutor mAutoModeExecutor;
 
 
@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             mDriveSubsystem = DriveSubsystem.getInstance();
-            mVisionDeviceManager = VisionDeviceManager.getInstance();
+            // mVisionDeviceManager = VisionDeviceManager.getInstance();
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
                     mIntakeSubsystem,
                     mFlywheelSubsystem,
                     mFourbarSubsystem,
-                    mVisionDeviceManager,
+                    // mVisionDeviceManager,
                     mClimberSubsystem);
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);

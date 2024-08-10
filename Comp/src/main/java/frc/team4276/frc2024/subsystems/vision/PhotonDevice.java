@@ -81,9 +81,9 @@ public class PhotonDevice extends Subsystem {
 
             RobotState.getInstance().visionHeadingUpdate(estimatedRobotPose.get().estimatedPose.getRotation().getZ());
 
-            SmartDashboard.putNumber("PhotonCamera X", estimatedRobotPose.get().estimatedPose.getX());
-            SmartDashboard.putNumber("PhotonCamera Y", estimatedRobotPose.get().estimatedPose.getY());
-            SmartDashboard.putNumber("PhotonCamera Heading", estimatedRobotPose.get().estimatedPose.getRotation().getZ());
+            SmartDashboard.putNumber("Debug/PhotonCamera X", estimatedRobotPose.get().estimatedPose.getX());
+            SmartDashboard.putNumber("Debug/PhotonCamera Y", estimatedRobotPose.get().estimatedPose.getY());
+            SmartDashboard.putNumber("Debug/PhotonCamera Heading", estimatedRobotPose.get().estimatedPose.getRotation().getZ());
         }
     }
 
