@@ -10,13 +10,15 @@ import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
 import frc.team4276.frc2024.field.Field;
 import frc.team4276.frc2024.subsystems.vision.VisionPoseAcceptor;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
+import frc.team254.lib.util.MovingAverage;
 
 public class RobotState {
     private Translation2d mEstimatedPose = Translation2d.identity();
-    private Rotation2d mEstimatedHeading = null;
+    private MovingAverage mEstimatedVisionHeading = new MovingAverage(100);
 
     private ExtendedKalmanFilter<N2, N2, N2> mKalmanFilter;
     private boolean mHasUpdated = false;
@@ -27,7 +29,7 @@ public class RobotState {
 
     private final TimeInterpolatableBuffer<edu.wpi.first.math.geometry.Pose2d> mOdomPoseBuffer;
 
-    private Field.POIs mPOIs;
+    private Field.POIs mPOIs = Field.Red.kPOIs;
 
     private static RobotState mInstance;
 
@@ -47,10 +49,8 @@ public class RobotState {
     }
 
     public synchronized void reset(double start_time, Pose2d initial_pose) {
-        mOdomPoseBuffer.clear();
         mOdomPoseBuffer.addSample(start_time, initial_pose.toWPI());
         mEstimatedPose = initial_pose.getTranslation();
-        mEstimatedHeading = null;
     }
 
     public synchronized void resetKalmanFilters() {
@@ -79,7 +79,7 @@ public class RobotState {
     }
 
     public synchronized void visionHeadingUpdate(double heading_rad) {
-        mEstimatedHeading = Rotation2d.fromRadians(heading_rad);
+        mEstimatedVisionHeading.addNumber(heading_rad);
     }
 
     public synchronized void addOdomObservations(double timestamp, Pose2d odom_to_robot) {
@@ -134,11 +134,11 @@ public class RobotState {
     }
 
     // Use on enabled init
-    public synchronized Rotation2d getHeadingFromVision() {
-        if(mEstimatedHeading == null) {
-            return getLatestFieldToVehicle().getRotation();
+    public synchronized double getHeadingFromVision() {
+        if(mEstimatedVisionHeading.getSize() == 0) {
+            return getLatestFieldToVehicle().getRotation().getRadians();
         }
-        return mEstimatedHeading;
+        return mEstimatedVisionHeading.getAverage();
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {

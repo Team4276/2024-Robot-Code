@@ -3,13 +3,16 @@ package frc.team4276.frc2024.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
+import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.shooting.FerryUtil;
 import frc.team4276.frc2024.shooting.ShootingUtil;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.lib.drivers.Subsystem;
+
 import frc.team1678.lib.drivers.BeamBreak;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 
@@ -264,7 +267,7 @@ public class Superstructure extends Subsystem {
         if ((mGoalState != GoalState.READY && mGoalState != GoalState.SHOOT) || !mIsDymanic)
             return;
 
-        Pose2d robot_pose = mDriveSubsystem.getPose();
+        Pose2d robot_pose = RobotState.getInstance().getLatestFieldToVehicle();
 
         double flywheel_setpoint;
         double fourbar_setpoint;

@@ -18,25 +18,19 @@ import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModuleV2;
+
+import frc.team1678.lib.loops.Loop;
+import frc.team1678.lib.loops.ILooper;
+import frc.team1678.lib.swerve.ModuleState;
+import frc.team1678.lib.swerve.SwerveDriveOdometry;
+import frc.team1678.lib.swerve.ChassisSpeeds;
+
 import frc.team254.lib.util.Util;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Twist2d;
 
-import frc.team1678.lib.loops.Loop;
-import frc.team1678.lib.loops.ILooper;
-import frc.team1678.lib.swerve.ChassisSpeeds;
-import frc.team1678.lib.swerve.ModuleState;
-import frc.team1678.lib.swerve.SwerveDriveOdometry;
-
-public class DriveSubsystem extends Subsystem { // TODO: organize
-    public enum DriveControlState {
-        FORCE_ORIENT,
-        OPEN_LOOP,
-        HEADING_CONTROL,
-        PATH_FOLLOWING
-    }
-
+public class DriveSubsystem extends Subsystem {
     public MAXSwerveModuleV2[] mModules;
 
     private SwerveDriveOdometry mOdometry;
@@ -45,13 +39,6 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
     private Pigeon mPigeon;
 
     private PeriodicIO mPeriodicIO;
-    private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
-
-    private HeadingController mHeadingController;
-
-    private boolean mOverrideHeading = false;
-
-    private Rotation2d mTrackingAngle = Rotation2d.identity();
 
     public static class KinematicLimits {
         public double kMaxDriveVelocity = DriveConstants.kMaxVel; // m/s
@@ -62,6 +49,21 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
     }
 
     private KinematicLimits mKinematicLimits = DriveConstants.kUncappedLimits;
+    
+    public enum DriveControlState {
+        FORCE_ORIENT,
+        OPEN_LOOP,
+        HEADING_CONTROL,
+        PATH_FOLLOWING
+    }
+    
+    private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
+
+    private HeadingController mHeadingController;
+
+    private boolean mOverrideHeading = false;
+
+    private Rotation2d mTrackingAngle = Rotation2d.identity();
 
     private static DriveSubsystem mInstance;
 
@@ -107,41 +109,6 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
 
     }
 
-    public synchronized void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
-        if (mKinematicLimits != DriveConstants.kAutoLimits) {
-            mKinematicLimits = DriveConstants.kAutoLimits;
-        }
-
-        mPeriodicIO.des_chassis_speeds = speeds;
-    }
-
-    public void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
-        updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
-    }
-
-    public synchronized void setKinematicLimits(KinematicLimits limits) {
-        this.mKinematicLimits = limits;
-    }
-
-    // TODO: simplify tracking logic
-    public synchronized void overrideHeading(boolean overrideHeading) {
-        mOverrideHeading = overrideHeading;
-    }
-
-    public synchronized void feedTrackingSetpoint(Rotation2d angle) {
-        mTrackingAngle = angle;
-    }
-
-    public synchronized void setHeadingSetpoint(Rotation2d angle) {
-        if (mControlState != DriveControlState.HEADING_CONTROL) {
-            mControlState = DriveControlState.HEADING_CONTROL;
-        }
-
-        if (mHeadingController.getTargetRad() != angle.getRadians()) {
-            mHeadingController.setTarget(angle.getRadians());
-        }
-    }
-
     public synchronized void teleopDrive(ChassisSpeeds speeds) {
         if (mKinematicLimits != DriveConstants.kUncappedLimits || mKinematicLimits != DriveConstants.kDemoLimits) {
             mKinematicLimits = DriveConstants.kUncappedLimits;
@@ -164,6 +131,40 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
         }
 
         mPeriodicIO.des_chassis_speeds = speeds;
+    }
+
+    public synchronized void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
+        if (mKinematicLimits != DriveConstants.kAutoLimits) {
+            mKinematicLimits = DriveConstants.kAutoLimits;
+        }
+
+        mPeriodicIO.des_chassis_speeds = speeds;
+    }
+
+    public void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
+        updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
+    }
+
+    public synchronized void feedTrackingSetpoint(Rotation2d angle) {
+        mTrackingAngle = angle;
+    }
+
+    public synchronized void setHeadingSetpoint(Rotation2d angle) {
+        if (mControlState != DriveControlState.HEADING_CONTROL) {
+            mControlState = DriveControlState.HEADING_CONTROL;
+        }
+
+        if (mHeadingController.getTargetRad() != angle.getRadians()) {
+            mHeadingController.setTarget(angle.getRadians());
+        }
+    }
+
+    public synchronized void setKinematicLimits(KinematicLimits limits) {
+        this.mKinematicLimits = limits;
+    }
+
+    public synchronized void overrideHeading(boolean overrideHeading) {
+        mOverrideHeading = overrideHeading;
     }
 
     public void stop() {
@@ -199,27 +200,6 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
                         Rotation2d.fromDegrees(45)));
     }
 
-    /**
-     * Sets the swerve ModuleStates.
-     *
-     * @param desiredStates The desired SwerveModule states.
-     */
-    public synchronized void setModuleStates(ModuleState[] desiredStates) {
-        mPeriodicIO.des_module_states = desiredStates;
-    }
-
-    /** Resets the drive encoders to currently read a position of 0. */
-    public void resetEncoders() {
-        for (MAXSwerveModuleV2 mod : mModules) {
-            mod.resetEncoders();
-        }
-    }
-
-    /** Zeroes yaw with given degrees */
-    public synchronized void resetHeading(double reset_degrees) {
-        resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(reset_degrees)));
-    }
-
     public synchronized Rotation2d getHeading() {
         return mPeriodicIO.heading;
     }
@@ -248,36 +228,42 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
         return mKinematicLimits;
     }
 
-    public Pose2d getPose() {
-        return RobotState.getInstance().getLatestFieldToVehicle();
+    /** Resets the drive encoders to currently read a position of 0. */
+    public synchronized void resetEncoders() {
+        for (MAXSwerveModuleV2 mod : mModules) {
+            mod.resetEncoders();
+        }
     }
 
-    public synchronized void resetOdometry(Pose2d initialPose) {
-        mPigeon.setYaw(initialPose.getRotation().getDegrees());
-        mOdometry.resetPosition(DriveSubsystem.getInstance().getModuleStates(), initialPose.toWPI());
-        RobotState.getInstance().reset(Timer.getFPGATimestamp(), initialPose);
+    public synchronized void resetGyro(double angleDeg) {
+        mOdometry.offsetGyro(mPigeon.getYaw().toWPI().minus(Rotation2d.fromDegrees(angleDeg).toWPI()));
+        mPigeon.setYaw(angleDeg);
+    }
+
+    public synchronized void resetOdometry(Pose2d pose) {
+        mOdometry.resetPosition(mPeriodicIO.meas_module_states, pose.toWPI());
     }
 
     private class PeriodicIO {
         // Inputs/Desired States
         double timestamp = Timer.getFPGATimestamp();
-        ChassisSpeeds des_chassis_speeds = ChassisSpeeds.identity();
-        ChassisSpeeds meas_chassis_speeds = ChassisSpeeds.identity();
+        ChassisSpeeds des_chassis_speeds = new ChassisSpeeds();
+        ChassisSpeeds meas_chassis_speeds = new ChassisSpeeds();
         ModuleState[] meas_module_states = new ModuleState[] {
-                ModuleState.identity(),
-                ModuleState.identity(),
-                ModuleState.identity(),
-                ModuleState.identity()
+                new ModuleState(),
+                new ModuleState(),
+                new ModuleState(),
+                new ModuleState()
         };
         Rotation2d heading = Rotation2d.identity();
         Rotation2d pitch = Rotation2d.identity();
 
         // Outputs
         ModuleState[] des_module_states = new ModuleState[] {
-                ModuleState.identity(),
-                ModuleState.identity(),
-                ModuleState.identity(),
-                ModuleState.identity()
+                new ModuleState(),
+                new ModuleState(),
+                new ModuleState(),
+                new ModuleState()
         };
     }
 
@@ -326,7 +312,7 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
                         updateSetpoint();
 
                         mOdometry.update(
-                                mPeriodicIO.heading.toWPI(),
+                                mPigeon.getYaw().toWPI(),
                                 mPeriodicIO.meas_module_states);
                         RobotState.getInstance().addOdomObservations(
                                 mPeriodicIO.timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
@@ -341,35 +327,6 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
             }
         });
 
-    }
-
-    @Override
-    public synchronized void writePeriodicOutputs() {
-        for (int i = 0; i < mModules.length; i++) {
-            if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
-                mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
-            } else if (mControlState == DriveControlState.PATH_FOLLOWING
-                    || mControlState == DriveControlState.FORCE_ORIENT) {
-                mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
-            }
-        }
-
-    }
-
-    @Override
-    public synchronized void outputTelemetry() {
-        // for (int i = 0; i < mModules.length; i++) {
-        // SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
-        // mModules[i].getDriveSetpoint());
-        // SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ",
-        // mModules[i].getTurnSetpoint());
-
-        // SmartDashboard.putNumber("Motor " + i + " Drive RPM: ",
-        // mModules[i].getMotorSpeed());
-        // }
-
-        SmartDashboard.putNumber("Heading", mPeriodicIO.heading.getDegrees());
-        SmartDashboard.putString("Drive Mode", mControlState.name());
     }
 
     private void updateSetpoint() {
@@ -463,5 +420,34 @@ public class DriveSubsystem extends Subsystem { // TODO: organize
 
         ModuleState[] real_module_setpoints = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
         mPeriodicIO.des_module_states = real_module_setpoints;
+    }
+
+    @Override
+    public synchronized void writePeriodicOutputs() {
+        for (int i = 0; i < mModules.length; i++) {
+            if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
+                mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
+            } else if (mControlState == DriveControlState.PATH_FOLLOWING
+                    || mControlState == DriveControlState.FORCE_ORIENT) {
+                mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
+            }
+        }
+
+    }
+
+    @Override
+    public synchronized void outputTelemetry() {
+        // for (int i = 0; i < mModules.length; i++) {
+        // SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
+        // mModules[i].getDriveSetpoint());
+        // SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ",
+        // mModules[i].getTurnSetpoint());
+
+        // SmartDashboard.putNumber("Motor " + i + " Drive RPM: ",
+        // mModules[i].getMotorSpeed());
+        // }
+
+        SmartDashboard.putNumber("Heading", mPeriodicIO.heading.getDegrees());
+        SmartDashboard.putString("Drive Mode", mControlState.name());
     }
 }

@@ -1,6 +1,7 @@
 package frc.team4276.lib.characterizations;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.team4276.lib.util.Util;
 
 import frc.team254.lib.geometry.Translation2d;

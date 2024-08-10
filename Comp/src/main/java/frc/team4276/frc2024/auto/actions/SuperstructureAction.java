@@ -1,6 +1,7 @@
 package frc.team4276.frc2024.auto.actions;
 
 import edu.wpi.first.wpilibj.Timer;
+
 import frc.team4276.frc2024.subsystems.Superstructure;
 
 public class SuperstructureAction implements Action {

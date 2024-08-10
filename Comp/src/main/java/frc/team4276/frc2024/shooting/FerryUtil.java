@@ -1,8 +1,9 @@
 package frc.team4276.frc2024.shooting;
 
+import frc.team4276.frc2024.RobotState;
+
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Translation2d;
-import frc.team4276.frc2024.RobotState;
 
 public class FerryUtil {
     public static double[] getFerryParams(Pose2d robot_pose) {

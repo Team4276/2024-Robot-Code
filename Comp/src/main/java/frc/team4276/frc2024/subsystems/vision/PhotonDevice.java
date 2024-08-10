@@ -11,12 +11,15 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1678.lib.loops.ILooper;
-import frc.team1678.lib.loops.Loop;
-import frc.team254.lib.geometry.Translation2d;
+
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.field.Field;
 import frc.team4276.lib.drivers.Subsystem;
+
+import frc.team1678.lib.loops.ILooper;
+import frc.team1678.lib.loops.Loop;
+
+import frc.team254.lib.geometry.Translation2d;
 
 public class PhotonDevice extends Subsystem {
     private PhotonCamera mCamera;

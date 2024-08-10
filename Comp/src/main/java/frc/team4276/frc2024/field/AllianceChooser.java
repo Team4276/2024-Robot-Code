@@ -6,9 +6,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AllianceChooser {
-    // unnecessary abstraction FTW
-    //TODO: move to Robot
-
     private SendableChooser<Alliance> mChooser;
 
     private Alliance mAlliance = Alliance.Blue;

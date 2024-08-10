@@ -2,16 +2,18 @@ package frc.team4276.lib.drivers;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1678.lib.loops.ILooper;
-import frc.team1678.lib.loops.Loop;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.VIKCANSparkMax;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
+
+import frc.team1678.lib.loops.ILooper;
+import frc.team1678.lib.loops.Loop;
 
 public abstract class ServoMotorSubsystem extends Subsystem {
     public static class ServoMotorConfig {

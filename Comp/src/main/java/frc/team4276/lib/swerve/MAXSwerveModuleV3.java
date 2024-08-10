@@ -13,13 +13,12 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
-import frc.team4276.frc2024.Constants.ModuleConstants;
+import frc.team4276.frc2024.Constants;
 import frc.team4276.lib.drivers.Subsystem;
-import frc.team4276.frc2024.Constants.DriveConstants;
-
-import frc.team254.lib.util.Util;
 
 import frc.team1678.lib.swerve.ModuleState;
+
+import frc.team254.lib.util.Util;
 
 public class MAXSwerveModuleV3 extends Subsystem {
   private final CANSparkMax m_drivingSparkMax;
@@ -59,52 +58,52 @@ public class MAXSwerveModuleV3 extends Subsystem {
     // Apply position and velocity conversion factors for the driving encoder. The
     // native units for position and velocity are rotations and RPM, respectively,
     // but we want meters and meters per second to use with WPILib's swerve APIs.
-    m_drivingEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
-    m_drivingEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
+    m_drivingEncoder.setPositionConversionFactor(Constants.ModuleConstants.kDrivingEncoderPositionFactor);
+    m_drivingEncoder.setVelocityConversionFactor(Constants.ModuleConstants.kDrivingEncoderVelocityFactor);
 
     // Apply position and velocity conversion factors for the turning encoder. We
     // want these in radians and radians per second to use with WPILib's swerve
     // APIs.
-    m_turningEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
-    m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
+    m_turningEncoder.setPositionConversionFactor(Constants.ModuleConstants.kTurningEncoderPositionFactor);
+    m_turningEncoder.setVelocityConversionFactor(Constants.ModuleConstants.kTurningEncoderVelocityFactor);
 
     // Invert the turning encoder, since the output shaft rotates in the opposite
     // direction of
     // the steering motor in the MAXSwerve Module.
-    m_turningEncoder.setInverted(ModuleConstants.kTurningEncoderInverted);
+    m_turningEncoder.setInverted(Constants.ModuleConstants.kTurningEncoderInverted);
 
     // Enable PID wrap around for the turning motor. This will allow the PID
     // controller to go through 0 to get to the setpoint i.e. going from 350 degrees
     // to 10 degrees will go through 0 rather than the other direction which is a
     // longer route.
     m_turningPIDController.setPositionPIDWrappingEnabled(true);
-    m_turningPIDController.setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
-    m_turningPIDController.setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
+    m_turningPIDController.setPositionPIDWrappingMinInput(Constants.ModuleConstants.kTurningEncoderPositionPIDMinInput);
+    m_turningPIDController.setPositionPIDWrappingMaxInput(Constants.ModuleConstants.kTurningEncoderPositionPIDMaxInput);
 
     // Set the PID gains for the driving motor. Note these are example gains, and
     // you
     // may need to tune them for your own robot!
-    m_drivingPIDController.setP(ModuleConstants.kDrivingP);
-    m_drivingPIDController.setI(ModuleConstants.kDrivingI);
-    m_drivingPIDController.setD(ModuleConstants.kDrivingD);
-    m_drivingPIDController.setFF(ModuleConstants.kDrivingFF);
-    m_drivingPIDController.setOutputRange(ModuleConstants.kDrivingMinOutput,
-        ModuleConstants.kDrivingMaxOutput);
+    m_drivingPIDController.setP(Constants.ModuleConstants.kDrivingP);
+    m_drivingPIDController.setI(Constants.ModuleConstants.kDrivingI);
+    m_drivingPIDController.setD(Constants.ModuleConstants.kDrivingD);
+    m_drivingPIDController.setFF(Constants.ModuleConstants.kDrivingFF);
+    m_drivingPIDController.setOutputRange(Constants.ModuleConstants.kDrivingMinOutput,
+        Constants.ModuleConstants.kDrivingMaxOutput);
 
     // Set the PID gains for the turning motor. Note these are example gains, and
     // you
     // may need to tune them for your own robot!
-    m_turningPIDController.setP(ModuleConstants.kTurningP);
-    m_turningPIDController.setI(ModuleConstants.kTurningI);
-    m_turningPIDController.setD(ModuleConstants.kTurningD);
-    m_turningPIDController.setFF(ModuleConstants.kTurningFF);
-    m_turningPIDController.setOutputRange(ModuleConstants.kTurningMinOutput,
-        ModuleConstants.kTurningMaxOutput);
+    m_turningPIDController.setP(Constants.ModuleConstants.kTurningP);
+    m_turningPIDController.setI(Constants.ModuleConstants.kTurningI);
+    m_turningPIDController.setD(Constants.ModuleConstants.kTurningD);
+    m_turningPIDController.setFF(Constants.ModuleConstants.kTurningFF);
+    m_turningPIDController.setOutputRange(Constants.ModuleConstants.kTurningMinOutput,
+        Constants.ModuleConstants.kTurningMaxOutput);
 
-    m_drivingSparkMax.setIdleMode(ModuleConstants.kDrivingMotorIdleMode);
-    m_turningSparkMax.setIdleMode(ModuleConstants.kTurningMotorIdleMode);
-    m_drivingSparkMax.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
-    m_turningSparkMax.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
+    m_drivingSparkMax.setIdleMode(Constants.ModuleConstants.kDrivingMotorIdleMode);
+    m_turningSparkMax.setIdleMode(Constants.ModuleConstants.kTurningMotorIdleMode);
+    m_drivingSparkMax.setSmartCurrentLimit(Constants.ModuleConstants.kDrivingMotorCurrentLimit);
+    m_turningSparkMax.setSmartCurrentLimit(Constants.ModuleConstants.kTurningMotorCurrentLimit);
 
     m_drivingEncoder.setPosition(0);
     mChassisAngularOffset = chassisAngularOffset;
@@ -141,7 +140,7 @@ public class MAXSwerveModuleV3 extends Subsystem {
 
     }
 
-    double speed = Util.limit(desiredState.speedMetersPerSecond, DriveConstants.kMaxVel);
+    double speed = Util.limit(desiredState.speedMetersPerSecond, Constants.DriveConstants.kMaxVel);
     Rotation2d angle = desiredState.angle.rotateBy(new Rotation2d(mChassisAngularOffset));
 
     if (Util.shouldReverse(frc.team254.lib.geometry.Rotation2d.fromWPI(desiredState.angle),

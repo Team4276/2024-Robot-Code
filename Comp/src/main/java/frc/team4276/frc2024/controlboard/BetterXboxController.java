@@ -3,6 +3,7 @@ package frc.team4276.frc2024.controlboard;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+
 import frc.team4276.frc2024.Constants.OIConstants;
 
 public class BetterXboxController extends XboxController {

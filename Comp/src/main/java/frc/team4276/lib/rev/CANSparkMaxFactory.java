@@ -2,7 +2,6 @@ package frc.team4276.lib.rev;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-
 import com.revrobotics.SparkPIDController;
 
 //TODO: check defaults

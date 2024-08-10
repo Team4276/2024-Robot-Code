@@ -3,7 +3,6 @@ package frc.team4276.frc2024.field;
 import java.util.HashMap;
 
 import frc.team254.lib.geometry.Pose2d;
-
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
 

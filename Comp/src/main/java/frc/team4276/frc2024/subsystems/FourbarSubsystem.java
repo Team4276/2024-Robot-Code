@@ -2,12 +2,13 @@ package frc.team4276.frc2024.subsystems;
 
 import com.revrobotics.SparkAbsoluteEncoder;
 
-import frc.team1678.lib.loops.ILooper;
-import frc.team1678.lib.loops.Loop;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
+
+import frc.team1678.lib.loops.ILooper;
+import frc.team1678.lib.loops.Loop;
 
 public class FourbarSubsystem extends ServoMotorSubsystem {
     private SparkAbsoluteEncoder mAbsoluteEncoder;

@@ -24,8 +24,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 public class SwerveDriveOdometry {
 	private final SwerveDriveKinematics m_kinematics;
 	private Pose2d m_poseMeters;
+	private Rotation2d m_prevRotation;
 
-	private Rotation2d m_previousAngle;
 	private final int m_numModules;
 	private SwerveModulePosition[] m_previousModulePositions;
 
@@ -40,14 +40,9 @@ public class SwerveDriveOdometry {
 		SwerveDriveKinematics kinematics, SwerveModulePosition[] modulePositions, Pose2d initialPose) {
 		m_kinematics = kinematics;
 		m_poseMeters = initialPose;
-		m_previousAngle = initialPose.getRotation();
+		m_prevRotation = initialPose.getRotation();
 		m_numModules = modulePositions.length;
-
-		m_previousModulePositions = new SwerveModulePosition[m_numModules];
-		for (int index = 0; index < m_numModules; index++) {
-			m_previousModulePositions[index] = new SwerveModulePosition(
-					modulePositions[index].distanceMeters, modulePositions[index].angle);
-		}
+		m_previousModulePositions = modulePositions;
 	}
 
 	/**
@@ -74,11 +69,17 @@ public class SwerveDriveOdometry {
 	 */
 	public void resetPosition(SwerveModulePosition[] modulePositions, Pose2d pose) {
 		m_poseMeters = pose;
-		m_previousAngle = pose.getRotation();
-		for (int index = 0; index < m_numModules; index++) {
-			m_previousModulePositions[index] = new SwerveModulePosition(
-					modulePositions[index].distanceMeters, modulePositions[index].angle);
-		}
+		m_prevRotation = pose.getRotation();
+		m_previousModulePositions = modulePositions;
+	}
+
+	/**
+	 * Use when reseting gyro. Prevents inaccurate deltas for pose estimation.
+	 * If the gyro was at 15 deg then was reset to 0, the offset is -15.
+	 * @param gyroAngle Gyro offset
+	 */
+	public void offsetGyro(Rotation2d offset) {
+		m_prevRotation = m_prevRotation.plus(offset);
 	}
 
 	/**
@@ -126,37 +127,13 @@ public class SwerveDriveOdometry {
 		}
 
 		var twist = m_kinematics.toTwist2d(moduleDeltas);
-		twist.dtheta = gyroAngle.minus(m_previousAngle).getRadians();
+		twist.dtheta = gyroAngle.minus(m_prevRotation).getRadians();
 
 		var newPose = m_poseMeters.exp(twist);
 
-		m_previousAngle = gyroAngle;
+		m_prevRotation = gyroAngle;
 		m_poseMeters = new Pose2d(newPose.getTranslation(), gyroAngle);
 
 		return m_poseMeters;
-	}
-
-	public Pose2d update(SwerveModulePosition[] modulePositions) {
-		if (modulePositions.length != m_numModules) {
-			throw new IllegalArgumentException(
-					"Number of modules is not consistent with number of wheel locations provided in "
-							+ "constructor");
-		}
-
-		var moduleDeltas = new SwerveModulePosition[m_numModules];
-		for (int index = 0; index < m_numModules; index++) {
-			var current = modulePositions[index];
-			var previous = m_previousModulePositions[index];
-
-			moduleDeltas[index] = new SwerveModulePosition(current.distanceMeters - previous.distanceMeters,
-					current.angle);
-			previous.distanceMeters = current.distanceMeters;
-		}
-
-		var twist = m_kinematics.toTwist2d(moduleDeltas);
-
-		var newPose = m_poseMeters.exp(twist);
-
-		return newPose;
 	}
 }

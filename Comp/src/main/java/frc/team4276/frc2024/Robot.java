@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -20,10 +21,11 @@ import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.FourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.vision.VisionDeviceManager;
+
 import frc.team1678.lib.loops.Looper;
 import frc.team1678.lib.swerve.ChassisSpeeds;
+
 import frc.team254.lib.geometry.Pose2d;
-import frc.team254.lib.geometry.Rotation2d;
 
 
 //TODO: refactor imports
@@ -187,12 +189,12 @@ public class Robot extends TimedRobot {
 
                 mDriveSubsystem.resetOdometry(autoMode.get().getStartingPose());
             } else {
-                mDriveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d(0.0)));
+                mDriveSubsystem.resetOdometry(Pose2d.identity());
 
             }
 
             if(Constants.RobotStateConstants.kVisionResetsHeading) {
-                mDriveSubsystem.resetHeading(RobotState.getInstance().getHeadingFromVision().getDegrees());
+                mDriveSubsystem.resetGyro(Math.toDegrees(RobotState.getInstance().getHeadingFromVision()));
 
             }
 
@@ -225,7 +227,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         try {
             if (mControlBoard.wantZeroHeading()) {
-                mDriveSubsystem.resetHeading(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
+                mDriveSubsystem.resetGyro(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
             }
 
             if (mControlBoard.wantXBrake()) {
