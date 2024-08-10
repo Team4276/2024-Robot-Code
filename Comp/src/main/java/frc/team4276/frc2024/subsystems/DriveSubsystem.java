@@ -407,16 +407,14 @@ public class DriveSubsystem extends Subsystem {
             min_omega_scalar *= max_omega_step;
         }
 
-        SmartDashboard.putNumber("Accel", min_translational_scalar);
-
         wanted_speeds = new ChassisSpeeds(
                 prev_chassis_speeds.vxMetersPerSecond + dx * min_translational_scalar,
                 prev_chassis_speeds.vyMetersPerSecond + dy * min_translational_scalar,
                 prev_chassis_speeds.omegaRadiansPerSecond + domega * min_omega_scalar);
 
-        SmartDashboard.putNumber("Des X Speed: ", wanted_speeds.vxMetersPerSecond);
-        SmartDashboard.putNumber("Des Y Speed: ", wanted_speeds.vyMetersPerSecond);
-        SmartDashboard.putNumber("Des Rot Speed: ", wanted_speeds.omegaRadiansPerSecond);
+        SmartDashboard.putNumber("Comp/Des X Speed: ", wanted_speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("Comp/Des Y Speed: ", wanted_speeds.vyMetersPerSecond);
+        SmartDashboard.putNumber("Comp/Des Rot Speed: ", wanted_speeds.omegaRadiansPerSecond);
 
         ModuleState[] real_module_setpoints = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
         mPeriodicIO.des_module_states = real_module_setpoints;
@@ -447,7 +445,7 @@ public class DriveSubsystem extends Subsystem {
         // mModules[i].getMotorSpeed());
         // }
 
-        SmartDashboard.putNumber("Heading", mPeriodicIO.heading.getDegrees());
-        SmartDashboard.putString("Drive Mode", mControlState.name());
+        SmartDashboard.putNumber("Comp/Heading", mPeriodicIO.heading.getDegrees());
+        SmartDashboard.putString("Comp/Drive Mode", mControlState.name());
     }
 }

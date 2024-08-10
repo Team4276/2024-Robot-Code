@@ -163,7 +163,8 @@ public class FlywheelSubsystem extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putNumber("Top RPM", mPeriodicIO.curr_top_RPM);
-        SmartDashboard.putNumber("Bottom RPM", mPeriodicIO.curr_bottom_RPM);
+        SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.curr_top_RPM);
+        SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.curr_bottom_RPM);
+        SmartDashboard.putBoolean("Comp/Flywheels Spun Up", isSpunUp());
     }
 }

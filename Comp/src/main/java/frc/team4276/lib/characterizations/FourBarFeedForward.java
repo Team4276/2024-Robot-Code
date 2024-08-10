@@ -129,8 +129,8 @@ public class FourBarFeedForward implements IFeedForward {
         double gravity_voltage = calcGravityVoltage(pos);
         double velocity_voltage = kV * vel;
 
-        SmartDashboard.putNumber("Fourbar Gravity Voltage", gravity_voltage);
-        SmartDashboard.putNumber("Fourbar Velocity Voltage", velocity_voltage);
+        SmartDashboard.putNumber("Debug/Fourbar Gravity Voltage", gravity_voltage);
+        SmartDashboard.putNumber("Debug/Fourbar Velocity Voltage", velocity_voltage);
         return gravity_voltage + (kS * Math.signum(vel)) + velocity_voltage;
     }
 

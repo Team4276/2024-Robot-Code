@@ -298,12 +298,12 @@ public class Superstructure extends Subsystem {
 
     @Override
     public synchronized void outputTelemetry() {
-        SmartDashboard.putNumber("Scoring Offset", mScoringOffset);
+        SmartDashboard.putNumber("Comp/Scoring Offset", mScoringOffset);
 
-        SmartDashboard.putBoolean("Is Holding Note", mIsHoldingNote);
+        SmartDashboard.putBoolean("Comp/Is Holding Note", mIsHoldingNote);
 
         if (mGoalState != null) {
-            SmartDashboard.putString("Fourbar Goal", mGoalState.name());
+            SmartDashboard.putString("Comp/Superstructure Goal", mGoalState.name());
         }
 
         if (!hadNote && mIsHoldingNote) {

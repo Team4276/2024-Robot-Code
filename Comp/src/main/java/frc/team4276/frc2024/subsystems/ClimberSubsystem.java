@@ -104,9 +104,9 @@ public class ClimberSubsystem extends Subsystem {
 
     @Override
     public synchronized void outputTelemetry() {
-        SmartDashboard.putString("Climber State", mState.toString());
-        SmartDashboard.putBoolean("Right Climber Limit", mRightLimit.get());
-        SmartDashboard.putBoolean("Left Climber Limit", mLeftLimit.get());
+        SmartDashboard.putString("Comp/Climber State", mState.toString());
+        SmartDashboard.putBoolean("Debug/Right Climber Limit", mRightLimit.get());
+        SmartDashboard.putBoolean("Debug/Left Climber Limit", mLeftLimit.get());
     }
 
 }

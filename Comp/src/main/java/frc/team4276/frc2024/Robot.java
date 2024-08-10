@@ -40,11 +40,11 @@ public class Robot extends TimedRobot {
 
     private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
     private final ControlBoard mControlBoard = ControlBoard.getInstance();
-    
+
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
     private DriveSubsystem mDriveSubsystem;
-    private VisionDeviceManager mVisionDeviceManager;
+    // private VisionDeviceManager mVisionDeviceManager;
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
@@ -53,9 +53,8 @@ public class Robot extends TimedRobot {
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
 
-    private final AutoModeSelector mAutoModeSelector = new AutoModeSelector();
+    private final AutoModeSelector mAutoModeSelector = AutoModeSelector.getInstance();;
     private AutoModeExecutor mAutoModeExecutor;
-
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -66,14 +65,14 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             mDriveSubsystem = DriveSubsystem.getInstance();
-            mVisionDeviceManager = VisionDeviceManager.getInstance();
+            // mVisionDeviceManager = VisionDeviceManager.getInstance();
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
             mClimberSubsystem = ClimberSubsystem.getInstance();
 
             CameraServer.startAutomaticCapture();
-            
+
             // Set subsystems
             mSubsystemManager.setSubsystems(
                     mDriveSubsystem,
@@ -81,7 +80,7 @@ public class Robot extends TimedRobot {
                     mIntakeSubsystem,
                     mFlywheelSubsystem,
                     mFourbarSubsystem,
-                    mVisionDeviceManager,
+                    // mVisionDeviceManager,
                     mClimberSubsystem);
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -190,7 +189,7 @@ public class Robot extends TimedRobot {
 
             }
 
-            if(Constants.RobotStateConstants.kVisionResetsHeading) {
+            if (Constants.RobotStateConstants.kVisionResetsHeading) {
                 mDriveSubsystem.resetGyro(Math.toDegrees(RobotState.getInstance().getHeadingFromVision()));
 
             }
@@ -223,6 +222,14 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         try {
+            mControlBoard.update();
+
+            if (mControlBoard.wantDemoLimits()) {
+                mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kDemoLimits);
+            } else {
+                mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kUncappedLimits);
+            }
+
             if (mControlBoard.wantZeroHeading()) {
                 mDriveSubsystem.resetGyro(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
             }
@@ -238,59 +245,29 @@ public class Robot extends TimedRobot {
                         AllianceChooser.getInstance().isAllianceRed()));
             }
 
-            if (mControlBoard.wantDemoLimits()) {
-                mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kDemoLimits);
-            } else {
-                mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kUncappedLimits);
-            }
-
-            if (mControlBoard.wantAutoLock()) {
-
-            }
-
-            if (mControlBoard.wantDynamic()) {
-
-            }
-
-            if (mControlBoard.wantStow()) {
-
-            }
-
-            if (mControlBoard.wantPrep()) {
-
-            }
-
-            if (mControlBoard.wantIdle()) {
-                mSuperstructure.setGoalState(Superstructure.GoalState.IDLE);
-
-            } else if (mControlBoard.wantIntake()) {
-                mSuperstructure.setGoalState(Superstructure.GoalState.INTAKE);
-
-            } else if (mControlBoard.wantShoot()) {
-                mSuperstructure.setGoalState(Superstructure.GoalState.SHOOT);
-
-            } else if (mControlBoard.wantExhaust()) {
-                mSuperstructure.setGoalState(Superstructure.GoalState.EXHAUST);
+            if(mControlBoard.wantManual()) {
+                mSuperstructure.setManual(true);
+                mControlBoard.updateManual();
 
             } else {
-                mSuperstructure.setGoalState(Superstructure.GoalState.STOW);
+                mSuperstructure.setManual(false);
+                mControlBoard.updateNominal();
 
             }
+            
 
-            if (mControlBoard.wantClimbMode()) {
-                if (mControlBoard.wantRaiseClimber()) {
-                    mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
+            if (mControlBoard.wantRaiseClimber()) {
+                mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
 
-                } else if (mControlBoard.wantSlowLowerClimber()) {
-                    mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
+            } else if (mControlBoard.wantSlowLowerClimber() && mControlBoard.wantClimbMode()) {
+                mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
 
-                } else if (mControlBoard.wantLowerClimber()) {
-                    mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
+            } else if (mControlBoard.wantLowerClimber() && mControlBoard.wantClimbMode()) {
+                mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
 
-                } else {
-                    mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
+            } else {
+                mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
 
-                }
             }
 
         } catch (Throwable t) {

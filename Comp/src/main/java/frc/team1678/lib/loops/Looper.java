@@ -90,6 +90,6 @@ public class Looper implements ILooper {
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("looper_dt", dt_);
+        SmartDashboard.putNumber("Debug/looper_dt", dt_);
     }
 }
