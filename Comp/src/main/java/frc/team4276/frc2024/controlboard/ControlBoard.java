@@ -5,18 +5,22 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
-
+import frc.team4276.frc2024.subsystems.IntakeSubsystem;
+import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
 
 import frc.team1678.lib.Util;
 
-public class ControlBoard { //TODO: config
+public class ControlBoard { // TODO: config
     public final BetterXboxController driver;
     public final BetterXboxController operator;
 
     private final DigitalInput climberSetting;
     private final DigitalInput fourbarSetting;
+
+    private DriveSubsystem mDriveSubsystem;
+    private Superstructure mSuperstructure;
 
     private static ControlBoard mInstance;
 
@@ -30,18 +34,61 @@ public class ControlBoard { //TODO: config
     private ControlBoard() {
         driver = new BetterXboxController(OIConstants.kDriverControllerPort);
         operator = new BetterXboxController(OIConstants.kOpControllerPort);
-        
+
         climberSetting = new DigitalInput(Ports.CLIMBER_BRAKE_SWITCH);
         fourbarSetting = new DigitalInput(Ports.FOURBAR_BRAKE_SWITCH);
+
+        mDriveSubsystem = DriveSubsystem.getInstance();
+        mSuperstructure = Superstructure.getInstance();
     }
 
-    public void update(){
+    public void update() {
         driver.update();
         operator.update();
     }
 
-    // Driver Controls
+    public void updateNominal() {
+        mDriveSubsystem.overrideHeading(wantReady());
 
+        mSuperstructure.setDynamic(wantDynamic());
+
+        mSuperstructure.setFerry(wantFerry());
+
+        if (wantStow()) {
+            mSuperstructure.setPrep(false);
+        } else if (wantPrep()) {
+            mSuperstructure.setPrep(true);
+        }
+
+        if (wantIdle()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.IDLE);
+
+        } else if (wantIntake()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.INTAKE);
+
+        } else if (wantShoot()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.SHOOT);
+
+        } else if (wantReady()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.READY);
+
+        } else if (wantExhaust()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.EXHAUST);
+
+        } else {
+            mSuperstructure.setGoalState(Superstructure.GoalState.STOW);
+
+        }
+    }
+
+    public void updateManual() {
+        mSuperstructure.setManualFlywheelVoltage(0.0);
+        mSuperstructure.setManualFourbarVoltage(0.0);
+        mSuperstructure.setManualIntakeState(IntakeSubsystem.State.IDLE);
+
+    }
+
+    // Driver Controls
     public Translation2d getSwerveTranslation() {
         double forwardAxis = -driver.getLeftY();
         double strafeAxis = -driver.getLeftX();
@@ -75,23 +122,24 @@ public class ControlBoard { //TODO: config
         }
     }
 
-    public boolean wantZeroHeading(){
+    public boolean wantZeroHeading() {
         return driver.getAButtonPressed();
     }
 
-    public boolean wantXBrake(){
+    public boolean wantXBrake() {
         return driver.getXButton();
     }
 
     boolean isDemo = false;
     boolean hasReleased = false;
-    public boolean wantDemoLimits(){
-        if(!driver.isPOVUPPressed()){
+
+    public boolean wantDemoLimits() {
+        if (!driver.isPOVUPPressed()) {
             hasReleased = true;
-            
+
         }
 
-        if(driver.isPOVUPPressed() && hasReleased){
+        if (driver.isPOVUPPressed() && hasReleased) {
             hasReleased = false;
             isDemo = !isDemo;
         }
@@ -99,58 +147,63 @@ public class ControlBoard { //TODO: config
         return isDemo;
     }
 
-    public boolean wantIntake(){
+    public boolean wantIntake() {
         return driver.getRT();
     }
-    
-    public boolean wantExhaust(){
-        return driver.getBButton();
+
+    public boolean wantExhaust() {
+        return false;
     }
 
-    public boolean wantSlowLowerClimber(){
-        return driver.getLeftBumper();
+    public boolean wantSlowLowerClimber() {
+        return false;
     }
 
-    public boolean wantLowerClimber(){
-        return driver.getLT();
+    public boolean wantLowerClimber() {
+        return false;
     }
 
-    public boolean wantAutoLock(){
+    public boolean wantReady() {
         return driver.getYButton();
     }
 
     // Operator Controls
-    public boolean wantClimbMode(){
-        return true;
+    public boolean wantManual() {
+        return false;
+    }
+    
+    public boolean wantStow() {
+        return false;
     }
 
-    public boolean wantStow(){
-        return operator.getLeftStickButtonPressed();
+    public boolean wantPrep() {
+        return false;
     }
 
-    public boolean wantPrep(){
-        return operator.isPOVUPPressed();
+    public boolean wantDynamic() {
+        return false;
     }
 
-    public boolean wantDynamic(){
-        return operator.getLeftBumperPressed();
+    public boolean wantShoot() {
+        return false;
     }
 
-    public boolean wantShoot(){
-        return operator.getRT();
+    public boolean wantFerry() {
+        return false;
     }
 
-    public boolean wantIntakeReverse(){
-        return operator.getXButton();
+    public boolean wantClimbMode() {
+        return false;
     }
 
-    public boolean wantRaiseClimber(){
-        return operator.getRightBumper();
+    public boolean wantRaiseClimber() {
+        return false;
     }
 
     private boolean wasIdle = false;
-    public boolean wantIdle(){
-        if(operator.getBButtonPressed()) {
+
+    public boolean wantIdle() {
+        if (operator.getBButtonPressed()) {
             wasIdle = !wasIdle;
         }
 
@@ -158,13 +211,12 @@ public class ControlBoard { //TODO: config
     }
 
     // Robot Button Board
-    public boolean wantClimberCoastMode(){
+    public boolean wantClimberCoastMode() {
         return climberSetting.get();
     }
 
-    public boolean wantFourbarCoastMode(){
+    public boolean wantFourbarCoastMode() {
         return fourbarSetting.get();
     }
-
 
 }

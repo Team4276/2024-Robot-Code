@@ -33,7 +33,7 @@ public final class Constants {
 
     // Enables extra SmartDashboard Debugs
     // Don't use during competition
-    public static final boolean disableExtraTelemetry = false; //TODO: move into shuffleboard
+    public static final boolean disableExtraTelemetry = false;
 
   public static final class DebugConstants {
     public static final boolean writeSwerveErrors = true;
