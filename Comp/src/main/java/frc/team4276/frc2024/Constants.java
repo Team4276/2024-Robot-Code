@@ -23,7 +23,7 @@ import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
-
+import frc.team4276.lib.swerve.MAXSwerveModuleV3.MAXSwerveModuleConstants;
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
 
 public final class Constants {
@@ -61,6 +61,38 @@ public final class Constants {
                 new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
                 new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
                 new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+
+        public static final MAXSwerveModuleConstants kFLConstants = new MAXSwerveModuleConstants();
+        static {
+            kFLConstants.kName = "Front Left";
+            kFLConstants.kDriveId = Ports.FRONT_LEFT_DRIVE;
+            kFLConstants.kTurnId = Ports.FRONT_LEFT_TURN;
+            kFLConstants.kOffset = -Math.PI / 2;
+        }
+
+        public static final MAXSwerveModuleConstants kFRConstants = new MAXSwerveModuleConstants();
+        static {
+            kFRConstants.kName = "Front Right";
+            kFRConstants.kDriveId = Ports.FRONT_RIGHT_DRIVE;
+            kFRConstants.kTurnId = Ports.FRONT_RIGHT_TURN;
+            kFRConstants.kOffset = 0;
+        }
+
+        public static final MAXSwerveModuleConstants kBRConstants = new MAXSwerveModuleConstants();
+        static {
+            kBRConstants.kName = "Back Right";
+            kBRConstants.kDriveId = Ports.BACK_RIGHT_DRIVE;
+            kBRConstants.kTurnId = Ports.BACK_RIGHT_TURN;
+            kBRConstants.kOffset = Math.PI / 2;
+        }
+
+        public static final MAXSwerveModuleConstants kBLConstants = new MAXSwerveModuleConstants();
+        static {
+            kBLConstants.kName = "Back Left";
+            kBLConstants.kDriveId = Ports.BACK_LEFT_DRIVE;
+            kBLConstants.kTurnId = Ports.BACK_LEFT_TURN;
+            kBLConstants.kOffset = Math.PI;
+        }
 
         // Angular offsets of the modules relative to the chassis in radians
         public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
@@ -175,6 +207,19 @@ public final class Constants {
 
         public static final double kTurningEncoderPositionPIDMinInput = 0; // radians
         public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
+
+        public static final CANSparkMaxFactory.CANSparkMaxPIDFConfig kDrivingPIDFConfig = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
+        static {
+            kDrivingPIDFConfig.kP = 0.04;
+            kDrivingPIDFConfig.kFF = 1 / kDriveWheelFreeSpeedRps;
+            kDrivingPIDFConfig.kPIDOutputRange = 1.0;
+        }
+        
+        public static final CANSparkMaxFactory.CANSparkMaxPIDFConfig kTurningPIDFConfig = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
+        static {
+            kTurningPIDFConfig.kP = 1.0;
+            kTurningPIDFConfig.kPIDOutputRange = 1.0;
+        }
 
         public static final double kDrivingP = 0.04;
         public static final double kDrivingI = 0;

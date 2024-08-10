@@ -2,6 +2,9 @@ package frc.team4276.lib.rev;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+
+import frc.team4276.frc2024.Constants;
+
 import com.revrobotics.SparkPIDController;
 
 //TODO: check defaults
@@ -92,6 +95,11 @@ public class CANSparkMaxFactory {
 
     public static void configAlternateEncoder(VIKCANSparkMax motor, double periodSec) {
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, periodSec);
+
+    }
+
+    public static void configAbsoluteEncoder(VIKCANSparkMax motor) {
+        configAbsoluteEncoder(motor, Constants.kLooperDt);
 
     }
 
