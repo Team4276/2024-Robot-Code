@@ -102,10 +102,9 @@ public final class Constants {
 
         public static final boolean kGyroReversed = false;
 
-        // TODO: calibrate Kinematic limits
         public static final double kMaxVel = ModuleConstants.kDriveWheelFreeSpeedRps; // meters per second
         public static final double kMaxAttainableVel = kMaxVel * 0.8;
-        public static final double kMaxAttainableAccel = 3.0;
+        public static final double kMaxAttainableAccel = 8.9;
 
         public static final double kMaxAngularVel = kMaxVel * 2 / (kTrackWidth * Math.sqrt(2)); // radians per second
 
@@ -127,9 +126,10 @@ public final class Constants {
             kDemoLimits.kName = "Demo";
         }
 
-        public static final double kAutoTranslationKp = 2.4;
+        //TODO: tune
+        public static final double kAutoTranslationKp = 3.0;
         public static final double kAutoTranslationKd = 0.0;
-        public static final double kAutoRotationKp = 2.4;
+        public static final double kAutoRotationKp = 4.0;
         public static final double kAutoRotationKd = 0.0;
 
         public static final PIDConstants kAutoTranslationPIDConstants = new PIDConstants(kAutoTranslationKp, 0,
@@ -142,8 +142,8 @@ public final class Constants {
         public static final double kAutoMaxError = 0.75; // Meters
 
         public static final double kSnapHeadingKp = 0.18;
-        public static final double kSnapHeadingKi = 0.009;
-        public static final double kSnapHeadingKd = 0.012;
+        public static final double kSnapHeadingKi = 0.0;
+        public static final double kSnapHeadingKd = 0.0;
 
         public static final double kSnapPositionTolerance = 0.1;
         public static final double kSnapAngularVelocityTolerance = 0.1;
@@ -214,7 +214,7 @@ public final class Constants {
         public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
         public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-        public static final int kDrivingMotorCurrentLimit = 40; // amps
+        public static final int kDrivingMotorCurrentLimit = 50; // amps
         public static final int kTurningMotorCurrentLimit = 20; // amps
     }
 
@@ -350,7 +350,7 @@ public final class Constants {
 
     public static class FlywheelConstants {
         public static IdleMode kIdleMode = IdleMode.kBrake;
-        public static int kSmartCurrentLimit = 40;
+        public static int kSmartCurrentLimit = 50;
         
         public static int kAvgSamplingDepth = 8;
         public static int kMeasurementPeriod = 10;

@@ -30,6 +30,14 @@ public class VisionDeviceManager extends Subsystem {
         mAllCameras = List.of(mFrontCamera, mRearCamera);
     }
 
+    public synchronized void setDisabled(boolean disable) {
+        mIsDisabled = disable;
+    }
+
+    public synchronized boolean getIsDisabled() {
+        return mIsDisabled;
+    }
+
     @Override
     public void readPeriodicInputs() {
         mAllCameras.forEach(PhotonDevice::readPeriodicInputs);
@@ -40,11 +48,8 @@ public class VisionDeviceManager extends Subsystem {
         mAllCameras.forEach(PhotonDevice::writePeriodicOutputs);
     }
 
-    public synchronized void setDisabled(boolean disable) {
-        mIsDisabled = disable;
-    }
-
-    public synchronized boolean getIsDisabled() {
-        return mIsDisabled;
+    @Override
+    public void outputTelemetry() {
+        //TODO: add debugs for testing
     }
 }

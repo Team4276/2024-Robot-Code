@@ -7,7 +7,6 @@ import frc.team4276.frc2024.Constants;
 
 import com.revrobotics.SparkPIDController;
 
-//TODO: check defaults
 public class CANSparkMaxFactory {
     
     /**

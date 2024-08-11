@@ -1,9 +1,9 @@
 {
     "version": "v0.4",
     "robotConfiguration": {
-        "mass": 54.33118313560075,
+        "mass": 61.73998083590995,
         "rotationalInertia": 3.2262688932521093,
-        "motorMaxTorque": 0.7248618784530386,
+        "motorMaxTorque": 0.9060773480662982,
         "motorMaxVelocity": 4704,
         "gearing": 5.07692,
         "wheelbase": 0.5968996776741741,
@@ -575,8 +575,7 @@
                     "scope": [
                         "last"
                     ],
-                    "type": "StopPoint",
-                    "direction": 0
+                    "type": "StopPoint"
                 }
             ],
             "usesControlIntervalGuessing": true,

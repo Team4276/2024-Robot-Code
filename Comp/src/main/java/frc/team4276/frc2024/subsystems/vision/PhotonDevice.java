@@ -9,6 +9,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,6 +27,8 @@ public class PhotonDevice extends Subsystem {
 
     private PhotonPoseEstimator mPoseEstimator;
 
+    private Pose3d mLatestUpdate;
+
     public static class PhotonDeviceConstants {
         public String kCameraName = "ERROR_ASSIGN_A_NAME";
         public Transform3d kRobotToCamera = new Transform3d();
@@ -42,6 +45,10 @@ public class PhotonDevice extends Subsystem {
   
     public boolean getConnected(){
         return mCamera.isConnected();
+    }
+
+    public Pose3d getLatestUpdate(){
+        return mLatestUpdate;
     }
     //TODO: check vision readings vs gyro; check height reading (citrus ignore)
 
@@ -84,6 +91,8 @@ public class PhotonDevice extends Subsystem {
             SmartDashboard.putNumber("Debug/PhotonCamera X", estimatedRobotPose.get().estimatedPose.getX());
             SmartDashboard.putNumber("Debug/PhotonCamera Y", estimatedRobotPose.get().estimatedPose.getY());
             SmartDashboard.putNumber("Debug/PhotonCamera Heading", estimatedRobotPose.get().estimatedPose.getRotation().getZ());
+
+            mLatestUpdate = estimatedRobotPose.get().estimatedPose;
         }
     }
 
@@ -107,4 +116,6 @@ public class PhotonDevice extends Subsystem {
     @Override
     public void writePeriodicOutputs() {
     }
+
+
 }

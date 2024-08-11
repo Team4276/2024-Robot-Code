@@ -2,8 +2,6 @@ package frc.team4276.frc2024.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import com.revrobotics.RelativeEncoder;
-
 import frc.team4276.frc2024.Ports;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.rev.VIKCANSparkMax;
@@ -15,10 +13,6 @@ import frc.team1678.lib.loops.Loop;
 public class IntakeSubsystem extends Subsystem {
     private VIKCANSparkMax mMotor;
 
-    private RelativeEncoder mRelativeEncoder;
-
-    private PeriodicIO mPeriodicIO = new PeriodicIO();
-
     private State mState = State.IDLE;
 
     public enum State {
@@ -27,7 +21,7 @@ public class IntakeSubsystem extends Subsystem {
         SLOW_FEED(5.0),
         DEFEED(-2.0),
         EXHAUST(-8.0),
-        SHOOT(12.0); //TODO: add RPM control?
+        SHOOT(12.0);
 
         public double voltage;
 
@@ -49,10 +43,6 @@ public class IntakeSubsystem extends Subsystem {
         mMotor = CANSparkMaxFactory.createDefault(Ports.INTAKE);
         mMotor.setSmartCurrentLimit(40);
         mMotor.setWantBrakeMode(true);
-
-        mRelativeEncoder = mMotor.getEncoder();
-        mRelativeEncoder.setAverageDepth(8);
-        mRelativeEncoder.setVelocityConversionFactor(5);
         
         mMotor.burnFlash();
     }
@@ -68,14 +58,6 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void stop() {
         mState = State.IDLE;
-        mPeriodicIO.voltage = 0.0;
-    }
-
-    private class PeriodicIO {
-        // Inputs
-
-        // Outputs
-        double voltage;
     }
 
     @Override
@@ -91,7 +73,6 @@ public class IntakeSubsystem extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                mPeriodicIO.voltage = mState.voltage;
             }
 
             @Override
@@ -101,12 +82,11 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        mMotor.setVoltage(mPeriodicIO.voltage);
+        mMotor.setVoltage(mState.voltage);
     }
 
     @Override
     public void outputTelemetry() {
         SmartDashboard.putString("Comp/Intake State", mState.name());
-        SmartDashboard.putNumber("Debug/Feeder RPM:", mRelativeEncoder.getVelocity());
     }
 }

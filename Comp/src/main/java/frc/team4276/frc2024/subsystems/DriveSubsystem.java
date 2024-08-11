@@ -115,10 +115,6 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized void teleopDrive(ChassisSpeeds speeds) {
-        if (mKinematicLimits != DriveConstants.kUncappedLimits || mKinematicLimits != DriveConstants.kDemoLimits) {
-            mKinematicLimits = DriveConstants.kUncappedLimits;
-        }
-
         if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL) {
             mControlState = DriveControlState.OPEN_LOOP;
         }
