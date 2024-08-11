@@ -104,7 +104,7 @@ public final class Constants {
 
         // TODO: calibrate Kinematic limits
         public static final double kMaxVel = ModuleConstants.kDriveWheelFreeSpeedRps; // meters per second
-        public static final double kMaxAttainableVel = kMaxVel * 0.85;
+        public static final double kMaxAttainableVel = kMaxVel * 0.8;
         public static final double kMaxAttainableAccel = 3.0;
 
         public static final double kMaxAngularVel = kMaxVel * 2 / (kTrackWidth * Math.sqrt(2)); // radians per second
@@ -127,34 +127,6 @@ public final class Constants {
             kDemoLimits.kName = "Demo";
         }
 
-        public static final DriveSubsystem.KinematicLimits kAutoLimits = new DriveSubsystem.KinematicLimits();
-        static {
-            kAutoLimits.kMaxDriveVelocity = kMaxAttainableVel;
-            kAutoLimits.kMaxAccel = kMaxAttainableAccel;
-            kAutoLimits.kMaxAngularVelocity = kMaxAngularVel; // Rad/Sec
-            kAutoLimits.kMaxAngularAccel = Math.toRadians(500.0); // 2 * Math.PI
-            kAutoLimits.kName = "Auto";
-
-        }
-
-        public static final DriveSubsystem.KinematicLimits kSourceLimits = new DriveSubsystem.KinematicLimits();
-        static {
-            kDemoLimits.kMaxDriveVelocity = 1.0;
-            kDemoLimits.kMaxAccel = Double.MAX_VALUE;
-            kDemoLimits.kMaxAngularVelocity = kMaxAngularVel / 4; // Rad/Sec
-            kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
-            kDemoLimits.kName = "Source";
-        }
-
-        public static final DriveSubsystem.KinematicLimits kScoringLimits = new DriveSubsystem.KinematicLimits();
-        static {
-            kDemoLimits.kMaxDriveVelocity = 1.0;
-            kDemoLimits.kMaxAccel = Double.MAX_VALUE;
-            kDemoLimits.kMaxAngularVelocity = kMaxAngularVel / 4; // Rad/Sec
-            kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
-            kDemoLimits.kName = "Score";
-        }
-
         public static final double kAutoTranslationKp = 2.4;
         public static final double kAutoTranslationKd = 0.0;
         public static final double kAutoRotationKp = 2.4;
@@ -164,6 +136,10 @@ public final class Constants {
                 kAutoTranslationKd);
         public static final PIDConstants kAutoRotationPIDConstants = new PIDConstants(kAutoRotationKp, 0,
                 kAutoRotationKd);
+
+        public static final double kAutoAccelFF = 0.0;
+
+        public static final double kAutoMaxError = 0.75; // Meters
 
         public static final double kSnapHeadingKp = 0.18;
         public static final double kSnapHeadingKi = 0.009;

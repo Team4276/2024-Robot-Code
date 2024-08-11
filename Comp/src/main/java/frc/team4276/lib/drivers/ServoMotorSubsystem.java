@@ -66,7 +66,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     public ServoMotorSubsystem(ServoMotorSubsystemConstants constants) {
         mConstants = constants;
         mMaster = CANSparkMaxFactory.createDefaultServo(mConstants.kMasterConstants.id);
-        mFollowers = new VIKCANSparkMax[mConstants.kFollowerConstants.length]; // TODO: check faster follower updates
+        mFollowers = new VIKCANSparkMax[mConstants.kFollowerConstants.length];
 
         if (mConstants.kForwardLimitPolarity != null) {
             mForwardLimitSwitch = mMaster.getForwardLimitSwitch(mConstants.kForwardLimitPolarity);

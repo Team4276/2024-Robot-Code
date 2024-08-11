@@ -7,6 +7,8 @@ package frc.team4276.frc2024.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -18,7 +20,7 @@ import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModuleV2;
-
+import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.swerve.ModuleState;
@@ -58,6 +60,8 @@ public class DriveSubsystem extends Subsystem {
     }
     
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
+
+    private MotionPlanner mMotionPlanner;
 
     private HeadingController mHeadingController;
 
@@ -99,14 +103,15 @@ public class DriveSubsystem extends Subsystem {
         mPigeon = Pigeon.getInstance();
         mPigeon.setYaw(0.0);
 
-        mHeadingController = HeadingController.getInstance();
-
         mPeriodicIO = new PeriodicIO();
 
         mOdometry = new SwerveDriveOdometry(
                 DriveConstants.kDriveKinematics,
                 mPeriodicIO.meas_module_states);
 
+        mMotionPlanner = new MotionPlanner();
+
+        mHeadingController = HeadingController.getInstance();
     }
 
     public synchronized void teleopDrive(ChassisSpeeds speeds) {
@@ -134,15 +139,19 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
-        if (mKinematicLimits != DriveConstants.kAutoLimits) {
-            mKinematicLimits = DriveConstants.kAutoLimits;
+        if (mControlState != DriveControlState.PATH_FOLLOWING) {
+            mControlState = DriveControlState.PATH_FOLLOWING;
         }
 
         mPeriodicIO.des_chassis_speeds = speeds;
     }
 
-    public void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
+    public synchronized void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
         updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
+    }
+
+    public synchronized void setPathFollowingPath(PathPlannerPath path) {
+        mMotionPlanner.setTrajectory(null, null, getMeasSpeeds(), 0);
     }
 
     public synchronized void feedTrackingSetpoint(Rotation2d angle) {
@@ -198,6 +207,10 @@ public class DriveSubsystem extends Subsystem {
                         Rotation2d.fromDegrees(-45),
                         Rotation2d.fromDegrees(-45),
                         Rotation2d.fromDegrees(45)));
+    }
+
+    public boolean isPathFinished() {
+        return mMotionPlanner.isFinished();
     }
 
     public synchronized Rotation2d getHeading() {
@@ -303,6 +316,7 @@ public class DriveSubsystem extends Subsystem {
                             case HEADING_CONTROL:
                                 break;
                             case PATH_FOLLOWING:
+                                updatePathFollowing();
                                 break;
 
                             default:
@@ -329,6 +343,10 @@ public class DriveSubsystem extends Subsystem {
 
     }
 
+    private void updatePathFollowing() {
+
+    }
+
     private void updateSetpoint() {
         if (mControlState == DriveControlState.FORCE_ORIENT) {
             return;
@@ -352,65 +370,69 @@ public class DriveSubsystem extends Subsystem {
 
         }
 
-        // Limit rotational velocity
-        wanted_speeds.omegaRadiansPerSecond = Math.signum(wanted_speeds.omegaRadiansPerSecond)
-                * Math.min(mKinematicLimits.kMaxAngularVelocity, Math.abs(wanted_speeds.omegaRadiansPerSecond));
+        if (mControlState != DriveControlState.PATH_FOLLOWING) {
+            // Limit rotational velocity
+            wanted_speeds.omegaRadiansPerSecond = Math.signum(wanted_speeds.omegaRadiansPerSecond)
+                    * Math.min(mKinematicLimits.kMaxAngularVelocity, Math.abs(wanted_speeds.omegaRadiansPerSecond));
 
-        // Limit translational velocity
-        double velocity_magnitude = Math.hypot(des_chassis_speeds.vxMetersPerSecond,
-                des_chassis_speeds.vyMetersPerSecond);
-        if (velocity_magnitude > mKinematicLimits.kMaxDriveVelocity) {
-            wanted_speeds.vxMetersPerSecond = (wanted_speeds.vxMetersPerSecond / velocity_magnitude)
-                    * mKinematicLimits.kMaxDriveVelocity;
-            wanted_speeds.vyMetersPerSecond = (wanted_speeds.vyMetersPerSecond / velocity_magnitude)
-                    * mKinematicLimits.kMaxDriveVelocity;
-        }
-
-        ModuleState[] prev_module_states = mPeriodicIO.des_module_states.clone(); // Get last setpoint to get
-                                                                                  // differentials
-        ChassisSpeeds prev_chassis_speeds = DriveConstants.kDriveKinematics.toChassisSpeeds(prev_module_states);
-        ModuleState[] target_module_states = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
-
-        if (wanted_speeds.epsilonEquals(ChassisSpeeds.identity(), Util.kEpsilon)) {
-            for (int i = 0; i < target_module_states.length; i++) {
-                target_module_states[i].speedMetersPerSecond = 0.0;
-                target_module_states[i].angle = prev_module_states[i].angle;
+            // Limit translational velocity
+            double velocity_magnitude = Math.hypot(des_chassis_speeds.vxMetersPerSecond,
+                    des_chassis_speeds.vyMetersPerSecond);
+            if (velocity_magnitude > mKinematicLimits.kMaxDriveVelocity) {
+                wanted_speeds.vxMetersPerSecond = (wanted_speeds.vxMetersPerSecond / velocity_magnitude)
+                        * mKinematicLimits.kMaxDriveVelocity;
+                wanted_speeds.vyMetersPerSecond = (wanted_speeds.vyMetersPerSecond / velocity_magnitude)
+                        * mKinematicLimits.kMaxDriveVelocity;
             }
-        }
 
-        double dx = wanted_speeds.vxMetersPerSecond - prev_chassis_speeds.vxMetersPerSecond;
-        double dy = wanted_speeds.vyMetersPerSecond - prev_chassis_speeds.vyMetersPerSecond;
-        double domega = wanted_speeds.omegaRadiansPerSecond - prev_chassis_speeds.omegaRadiansPerSecond;
+            ModuleState[] prev_module_states = mPeriodicIO.des_module_states.clone(); // Get last setpoint to get
+                                                                                    // differentials
+            ChassisSpeeds prev_chassis_speeds = DriveConstants.kDriveKinematics.toChassisSpeeds(prev_module_states);
+            ModuleState[] target_module_states = DriveConstants.kDriveKinematics.toModuleStates(wanted_speeds);
 
-        double max_velocity_step = mKinematicLimits.kMaxAccel * Constants.kLooperDt;
-        double min_translational_scalar = 1.0;
+            if (wanted_speeds.epsilonEquals(ChassisSpeeds.identity(), Util.kEpsilon)) {
+                for (int i = 0; i < target_module_states.length; i++) {
+                    target_module_states[i].speedMetersPerSecond = 0.0;
+                    target_module_states[i].angle = prev_module_states[i].angle;
+                }
+            }
 
-        if (max_velocity_step < Double.MAX_VALUE * Constants.kLooperDt) {
-            // Check X
-            double x_norm = Math.abs(dx / max_velocity_step);
-            min_translational_scalar = Math.min(min_translational_scalar, x_norm);
+            double dx = wanted_speeds.vxMetersPerSecond - prev_chassis_speeds.vxMetersPerSecond;
+            double dy = wanted_speeds.vyMetersPerSecond - prev_chassis_speeds.vyMetersPerSecond;
+            double domega = wanted_speeds.omegaRadiansPerSecond - prev_chassis_speeds.omegaRadiansPerSecond;
 
-            // Check Y
-            double y_norm = Math.abs(dy / max_velocity_step);
-            min_translational_scalar = Math.min(min_translational_scalar, y_norm);
+            double max_velocity_step = mKinematicLimits.kMaxAccel * Constants.kLooperDt;
+            double min_translational_scalar = 1.0;
 
-            min_translational_scalar *= max_velocity_step;
-        }
+            if (max_velocity_step < Double.MAX_VALUE * Constants.kLooperDt) {
+                // Check X
+                double x_norm = Math.abs(dx / max_velocity_step);
+                min_translational_scalar = Math.min(min_translational_scalar, x_norm);
 
-        double max_omega_step = mKinematicLimits.kMaxAngularAccel * Constants.kLooperDt;
-        double min_omega_scalar = 1.0;
+                // Check Y
+                double y_norm = Math.abs(dy / max_velocity_step);
+                min_translational_scalar = Math.min(min_translational_scalar, y_norm);
 
-        if (max_omega_step < Double.MAX_VALUE * Constants.kLooperDt) {
-            double omega_norm = Math.abs(domega / max_omega_step);
-            min_omega_scalar = Math.min(min_omega_scalar, omega_norm);
+                min_translational_scalar *= max_velocity_step;
+            }
 
-            min_omega_scalar *= max_omega_step;
-        }
+            double max_omega_step = mKinematicLimits.kMaxAngularAccel * Constants.kLooperDt;
+            double min_omega_scalar = 1.0;
 
-        wanted_speeds = new ChassisSpeeds(
+            if (max_omega_step < Double.MAX_VALUE * Constants.kLooperDt) {
+                double omega_norm = Math.abs(domega / max_omega_step);
+                min_omega_scalar = Math.min(min_omega_scalar, omega_norm);
+
+                min_omega_scalar *= max_omega_step;
+            }
+            
+            wanted_speeds = new ChassisSpeeds(
                 prev_chassis_speeds.vxMetersPerSecond + dx * min_translational_scalar,
                 prev_chassis_speeds.vyMetersPerSecond + dy * min_translational_scalar,
                 prev_chassis_speeds.omegaRadiansPerSecond + domega * min_omega_scalar);
+        }
+
+        
 
         SmartDashboard.putNumber("Comp/Des X Speed: ", wanted_speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("Comp/Des Y Speed: ", wanted_speeds.vyMetersPerSecond);

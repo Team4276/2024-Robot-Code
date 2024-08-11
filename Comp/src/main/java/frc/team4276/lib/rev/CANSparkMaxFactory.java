@@ -20,7 +20,7 @@ public class CANSparkMaxFactory {
         sparkMax.restoreFactoryDefaults();
 
         // Clean up CAN usage
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Applied Output / Faults
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Applied Output / Faults / Follower Sends
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Voltage / Temp / Current / Internal Encoder Vel
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Internal Encoder Pos
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000); // Analog Sensor
@@ -59,6 +59,8 @@ public class CANSparkMaxFactory {
         VIKCANSparkMax sparkMax = createDefault(id);
 
         sparkMax.follow(master);
+
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 1);
 
         return sparkMax;
     }
