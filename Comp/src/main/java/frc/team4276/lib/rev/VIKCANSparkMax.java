@@ -58,7 +58,7 @@ public class VIKCANSparkMax extends CANSparkMax {
         }
 
         if(mReverseLimit != null) {
-            output = mForwardLimit.get() ? Math.max(0.0, output) : output;
+            output = mReverseLimit.get() ? Math.max(0.0, output) : output;
             
         }
 
