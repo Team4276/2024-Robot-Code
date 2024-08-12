@@ -11,7 +11,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.field.Field;
@@ -24,23 +23,35 @@ import frc.team254.lib.geometry.Translation2d;
 
 public class PhotonDevice extends Subsystem {
     private PhotonCamera mCamera;
+    private PhotonDeviceConstants mConstants;
 
     private PhotonPoseEstimator mPoseEstimator;
 
     private Pose3d mLatestUpdate;
 
     public static class PhotonDeviceConstants {
+        public String kCameraNameId = "ERROR_ASSIGN_A_NAME";
         public String kCameraName = "ERROR_ASSIGN_A_NAME";
         public Transform3d kRobotToCamera = new Transform3d();
     }
 
     public PhotonDevice(PhotonDeviceConstants constants) {
-        mCamera = new PhotonCamera(constants.kCameraName);
+        mConstants = constants;
+
+        mCamera = new PhotonCamera(mConstants.kCameraNameId);
         
         mPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
-                PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, mCamera, constants.kRobotToCamera);
+                PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, mCamera, mConstants.kRobotToCamera);
 
         mPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS);
+    }
+
+    public String getNameId() {
+        return mConstants.kCameraNameId;
+    }
+
+    public String getName() {
+        return mConstants.kCameraName;
     }
   
     public boolean getConnected(){
@@ -87,10 +98,6 @@ public class PhotonDevice extends Subsystem {
                 distStDev));
 
             RobotState.getInstance().visionHeadingUpdate(estimatedRobotPose.get().estimatedPose.getRotation().getZ());
-
-            SmartDashboard.putNumber("Debug/PhotonCamera X", estimatedRobotPose.get().estimatedPose.getX());
-            SmartDashboard.putNumber("Debug/PhotonCamera Y", estimatedRobotPose.get().estimatedPose.getY());
-            SmartDashboard.putNumber("Debug/PhotonCamera Heading", estimatedRobotPose.get().estimatedPose.getRotation().getZ());
 
             mLatestUpdate = estimatedRobotPose.get().estimatedPose;
         }

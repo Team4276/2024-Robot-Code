@@ -31,6 +31,7 @@ public class Superstructure extends Subsystem {
     private GoalState mGoalState = GoalState.IDLE;
 
     private double mScoringOffset = 0.0;
+    private double mFerryOffset = 0.0;
 
     private boolean mIsHoldingNote = false; // TODO: test note detection reliability
 
@@ -67,10 +68,6 @@ public class Superstructure extends Subsystem {
         return mInstance;
     }
 
-    public void offsetScoring(double delta_offset) {
-        mScoringOffset += delta_offset;
-    }
-
     public synchronized void setGoalState(GoalState state) {
         mRequestedState = state;
     }
@@ -84,15 +81,27 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setDynamic(boolean isDynamic) {
-        // mIsDymanic = isDynamic;
+        mIsDymanic = isDynamic;
     }
 
     public synchronized void setManual(boolean isManual) {
         mIsManual = isManual;
     }
+    
+    public synchronized void offsetScoring(double delta_offset) {
+        mScoringOffset += delta_offset;
+    }
 
-    public synchronized boolean isHoldingNote() {
-        return mIsHoldingNote;
+    public synchronized void setScoringOffset(double offset) {
+        mScoringOffset = offset;
+    }
+
+    public synchronized void offsetFerry(double delta_offset) {
+        mFerryOffset += delta_offset;
+    }
+
+    public synchronized void setFerryOffset(double offset) {
+        mFerryOffset = offset;
     }
 
     public synchronized void setManualFlywheelVoltage(double voltage) {
@@ -105,6 +114,10 @@ public class Superstructure extends Subsystem {
 
     public synchronized void setManualFourbarVoltage(double voltage) {
         mRequestedManualInput.fourbar_voltage = voltage;
+    }
+    
+    public synchronized boolean isHoldingNote() {
+        return mIsHoldingNote;
     }
 
     @Override
@@ -269,21 +282,28 @@ public class Superstructure extends Subsystem {
 
         Pose2d robot_pose = RobotState.getInstance().getLatestFieldToVehicle();
 
+        double distance;
         double flywheel_setpoint;
         double fourbar_setpoint;
         Rotation2d drive_heading_setpoint;
 
         if (mIsFerry) {
             double[] params = FerryUtil.getFerryParams(robot_pose);
-            flywheel_setpoint = params[0];
-            fourbar_setpoint = params[1];
-            drive_heading_setpoint = Rotation2d.fromRadians(params[2]);
+            distance = params[0];
+            flywheel_setpoint = params[1];
+            fourbar_setpoint = params[2] + mFerryOffset;
+            drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
         } else {
             double[] params = ShootingUtil.getSpeakerShotParams(robot_pose);
-            flywheel_setpoint = params[0];
-            fourbar_setpoint = params[1];
-            drive_heading_setpoint = Rotation2d.fromRadians(params[2]);
+            distance = params[0];
+            flywheel_setpoint = params[1];
+            fourbar_setpoint = params[2] + mScoringOffset;
+            drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
         }
+
+        SmartDashboard.putNumber("Debug/Regression Tuning/Distance", distance);
+        SmartDashboard.putNumber("Debug/Regression Tuning/Flywheel Setpoint", flywheel_setpoint);
+        SmartDashboard.putNumber("Debug/Regression Tuning/Fourbar Setpoint Degrees", Math.toDegrees(fourbar_setpoint));
 
         mFlywheelSubsystem.setTargetRPM(flywheel_setpoint);
         mFourbarSubsystem.setFuseMotionSetpoint(fourbar_setpoint);
@@ -299,6 +319,7 @@ public class Superstructure extends Subsystem {
     @Override
     public synchronized void outputTelemetry() {
         SmartDashboard.putNumber("Comp/Scoring Offset", mScoringOffset);
+        SmartDashboard.putNumber("Comp/Ferry Offset", mFerryOffset);
 
         SmartDashboard.putBoolean("Comp/Is Holding Note", mIsHoldingNote);
 

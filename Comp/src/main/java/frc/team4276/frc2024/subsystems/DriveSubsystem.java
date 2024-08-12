@@ -245,8 +245,9 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized void resetGyro(double angleDeg) {
-        mOdometry.offsetGyro(mPigeon.getYaw().toWPI().minus(Rotation2d.fromDegrees(angleDeg).toWPI()));
+        Rotation2d prevOffset = mPigeon.getYawOffset();
         mPigeon.setYaw(angleDeg);
+        mOdometry.offsetGyro(mPigeon.getYawOffset().rotateBy(prevOffset.inverse()).toWPI());
     }
 
     public synchronized void resetOdometry(Pose2d pose) {

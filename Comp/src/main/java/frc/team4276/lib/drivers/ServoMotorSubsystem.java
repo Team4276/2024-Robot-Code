@@ -15,6 +15,7 @@ import frc.team4276.lib.rev.VIKCANSparkMaxServo;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 
+//TODO: change to radians
 public abstract class ServoMotorSubsystem extends Subsystem {
     public static class ServoMotorConfig {
         public int id;

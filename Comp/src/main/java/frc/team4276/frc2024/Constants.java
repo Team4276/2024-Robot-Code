@@ -299,7 +299,7 @@ public final class Constants {
             kSubsystemConstants.kPidfConfigs = new CANSparkMaxFactory.CANSparkMaxPIDFConfig[3];
 
             kSubsystemConstants.kPidfConfigs[0] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
-            kSubsystemConstants.kPidfConfigs[0].kSlotId = 0; // Smart Motion Cruise
+            kSubsystemConstants.kPidfConfigs[0].kSlotId = 0; // Smart Motion Cruise (Velocity Control)
             kSubsystemConstants.kPidfConfigs[0].kP = 0.0;
             kSubsystemConstants.kPidfConfigs[0].kI = 0.0;
             kSubsystemConstants.kPidfConfigs[0].kD = 0.0;
@@ -310,7 +310,7 @@ public final class Constants {
             kSubsystemConstants.kPidfConfigs[0].kPIDOutputRange = 1.0;
 
             kSubsystemConstants.kPidfConfigs[1] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
-            kSubsystemConstants.kPidfConfigs[1].kSlotId = 1; // Smart Motion Maintain
+            kSubsystemConstants.kPidfConfigs[1].kSlotId = 1; // Smart Motion Maintain (Position Control)
             kSubsystemConstants.kPidfConfigs[1].kP = 0.0;
             kSubsystemConstants.kPidfConfigs[1].kI = 0.0;
             kSubsystemConstants.kPidfConfigs[1].kD = 0.0;
@@ -385,13 +385,15 @@ public final class Constants {
     public static final class VisionConstants {
         public static final PhotonDeviceConstants kFrontCameraConstants = new PhotonDeviceConstants();
         static {
-            kFrontCameraConstants.kCameraName = "Arducam_OV9281_USB_Camera";
+            kFrontCameraConstants.kCameraName = "Front Camera";
+            kFrontCameraConstants.kCameraNameId = "Arducam_OV9281_USB_Camera";
             kFrontCameraConstants.kRobotToCamera = new Transform3d();
         }
 
         public static final PhotonDeviceConstants kBackCameraConstants = new PhotonDeviceConstants();
         static {
-            kBackCameraConstants.kCameraName = "PI_CAM_3";
+            kFrontCameraConstants.kCameraName = "Back Camera";
+            kBackCameraConstants.kCameraNameId = "PI_CAM_3";
             kBackCameraConstants.kRobotToCamera = new Transform3d();
         }
     }

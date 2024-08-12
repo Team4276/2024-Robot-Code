@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -169,6 +168,10 @@ public class Robot extends TimedRobot {
 
     }
 
+    @Override
+    public void disabledExit() {
+    }
+
     /**
      * This autonomous runs the autonomous command selected by your
      * {@link RobotContainer} class.
@@ -208,6 +211,10 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void autonomousExit() {
+    }
+
+    @Override
     public void teleopInit() {
         try {
             mDisabledLooper.stop();
@@ -222,8 +229,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         try {
-            mControlBoard.update();
-
             if (mControlBoard.wantDemoLimits()) {
                 mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kDemoLimits);
             } else {
@@ -274,6 +279,10 @@ public class Robot extends TimedRobot {
             System.out.println(t.getMessage());
             throw t;
         }
+    }
+
+    @Override
+    public void teleopExit() {
     }
 
     @Override

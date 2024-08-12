@@ -86,4 +86,8 @@ public class Pigeon {
     public Rotation2d getUnadjustedRoll() {
         return Rotation2d.fromDegrees(mGyro.getXComplementaryAngle());
     }
+
+    public Rotation2d getYawOffset() {
+        return yawAdjustmentAngle;
+    }
 }

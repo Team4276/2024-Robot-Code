@@ -54,6 +54,22 @@ public class ControlBoard { // TODO: config
 
         mSuperstructure.setFerry(wantFerry());
 
+        if(wantOffsetFerry()) {
+            if(wantIncrementOffset()) {
+                mSuperstructure.offsetFerry(Math.toRadians(1.0));
+            } else if(wantDecrementOffset()) {
+                mSuperstructure.offsetFerry(Math.toRadians(-1.0));
+            }
+        }
+        
+        if(wantOffsetScoring()) {
+            if(wantIncrementOffset()) {
+                mSuperstructure.offsetScoring(Math.toRadians(1.0));
+            } else if(wantDecrementOffset()) {
+                mSuperstructure.offsetScoring(Math.toRadians(-1.0));
+            }
+        }
+
         if (wantStow()) {
             mSuperstructure.setPrep(false);
         } else if (wantPrep()) {
@@ -208,6 +224,22 @@ public class ControlBoard { // TODO: config
         }
 
         return wasIdle;
+    }
+
+    public boolean wantOffsetFerry() {
+        return false;
+    }
+
+    public boolean wantOffsetScoring() {
+        return false;
+    }
+
+    public boolean wantIncrementOffset() {
+        return false;
+    }
+
+    public boolean wantDecrementOffset() {
+        return false;
     }
 
     // Robot Button Board

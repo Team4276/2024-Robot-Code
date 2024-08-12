@@ -60,6 +60,9 @@ public class ClimberSubsystem extends Subsystem {
 
         mRightLimit = new DigitalInput(Ports.CLIMBER_LIMIT_RIGHT);
         mLeftLimit = new DigitalInput(Ports.CLIMBER_LIMIT_LEFT);
+
+        mRightMotor.enableReverseLimit(mRightLimit::get);
+        mLeftMotor.enableReverseLimit(mLeftLimit::get);
     }
 
     public synchronized void setDesiredState(State state){
@@ -98,8 +101,8 @@ public class ClimberSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        mLeftMotor.setVoltage(mLeftLimit.get() ? Math.max(0, mDesiredVoltage) : mDesiredVoltage);
-        mRightMotor.setVoltage(mRightLimit.get() ? Math.max(0, mDesiredVoltage) : mDesiredVoltage);
+        mLeftMotor.setVoltage(mDesiredVoltage);
+        mRightMotor.setVoltage(mDesiredVoltage);
     }
 
     @Override

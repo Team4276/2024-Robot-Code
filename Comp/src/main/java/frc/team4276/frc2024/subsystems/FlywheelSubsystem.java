@@ -89,8 +89,8 @@ public class FlywheelSubsystem extends Subsystem {
             mIsOpenLoop = false;
         }
 
-        mPeriodicIO.top_demand = top_RPM;
-        mPeriodicIO.bottom_demand = bottom_RPM;
+        mPeriodicIO.top_demand = mTopFF.calculate(top_RPM);
+        mPeriodicIO.bottom_demand = mBottomFF.calculate(bottom_RPM);
     }
 
     public boolean isSpunUp() {
@@ -98,12 +98,12 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public boolean isTopSpunUp() {
-        return Math.abs(mPeriodicIO.curr_top_RPM - mPeriodicIO.top_demand) < FlywheelConstants.kFlywheelTolerance;
+        return Math.abs(mPeriodicIO.top_RPM - mPeriodicIO.top_demand) < FlywheelConstants.kFlywheelTolerance;
     }
 
     public boolean isBottomSpunUp() {
         return Math.abs(
-                mPeriodicIO.curr_bottom_RPM - mPeriodicIO.bottom_demand) < FlywheelConstants.kFlywheelTolerance;
+                mPeriodicIO.bottom_RPM - mPeriodicIO.bottom_demand) < FlywheelConstants.kFlywheelTolerance;
     }
 
     @Override
@@ -113,8 +113,10 @@ public class FlywheelSubsystem extends Subsystem {
 
     private class PeriodicIO {
         // Inputs
-        double curr_top_RPM = 0.0;
-        double curr_bottom_RPM = 0.0;
+        double top_RPM = 0.0;
+        double bottom_RPM = 0.0;
+        double top_voltage = 0.0;
+        double bottom_voltage = 0.0;
 
         // Outputs
         double top_demand;
@@ -124,8 +126,11 @@ public class FlywheelSubsystem extends Subsystem {
 
     @Override
     public void readPeriodicInputs() {
-        mPeriodicIO.curr_top_RPM = mTopEncoder.getVelocity();
-        mPeriodicIO.curr_bottom_RPM = mBottomEncoder.getVelocity();
+        mPeriodicIO.top_RPM = mTopEncoder.getVelocity();
+        mPeriodicIO.bottom_RPM = mBottomEncoder.getVelocity();
+
+        mPeriodicIO.top_voltage = mTopMotor.getAppliedVoltage();
+        mPeriodicIO.bottom_voltage = mBottomMotor.getAppliedVoltage();
     }
 
     @Override
@@ -150,21 +155,16 @@ public class FlywheelSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        if (mIsOpenLoop) {
-            mTopMotor.setVoltage(mPeriodicIO.top_demand);
-            mBottomMotor.setVoltage(mPeriodicIO.bottom_demand);
-
-        } else {
-            mTopMotor.setVoltage(mTopFF.calculate(mPeriodicIO.top_demand));
-            mTopMotor.setVoltage(mBottomFF.calculate(mPeriodicIO.bottom_demand));
-
-        }
+        mTopMotor.setVoltage(mPeriodicIO.top_demand);
+        mBottomMotor.setVoltage(mPeriodicIO.bottom_demand);
     }
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.curr_top_RPM);
-        SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.curr_bottom_RPM);
+        SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.top_RPM);
+        SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.bottom_RPM);
+        SmartDashboard.putNumber("Debug/Top Voltage", mPeriodicIO.top_voltage);
+        SmartDashboard.putNumber("Debug/Bottom Voltage", mPeriodicIO.bottom_voltage);
         SmartDashboard.putBoolean("Comp/Flywheels Spun Up", isSpunUp());
     }
 }

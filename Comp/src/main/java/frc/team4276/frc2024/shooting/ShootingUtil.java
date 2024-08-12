@@ -10,11 +10,12 @@ public class ShootingUtil {
         Translation2d robot_to_target = RobotState.getInstance().getPOIs().kSpeakerCenter
             .translateBy(robot_pose.getTranslation().inverse());
 
+        double distance = robot_to_target.norm();
         double flywheel_setpoint = RegressionMaps.kSpeakerFlywheelRPMs.get(robot_to_target.norm());
         double fourbar_setpoint = RegressionMaps.kSpeakerFourbarAngles.get(robot_to_target.norm());
         double heading_setpoint = robot_to_target.direction().getRadians();
 
-        return new double[] {flywheel_setpoint, fourbar_setpoint, heading_setpoint};
+        return new double[] { distance, flywheel_setpoint, fourbar_setpoint, heading_setpoint};
 
     }
     
