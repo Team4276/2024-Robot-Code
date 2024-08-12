@@ -82,9 +82,15 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
                 profile_start_fuse, setpoint_fuse);
 
-        getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
+        if(kFuseMotionFF.isLinear()) {
+            getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
                 kFuseMotionFF.calculate(state[0], state[1], 0.0), ArbFFUnits.kVoltage);
 
+        } else { // Asume setpoint given in degrees
+            getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
+                kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0), ArbFFUnits.kVoltage);
+
+        }
     }
 
     @Override
@@ -99,7 +105,4 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         isFuseMotion = false;
         super.setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);
     }
-
-    
-
 }

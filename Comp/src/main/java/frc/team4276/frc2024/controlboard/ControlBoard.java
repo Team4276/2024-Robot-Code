@@ -108,17 +108,17 @@ public class ControlBoard { // TODO: config
 
         if (wantOffsetFerry()) {
             if (wantIncrementOffset()) {
-                mSuperstructure.offsetFerry(Math.toRadians(1.0));
+                mSuperstructure.offsetFerry(1.0);
             } else if (wantDecrementOffset()) {
-                mSuperstructure.offsetFerry(Math.toRadians(-1.0));
+                mSuperstructure.offsetFerry(-1.0);
             }
         }
 
         if (wantOffsetScoring()) {
             if (wantIncrementOffset()) {
-                mSuperstructure.offsetScoring(Math.toRadians(1.0));
+                mSuperstructure.offsetScoring(1.0);
             } else if (wantDecrementOffset()) {
-                mSuperstructure.offsetScoring(Math.toRadians(-1.0));
+                mSuperstructure.offsetScoring(-1.0);
             }
         }
 

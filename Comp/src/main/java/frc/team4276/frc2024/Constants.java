@@ -179,7 +179,7 @@ public final class Constants {
                 / kDrivingMotorReduction) / 60.0; // meters per second
 
         public static final double kTurningEncoderPositionFactor = (2 * Math.PI); // radians
-        public static final double kTurningEncoderVelocityFactor = (2 * Math.PI) / 60.0; // radians per second
+        public static final double kTurningEncoderVelocityFactor = (2 * Math.PI); // radians per second
 
         public static final double kTurningEncoderPositionPIDMinInput = 0; // radians
         public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
@@ -282,13 +282,13 @@ public final class Constants {
 
             kSubsystemConstants.kSmartCurrentLimit = 40;
             kSubsystemConstants.kIdleMode = IdleMode.kBrake;
-            kSubsystemConstants.kIsCircular = false; // assume max position is 2 * Pi
-            kSubsystemConstants.kMinPosition = Math.toRadians(42.0); // Input Bound
-            kSubsystemConstants.kMaxPosition = Math.toRadians(125.0); // Input Bound
+            kSubsystemConstants.kIsCircular = false; // assume max position is 360
+            kSubsystemConstants.kMinPosition = 42.0; // Input Bound
+            kSubsystemConstants.kMaxPosition = 125.0; // Input Bound
             kSubsystemConstants.kMaxVel = 0.0;
             kSubsystemConstants.kMaxAccel = 0.0;
             kSubsystemConstants.kS = 0.185;
-            kSubsystemConstants.kTol = Math.toRadians(1.0);
+            kSubsystemConstants.kTol = 1.0;
             kSubsystemConstants.kForwardLimitPolarity = SparkLimitSwitch.Type.kNormallyOpen;
             kSubsystemConstants.kReverseLimitPolarity = SparkLimitSwitch.Type.kNormallyOpen;
             
@@ -342,8 +342,8 @@ public final class Constants {
         public static final RevUtil.SparkAbsoluteEncoderConfig kAbsoluteEncoderConfig = new RevUtil.SparkAbsoluteEncoderConfig();
         static {
             kAbsoluteEncoderConfig.kIsInverted = true;
-            kAbsoluteEncoderConfig.kUnitsPerRotation = 2 * Math.PI;
-            kAbsoluteEncoderConfig.kOffset = Math.toRadians(84.5);
+            kAbsoluteEncoderConfig.kUnitsPerRotation = 360.0;
+            kAbsoluteEncoderConfig.kOffset = 84.5;
             kAbsoluteEncoderConfig.kAvgSamplingDepth = 32;
         }
     }
@@ -370,11 +370,11 @@ public final class Constants {
 
     public static final class SuperstructureConstants {
         // Radians
-        public static final double kFourbarStowState = Math.toRadians(120.0);
-        public static final double kFourbarPrepState = Math.toRadians(106.7);
-        public static final double kFourbarIntakeState = Math.toRadians(49.0);
-        public static final double kFourbarSubCloseState = Math.toRadians(45.0);
-        public static final double kFourbarFerryState = Math.toRadians(45.0);
+        public static final double kFourbarStowState = 120.0;
+        public static final double kFourbarPrepState = 106.7;
+        public static final double kFourbarIntakeState = 49.0;
+        public static final double kFourbarSubCloseState = 45.0;
+        public static final double kFourbarFerryState = 45.0;
 
         public static final int kNormalShotRPM = 3500;
 

@@ -112,6 +112,11 @@ public class FourBarFeedForward implements IFeedForward {
         this.kSupportToCom = constants.kSupportToCom;
     }
 
+    @Override
+    public boolean isLinear() {
+        return false;
+    }
+
     public void setkS(double static_voltage){
         kS = static_voltage;
     }
@@ -121,17 +126,17 @@ public class FourBarFeedForward implements IFeedForward {
     }
 
     @Override
-    public double calculate(double pos, double vel, double accel) {
-        updateInsideAngles(pos);
+    public double calculate(double posRad, double velRad, double accelRad) {
+        updateInsideAngles(posRad);
         updateRelevantAngles();
         updateComs();
 
-        double gravity_voltage = calcGravityVoltage(pos);
-        double velocity_voltage = kV * vel;
+        double gravity_voltage = calcGravityVoltage(posRad);
+        double velocity_voltage = kV * velRad;
 
         SmartDashboard.putNumber("Debug/Fourbar Gravity Voltage", gravity_voltage);
         SmartDashboard.putNumber("Debug/Fourbar Velocity Voltage", velocity_voltage);
-        return gravity_voltage + (kS * Math.signum(vel)) + velocity_voltage;
+        return gravity_voltage + (kS * Math.signum(velRad)) + velocity_voltage;
     }
 
     // private double calcAccelerationVoltage(){

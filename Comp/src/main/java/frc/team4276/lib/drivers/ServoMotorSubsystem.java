@@ -15,7 +15,6 @@ import frc.team4276.lib.rev.VIKCANSparkMaxServo;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 
-//TODO: change to radians
 public abstract class ServoMotorSubsystem extends Subsystem {
     public static class ServoMotorConfig {
         public int id;
@@ -30,7 +29,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
         public int kSmartCurrentLimit = 40;
         public CANSparkBase.IdleMode kIdleMode = CANSparkBase.IdleMode.kCoast;
-        public boolean kIsCircular = false;
+        public boolean kIsCircular = false; // Units expect to be 
         public double kMinPosition = Double.NEGATIVE_INFINITY;
         public double kMaxPosition = Double.POSITIVE_INFINITY;
         public double kMaxVel = 0.0;
@@ -154,7 +153,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             return;
         }
 
-        mPeriodicIO.demand = constrainUnits(position);
+        mPeriodicIO.demand = constrain(position);
     }
 
     public synchronized void setFuseMotionSetpoint(double position) {
@@ -164,12 +163,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             return;
         }
 
-        mPeriodicIO.demand = constrainUnits(position);
+        mPeriodicIO.demand = constrain(position);
 
     }
 
-    protected double constrainUnits(double units) {
-        return Math.max(Math.min(units, mConstants.kMaxPosition), mConstants.kMinPosition);
+    protected double constrain(double pos) {
+        return Math.max(Math.min(pos, mConstants.kMaxPosition), mConstants.kMinPosition);
     }
 
     public void setWantBrakeMode(boolean brake) {

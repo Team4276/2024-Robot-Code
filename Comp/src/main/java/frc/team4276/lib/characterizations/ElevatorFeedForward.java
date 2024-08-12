@@ -15,4 +15,9 @@ public class ElevatorFeedForward extends ElevatorFeedforward implements IFeedFor
     public double calculate(double pos, double vel, double accel) {
         return super.calculate(vel, accel);
     }
+
+    @Override
+    public boolean isLinear() {
+        return true;
+    }
 }
