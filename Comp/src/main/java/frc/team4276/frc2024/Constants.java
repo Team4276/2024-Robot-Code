@@ -23,7 +23,7 @@ import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
-import frc.team4276.lib.swerve.MAXSwerveModuleV3.MAXSwerveModuleConstants;
+import frc.team4276.lib.swerve.MAXSwerveModule.MAXSwerveModuleConstants;
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
 
 public final class Constants {

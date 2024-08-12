@@ -19,7 +19,7 @@ import frc.team4276.lib.rev.VIKCANSparkMax;
 
 import frc.team1678.lib.swerve.ModuleState;
 
-public class MAXSwerveModuleV3 extends Subsystem {
+public class MAXSwerveModule extends Subsystem {
     private final VIKCANSparkMax mDrive;
     private final VIKCANSparkMax mTurn;
 
@@ -35,7 +35,7 @@ public class MAXSwerveModuleV3 extends Subsystem {
         public double kOffset = 0.0;
     }
 
-    public MAXSwerveModuleV3(MAXSwerveModuleConstants constants) {
+    public MAXSwerveModule(MAXSwerveModuleConstants constants) {
         mDrive = CANSparkMaxFactory.createDefault(constants.kDriveId);
         mTurn = CANSparkMaxFactory.createDefault(constants.kTurnId);
 

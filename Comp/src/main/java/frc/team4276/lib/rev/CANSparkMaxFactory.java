@@ -2,10 +2,10 @@ package frc.team4276.lib.rev;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.SparkPIDController;
 
 import frc.team4276.frc2024.Constants;
-
-import com.revrobotics.SparkPIDController;
+import frc.team4276.lib.rev.RevUtil.SparkAbsoluteEncoderConfig;
 
 public class CANSparkMaxFactory {
     
@@ -98,7 +98,7 @@ public class CANSparkMaxFactory {
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, periodSec);
 
     }
-
+    
     public static void configAbsoluteEncoder(VIKCANSparkMax motor) {
         configAbsoluteEncoder(motor, Constants.kLooperDt);
 
@@ -107,6 +107,23 @@ public class CANSparkMaxFactory {
     public static void configAbsoluteEncoder(VIKCANSparkMax motor, double periodSec) {
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, periodSec);
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, periodSec);
+
+    }
+
+    public static void configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config) {
+        configAbsoluteEncoder(motor, config, Constants.kLooperDt);
+
+    }
+
+    public static void configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config, double periodSec) {
+        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, periodSec);
+        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, periodSec);
+
+        motor.getAbsoluteEncoder().setInverted(config.kIsInverted);
+        motor.getAbsoluteEncoder().setPositionConversionFactor(config.kUnitsPerRotation);
+        motor.getAbsoluteEncoder().setVelocityConversionFactor(config.kUnitsPerRotation);
+        motor.getAbsoluteEncoder().setZeroOffset(config.kOffset);
+        motor.getAbsoluteEncoder().setAverageDepth(config.kAvgSamplingDepth);
 
     }
 }

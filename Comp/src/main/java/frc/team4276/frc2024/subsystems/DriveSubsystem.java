@@ -13,13 +13,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.Constants;
-import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.lib.drivers.Pigeon;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
-import frc.team4276.lib.swerve.MAXSwerveModuleV2;
+import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
@@ -34,7 +33,7 @@ import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Twist2d;
 
 public class DriveSubsystem extends Subsystem {
-    public MAXSwerveModuleV2[] mModules;
+    public MAXSwerveModule[] mModules;
 
     private SwerveDriveOdometry mOdometry;
 
@@ -82,27 +81,14 @@ public class DriveSubsystem extends Subsystem {
 
     /** Creates a new DriveSubsystem. */
     private DriveSubsystem() {
-        mModules = new MAXSwerveModuleV2[] {
-                new MAXSwerveModuleV2(
-                        Ports.FRONT_LEFT_DRIVE,
-                        Ports.FRONT_LEFT_TURN,
-                        DriveConstants.kFrontLeftChassisAngularOffset),
-                new MAXSwerveModuleV2(
-                        Ports.FRONT_RIGHT_DRIVE,
-                        Ports.FRONT_RIGHT_TURN,
-                        DriveConstants.kFrontRightChassisAngularOffset),
-                new MAXSwerveModuleV2(
-                        Ports.BACK_LEFT_DRIVE,
-                        Ports.BACK_LEFT_TURN,
-                        DriveConstants.kBackLeftChassisAngularOffset),
-                new MAXSwerveModuleV2(
-                        Ports.BACK_RIGHT_DRIVE,
-                        Ports.BACK_RIGHT_TURN,
-                        DriveConstants.kBackRightChassisAngularOffset)
+        mModules = new MAXSwerveModule[] {
+                new MAXSwerveModule(DriveConstants.kFLConstants),
+                new MAXSwerveModule(DriveConstants.kFRConstants),
+                new MAXSwerveModule(DriveConstants.kBLConstants),
+                new MAXSwerveModule(DriveConstants.kBRConstants)
         };
 
         mPigeon = Pigeon.getInstance();
-        mPigeon.setYaw(0.0);
 
         mPeriodicIO = new PeriodicIO();
 
@@ -178,7 +164,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void stop() {
-        for (MAXSwerveModuleV2 module : mModules) {
+        for (MAXSwerveModule module : mModules) {
             module.stop();
         }
     }
@@ -244,7 +230,7 @@ public class DriveSubsystem extends Subsystem {
 
     /** Resets the drive encoders to currently read a position of 0. */
     public synchronized void resetEncoders() {
-        for (MAXSwerveModuleV2 mod : mModules) {
+        for (MAXSwerveModule mod : mModules) {
             mod.resetEncoders();
         }
     }

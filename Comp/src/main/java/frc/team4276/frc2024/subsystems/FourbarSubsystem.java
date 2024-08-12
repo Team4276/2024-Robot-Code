@@ -1,7 +1,5 @@
 package frc.team4276.frc2024.subsystems;
 
-import com.revrobotics.SparkAbsoluteEncoder;
-
 import frc.team4276.frc2024.Constants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
@@ -11,7 +9,6 @@ import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 
 public class FourbarSubsystem extends ServoMotorSubsystem {
-    private SparkAbsoluteEncoder mAbsoluteEncoder;
 
     private static FourbarSubsystem mInstance;
 
@@ -28,21 +25,14 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
             RevUtil.SparkAbsoluteEncoderConfig encoderConfig) {
         super(constants);
 
-        mAbsoluteEncoder = mMaster.getAbsoluteEncoder();
-        mAbsoluteEncoder.setInverted(encoderConfig.kIsInverted);
-        mAbsoluteEncoder.setPositionConversionFactor(encoderConfig.kUnitsPerRotation);
-        mAbsoluteEncoder.setVelocityConversionFactor(encoderConfig.kUnitsPerRotation);
-        mAbsoluteEncoder.setZeroOffset(encoderConfig.kOffset);
-        mAbsoluteEncoder.setAverageDepth(encoderConfig.kAvgSamplingDepth);
+        CANSparkMaxFactory.configAbsoluteEncoder(mMaster, encoderConfig, mConstants.kFuseMotionConfig.kLooperDt);
 
-        mPositionSupplier = mAbsoluteEncoder::getPosition;
-        mVelocitySupplier = mAbsoluteEncoder::getVelocity;
+        mPositionSupplier = mMaster.getAbsoluteEncoder()::getPosition;
+        mVelocitySupplier = mMaster.getAbsoluteEncoder()::getVelocity;
 
-        mMaster.getPIDController().setFeedbackDevice(mAbsoluteEncoder);
+        mMaster.getPIDController().setFeedbackDevice(mMaster.getAbsoluteEncoder());
 
         mMaster.configFuseMotion(mConstants.kFuseMotionConfig, mPositionSupplier, mVelocitySupplier);
-
-        CANSparkMaxFactory.configAbsoluteEncoder(mMaster, mConstants.kFuseMotionConfig.kLooperDt);
 
         burnFlash();
     }

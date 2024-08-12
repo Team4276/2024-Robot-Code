@@ -1,7 +1,7 @@
 package frc.team4276.lib.rev;
 
 public class RevUtil {
-    public static class SparkAbsoluteEncoderConfig {
+    public static class SparkAbsoluteEncoderConfig { //TODO: check defaults
         public boolean kIsInverted = false; // Encoder
         public double kUnitsPerRotation = 1.0; // Overall Rotation
         public double kOffset = 0.0; // Set in hardware client
