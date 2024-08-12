@@ -1,9 +1,11 @@
 package frc.team4276.frc2024.controlboard;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
+import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.Constants.OIConstants;
+import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
@@ -11,6 +13,7 @@ import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
 
 import frc.team1678.lib.Util;
+import frc.team1678.lib.swerve.ChassisSpeeds;
 
 public class ControlBoard { // TODO: config
     public final BetterXboxController driver;
@@ -21,6 +24,7 @@ public class ControlBoard { // TODO: config
 
     private DriveSubsystem mDriveSubsystem;
     private Superstructure mSuperstructure;
+    private ClimberSubsystem mClimberSubsystem;
 
     private static ControlBoard mInstance;
 
@@ -40,11 +44,59 @@ public class ControlBoard { // TODO: config
 
         mDriveSubsystem = DriveSubsystem.getInstance();
         mSuperstructure = Superstructure.getInstance();
+        mClimberSubsystem = ClimberSubsystem.getInstance();
     }
 
     public void update() {
         driver.update();
         operator.update();
+
+        if (wantDemoLimits()) {
+            mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kDemoLimits);
+        } else {
+            mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kUncappedLimits);
+        }
+
+        if (wantZeroHeading()) {
+            mDriveSubsystem.resetGyro(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
+        }
+
+        if (wantXBrake()) {
+            mDriveSubsystem.setX();
+        } else {
+            mDriveSubsystem.teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    getSwerveTranslation().x(),
+                    getSwerveTranslation().y(),
+                    getSwerveRotation(),
+                    mDriveSubsystem.getHeading().toWPI(),
+                    AllianceChooser.getInstance().isAllianceRed()));
+        }
+
+        if (wantManual()) {
+            mSuperstructure.setManual(true);
+            updateManual();
+
+        } else {
+            mSuperstructure.setManual(false);
+            updateNominal();
+
+        }
+
+        if (wantRaiseClimber()) {
+            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
+
+        } else if (wantSlowLowerClimber() && wantClimbMode()) {
+            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
+            mSuperstructure.setPrep(false);
+
+        } else if (wantLowerClimber() && wantClimbMode()) {
+            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
+            mSuperstructure.setPrep(false);
+
+        } else {
+            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
+
+        }
     }
 
     public void updateNominal() {
@@ -54,18 +106,18 @@ public class ControlBoard { // TODO: config
 
         mSuperstructure.setFerry(wantFerry());
 
-        if(wantOffsetFerry()) {
-            if(wantIncrementOffset()) {
+        if (wantOffsetFerry()) {
+            if (wantIncrementOffset()) {
                 mSuperstructure.offsetFerry(Math.toRadians(1.0));
-            } else if(wantDecrementOffset()) {
+            } else if (wantDecrementOffset()) {
                 mSuperstructure.offsetFerry(Math.toRadians(-1.0));
             }
         }
-        
-        if(wantOffsetScoring()) {
-            if(wantIncrementOffset()) {
+
+        if (wantOffsetScoring()) {
+            if (wantIncrementOffset()) {
                 mSuperstructure.offsetScoring(Math.toRadians(1.0));
-            } else if(wantDecrementOffset()) {
+            } else if (wantDecrementOffset()) {
                 mSuperstructure.offsetScoring(Math.toRadians(-1.0));
             }
         }
@@ -98,10 +150,29 @@ public class ControlBoard { // TODO: config
     }
 
     public void updateManual() {
-        mSuperstructure.setManualFlywheelVoltage(0.0);
-        mSuperstructure.setManualFourbarVoltage(0.0);
-        mSuperstructure.setManualIntakeState(IntakeSubsystem.State.IDLE);
+        if (wantManualReadyFlywheel()) {
+            mSuperstructure.setManualFlywheelVoltage(0.0);
+        } else if (wantManualSpinup()) {
+            mSuperstructure.setManualFlywheelVoltage(Constants.FlywheelConstants.kPrep);
+        } else {
+            mSuperstructure.setManualFlywheelVoltage(0.0);
+        }
 
+        mSuperstructure.setManualFourbarVoltage(operator.getRightYDeadband());
+
+        if (wantManualIntake()) {
+            mSuperstructure.setManualIntakeState(IntakeSubsystem.State.INTAKE);
+        } else if (wantManualShoot()) {
+            mSuperstructure.setManualIntakeState(IntakeSubsystem.State.SHOOT);
+        } else if (wantManualExhaust()) {
+            mSuperstructure.setManualIntakeState(IntakeSubsystem.State.EXHAUST);
+        } else if (wantManualDefeed()) {
+            mSuperstructure.setManualIntakeState(IntakeSubsystem.State.DEFEED);
+        } else if (wantManualSlowFeed()) {
+            mSuperstructure.setManualIntakeState(IntakeSubsystem.State.SLOW_FEED);
+        } else {
+            mSuperstructure.setManualIntakeState(IntakeSubsystem.State.IDLE);
+        }
     }
 
     // Driver Controls
@@ -164,11 +235,19 @@ public class ControlBoard { // TODO: config
     }
 
     public boolean wantIntake() {
-        return driver.getRT();
+        return driver.getLT();
     }
 
     public boolean wantExhaust() {
         return false;
+    }
+
+    public boolean wantShoot() {
+        return driver.getYButton();
+    }
+
+    public boolean wantReady() {
+        return driver.getRT();
     }
 
     public boolean wantSlowLowerClimber() {
@@ -179,15 +258,7 @@ public class ControlBoard { // TODO: config
         return false;
     }
 
-    public boolean wantReady() {
-        return driver.getYButton();
-    }
-
     // Operator Controls
-    public boolean wantManual() {
-        return false;
-    }
-    
     public boolean wantStow() {
         return false;
     }
@@ -200,19 +271,7 @@ public class ControlBoard { // TODO: config
         return false;
     }
 
-    public boolean wantShoot() {
-        return false;
-    }
-
     public boolean wantFerry() {
-        return false;
-    }
-
-    public boolean wantClimbMode() {
-        return false;
-    }
-
-    public boolean wantRaiseClimber() {
         return false;
     }
 
@@ -239,6 +298,46 @@ public class ControlBoard { // TODO: config
     }
 
     public boolean wantDecrementOffset() {
+        return false;
+    }
+
+    public boolean wantManual() {
+        return false;
+    }
+
+    public boolean wantManualSpinup() {
+        return false;
+    }
+
+    public boolean wantManualReadyFlywheel() {
+        return false;
+    }
+
+    public boolean wantManualIntake() {
+        return false;
+    }
+
+    public boolean wantManualShoot() {
+        return false;
+    }
+
+    public boolean wantManualExhaust() {
+        return false;
+    }
+
+    public boolean wantManualDefeed() {
+        return false;
+    }
+
+    public boolean wantManualSlowFeed() {
+        return false;
+    }
+
+    public boolean wantClimbMode() {
+        return false;
+    }
+
+    public boolean wantRaiseClimber() {
         return false;
     }
 

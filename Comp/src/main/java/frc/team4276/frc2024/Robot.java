@@ -22,7 +22,6 @@ import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.vision.VisionDeviceManager;
 
 import frc.team1678.lib.loops.Looper;
-import frc.team1678.lib.swerve.ChassisSpeeds;
 
 import frc.team254.lib.geometry.Pose2d;
 
@@ -43,7 +42,7 @@ public class Robot extends TimedRobot {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
     private DriveSubsystem mDriveSubsystem;
-    // private VisionDeviceManager mVisionDeviceManager;
+    private VisionDeviceManager mVisionDeviceManager;
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
@@ -104,8 +103,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         mEnabledLooper.outputToSmartDashboard();
-        mControlBoard.update();
-
     }
 
     private boolean mHasFlippedClimberSetting = false;
@@ -229,51 +226,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         try {
-            if (mControlBoard.wantDemoLimits()) {
-                mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kDemoLimits);
-            } else {
-                mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kUncappedLimits);
-            }
-
-            if (mControlBoard.wantZeroHeading()) {
-                mDriveSubsystem.resetGyro(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
-            }
-
-            if (mControlBoard.wantXBrake()) {
-                mDriveSubsystem.setX();
-            } else {
-                mDriveSubsystem.teleopDrive(ChassisSpeeds.fromFieldRelativeSpeeds(
-                        mControlBoard.getSwerveTranslation().x(),
-                        mControlBoard.getSwerveTranslation().y(),
-                        mControlBoard.getSwerveRotation(),
-                        mDriveSubsystem.getHeading().toWPI(),
-                        AllianceChooser.getInstance().isAllianceRed()));
-            }
-
-            if(mControlBoard.wantManual()) {
-                mSuperstructure.setManual(true);
-                mControlBoard.updateManual();
-
-            } else {
-                mSuperstructure.setManual(false);
-                mControlBoard.updateNominal();
-
-            }
-            
-
-            if (mControlBoard.wantRaiseClimber()) {
-                mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
-
-            } else if (mControlBoard.wantSlowLowerClimber() && mControlBoard.wantClimbMode()) {
-                mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
-
-            } else if (mControlBoard.wantLowerClimber() && mControlBoard.wantClimbMode()) {
-                mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
-
-            } else {
-                mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
-
-            }
+            mControlBoard.update();
 
         } catch (Throwable t) {
             System.out.println(t.getMessage());
