@@ -29,6 +29,7 @@ import frc.team1678.lib.swerve.ChassisSpeeds;
 
 import frc.team254.lib.util.Util;
 import frc.team254.lib.geometry.Rotation2d;
+import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Twist2d;
 
@@ -147,7 +148,11 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized void setPathFollowingPath(PathPlannerPath path) {
-        mMotionPlanner.setTrajectory(null, null, getMeasSpeeds(), 0);
+        if (mControlState != DriveControlState.PATH_FOLLOWING) {
+            mControlState = DriveControlState.PATH_FOLLOWING;
+        }
+
+        mMotionPlanner.setTrajectory(path, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, mPeriodicIO.timestamp);
     }
 
     public synchronized void feedTrackingSetpoint(Rotation2d angle) {
@@ -267,6 +272,9 @@ public class DriveSubsystem extends Subsystem {
         };
         Rotation2d heading = Rotation2d.identity();
         Rotation2d pitch = Rotation2d.identity();
+        
+        Translation2d path_translation_error = Translation2d.identity();
+        Rotation2d path_heading_error = Rotation2d.identity();
 
         // Outputs
         ModuleState[] des_module_states = new ModuleState[] {
@@ -317,6 +325,7 @@ public class DriveSubsystem extends Subsystem {
                                 break;
 
                             default:
+                                stop();
                                 break;
                         }
 
@@ -341,6 +350,8 @@ public class DriveSubsystem extends Subsystem {
     }
 
     private void updatePathFollowing() {
+        mPeriodicIO.des_chassis_speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.timestamp);
+
 
     }
 
@@ -454,17 +465,10 @@ public class DriveSubsystem extends Subsystem {
 
     @Override
     public synchronized void outputTelemetry() {
-        // for (int i = 0; i < mModules.length; i++) {
-        // SmartDashboard.putNumber("Motor " + i + " Drive Setpoint: ",
-        // mModules[i].getDriveSetpoint());
-        // SmartDashboard.putNumber("Motor " + i + " Turn Setpoint: ",
-        // mModules[i].getTurnSetpoint());
-
-        // SmartDashboard.putNumber("Motor " + i + " Drive RPM: ",
-        // mModules[i].getMotorSpeed());
-        // }
-
         SmartDashboard.putNumber("Comp/Heading", mPeriodicIO.heading.getDegrees());
         SmartDashboard.putString("Comp/Drive Mode", mControlState.name());
+
+        SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
+        SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
     }
 }

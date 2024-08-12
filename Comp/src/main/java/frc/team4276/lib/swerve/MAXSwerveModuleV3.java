@@ -12,7 +12,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
-import frc.team4276.frc2024.Constants;
+import frc.team4276.frc2024.Constants.ModuleConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.VIKCANSparkMax;
@@ -46,28 +46,28 @@ public class MAXSwerveModuleV3 extends Subsystem {
         mDrive.getPIDController().setFeedbackDevice(mDriveEncoder);
         mTurn.getPIDController().setFeedbackDevice(mTurnEncoder);
 
-        mDriveEncoder.setPositionConversionFactor(Constants.ModuleConstants.kDrivingEncoderPositionFactor);
-        mDriveEncoder.setVelocityConversionFactor(Constants.ModuleConstants.kDrivingEncoderVelocityFactor);
+        mDriveEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
+        mDriveEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
 
-        mTurnEncoder.setPositionConversionFactor(Constants.ModuleConstants.kTurningEncoderPositionFactor);
-        mTurnEncoder.setVelocityConversionFactor(Constants.ModuleConstants.kTurningEncoderVelocityFactor);
+        mTurnEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
+        mTurnEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
 
-        mTurnEncoder.setInverted(Constants.ModuleConstants.kTurningEncoderInverted);
+        mTurnEncoder.setInverted(ModuleConstants.kTurningEncoderInverted);
         mTurnEncoder.setZeroOffset(constants.kOffset);
 
         mTurn.getPIDController().setPositionPIDWrappingEnabled(true);
         mTurn.getPIDController()
-                .setPositionPIDWrappingMinInput(Constants.ModuleConstants.kTurningEncoderPositionPIDMinInput);
+                .setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
         mTurn.getPIDController()
-                .setPositionPIDWrappingMaxInput(Constants.ModuleConstants.kTurningEncoderPositionPIDMaxInput);
+                .setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
 
-        CANSparkMaxFactory.configPIDF(mDrive, Constants.ModuleConstants.kDrivingPIDFConfig);
-        CANSparkMaxFactory.configPIDF(mTurn, Constants.ModuleConstants.kTurningPIDFConfig);
+        CANSparkMaxFactory.configPIDF(mDrive, ModuleConstants.kDrivingPIDFConfig);
+        CANSparkMaxFactory.configPIDF(mTurn, ModuleConstants.kTurningPIDFConfig);
 
-        mDrive.setIdleMode(Constants.ModuleConstants.kDrivingMotorIdleMode);
-        mTurn.setIdleMode(Constants.ModuleConstants.kTurningMotorIdleMode);
-        mDrive.setSmartCurrentLimit(Constants.ModuleConstants.kDrivingMotorCurrentLimit);
-        mTurn.setSmartCurrentLimit(Constants.ModuleConstants.kTurningMotorCurrentLimit);
+        mDrive.setIdleMode(ModuleConstants.kDrivingMotorIdleMode);
+        mTurn.setIdleMode(ModuleConstants.kTurningMotorIdleMode);
+        mDrive.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
+        mTurn.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
 
         mDriveEncoder.setPosition(0);
 

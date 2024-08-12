@@ -105,8 +105,6 @@ public class Robot extends TimedRobot {
         mEnabledLooper.outputToSmartDashboard();
     }
 
-    private boolean mHasFlippedClimberSetting = false;
-
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
     public void disabledInit() {
@@ -127,9 +125,9 @@ public class Robot extends TimedRobot {
         mAutoModeSelector.reset();
         mAutoModeSelector.updateModeCreator(false);
         mAutoModeExecutor = new AutoModeExecutor();
-
-        mHasFlippedClimberSetting = false;
     }
+    
+    private boolean mHasFlippedClimberSetting = false;
 
     @Override
     public void disabledPeriodic() {
@@ -147,12 +145,10 @@ public class Robot extends TimedRobot {
             }
 
             // Safety for Climber
-            boolean wantClimberCoastMode = mControlBoard.wantClimberCoastMode();
-
             if (mHasFlippedClimberSetting) {
-                mClimberSubsystem.setWantBrakeMode(!wantClimberCoastMode);
+                mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
 
-            } else if (!wantClimberCoastMode) {
+            } else if (!mControlBoard.wantClimberCoastMode()) {
                 mHasFlippedClimberSetting = true;
 
             }
@@ -183,8 +179,10 @@ public class Robot extends TimedRobot {
             if (autoMode.isPresent()) {
                 mAutoModeExecutor.setAutoMode(autoMode.get());
 
+                mDriveSubsystem.resetGyro(autoMode.get().getStartingPose().getRotation().getDegrees());
                 mDriveSubsystem.resetOdometry(autoMode.get().getStartingPose());
             } else {
+                mDriveSubsystem.resetGyro(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
                 mDriveSubsystem.resetOdometry(Pose2d.identity());
 
             }
@@ -236,6 +234,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopExit() {
+        mHasFlippedClimberSetting = false;
     }
 
     @Override
