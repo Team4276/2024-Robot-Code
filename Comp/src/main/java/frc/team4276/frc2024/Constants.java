@@ -37,21 +37,21 @@ public final class Constants {
     // Don't use during competition
     public static final boolean disableExtraTelemetry = false;
 
-  public static final class DebugConstants {
-    public static final boolean writeSwerveErrors = true;
-    // set to "DriverStation" to log to driver station or set to "Standard Out" to
-    // log to the standard output
-    public static final String printOutput = "Standard Out";
+    public static final class DebugConstants {
+        public static final boolean writeSwerveErrors = true;
+        // set to "DriverStation" to log to driver station or set to "Standard Out" to
+        // log to the standard output
+        public static final String printOutput = "Standard Out";
 
-    // Must end with a slash
-    // Do not leave blank
-    public static final String logDirectory = "/home/lvuser/logs/";
-    //max file size of the log directory
-    public static final double maxDirSize = 20;
-    //size to reduce the directory by
-    public static final double reductionSize = 5;
+        // Must end with a slash
+        // Do not leave blank
+        public static final String logDirectory = "/home/lvuser/logs/";
+        // max file size of the log directory
+        public static final double maxDirSize = 20;
+        // size to reduce the directory by
+        public static final double reductionSize = 5;
 
-  }
+    }
 
     public static final class DriveConstants {
         public static final double kTrackWidth = Units.inchesToMeters(23.5);
@@ -98,7 +98,7 @@ public final class Constants {
 
         public static final boolean kGyroReversed = false;
 
-        public static final double kMaxVel = ModuleConstants.kDriveWheelFreeSpeedRps; // meters per second
+        public static final double kMaxVel = MaxSwerveModuleConstants.kDriveWheelFreeSpeedRps; // meters per second
         public static final double kMaxAttainableVel = kMaxVel * 0.8;
         public static final double kMaxAttainableAccel = 8.9;
 
@@ -122,7 +122,7 @@ public final class Constants {
             kDemoLimits.kName = "Demo";
         }
 
-        //TODO: tune
+        // TODO: tune
         public static final double kAutoTranslationKp = 3.0;
         public static final double kAutoTranslationKd = 0.0;
         public static final double kAutoRotationKp = 4.0;
@@ -146,7 +146,7 @@ public final class Constants {
 
     }
 
-    public static final class ModuleConstants {
+    public static final class MaxSwerveModuleConstants {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T,
         // 13T, or 14T.
         // This changes the drive speed of the module (a pinion gear with more teeth
@@ -186,26 +186,12 @@ public final class Constants {
             kDrivingPIDFConfig.kFF = 1 / kDriveWheelFreeSpeedRps;
             kDrivingPIDFConfig.kPIDOutputRange = 1.0;
         }
-        
+
         public static final CANSparkMaxFactory.CANSparkMaxPIDFConfig kTurningPIDFConfig = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
         static {
             kTurningPIDFConfig.kP = 1.0;
             kTurningPIDFConfig.kPIDOutputRange = 1.0;
         }
-
-        public static final double kDrivingP = 0.04;
-        public static final double kDrivingI = 0;
-        public static final double kDrivingD = 0;
-        public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps;
-        public static final double kDrivingMinOutput = -1;
-        public static final double kDrivingMaxOutput = 1;
-
-        public static final double kTurningP = 1;
-        public static final double kTurningI = 0;
-        public static final double kTurningD = 0;
-        public static final double kTurningFF = 0;
-        public static final double kTurningMinOutput = -1;
-        public static final double kTurningMaxOutput = 1;
 
         public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
         public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
@@ -224,7 +210,7 @@ public final class Constants {
         public static final double kFreeSpeedRpm = 5676;
     }
 
-    //TODO: tune (though these are probably accurate)
+    // TODO: tune (though these are probably accurate)
     public static final class RobotStateConstants {
         public static final boolean kVisionResetsHeading = false;
 
@@ -287,7 +273,7 @@ public final class Constants {
             kSubsystemConstants.kTol = 1.0;
             kSubsystemConstants.kForwardLimitPolarity = SparkLimitSwitch.Type.kNormallyOpen;
             kSubsystemConstants.kReverseLimitPolarity = SparkLimitSwitch.Type.kNormallyOpen;
-            
+
             kSubsystemConstants.kSlotIdSmartMotionCruise = 0;
             kSubsystemConstants.kSlotIdSmartMotionMaintain = 1;
             kSubsystemConstants.kSlotIdFuseMotion = 2;
@@ -347,7 +333,7 @@ public final class Constants {
     public static class FlywheelConstants {
         public static IdleMode kIdleMode = IdleMode.kBrake;
         public static int kSmartCurrentLimit = 50;
-        
+
         public static int kAvgSamplingDepth = 8;
         public static int kMeasurementPeriod = 10;
         public static double kUnitsPerRotation = 1.0;

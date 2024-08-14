@@ -58,7 +58,7 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
     	cos_angle_ = Math.cos(Math.toRadians(theta_degrees));
     	sin_angle_ = Math.sin(Math.toRadians(theta_degrees));
     	this.theta_degrees = theta_degrees;
-        theta_radians = Math.toRadians(theta_degrees);
+        theta_radians = Math.atan2(sin_angle_, cos_angle_);
         
     }
 

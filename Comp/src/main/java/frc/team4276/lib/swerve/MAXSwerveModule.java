@@ -4,7 +4,6 @@
 
 package frc.team4276.lib.swerve;
 
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkBase.ControlType;
@@ -13,13 +12,12 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
-import frc.team4276.frc2024.Constants.ModuleConstants;
+import frc.team4276.frc2024.Constants.MaxSwerveModuleConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.VIKCANSparkMax;
 
 import frc.team1678.lib.swerve.ModuleState;
-import frc.team1678.lib.Util;
 
 import frc.team254.lib.geometry.Rotation2d;
 
@@ -30,9 +28,9 @@ public class MAXSwerveModule extends Subsystem {
     private final RelativeEncoder mDriveEncoder;
     private final AbsoluteEncoder mTurnEncoder;
 
-    private PeriodicIO mPeriodicIO;
+    private final PeriodicIO mPeriodicIO;
 
-    private MAXSwerveModuleConstants mConstants;
+    private final MAXSwerveModuleConstants mConstants;
 
     public static class MAXSwerveModuleConstants {
         public String kName = "ERROR_ASSIGN_A_NAME";
@@ -53,28 +51,28 @@ public class MAXSwerveModule extends Subsystem {
         mDrive.getPIDController().setFeedbackDevice(mDriveEncoder);
         mTurn.getPIDController().setFeedbackDevice(mTurnEncoder);
 
-        mDriveEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
-        mDriveEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
+        mDriveEncoder.setPositionConversionFactor(MaxSwerveModuleConstants.kDrivingEncoderPositionFactor);
+        mDriveEncoder.setVelocityConversionFactor(MaxSwerveModuleConstants.kDrivingEncoderVelocityFactor);
 
-        mTurnEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
-        mTurnEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
+        mTurnEncoder.setPositionConversionFactor(MaxSwerveModuleConstants.kTurningEncoderPositionFactor);
+        mTurnEncoder.setVelocityConversionFactor(MaxSwerveModuleConstants.kTurningEncoderVelocityFactor);
 
-        mTurnEncoder.setInverted(ModuleConstants.kTurningEncoderInverted);
+        mTurnEncoder.setInverted(MaxSwerveModuleConstants.kTurningEncoderInverted);
         mTurnEncoder.setZeroOffset(mConstants.kOffset);
 
         mTurn.getPIDController().setPositionPIDWrappingEnabled(true);
         mTurn.getPIDController()
-                .setPositionPIDWrappingMinInput(ModuleConstants.kTurningEncoderPositionPIDMinInput);
+                .setPositionPIDWrappingMinInput(MaxSwerveModuleConstants.kTurningEncoderPositionPIDMinInput);
         mTurn.getPIDController()
-                .setPositionPIDWrappingMaxInput(ModuleConstants.kTurningEncoderPositionPIDMaxInput);
+                .setPositionPIDWrappingMaxInput(MaxSwerveModuleConstants.kTurningEncoderPositionPIDMaxInput);
 
-        CANSparkMaxFactory.configPIDF(mDrive, ModuleConstants.kDrivingPIDFConfig);
-        CANSparkMaxFactory.configPIDF(mTurn, ModuleConstants.kTurningPIDFConfig);
+        CANSparkMaxFactory.configPIDF(mDrive, MaxSwerveModuleConstants.kDrivingPIDFConfig);
+        CANSparkMaxFactory.configPIDF(mTurn, MaxSwerveModuleConstants.kTurningPIDFConfig);
 
-        mDrive.setIdleMode(ModuleConstants.kDrivingMotorIdleMode);
-        mTurn.setIdleMode(ModuleConstants.kTurningMotorIdleMode);
-        mDrive.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
-        mTurn.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
+        mDrive.setIdleMode(MaxSwerveModuleConstants.kDrivingMotorIdleMode);
+        mTurn.setIdleMode(MaxSwerveModuleConstants.kTurningMotorIdleMode);
+        mDrive.setSmartCurrentLimit(MaxSwerveModuleConstants.kDrivingMotorCurrentLimit);
+        mTurn.setSmartCurrentLimit(MaxSwerveModuleConstants.kTurningMotorCurrentLimit);
 
         mDriveEncoder.setPosition(0);
 
@@ -95,52 +93,26 @@ public class MAXSwerveModule extends Subsystem {
             return;
         }
 
-        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Des Rotation", desiredState.angle.getDegrees());
+        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Des Rotation", desiredState.angle.getDegrees());
 
-        // ModuleState newState = ModuleState.optimize(desiredState,
-        //         Rotation2d.fromRadians(mPeriodicIO.turnPosition).toWPI());
+        mPeriodicIO.driveDemand = desiredState.speedMetersPerSecond;
 
-        // double targetAngle = desiredState.angle.getDegrees();
-        // if (Util.shouldReverse(Rotation2d.fromDegrees(targetAngle),
-        // Rotation2d.fromRadians(mPeriodicIO.turnPosition))) {
-        // mPeriodicIO.driveDemand = -desiredState.speedMetersPerSecond;
-        // targetAngle += 180.0;
-        // }
+        final double targetClamped = Rotation2d.fromWPI(desiredState.angle).getDegrees();
+        final double angleUnclamped = mPeriodicIO.turnPosition;
+        final Rotation2d angleClamped = Rotation2d.fromDegrees(angleUnclamped);
+        final Rotation2d relativeAngle = Rotation2d.fromDegrees(targetClamped).rotateBy(angleClamped.inverse());
+        double relativeDegrees = relativeAngle.getDegrees();
+        if (relativeDegrees > 90.0) {
+            relativeDegrees -= 180.0;
+            mPeriodicIO.driveDemand *= -1.0;
 
-        // mPeriodicIO.rotationDemand =
-        // Math.toRadians(Util.placeInAppropriate0To360Scope(Math.toDegrees(mPeriodicIO.turnPosition),
-        // targetAngle));
-
-        // SwerveModuleState state = SwerveModuleState.optimize(new
-        // SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle),
-        // Rotation2d.fromRadians(mPeriodicIO.turnPosition).toWPI());
-
-        // Apply chassis angular offset to the desired state.
-        // SwerveModuleState correctedDesiredState = new SwerveModuleState();
-        // correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-        // correctedDesiredState.angle = desiredState.angle;
-
-        // // Optimize the reference state to avoid spinning further than 90 degrees.
-        // SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
-        //         Rotation2d.fromRadians(mPeriodicIO.turnPosition).toWPI());
-
-        // mPeriodicIO.driveDemand = optimizedDesiredState.speedMetersPerSecond;
-        // mPeriodicIO.turnPosition = optimizedDesiredState.angle.getRadians();
-
-        // mPeriodicIO.driveDemand = newState.speedMetersPerSecond;
-        // mPeriodicIO.rotationDemand = newState.angle.getRadians();
-
-        ModuleS
-
-        double targetAngle = desiredState.angle.getDegrees();
-
-        if (Util.shouldReverse(Rotation2d.fromWPI(desiredState.angle), new Rotation2d(mPeriodicIO.turnPosition))) {
-            optimizedDesiredState.speedMetersPerSecond *= -1;
-            optimizedDesiredState.angle = new Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
+        } else if (relativeDegrees < -90.0) {
+            relativeDegrees += 180.0;
+            mPeriodicIO.driveDemand *= -1.0;
         }
 
-        optimizedDesiredState.angle = new Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
-                Math.toDegrees(m_turningEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
+        mPeriodicIO.rotationDemand = angleUnclamped + relativeDegrees;
+            
     }
 
     public void stop() {
@@ -156,7 +128,7 @@ public class MAXSwerveModule extends Subsystem {
     public ModuleState getState() {
         return new ModuleState(
                 mPeriodicIO.drivePosition,
-                new Rotation2d(mPeriodicIO.turnPosition).toWPI(),
+                Rotation2d.fromRadians(mPeriodicIO.turnPosition).toWPI(),
                 mPeriodicIO.driveVelocity);
     }
 
@@ -193,7 +165,7 @@ public class MAXSwerveModule extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
-        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
+        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
+        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
     }
 }

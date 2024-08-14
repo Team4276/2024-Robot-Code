@@ -276,8 +276,6 @@ public class DriveSubsystem extends Subsystem {
     public synchronized void readPeriodicInputs() {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
 
-        
-
         for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
             mModules[i].readPeriodicInputs();
             mPeriodicIO.meas_module_states[i] = mModules[i].getState();
@@ -296,7 +294,6 @@ public class DriveSubsystem extends Subsystem {
 
             @Override
             public void onStart(double timestamp) {
-                
             }
 
             @Override
@@ -341,7 +338,6 @@ public class DriveSubsystem extends Subsystem {
 
     private void updatePathFollowing() {
         mPeriodicIO.des_chassis_speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.timestamp);
-
 
     }
 
@@ -445,12 +441,12 @@ public class DriveSubsystem extends Subsystem {
         for (int i = 0; i < mModules.length; i++) {
             if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
-                mModules[i].writePeriodicOutputs();
             } else if (mControlState == DriveControlState.PATH_FOLLOWING
                     || mControlState == DriveControlState.FORCE_ORIENT) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
-                mModules[i].writePeriodicOutputs();
             }
+
+            mModules[i].writePeriodicOutputs();
         }
 
     }
