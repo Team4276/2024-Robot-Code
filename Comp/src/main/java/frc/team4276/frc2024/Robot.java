@@ -173,7 +173,6 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         try {
-
             mDisabledLooper.stop();
 
             Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode();

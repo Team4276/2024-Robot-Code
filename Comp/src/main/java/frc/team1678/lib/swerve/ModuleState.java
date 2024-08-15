@@ -2,7 +2,6 @@ package frc.team1678.lib.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.team1678.lib.Util;
 
 public class ModuleState extends SwerveModulePosition {
@@ -38,13 +37,5 @@ public class ModuleState extends SwerveModulePosition {
             targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
         }
         return ModuleState.fromSpeeds(Rotation2d.fromDegrees(targetAngle), targetSpeed);
-
-        // var delta = desiredState.angle.minus(currentAngle);
-        // if (Math.abs(delta.getDegrees()) > 90.0) {
-        //     return fromSpeeds(desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)), -desiredState.speedMetersPerSecond);
-        // }
-        
-        // return fromSpeeds(desiredState.angle, desiredState.speedMetersPerSecond);
     }
-
 }

@@ -234,12 +234,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
                 mIsMaintain = Math.abs(mPeriodicIO.meas_position - mPeriodicIO.demand) > mConstants.kTol;
 
                 if (mIsMaintain) {
-                    mMaster.getPIDController().setReference(mPeriodicIO.demand, CANSparkBase.ControlType.kSmartMotion,
+                    mMaster.setReference(mPeriodicIO.demand, CANSparkBase.ControlType.kSmartMotion,
                             mConstants.kSlotIdSmartMotionCruise,
                             mConstants.kS, SparkPIDController.ArbFFUnits.kVoltage);
 
                 } else {
-                    mMaster.getPIDController().setReference(mPeriodicIO.demand, CANSparkBase.ControlType.kPosition,
+                    mMaster.setReference(mPeriodicIO.demand, CANSparkBase.ControlType.kPosition,
                             mConstants.kSlotIdSmartMotionMaintain,
                             mConstants.kS, SparkPIDController.ArbFFUnits.kVoltage);
 

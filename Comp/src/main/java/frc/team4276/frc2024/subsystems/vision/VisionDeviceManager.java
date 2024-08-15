@@ -44,16 +44,19 @@ public class VisionDeviceManager extends Subsystem {
 
     @Override
     public void readPeriodicInputs() {
+        if(mIsDisabled) return;
         mAllCameras.forEach(PhotonDevice::readPeriodicInputs);
     }
 
     @Override
     public void writePeriodicOutputs() {
+        if(mIsDisabled) return;
         mAllCameras.forEach(PhotonDevice::writePeriodicOutputs);
     }
 
     @Override
     public void outputTelemetry() {
+        if(mIsDisabled) return;
         for(PhotonDevice camera : mAllCameras) {
             // Not technically error but its the only word I can think of
             Pose3d error = camera.getLatestUpdate().relativeTo(new Pose3d(RobotState.getInstance().getWPILatestFieldToVehicle()));
