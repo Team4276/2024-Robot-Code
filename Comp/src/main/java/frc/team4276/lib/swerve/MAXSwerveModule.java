@@ -4,7 +4,8 @@
 
 package frc.team4276.lib.swerve;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.AbsoluteEncoder;
@@ -18,6 +19,9 @@ import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.VIKCANSparkMax;
 
 import frc.team1678.lib.swerve.ModuleState;
+import frc.team1678.lib.Util;
+
+import frc.team254.lib.geometry.Rotation2d;
 
 public class MAXSwerveModule extends Subsystem {
     private final VIKCANSparkMax mDrive;
@@ -28,6 +32,8 @@ public class MAXSwerveModule extends Subsystem {
 
     private PeriodicIO mPeriodicIO;
 
+    private MAXSwerveModuleConstants mConstants;
+
     public static class MAXSwerveModuleConstants {
         public String kName = "ERROR_ASSIGN_A_NAME";
         public int kDriveId = -1;
@@ -36,8 +42,9 @@ public class MAXSwerveModule extends Subsystem {
     }
 
     public MAXSwerveModule(MAXSwerveModuleConstants constants) {
-        mDrive = CANSparkMaxFactory.createDefault(constants.kDriveId);
-        mTurn = CANSparkMaxFactory.createDefault(constants.kTurnId);
+        mConstants = constants;
+        mDrive = CANSparkMaxFactory.createDefault(mConstants.kDriveId);
+        mTurn = CANSparkMaxFactory.createDefault(mConstants.kTurnId);
 
         CANSparkMaxFactory.configAbsoluteEncoder(mTurn);
 
@@ -53,7 +60,7 @@ public class MAXSwerveModule extends Subsystem {
         mTurnEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
 
         mTurnEncoder.setInverted(ModuleConstants.kTurningEncoderInverted);
-        mTurnEncoder.setZeroOffset(constants.kOffset);
+        mTurnEncoder.setZeroOffset(mConstants.kOffset);
 
         mTurn.getPIDController().setPositionPIDWrappingEnabled(true);
         mTurn.getPIDController()
@@ -88,11 +95,52 @@ public class MAXSwerveModule extends Subsystem {
             return;
         }
 
-        ModuleState newState = ModuleState.optimize(desiredState.angle, ModuleState
-                .fromSpeeds(Rotation2d.fromRadians(mPeriodicIO.turnPosition), desiredState.speedMetersPerSecond));
+        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Des Rotation", desiredState.angle.getDegrees());
 
-        mPeriodicIO.driveDemand = newState.speedMetersPerSecond;
-        mPeriodicIO.rotationDemand = newState.angle.getRadians();
+        // ModuleState newState = ModuleState.optimize(desiredState,
+        //         Rotation2d.fromRadians(mPeriodicIO.turnPosition).toWPI());
+
+        // double targetAngle = desiredState.angle.getDegrees();
+        // if (Util.shouldReverse(Rotation2d.fromDegrees(targetAngle),
+        // Rotation2d.fromRadians(mPeriodicIO.turnPosition))) {
+        // mPeriodicIO.driveDemand = -desiredState.speedMetersPerSecond;
+        // targetAngle += 180.0;
+        // }
+
+        // mPeriodicIO.rotationDemand =
+        // Math.toRadians(Util.placeInAppropriate0To360Scope(Math.toDegrees(mPeriodicIO.turnPosition),
+        // targetAngle));
+
+        // SwerveModuleState state = SwerveModuleState.optimize(new
+        // SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle),
+        // Rotation2d.fromRadians(mPeriodicIO.turnPosition).toWPI());
+
+        // Apply chassis angular offset to the desired state.
+        // SwerveModuleState correctedDesiredState = new SwerveModuleState();
+        // correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+        // correctedDesiredState.angle = desiredState.angle;
+
+        // // Optimize the reference state to avoid spinning further than 90 degrees.
+        // SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
+        //         Rotation2d.fromRadians(mPeriodicIO.turnPosition).toWPI());
+
+        // mPeriodicIO.driveDemand = optimizedDesiredState.speedMetersPerSecond;
+        // mPeriodicIO.turnPosition = optimizedDesiredState.angle.getRadians();
+
+        // mPeriodicIO.driveDemand = newState.speedMetersPerSecond;
+        // mPeriodicIO.rotationDemand = newState.angle.getRadians();
+
+        ModuleS
+
+        double targetAngle = desiredState.angle.getDegrees();
+
+        if (Util.shouldReverse(Rotation2d.fromWPI(desiredState.angle), new Rotation2d(mPeriodicIO.turnPosition))) {
+            optimizedDesiredState.speedMetersPerSecond *= -1;
+            optimizedDesiredState.angle = new Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
+        }
+
+        optimizedDesiredState.angle = new Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
+                Math.toDegrees(m_turningEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
     }
 
     public void stop() {
@@ -108,7 +156,7 @@ public class MAXSwerveModule extends Subsystem {
     public ModuleState getState() {
         return new ModuleState(
                 mPeriodicIO.drivePosition,
-                new Rotation2d(mPeriodicIO.turnPosition),
+                new Rotation2d(mPeriodicIO.turnPosition).toWPI(),
                 mPeriodicIO.driveVelocity);
     }
 
@@ -141,5 +189,11 @@ public class MAXSwerveModule extends Subsystem {
     public void writePeriodicOutputs() {
         mDrive.setReference(mPeriodicIO.driveDemand, ControlType.kVelocity, 0, 0, ArbFFUnits.kVoltage);
         mTurn.setReference(mPeriodicIO.rotationDemand, ControlType.kPosition, 0, 0, ArbFFUnits.kVoltage);
+    }
+
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
+        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
     }
 }

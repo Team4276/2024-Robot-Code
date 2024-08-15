@@ -1,14 +1,14 @@
 package frc.team1678.lib.swerve;
 
-import frc.team1678.lib.Util;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.team1678.lib.Util;
 
 public class ModuleState extends SwerveModulePosition {
     protected static final ModuleState kIdentity = new ModuleState();
 
-    public static ModuleState identity(){
+    public static ModuleState identity() {
         return kIdentity;
     }
 
@@ -28,14 +28,23 @@ public class ModuleState extends SwerveModulePosition {
         return new ModuleState(Double.NaN, angle, speedMetersPerSecond);
     }
 
-    public static ModuleState optimize(Rotation2d desiredAngle, ModuleState currentState) {
-        double targetAngle = Util.placeInAppropriate0To360Scope(desiredAngle.getDegrees(), currentState.angle.getDegrees());
-        double targetSpeed = currentState.speedMetersPerSecond;
-        double delta = targetAngle - desiredAngle.getDegrees();
-        if (Math.abs(delta) > 90){
+    public static ModuleState optimize(ModuleState desiredState, Rotation2d currentAngle) {
+        double currentAngleD = currentAngle.getDegrees();
+        double targetAngle = Util.placeInAppropriate0To360Scope(currentAngleD, desiredState.angle.getDegrees());
+        double targetSpeed = desiredState.speedMetersPerSecond;
+        double delta = currentAngleD - targetAngle;
+        if (Math.abs(delta) > 90) {
             targetSpeed = -targetSpeed;
             targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
-        }        
+        }
         return ModuleState.fromSpeeds(Rotation2d.fromDegrees(targetAngle), targetSpeed);
-      }
+
+        // var delta = desiredState.angle.minus(currentAngle);
+        // if (Math.abs(delta.getDegrees()) > 90.0) {
+        //     return fromSpeeds(desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)), -desiredState.speedMetersPerSecond);
+        // }
+        
+        // return fromSpeeds(desiredState.angle, desiredState.speedMetersPerSecond);
+    }
+
 }
