@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.Constants.VisionConstants;
 import frc.team4276.lib.drivers.Subsystem;
-
 import frc.team4276.frc2024.RobotState;
 
 public class VisionDeviceManager extends Subsystem {

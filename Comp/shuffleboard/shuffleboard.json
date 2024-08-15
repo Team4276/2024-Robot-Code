@@ -790,6 +790,19 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "0,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Ferry Offset",
+              "_title": "Ferry Offset",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -805,6 +818,58 @@
         "vgap": 8.0,
         "titleType": 0,
         "tiles": {
+          "5,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Front Left Rotation Demand",
+              "_title": "Front Left Rotation Demand",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Front Right Rotation Demand",
+              "_title": "Front Right Rotation Demand",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Back Left Rotation Demand",
+              "_title": "Back Left Rotation Demand",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Back Right Rotation Demand",
+              "_title": "Back Right Rotation Demand",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
           "0,0": {
             "size": [
               1,
@@ -813,59 +878,59 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Debug/looper_dt",
-              "_title": "/looper_dt",
+              "_title": "looper_dt",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
-          "1,0": {
+          "9,3": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Feeder RPM:",
-              "_title": "/Feeder RPM:",
+              "_source0": "network_table:///SmartDashboard/Debug/Front Left Des Rotation",
+              "_title": "Front Left Des Rotation",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
-          "2,0": {
+          "11,3": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Top RPM",
-              "_title": "/Top RPM",
+              "_source0": "network_table:///SmartDashboard/Debug/Front Right Des Rotation",
+              "_title": "Front Right Des Rotation",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
-          "3,0": {
+          "9,4": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Bottom RPM",
-              "_title": "/Bottom RPM",
+              "_source0": "network_table:///SmartDashboard/Debug/Back Left Des Rotation",
+              "_title": "Back Left Des Rotation",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
-          "4,0": {
+          "11,4": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Voltage",
-              "_title": "/Fourbar Measured Voltage",
+              "_source0": "network_table:///SmartDashboard/Debug/Back Right Des Rotation",
+              "_title": "Back Right Des Rotation",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -877,8 +942,8 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Position",
-              "_title": "/Fourbar Measured Position",
+              "_source0": "network_table:///SmartDashboard/Debug/Motion Planner/Translation Error",
+              "_title": "Motion Planner/Translation Error",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -890,8 +955,8 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Velocity",
-              "_title": "/Fourbar Measured Velocity",
+              "_source0": "network_table:///SmartDashboard/Debug/Motion Planner/Heading Error",
+              "_title": "Motion Planner/Heading Error",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -903,55 +968,88 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Controlstate",
-              "_title": "/Fourbar Controlstate",
+              "_source0": "network_table:///SmartDashboard/Debug/Top RPM",
+              "_title": "Top RPM",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
           "8,0": {
             "size": [
-              2,
-              2
+              1,
+              1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar is Maintain",
-              "_title": "/Fourbar is Maintain",
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Bottom RPM",
+              "_title": "Bottom RPM",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_showGlyph": false
+            }
+          },
+          "9,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Top Voltage",
+              "_title": "Top Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           },
           "10,0": {
             "size": [
-              2,
-              2
+              1,
+              1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Debug/Right Climber Limit",
-              "_title": "/Right Climber Limit",
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Bottom Voltage",
+              "_title": "Bottom Voltage",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_showGlyph": false
+            }
+          },
+          "11,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Voltage",
+              "_title": "Fourbar Measured Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           },
           "12,0": {
             "size": [
-              2,
-              2
+              1,
+              1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Debug/Left Climber Limit",
-              "_title": "/Left Climber Limit",
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Position",
+              "_title": "Fourbar Measured Position",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_showGlyph": false
+            }
+          },
+          "13,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Velocity",
+              "_title": "Fourbar Measured Velocity",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           },
           "0,1": {
@@ -961,13 +1059,71 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Gravity Voltage",
-              "_title": "/Fourbar Gravity Voltage",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Controlstate",
+              "_title": "Fourbar Controlstate",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
           "1,1": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar is Maintain",
+              "_title": "Fourbar is Maintain",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "3,1": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Debug/Right Climber Limit",
+              "_title": "Right Climber Limit",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "5,1": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Debug/Left Climber Limit",
+              "_title": "Left Climber Limit",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "7,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Gravity Voltage",
+              "_title": "Fourbar Gravity Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,1": {
             "size": [
               1,
               1
@@ -975,12 +1131,77 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Debug/Fourbar Velocity Voltage",
-              "_title": "/Fourbar Velocity Voltage",
+              "_title": "Fourbar Velocity Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Front Left Turn Position",
+              "_title": "Front Left Turn Position",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Front Right Turn Position",
+              "_title": "Front Right Turn Position",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Back Left Turn Position",
+              "_title": "Back Left Turn Position",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Back Right Turn Position",
+              "_title": "Back Right Turn Position",
               "_glyph": 148,
               "_showGlyph": false
             }
           }
         }
+      }
+    },
+    {
+      "title": "PID Calibration",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "Debug/PID/",
+      "widgetPane": {
+        "gridSize": 64.0,
+        "showGrid": true,
+        "hgap": 8.0,
+        "vgap": 8.0,
+        "titleType": 1,
+        "tiles": {}
       }
     }
   ],

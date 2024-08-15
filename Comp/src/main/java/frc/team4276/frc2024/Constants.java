@@ -13,6 +13,7 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
 
 import com.pathplanner.lib.util.PIDConstants;
+
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.CANSparkBase.IdleMode;
 
@@ -24,6 +25,7 @@ import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
 import frc.team4276.lib.swerve.MAXSwerveModule.MAXSwerveModuleConstants;
+
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
 
 public final class Constants {
@@ -93,12 +95,6 @@ public final class Constants {
             kBLConstants.kTurnId = Ports.BACK_LEFT_TURN;
             kBLConstants.kOffset = Math.PI;
         }
-
-        // Angular offsets of the modules relative to the chassis in radians
-        public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
-        public static final double kFrontRightChassisAngularOffset = 0;
-        public static final double kBackLeftChassisAngularOffset = Math.PI;
-        public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
         public static final boolean kGyroReversed = false;
 

@@ -1,8 +1,9 @@
 package frc.team4276.lib.path;
 
-import com.pathplanner.lib.path.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 
 // Credit 4481 (2024)
 

@@ -1,6 +1,6 @@
 package frc.team4276.frc2024.subsystems;
 
-import frc.team4276.frc2024.Constants;
+import frc.team4276.frc2024.Constants.FourbarConstants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
@@ -14,8 +14,8 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
 
     public static FourbarSubsystem getInstance() {
         if (mInstance == null) {
-            mInstance = new FourbarSubsystem(Constants.FourbarConstants.kSubsystemConstants,
-                    Constants.FourbarConstants.kAbsoluteEncoderConfig);
+            mInstance = new FourbarSubsystem(FourbarConstants.kSubsystemConstants,
+                    FourbarConstants.kAbsoluteEncoderConfig);
         }
 
         return mInstance;

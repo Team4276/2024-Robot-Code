@@ -7,10 +7,10 @@ package frc.team4276.frc2024.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.RobotState;
@@ -20,6 +20,7 @@ import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.MotionPlanner;
+
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.swerve.ModuleState;
@@ -196,7 +197,7 @@ public class DriveSubsystem extends Subsystem {
                         Rotation2d.fromDegrees(45)));
     }
 
-    public boolean isPathFinished() {
+    public synchronized boolean isPathFinished() {
         return mMotionPlanner.isFinished();
     }
 
@@ -275,7 +276,10 @@ public class DriveSubsystem extends Subsystem {
     public synchronized void readPeriodicInputs() {
         mPeriodicIO.timestamp = Timer.getFPGATimestamp();
 
+        
+
         for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
+            mModules[i].readPeriodicInputs();
             mPeriodicIO.meas_module_states[i] = mModules[i].getState();
         }
 
@@ -441,9 +445,11 @@ public class DriveSubsystem extends Subsystem {
         for (int i = 0; i < mModules.length; i++) {
             if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
+                mModules[i].writePeriodicOutputs();
             } else if (mControlState == DriveControlState.PATH_FOLLOWING
                     || mControlState == DriveControlState.FORCE_ORIENT) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
+                mModules[i].writePeriodicOutputs();
             }
         }
 
@@ -456,5 +462,9 @@ public class DriveSubsystem extends Subsystem {
 
         SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
         SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
+
+        for(int i = 0; i < mModules.length; i++) {
+            mModules[i].outputTelemetry();
+        }
     }
 }

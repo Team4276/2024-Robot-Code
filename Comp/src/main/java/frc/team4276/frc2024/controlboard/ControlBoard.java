@@ -1,6 +1,7 @@
 package frc.team4276.frc2024.controlboard;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.field.AllianceChooser;
@@ -9,11 +10,12 @@ import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
-import frc.team254.lib.geometry.Rotation2d;
-import frc.team254.lib.geometry.Translation2d;
 
 import frc.team1678.lib.Util;
 import frc.team1678.lib.swerve.ChassisSpeeds;
+
+import frc.team254.lib.geometry.Rotation2d;
+import frc.team254.lib.geometry.Translation2d;
 
 public class ControlBoard { // TODO: config
     public final BetterXboxController driver;
@@ -239,7 +241,7 @@ public class ControlBoard { // TODO: config
     }
 
     public boolean wantExhaust() {
-        return false;
+        return driver.getLeftBumper();
     }
 
     public boolean wantShoot() {
@@ -250,12 +252,8 @@ public class ControlBoard { // TODO: config
         return driver.getRT();
     }
 
-    public boolean wantSlowLowerClimber() {
-        return false;
-    }
-
     public boolean wantLowerClimber() {
-        return false;
+        return driver.getRightBumper();
     }
 
     // Operator Controls
@@ -340,6 +338,11 @@ public class ControlBoard { // TODO: config
     public boolean wantRaiseClimber() {
         return false;
     }
+    
+    public boolean wantSlowLowerClimber() {
+        return false;
+    }
+
 
     // Robot Button Board
     public boolean wantClimberCoastMode() {
