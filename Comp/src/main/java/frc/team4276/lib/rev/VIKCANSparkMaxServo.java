@@ -34,6 +34,9 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     private Supplier<Double> poseSupplier;
     private Supplier<Double> velSupplier;
 
+    /**
+     * Only use on init
+     */
     public void configFuseMotion(FuseMotionConfig config, Supplier<Double> pose_supplier, Supplier<Double> vel_supplier){
         this.kFuseMotionFF = config.kFeedForward;
         this.kLooperDt = config.kLooperDt;
@@ -61,14 +64,16 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         if (isFuseMotion && setpoint_fuse[0] == setpoint)
             return true;
 
-        isFuseMotion = true;
-
         this.setpoint_fuse[0] = setpoint;
         profile_timestamp_fuse = Timer.getFPGATimestamp();
         profile_start_fuse[0] = poseSupplier.get();
         profile_start_fuse[1] = velSupplier.get();
 
-        looper.startPeriodic(kLooperDt);
+        if(!isFuseMotion) {
+            isFuseMotion = true;
+
+            looper.startPeriodic(kLooperDt);
+        }
 
         return true;
     }

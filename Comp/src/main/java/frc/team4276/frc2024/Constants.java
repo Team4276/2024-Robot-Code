@@ -14,7 +14,7 @@ import edu.wpi.first.math.util.Units;
 
 import com.pathplanner.lib.util.PIDConstants;
 
-import com.revrobotics.SparkLimitSwitch;
+import com.revrobotics.SparkLimitSwitch.Type;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
@@ -137,7 +137,7 @@ public final class Constants {
 
         public static final double kAutoMaxError = 0.75; // Meters
 
-        public static final double kSnapHeadingKp = 0.18;
+        public static final double kSnapHeadingKp = 4.0;
         public static final double kSnapHeadingKi = 0.0;
         public static final double kSnapHeadingKd = 0.0;
 
@@ -271,8 +271,8 @@ public final class Constants {
             kSubsystemConstants.kMaxAccel = 0.0;
             kSubsystemConstants.kS = 0.185;
             kSubsystemConstants.kTol = 1.0;
-            kSubsystemConstants.kForwardLimitPolarity = SparkLimitSwitch.Type.kNormallyOpen;
-            kSubsystemConstants.kReverseLimitPolarity = SparkLimitSwitch.Type.kNormallyOpen;
+            kSubsystemConstants.kForwardLimitPolarity = Type.kNormallyOpen;
+            kSubsystemConstants.kReverseLimitPolarity = Type.kNormallyOpen;
 
             kSubsystemConstants.kSlotIdSmartMotionCruise = 0;
             kSubsystemConstants.kSlotIdSmartMotionMaintain = 1;

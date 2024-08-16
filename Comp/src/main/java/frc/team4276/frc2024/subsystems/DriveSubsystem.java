@@ -425,9 +425,7 @@ public class DriveSubsystem extends Subsystem {
                 prev_chassis_speeds.vyMetersPerSecond + dy * min_translational_scalar,
                 prev_chassis_speeds.omegaRadiansPerSecond + domega * min_omega_scalar);
         }
-
         
-
         SmartDashboard.putNumber("Comp/Des X Speed: ", wanted_speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("Comp/Des Y Speed: ", wanted_speeds.vyMetersPerSecond);
         SmartDashboard.putNumber("Comp/Des Rot Speed: ", wanted_speeds.omegaRadiansPerSecond);
