@@ -223,12 +223,12 @@ public class ControlBoard { // TODO: config
     boolean hasReleased = false;
 
     public boolean wantDemoLimits() {
-        if (!driver.isPOVUPPressed()) {
+        if (!driver.getPOVUP()) {
             hasReleased = true;
 
         }
 
-        if (driver.isPOVUPPressed() && hasReleased) {
+        if (driver.getPOVUP() && hasReleased) {
             hasReleased = false;
             isDemo = !isDemo;
         }
@@ -292,11 +292,11 @@ public class ControlBoard { // TODO: config
     }
 
     public boolean wantIncrementOffset() {
-        return false;
+        return operator.getPOVUP();
     }
 
     public boolean wantDecrementOffset() {
-        return false;
+        return operator.getPOVDOWN();
     }
 
     public boolean wantManual() {

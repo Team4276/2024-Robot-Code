@@ -165,6 +165,5 @@ public class FlywheelSubsystem extends Subsystem {
         SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.bottom_RPM);
         SmartDashboard.putNumber("Debug/Top Voltage", mPeriodicIO.top_voltage);
         SmartDashboard.putNumber("Debug/Bottom Voltage", mPeriodicIO.bottom_voltage);
-        SmartDashboard.putBoolean("Comp/Flywheels Spun Up", isSpunUp());
     }
 }

@@ -182,6 +182,16 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         return mMaster.getIdleMode() == CANSparkBase.IdleMode.kBrake;
     }
 
+    /**
+     * False for voltage mode
+     * @return
+     */
+    public boolean atSetpoint() {
+        if(mControlState == ControlState.VOLTAGE) return false;
+
+        return Math.abs(mPeriodicIO.meas_position - mPeriodicIO.demand) < mConstants.kTol;
+    }
+
     @Override
     public void stop() {
         setVoltage(0.0);

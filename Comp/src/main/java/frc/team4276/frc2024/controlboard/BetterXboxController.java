@@ -31,7 +31,7 @@ public class BetterXboxController extends XboxController {
         isRumbling = false;
     }
 
-    public boolean isPOVUPPressed(){
+    public boolean getPOVUP(){
         if (getPOV() == 0){
             return true;
         } else {
@@ -39,7 +39,7 @@ public class BetterXboxController extends XboxController {
         }
     }
 
-    public boolean isPOVRIGHTPressed(){
+    public boolean getPOVRIGHT(){
         if (getPOV() == 90){
             return true;
         } else {
@@ -47,7 +47,7 @@ public class BetterXboxController extends XboxController {
         }
     }
 
-    public boolean isPOVDOWNPressed(){
+    public boolean getPOVDOWN(){
         if (getPOV() == 180){
             return true;
         } else {
@@ -55,7 +55,7 @@ public class BetterXboxController extends XboxController {
         }
     }
 
-    public boolean isPOVLEFTPressed(){
+    public boolean getPOVLEFT(){
         if (getPOV() == 270){
             return true;
         } else {

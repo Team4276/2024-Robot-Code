@@ -121,6 +121,10 @@ public class Superstructure extends Subsystem {
         return mIsHoldingNote;
     }
 
+    public synchronized boolean isReady() {
+        return mGoalState == GoalState.READY && mFlywheelSubsystem.isSpunUp() && mFourbarSubsystem.atSetpoint();
+    }
+
     @Override
     public synchronized void readPeriodicInputs() {
         mFrontBeam.update();
@@ -316,17 +320,30 @@ public class Superstructure extends Subsystem {
     } // Leave empty
 
     private boolean hadNote = false;
+    private boolean wasReady = false;
 
     @Override
     public synchronized void outputTelemetry() {
         SmartDashboard.putNumber("Comp/Scoring Offset", mScoringOffset);
         SmartDashboard.putNumber("Comp/Ferry Offset", mFerryOffset);
 
-        SmartDashboard.putBoolean("Comp/Is Holding Note", mIsHoldingNote);
+        SmartDashboard.putString("Comp/Superstructure Goal", mGoalState.name());
+        
+        SmartDashboard.putBoolean("Comp/Flywheels Spun Up", mFlywheelSubsystem.isSpunUp());
 
-        if (mGoalState != null) {
-            SmartDashboard.putString("Comp/Superstructure Goal", mGoalState.name());
+        SmartDashboard.putBoolean("Comp/Ready", isReady());
+
+        if(!wasReady && isReady()) {
+            ControlBoard.getInstance().driver.rumble(1.0);
+            ControlBoard.getInstance().operator.rumble(1.0);
+
+            wasReady = true;
+            
+        } else if (!isReady()) {
+            wasReady = false;
         }
+        
+        SmartDashboard.putBoolean("Comp/Is Holding Note", mIsHoldingNote);
 
         if (!hadNote && mIsHoldingNote) {
             ControlBoard.getInstance().driver.rumble(1.0);
