@@ -91,7 +91,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             pidfContoller.setSmartMotionAllowedClosedLoopError(mConstants.kTol, i);
         }
 
-        if (mConstants.kIsCircular) { // TODO: check if init order matters (encoder)
+        if (mConstants.kIsCircular) {
             pidfContoller.setPositionPIDWrappingEnabled(mConstants.kIsCircular);
             pidfContoller.setPositionPIDWrappingMaxInput(mConstants.kMaxPosition);
             pidfContoller.setPositionPIDWrappingMinInput(mConstants.kMinPosition);

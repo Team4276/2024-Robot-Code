@@ -326,7 +326,7 @@ public final class Constants {
             kAbsoluteEncoderConfig.kIsInverted = true;
             kAbsoluteEncoderConfig.kUnitsPerRotation = 360.0;
             kAbsoluteEncoderConfig.kOffset = 84.5;
-            kAbsoluteEncoderConfig.kAvgSamplingDepth = 32;
+            kAbsoluteEncoderConfig.kAvgSamplingDepth = 128;
         }
     }
 
@@ -362,6 +362,8 @@ public final class Constants {
 
         public static final double kShotWaitTime = 0.5;
         public static final double kExhaustWaitTime = 0.5;
+
+        public static final double kSpinUpDistance = 6.0;
     }
 
     public static final class VisionConstants {
