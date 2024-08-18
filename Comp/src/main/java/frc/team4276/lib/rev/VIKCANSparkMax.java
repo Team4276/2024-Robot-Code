@@ -2,6 +2,7 @@ package frc.team4276.lib.rev;
 
 import java.util.function.Supplier;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -64,5 +65,20 @@ public class VIKCANSparkMax extends CANSparkMax {
 
         super.setVoltage(output);
     }
+
+    //TODO: test
+    /**
+     * @param zero current position
+     */
+    public void zeroAbsoluteEncoder(double zero) {
+        AbsoluteEncoder e = getAbsoluteEncoder();
+
+        e.setZeroOffset(e.getZeroOffset() + e.getPosition());
+    }
+
+    public void zeroAbsoluteEncoder() {
+        zeroAbsoluteEncoder(0.0);
+    }
+
 
 }

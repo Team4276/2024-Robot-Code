@@ -225,7 +225,7 @@ public final class Constants {
             kFeedForwardConstants.kS = 0.185;
 
             kFeedForwardConstants.kMotorFreeSpeedRpm = 5676.0;
-            kFeedForwardConstants.kGearRatio = 232.14;
+            kFeedForwardConstants.kGearRatio = 185.712;
             kFeedForwardConstants.kStallTorque = 3.28;
             kFeedForwardConstants.kMotorAmnt = 2;
             kFeedForwardConstants.kEfficiency = 0.2155;

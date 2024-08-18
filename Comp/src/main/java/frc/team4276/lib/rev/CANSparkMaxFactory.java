@@ -86,7 +86,7 @@ public class CANSparkMaxFactory {
         controller.setDFilter(config.kDFilter, config.kSlotId);
         controller.setIZone(config.kIZone, config.kSlotId);
         controller.setIMaxAccum(config.kIMaxAccum, config.kSlotId);
-        controller.setOutputRange(config.kPIDOutputRange, config.kPIDOutputRange, config.kSlotId);
+        controller.setOutputRange(-1.0 * config.kPIDOutputRange, config.kPIDOutputRange, config.kSlotId);
     }
 
     public static void configAnalogSensor(VIKCANSparkMax motor, double periodSec) {

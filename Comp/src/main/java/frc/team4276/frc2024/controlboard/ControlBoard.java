@@ -153,7 +153,7 @@ public class ControlBoard { // TODO: config
 
     public void updateManual() {
         if (wantManualReadyFlywheel()) {
-            mSuperstructure.setManualFlywheelVoltage(0.0);
+            mSuperstructure.setManualFlywheelVoltage(4.0);
         } else if (wantManualSpinup()) {
             mSuperstructure.setManualFlywheelVoltage(Constants.FlywheelConstants.kPrep);
         } else {
@@ -300,7 +300,7 @@ public class ControlBoard { // TODO: config
     }
 
     public boolean wantManual() {
-        return false;
+        return true;
     }
 
     public boolean wantManualSpinup() {
@@ -308,7 +308,7 @@ public class ControlBoard { // TODO: config
     }
 
     public boolean wantManualReadyFlywheel() {
-        return false;
+        return operator.getLT();
     }
 
     public boolean wantManualIntake() {
@@ -316,11 +316,11 @@ public class ControlBoard { // TODO: config
     }
 
     public boolean wantManualShoot() {
-        return false;
+        return operator.getRT();
     }
 
     public boolean wantManualExhaust() {
-        return false;
+        return operator.getXButton();
     }
 
     public boolean wantManualDefeed() {

@@ -27,7 +27,7 @@ public class Superstructure extends Subsystem {
     private BeamBreak mFrontBeam  = new BeamBreak(Ports.BEAM_FRONT);
     private BeamBreak mBackBeam = new BeamBreak(Ports.BEAM_BACK);
 
-    private boolean mIsManual = false;
+    private boolean mIsManual = true;
 
     private GoalState mRequestedState = GoalState.IDLE;
     private GoalState mGoalState = GoalState.IDLE;

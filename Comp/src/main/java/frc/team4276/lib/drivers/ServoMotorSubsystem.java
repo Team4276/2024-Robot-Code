@@ -131,11 +131,21 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     protected boolean mIsMaintain = false;
 
+    protected boolean mIsDisabled = true;
+
     protected enum ControlState {
         VOLTAGE,
         SMART_MOTION, // Onboard PIDF
         FUSE_MOTION // RIO FF w/ Onboard PID
 
+    }
+
+    public synchronized void setDisabled(boolean isDisabled){
+        mIsDisabled = isDisabled;
+    }
+
+    public synchronized void setAbsoluteEncoderZero(double currentPosition) {
+        mMaster.zeroAbsoluteEncoder(currentPosition);
     }
 
     public synchronized void setVoltage(double voltage) {
@@ -234,6 +244,9 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     @Override
     public synchronized void writePeriodicOutputs() {
+        mMaster.setVoltage(0.0);
+        if(mIsDisabled) return;
+
         switch (mControlState) {
             case VOLTAGE:
                 mMaster.setVoltage(mPeriodicIO.demand);

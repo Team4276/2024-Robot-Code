@@ -40,7 +40,7 @@ public class FlywheelSubsystem extends Subsystem {
 
     private FlywheelSubsystem() {
         mTopMotor = CANSparkMaxFactory.createDefault(Ports.FLYWHEEL_TOP);
-        mTopMotor.setInverted(false);
+        mTopMotor.setInverted(true);
         mTopMotor.setIdleMode(FlywheelConstants.kIdleMode);
         mTopMotor.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
 
