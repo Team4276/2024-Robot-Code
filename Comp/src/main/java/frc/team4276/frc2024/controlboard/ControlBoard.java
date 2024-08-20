@@ -17,7 +17,7 @@ import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
 
-public class ControlBoard { // TODO: config
+public class ControlBoard {
     public final BetterXboxController driver;
     public final BetterXboxController operator;
 

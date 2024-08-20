@@ -122,7 +122,6 @@ public final class Constants {
             kDemoLimits.kName = "Demo";
         }
 
-        // TODO: tune
         public static final double kAutoTranslationKp = 3.0;
         public static final double kAutoTranslationKd = 0.0;
         public static final double kAutoRotationKp = 4.0;
@@ -210,7 +209,6 @@ public final class Constants {
         public static final double kFreeSpeedRpm = 5676;
     }
 
-    // TODO: tune (though these are probably accurate)
     public static final class RobotStateConstants {
         public static final boolean kVisionResetsHeading = false;
 

@@ -35,7 +35,7 @@ public class Superstructure extends Subsystem {
     private double mScoringOffset = 0.0;
     private double mFerryOffset = 0.0;
 
-    private boolean mIsHoldingNote = false; // TODO: test note detection reliability
+    private boolean mIsHoldingNote = false;
 
     private boolean mIsFerry = false;
     private boolean mIsDymanic = false;

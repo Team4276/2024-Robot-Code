@@ -9,7 +9,6 @@ import frc.team4276.frc2024.subsystems.DriveSubsystem;
 
 import frc.team254.lib.geometry.Pose2d;
 
-//TODO: test new swerve trajectory action
 public class SwerveTrajectoryAction implements Action {
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 

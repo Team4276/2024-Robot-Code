@@ -61,7 +61,6 @@ public class PhotonDevice extends Subsystem {
     public Pose3d getLatestUpdate(){
         return mLatestUpdate;
     }
-    //TODO: check vision readings vs gyro; check height reading (citrus ignore)
 
     @Override
     public void readPeriodicInputs() {
@@ -73,7 +72,6 @@ public class PhotonDevice extends Subsystem {
         Optional<EstimatedRobotPose> estimatedRobotPose = mPoseEstimator.update(result);
 
         if(estimatedRobotPose.isPresent()) {
-            //TODO: calibrate std dev scaling
             double total_tag_dist = 0.0;
             double lowest_dist = Double.POSITIVE_INFINITY;
 

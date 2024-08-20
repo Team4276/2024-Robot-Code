@@ -3,7 +3,6 @@ package frc.team4276.frc2024.shooting;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
 public class RegressionMaps {
-    //TODO: populate
     public static InterpolatingDoubleTreeMap kSpeakerFourbarAngles = new InterpolatingDoubleTreeMap();
     static {
         kSpeakerFourbarAngles.put(0.0, 0.0);
