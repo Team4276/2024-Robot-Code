@@ -104,7 +104,7 @@ public class Field {
             kPOIs.kStageMid = new Translation2d();
             kPOIs.kStageSS = new Translation2d();
             kPOIs.kStageAS = new Translation2d();
-            kPOIs.kBank = new Translation2d();
+            kPOIs.kBank = new Translation2d(2.0, 7.0);
         }
 
     }
@@ -140,7 +140,7 @@ public class Field {
             kPOIs.kStageMid = new Translation2d();
             kPOIs.kStageSS = new Translation2d();
             kPOIs.kStageAS = new Translation2d();
-            kPOIs.kBank = new Translation2d();
+            kPOIs.kBank = new Translation2d(15.292, 7.0);
         }
     }
 

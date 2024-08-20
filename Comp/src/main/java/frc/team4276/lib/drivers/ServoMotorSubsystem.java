@@ -244,8 +244,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     @Override
     public synchronized void writePeriodicOutputs() {
-        mMaster.setVoltage(0.0);
-        if(mIsDisabled) return;
+        if(mIsDisabled) {
+            mMaster.setVoltage(0.0);
+            return;
+        }
 
         switch (mControlState) {
             case VOLTAGE:

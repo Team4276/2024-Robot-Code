@@ -153,7 +153,7 @@ public class ControlBoard { // TODO: config
 
     public void updateManual() {
         if (wantManualReadyFlywheel()) {
-            mSuperstructure.setManualFlywheelVoltage(4.0);
+            mSuperstructure.setManualFlywheelVoltage(8.0);
         } else if (wantManualSpinup()) {
             mSuperstructure.setManualFlywheelVoltage(Constants.FlywheelConstants.kPrep);
         } else {

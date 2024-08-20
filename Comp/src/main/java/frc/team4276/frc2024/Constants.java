@@ -222,7 +222,7 @@ public final class Constants {
     public static final class FourbarConstants {
         public static final FourBarFeedForward.FourBarFeedForwardConstants kFeedForwardConstants = new FourBarFeedForward.FourBarFeedForwardConstants();
         static {
-            kFeedForwardConstants.kS = 0.185;
+            kFeedForwardConstants.kS = 0.0;
 
             kFeedForwardConstants.kMotorFreeSpeedRpm = 5676.0;
             kFeedForwardConstants.kGearRatio = 185.712;
@@ -325,7 +325,7 @@ public final class Constants {
         static {
             kAbsoluteEncoderConfig.kIsInverted = true;
             kAbsoluteEncoderConfig.kUnitsPerRotation = 360.0;
-            kAbsoluteEncoderConfig.kOffset = 84.5;
+            kAbsoluteEncoderConfig.kOffset = 94.5;
             kAbsoluteEncoderConfig.kAvgSamplingDepth = 128;
         }
     }
@@ -345,7 +345,7 @@ public final class Constants {
         public static double kV_Bottom = 0.002;
         public static double kA = 0;
 
-        public static double kPrep = 2.0; // Volts
+        public static double kPrep = 4.0; // Volts
 
         public static double kFlywheelTolerance = 300.0; // RPM
     }

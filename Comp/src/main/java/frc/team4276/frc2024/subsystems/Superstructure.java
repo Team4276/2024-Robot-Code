@@ -284,17 +284,6 @@ public class Superstructure extends Subsystem {
 
                 break;
             case READY:
-                if(mIsDymanic) break;
-
-                // Setpoints from Vision are updated in updateShootingSetpoints()
-                mIntakeSubsystem.setState(IntakeSubsystem.State.IDLE);
-                mFlywheelSubsystem.setTargetRPM(SuperstructureConstants.kNormalShotRPM);
-                mFourbarSubsystem.setFuseMotionSetpoint(SuperstructureConstants.kFourbarSubCloseState);
-
-                if (mIsFerry) {
-                    mFourbarSubsystem.setFuseMotionSetpoint(SuperstructureConstants.kFourbarFerryState);
-                }
-
                 if (mFlywheelSubsystem.isSpunUp()) {
                     if(!hasRumbled){ 
                         ControlBoard.getInstance().driver.rumble(1.0);
@@ -305,6 +294,17 @@ public class Superstructure extends Subsystem {
                 } else {
                     hasRumbled = false;
 
+                }
+
+                if(mIsDymanic) break;
+
+                // Setpoints from Vision are updated in updateShootingSetpoints()
+                mIntakeSubsystem.setState(IntakeSubsystem.State.IDLE);
+                mFlywheelSubsystem.setTargetRPM(SuperstructureConstants.kNormalShotRPM);
+                mFourbarSubsystem.setFuseMotionSetpoint(SuperstructureConstants.kFourbarSubCloseState);
+
+                if (mIsFerry) {
+                    mFourbarSubsystem.setFuseMotionSetpoint(SuperstructureConstants.kFourbarFerryState);
                 }
 
                 break;
