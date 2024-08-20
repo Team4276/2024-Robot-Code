@@ -41,6 +41,7 @@ public class Superstructure extends Subsystem {
     private boolean mIsDymanic = false;
     private boolean mIsPrep = false;
     private boolean mRequestPrep = false;
+    private boolean mForceDisablePrep = false;
 
     private ManualInput mRequestedManualInput = new ManualInput();
     private ManualInput mManualInput = new ManualInput();
@@ -81,6 +82,10 @@ public class Superstructure extends Subsystem {
 
     public synchronized void setPrep(boolean isPrep) {
         mRequestPrep = isPrep;
+    }
+
+    public synchronized void setForceDisablePrep(boolean forceDisablePrep) {
+        mForceDisablePrep = forceDisablePrep;
     }
 
     public synchronized void setDynamic(boolean isDynamic) {
@@ -218,7 +223,7 @@ public class Superstructure extends Subsystem {
             fourbar_setpoint = params[2] + mScoringOffset;
             drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
 
-            mIsPrep = distance < SuperstructureConstants.kSpinUpDistance || mIsPrep;
+            mIsPrep = distance < SuperstructureConstants.kSpinUpDistance;
         }
 
         SmartDashboard.putNumber("Debug/Regression Tuning/Distance", distance);
@@ -274,7 +279,7 @@ public class Superstructure extends Subsystem {
                 mFlywheelSubsystem.setOpenLoop(0.0);
                 mFourbarSubsystem.setFuseMotionSetpoint(SuperstructureConstants.kFourbarStowState);
 
-                if (mIsPrep) {
+                if (mIsPrep && !mForceDisablePrep) {
                     mFourbarSubsystem.setFuseMotionSetpoint(SuperstructureConstants.kFourbarPrepState);
 
                     if (mIsHoldingNote) {

@@ -88,12 +88,16 @@ public class ControlBoard {
             mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
 
         } else if (wantSlowLowerClimber() && wantClimbMode()) {
+            mSuperstructure.setForceDisablePrep(true);
             mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
-            mSuperstructure.setPrep(false);
 
         } else if (wantLowerClimber() && wantClimbMode()) {
+            mSuperstructure.setForceDisablePrep(true);
             mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
-            mSuperstructure.setPrep(false);
+
+        } else if (!wantClimbMode()){
+            mSuperstructure.setForceDisablePrep(false);
+            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
 
         } else {
             mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
@@ -124,6 +128,7 @@ public class ControlBoard {
             }
         }
 
+        // If vision is disabled
         if (wantStow()) {
             mSuperstructure.setPrep(false);
         } else if (wantPrep()) {
