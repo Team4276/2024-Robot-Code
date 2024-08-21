@@ -57,7 +57,7 @@ public class CANSparkMaxFactory {
     public static VIKCANSparkMax createDefaultFollower(int id, CANSparkMax master){
         VIKCANSparkMax sparkMax = createDefault(id);
 
-        sparkMax.follow(master);
+        sparkMax.follow(master, true);
 
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 1);
 

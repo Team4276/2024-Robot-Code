@@ -106,7 +106,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
             VIKCANSparkMax follower = mFollowers[i];
 
-            follower.setInverted(mConstants.kFollowerConstants[i].isInverted);
+            // follower.setInverted(mConstants.kFollowerConstants[i].isInverted);
             follower.setSmartCurrentLimit(mConstants.kSmartCurrentLimit);
             follower.setIdleMode(mConstants.kIdleMode);
 
@@ -131,7 +131,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     protected boolean mIsMaintain = false;
 
-    protected boolean mIsDisabled = true;
+    protected boolean mIsDisabled = false;
 
     protected enum ControlState {
         VOLTAGE,

@@ -158,14 +158,14 @@ public class ControlBoard {
 
     public void updateManual() {
         if (wantManualReadyFlywheel()) {
-            mSuperstructure.setManualFlywheelVoltage(8.0);
+            mSuperstructure.setManualFlywheelVoltage(11.0);
         } else if (wantManualSpinup()) {
             mSuperstructure.setManualFlywheelVoltage(Constants.FlywheelConstants.kPrep);
         } else {
             mSuperstructure.setManualFlywheelVoltage(0.0);
         }
 
-        mSuperstructure.setManualFourbarVoltage(operator.getRightYDeadband());
+        mSuperstructure.setManualFourbarVoltage(operator.getRightYDeadband() * 3.0);
 
         if (wantManualIntake()) {
             mSuperstructure.setManualIntakeState(IntakeSubsystem.State.INTAKE);
@@ -258,7 +258,8 @@ public class ControlBoard {
     }
 
     public boolean wantLowerClimber() {
-        return driver.getRightBumper();
+        // return driver.getRightBumper();
+        return false;
     }
 
     // Operator Controls

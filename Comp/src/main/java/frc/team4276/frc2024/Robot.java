@@ -24,6 +24,8 @@ import frc.team4276.frc2024.subsystems.vision.VisionDeviceManager;
 
 import frc.team1678.lib.loops.Looper;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 import frc.team254.lib.geometry.Pose2d;
 
 /**

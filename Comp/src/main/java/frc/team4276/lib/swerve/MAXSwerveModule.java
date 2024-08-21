@@ -7,11 +7,13 @@ package frc.team4276.lib.swerve;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.MaxSwerveModuleConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
@@ -20,6 +22,7 @@ import frc.team4276.lib.rev.VIKCANSparkMax;
 import frc.team1678.lib.swerve.ModuleState;
 
 import frc.team254.lib.geometry.Rotation2d;
+import frc.team254.lib.util.Util;
 
 public class MAXSwerveModule extends Subsystem {
     private final VIKCANSparkMax mDrive;
@@ -58,7 +61,7 @@ public class MAXSwerveModule extends Subsystem {
         mTurnEncoder.setVelocityConversionFactor(MaxSwerveModuleConstants.kTurningEncoderVelocityFactor);
 
         mTurnEncoder.setInverted(MaxSwerveModuleConstants.kTurningEncoderInverted);
-        mTurnEncoder.setZeroOffset(mConstants.kOffset);
+        // mTurnEncoder.setZeroOffset(mConstants.kOffset);
 
         mTurn.getPIDController().setPositionPIDWrappingEnabled(true);
         mTurn.getPIDController()
@@ -87,33 +90,71 @@ public class MAXSwerveModule extends Subsystem {
      *
      * @param desiredState Desired state with speed and angle.
      */
+    // public void setDesiredState(ModuleState desiredState, boolean isOpenLoop) {
+    //     if (Math.abs(desiredState.speedMetersPerSecond) < 0.001 && !isOpenLoop) {
+    //         stop();
+    //         return;
+    //     }
+
+    //     SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Des Rotation", desiredState.angle.getDegrees());
+
+    //     mPeriodicIO.driveDemand = desiredState.speedMetersPerSecond;
+
+    //     final double targetClamped = Rotation2d.fromWPI(desiredState.angle).getDegrees() + Math.toDegrees(mConstants.kOffset);
+    //     final double angleUnclamped = mPeriodicIO.turnPosition;
+    //     final Rotation2d angleClamped = Rotation2d.fromDegrees(angleUnclamped);
+    //     final Rotation2d relativeAngle = Rotation2d.fromDegrees(targetClamped).rotateBy(angleClamped.inverse());
+    //     double relativeDegrees = relativeAngle.getDegrees();
+    //     if (relativeDegrees > 90.0) {
+    //         relativeDegrees -= 180.0;
+    //         mPeriodicIO.driveDemand *= -1.0;
+
+    //     } else if (relativeDegrees < -90.0) {
+    //         relativeDegrees += 180.0;
+    //         mPeriodicIO.driveDemand *= -1.0;
+    //     }
+
+    //     mPeriodicIO.rotationDemand = angleUnclamped + relativeDegrees;
+            
+    // }
+    
     public void setDesiredState(ModuleState desiredState, boolean isOpenLoop) {
         if (Math.abs(desiredState.speedMetersPerSecond) < 0.001 && !isOpenLoop) {
             stop();
             return;
+
+        } else {
+            // Apply chassis angular offset to the desired state.
+            ModuleState optimizedDesiredState = ModuleState.identity();
+
+            optimizedDesiredState.speedMetersPerSecond = Util.limit(desiredState.speedMetersPerSecond,
+                    Constants.DriveConstants.kMaxVel);
+            optimizedDesiredState.angle = desiredState.angle.plus(edu.wpi.first.math.geometry.Rotation2d.fromRadians(mConstants.kOffset));
+
+            double targetAngle = optimizedDesiredState.angle.getDegrees();
+
+            if (Util.shouldReverse(
+                    new frc.team254.lib.geometry.Rotation2d(targetAngle),
+                    new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(mTurnEncoder.getPosition())))) {
+                optimizedDesiredState.speedMetersPerSecond *= -1;
+                optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
+            }
+
+            optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
+                    Math.toDegrees(mTurnEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
+
+            // Optimize the reference state to avoid spinning further than 90 degrees.
+            // ModuleState optimizedDesiredState =
+            // ModuleState.optimize(correctedDesiredState.angle, getState());
+
+            // Command driving and turning SPARKS MAX towards their respective setpoints.
+
+            mPeriodicIO.driveDemand = optimizedDesiredState.speedMetersPerSecond;
+            mPeriodicIO.rotationDemand = optimizedDesiredState.angle.getRadians();
+
         }
-
-        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Des Rotation", desiredState.angle.getDegrees());
-
-        mPeriodicIO.driveDemand = desiredState.speedMetersPerSecond;
-
-        final double targetClamped = Rotation2d.fromWPI(desiredState.angle).getDegrees();
-        final double angleUnclamped = mPeriodicIO.turnPosition;
-        final Rotation2d angleClamped = Rotation2d.fromDegrees(angleUnclamped);
-        final Rotation2d relativeAngle = Rotation2d.fromDegrees(targetClamped).rotateBy(angleClamped.inverse());
-        double relativeDegrees = relativeAngle.getDegrees();
-        if (relativeDegrees > 90.0) {
-            relativeDegrees -= 180.0;
-            mPeriodicIO.driveDemand *= -1.0;
-
-        } else if (relativeDegrees < -90.0) {
-            relativeDegrees += 180.0;
-            mPeriodicIO.driveDemand *= -1.0;
-        }
-
-        mPeriodicIO.rotationDemand = angleUnclamped + relativeDegrees;
-            
     }
+
 
     public void stop() {
         mDrive.set(0);
@@ -128,7 +169,7 @@ public class MAXSwerveModule extends Subsystem {
     public ModuleState getState() {
         return new ModuleState(
                 mPeriodicIO.drivePosition,
-                Rotation2d.fromRadians(mPeriodicIO.turnPosition).toWPI(),
+                Rotation2d.fromRadians(mPeriodicIO.turnPosition - mConstants.kOffset).toWPI(),
                 mPeriodicIO.driveVelocity);
     }
 
