@@ -66,14 +66,13 @@ public class VIKCANSparkMax extends CANSparkMax {
         super.setVoltage(output);
     }
 
-    //TODO: test
     /**
      * @param zero current position
      */
     public void zeroAbsoluteEncoder(double zero) {
         AbsoluteEncoder e = getAbsoluteEncoder();
 
-        e.setZeroOffset(e.getZeroOffset() + e.getPosition());
+        e.setZeroOffset(e.getZeroOffset() + e.getPosition() - zero);
     }
 
     public void zeroAbsoluteEncoder() {

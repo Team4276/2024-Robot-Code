@@ -258,8 +258,7 @@ public class ControlBoard {
     }
 
     public boolean wantLowerClimber() {
-        // return driver.getRightBumper();
-        return false;
+        return driver.getRightBumper();
     }
 
     // Operator Controls

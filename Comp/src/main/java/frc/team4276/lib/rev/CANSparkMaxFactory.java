@@ -55,9 +55,19 @@ public class CANSparkMaxFactory {
     }
 
     public static VIKCANSparkMax createDefaultFollower(int id, CANSparkMax master){
+        return createDefaultFollower(id, master, false);
+    }
+
+    /**
+     * @param id
+     * @param master
+     * @param isInverted Relative to master
+     * @return
+     */
+    public static VIKCANSparkMax createDefaultFollower(int id, CANSparkMax master, boolean isInverted){
         VIKCANSparkMax sparkMax = createDefault(id);
 
-        sparkMax.follow(master, true);
+        sparkMax.follow(master, isInverted);
 
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 1);
 

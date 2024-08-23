@@ -102,11 +102,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         mMaster.setIdleMode(mConstants.kIdleMode);
 
         for (int i = 0; i < mFollowers.length; i++) {
-            mFollowers[i] = CANSparkMaxFactory.createDefaultFollower(mConstants.kFollowerConstants[i].id, mMaster);
+            mFollowers[i] = CANSparkMaxFactory.createDefaultFollower(
+                mConstants.kFollowerConstants[i].id, mMaster, 
+                mConstants.kFollowerConstants[i].isInverted);
 
             VIKCANSparkMax follower = mFollowers[i];
 
-            // follower.setInverted(mConstants.kFollowerConstants[i].isInverted);
             follower.setSmartCurrentLimit(mConstants.kSmartCurrentLimit);
             follower.setIdleMode(mConstants.kIdleMode);
 

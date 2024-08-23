@@ -18,8 +18,6 @@ public class ClimberSubsystem extends Subsystem {
     private DigitalInput mRightLimit;
     private DigitalInput mLeftLimit;
 
-    private double mDesiredVoltage;
-
     public enum State {
         IDLE(0.0),
         RAISE(3.0),
@@ -88,9 +86,7 @@ public class ClimberSubsystem extends Subsystem {
             }
 
             @Override
-            public void onLoop(double timestamp) {
-                mDesiredVoltage = mState.voltage;
-            }
+            public void onLoop(double timestamp) {}
 
             @Override
             public void onStop(double timestamp) {
@@ -101,8 +97,8 @@ public class ClimberSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        mLeftMotor.setVoltage(mDesiredVoltage);
-        mRightMotor.setVoltage(mDesiredVoltage);
+        // mLeftMotor.setVoltage(mState.voltage);
+        // mRightMotor.setVoltage(mState.voltage);
     }
 
     @Override

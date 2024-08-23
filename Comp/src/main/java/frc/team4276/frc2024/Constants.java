@@ -258,7 +258,7 @@ public final class Constants {
 
             kSubsystemConstants.kFollowerConstants[0] = new ServoMotorSubsystem.ServoMotorConfig();
             kSubsystemConstants.kFollowerConstants[0].id = Ports.FOURBAR_FOLLOWER;
-            kSubsystemConstants.kFollowerConstants[0].isInverted = false;
+            kSubsystemConstants.kFollowerConstants[0].isInverted = true;
 
             kSubsystemConstants.kSmartCurrentLimit = 40;
             kSubsystemConstants.kIdleMode = IdleMode.kBrake;
@@ -269,8 +269,8 @@ public final class Constants {
             kSubsystemConstants.kMaxAccel = 0.0;
             kSubsystemConstants.kS = 0.185;
             kSubsystemConstants.kTol = 1.0;
-            // kSubsystemConstants.kForwardLimitPolarity = Type.kNormallyOpen;
-            // kSubsystemConstants.kReverseLimitPolarity = Type.kNormallyOpen;
+            kSubsystemConstants.kForwardLimitPolarity = Type.kNormallyOpen;
+            kSubsystemConstants.kReverseLimitPolarity = Type.kNormallyOpen;
 
             kSubsystemConstants.kSlotIdSmartMotionCruise = 0;
             kSubsystemConstants.kSlotIdSmartMotionMaintain = 1;
