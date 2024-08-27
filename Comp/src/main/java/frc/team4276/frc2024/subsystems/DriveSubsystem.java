@@ -38,7 +38,6 @@ public class DriveSubsystem extends Subsystem {
 
     private SwerveDriveOdometry mOdometry;
 
-    // The gyro sensor
     private Pigeon mPigeon;
 
     private PeriodicIO mPeriodicIO;
@@ -80,7 +79,6 @@ public class DriveSubsystem extends Subsystem {
         return mInstance;
     }
 
-    /** Creates a new DriveSubsystem. */
     private DriveSubsystem() {
         mModules = new MAXSwerveModule[] {
                 new MAXSwerveModule(DriveConstants.kFLConstants),
@@ -170,7 +168,6 @@ public class DriveSubsystem extends Subsystem {
         }
     }
 
-    // Stops drive without orienting modules
     public synchronized void stopModules() {
         List<Rotation2d> orientations = new ArrayList<>();
         for (int i = 0; i < mPeriodicIO.meas_module_states.length; i++) {
@@ -229,8 +226,7 @@ public class DriveSubsystem extends Subsystem {
         return mKinematicLimits;
     }
 
-    /** Resets the drive encoders to currently read a position of 0. */
-    public synchronized void resetEncoders() {
+    public synchronized void resetDriveEncoders() {
         for (MAXSwerveModule mod : mModules) {
             mod.resetEncoders();
         }
@@ -455,12 +451,15 @@ public class DriveSubsystem extends Subsystem {
     public synchronized void outputTelemetry() {
         SmartDashboard.putNumber("Comp/Heading", mPeriodicIO.heading.getDegrees());
         SmartDashboard.putString("Comp/Drive Mode", mControlState.name());
-
-        SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
-        SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
-
+        
         for(int i = 0; i < mModules.length; i++) {
             mModules[i].outputTelemetry();
         }
+
+        if(Constants.disableExtraTelemetry) return;
+        
+        SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
+        SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
+
     }
 }

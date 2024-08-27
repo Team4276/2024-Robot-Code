@@ -198,6 +198,8 @@ public class MAXSwerveModule extends Subsystem {
 
     @Override
     public void outputTelemetry() {
+        if(Constants.disableExtraTelemetry) return;
+        
         SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
         SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
     }

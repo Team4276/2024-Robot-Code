@@ -32,9 +32,6 @@ public class SubsystemManager implements ILooper {
     }
 
     public void outputToSmartDashboard() {
-        if (Constants.disableExtraTelemetry) {
-            return;
-        }
         mAllSubsystems.forEach(Subsystem::outputTelemetry);
     }
 

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.RelativeEncoder;
 
 import frc.team4276.frc2024.Ports;
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.FlywheelConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.rev.VIKCANSparkMax;
@@ -161,6 +162,8 @@ public class FlywheelSubsystem extends Subsystem {
 
     @Override
     public void outputTelemetry() {
+        if(Constants.disableExtraTelemetry) return;
+        
         SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.top_RPM);
         SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.bottom_RPM);
         SmartDashboard.putNumber("Debug/Top Voltage", mPeriodicIO.top_voltage);

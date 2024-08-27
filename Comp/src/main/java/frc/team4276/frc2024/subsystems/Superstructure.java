@@ -46,6 +46,10 @@ public class Superstructure extends Subsystem {
     private ManualInput mRequestedManualInput = new ManualInput();
     private ManualInput mManualInput = new ManualInput();
 
+    private double mRegressionTuningDistance = 0.0;
+    private double mRegressionTuningFlywheelSetpoint = 0.0;
+    private double mRegressionTuningFourbarSetpoint = 0.0;
+
     public enum GoalState {
         IDLE,
         STOW,
@@ -226,9 +230,9 @@ public class Superstructure extends Subsystem {
             mIsPrep = distance < SuperstructureConstants.kSpinUpDistance;
         }
 
-        SmartDashboard.putNumber("Debug/Regression Tuning/Distance", distance);
-        SmartDashboard.putNumber("Debug/Regression Tuning/Flywheel Setpoint", flywheel_setpoint);
-        SmartDashboard.putNumber("Debug/Regression Tuning/Fourbar Setpoint Degrees", Math.toDegrees(fourbar_setpoint));
+        mRegressionTuningDistance = distance;
+        mRegressionTuningFlywheelSetpoint = flywheel_setpoint;
+        mRegressionTuningFourbarSetpoint = fourbar_setpoint;
 
         if(mGoalState == GoalState.STOW) return;
 
@@ -372,5 +376,11 @@ public class Superstructure extends Subsystem {
         } else if (!mIsHoldingNote) {
             hadNote = false;
         }
+
+        if(Constants.disableExtraTelemetry) return;
+
+        SmartDashboard.putNumber("Debug/Regression Tuning/Distance", mRegressionTuningDistance);
+        SmartDashboard.putNumber("Debug/Regression Tuning/Flywheel Setpoint", mRegressionTuningFlywheelSetpoint);
+        SmartDashboard.putNumber("Debug/Regression Tuning/Fourbar Setpoint", mRegressionTuningFourbarSetpoint);
     }
 }

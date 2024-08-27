@@ -2,7 +2,7 @@ package frc.team4276.frc2024.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.rev.VIKCANSparkMax;
@@ -104,6 +104,9 @@ public class ClimberSubsystem extends Subsystem {
     @Override
     public synchronized void outputTelemetry() {
         SmartDashboard.putString("Comp/Climber State", mState.toString());
+
+        if(Constants.disableExtraTelemetry) return;
+        
         SmartDashboard.putBoolean("Debug/Right Climber Limit", mRightLimit.get());
         SmartDashboard.putBoolean("Debug/Left Climber Limit", mLeftLimit.get());
     }

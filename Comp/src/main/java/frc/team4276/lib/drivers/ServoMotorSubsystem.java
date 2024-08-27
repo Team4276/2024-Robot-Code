@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.SparkPIDController;
 
+import frc.team4276.frc2024.Constants;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.VIKCANSparkMax;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
@@ -286,6 +287,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     @Override
     public synchronized void outputTelemetry() {
         SmartDashboard.putNumber("Comp/" + mConstants.kName + " Setpoint", mPeriodicIO.demand);
+
+        if(Constants.disableExtraTelemetry) return;
 
         SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Voltage", mPeriodicIO.meas_master_voltage);
         SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Position", mPeriodicIO.meas_position);
