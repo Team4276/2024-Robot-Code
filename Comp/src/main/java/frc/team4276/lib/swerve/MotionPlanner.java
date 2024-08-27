@@ -49,8 +49,8 @@ public class MotionPlanner {
             mIsFinished = true;
         }
 
-        mTranslationError = currentPose.getTranslation().translateBy(Translation2d.fromWPI(targetState.positionMeters).inverse());
-        mRotationError = currentPose.getRotation().rotateBy(Rotation2d.fromWPI(targetState.heading).inverse());
+        mTranslationError = Translation2d.fromWPI(mDriveToTrajectoryState.getTranslationError());
+        mRotationError = Rotation2d.fromWPI(mDriveToTrajectoryState.getRotationError());
 
         return ChassisSpeeds.fromWPI(mDriveToTrajectoryState.getTargetSpeeds(currentPose.toWPI(), targetState));
     }

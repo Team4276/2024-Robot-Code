@@ -339,6 +339,8 @@ public class DriveSubsystem extends Subsystem {
     private void updatePathFollowing() {
         mPeriodicIO.des_chassis_speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.timestamp);
 
+        mPeriodicIO.path_translation_error = mMotionPlanner.getTranslationError();
+        mPeriodicIO.path_heading_error = mMotionPlanner.getRotationError();
     }
 
     private void updateSetpoint() {
