@@ -7,6 +7,8 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
+import frc.team4276.lib.util.Util;
+
 public class VIKCANSparkMax extends CANSparkMax {
     protected Supplier<Boolean> mForwardLimit;
     protected Supplier<Boolean> mReverseLimit;
@@ -72,7 +74,7 @@ public class VIKCANSparkMax extends CANSparkMax {
     public void zeroAbsoluteEncoder(double zero) {
         AbsoluteEncoder e = getAbsoluteEncoder();
 
-        e.setZeroOffset(e.getZeroOffset() + e.getPosition() - zero);
+        e.setZeroOffset(Util.rescopeAngle(e.getZeroOffset() + e.getPosition() - zero, e.getPositionConversionFactor()));
     }
 
     public void zeroAbsoluteEncoder() {

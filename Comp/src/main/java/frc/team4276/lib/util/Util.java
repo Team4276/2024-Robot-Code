@@ -50,4 +50,19 @@ public class Util {
 
         return rot;
     }
+
+    /**
+     * @param angle
+     * @param max assume min is 0
+     * @return
+     */
+    public static double rescopeAngle(double angle, double max){
+        while (angle < 0.0) {
+            angle += max;
+        }
+
+        angle %= max;
+
+        return angle;
+    }
 }
