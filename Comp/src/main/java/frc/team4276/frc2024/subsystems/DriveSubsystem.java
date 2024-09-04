@@ -436,10 +436,10 @@ public class DriveSubsystem extends Subsystem {
     public synchronized void writePeriodicOutputs() {
         for (int i = 0; i < mModules.length; i++) {
             if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
-                mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
+                mModules[i].setDesiredStateOld(mPeriodicIO.des_module_states[i], true);
             } else if (mControlState == DriveControlState.PATH_FOLLOWING
                     || mControlState == DriveControlState.FORCE_ORIENT) {
-                mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
+                mModules[i].setDesiredStateOld(mPeriodicIO.des_module_states[i], false);
             }
 
             mModules[i].writePeriodicOutputs();
