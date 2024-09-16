@@ -50,6 +50,10 @@ public class Superstructure extends Subsystem {
     private double mRegressionTuningFlywheelSetpoint = 0.0;
     private double mRegressionTuningFourbarSetpoint = 0.0;
 
+    private double mPrevShotDistance = 0.0;
+    private double mPrevShotFlywheelSetpoint = 0.0;
+    private double mPrevShotFourbarSetpoint = 0.0;
+
     public enum GoalState {
         IDLE,
         STOW,
@@ -149,6 +153,9 @@ public class Superstructure extends Subsystem {
 
         if(mGoalState != GoalState.SHOOT) {
             mNoteDetectTime = -1.0;
+            mPrevShotDistance = Double.NaN;
+            mPrevShotFlywheelSetpoint = Double.NaN;
+            mPrevShotFourbarSetpoint = Double.NaN;
         }
 
         if(mNoteDetectTime == -1.0) {
@@ -248,6 +255,12 @@ public class Superstructure extends Subsystem {
         switch (mGoalState) {
             case SHOOT:
                 mIntakeSubsystem.setState(IntakeSubsystem.State.SHOOT);
+
+                if(mPrevShotDistance == Double.NaN){
+                    mPrevShotDistance = mRegressionTuningDistance;
+                    mPrevShotFlywheelSetpoint = mRegressionTuningFlywheelSetpoint;
+                    mPrevShotFourbarSetpoint = mRegressionTuningFourbarSetpoint;
+                }
 
                 if (!mIsHoldingNote)
                     break;
@@ -382,5 +395,11 @@ public class Superstructure extends Subsystem {
         SmartDashboard.putNumber("Debug/Regression Tuning/Distance", mRegressionTuningDistance);
         SmartDashboard.putNumber("Debug/Regression Tuning/Flywheel Setpoint", mRegressionTuningFlywheelSetpoint);
         SmartDashboard.putNumber("Debug/Regression Tuning/Fourbar Setpoint", mRegressionTuningFourbarSetpoint);
+
+        if(mPrevShotDistance != Double.NaN){
+            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Distance", mPrevShotDistance);
+            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Flywheel Setpoint", mPrevShotFlywheelSetpoint);
+            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Fourbar Setpoint", mPrevShotFourbarSetpoint);
+        }
     }
 }

@@ -115,7 +115,7 @@ public final class Constants {
 
         public static final DriveSubsystem.KinematicLimits kDemoLimits = new DriveSubsystem.KinematicLimits();
         static {
-            kDemoLimits.kMaxDriveVelocity = 2.0;
+            kDemoLimits.kMaxDriveVelocity = 1.5;
             kDemoLimits.kMaxAccel = Double.MAX_VALUE;
             kDemoLimits.kMaxAngularVelocity = kMaxAngularVel; // Rad/Sec
             kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
@@ -267,7 +267,7 @@ public final class Constants {
             kSubsystemConstants.kMaxPosition = 125.0; // Input Bound
             kSubsystemConstants.kMaxVel = 0.0;
             kSubsystemConstants.kMaxAccel = 0.0;
-            kSubsystemConstants.kS = 0.185;
+            kSubsystemConstants.kS = 0.185; // Smart Motion Firmware
             kSubsystemConstants.kTol = 1.0;
             kSubsystemConstants.kForwardLimitPolarity = Type.kNormallyOpen;
             kSubsystemConstants.kReverseLimitPolarity = Type.kNormallyOpen;
@@ -349,7 +349,6 @@ public final class Constants {
     }
 
     public static final class SuperstructureConstants {
-        // Radians
         public static final double kFourbarStowState = 120.0;
         public static final double kFourbarPrepState = 106.7;
         public static final double kFourbarIntakeState = 49.0;

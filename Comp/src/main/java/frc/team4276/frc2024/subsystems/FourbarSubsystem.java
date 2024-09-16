@@ -24,7 +24,7 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
             RevUtil.SparkAbsoluteEncoderConfig encoderConfig) {
         super(constants);
 
-        CANSparkMaxFactory.configAbsoluteEncoder(mMaster, encoderConfig, mConstants.kFuseMotionConfig.kLooperDt);
+        CANSparkMaxFactory.configAbsoluteEncoder(mMaster, encoderConfig);
 
         mPositionSupplier = mMaster.getAbsoluteEncoder()::getPosition;
         mVelocitySupplier = mMaster.getAbsoluteEncoder()::getVelocity;

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -239,10 +239,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
+        SmartDashboard.putNumber("Debug/Test/Fourbar Des Position", 90.0);
+        SmartDashboard.putNumber("Debug/Test/Fourbar Des Voltage", 0.0);
+        SmartDashboard.putNumber("Debug/Test/Flywheel Des RPM", 0.0);
     }
 
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
+        // mFourbarSubsystem.setFuseMotionSetpoint(SmartDashboard.getNumber("Debug/Test/Fourbar Des Position", 90.0));
+        mFourbarSubsystem.setVoltage(SmartDashboard.getNumber("Debug/Test/Fourbar Des Voltage", 0.0));
+        mFlywheelSubsystem.setTargetRPM(SmartDashboard.getNumber("Debug/Test/Flywheel Des RPM", 0.0));
     }
 }
