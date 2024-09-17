@@ -338,7 +338,7 @@ public class Superstructure extends Subsystem {
             case IDLE:
                 mFlywheelSubsystem.setOpenLoop(0.0);
                 mIntakeSubsystem.setState(IntakeSubsystem.State.IDLE);
-                mFourbarSubsystem.setVoltage(0.0);
+                // mFourbarSubsystem.setVoltage(0.0);
 
                 break;
 

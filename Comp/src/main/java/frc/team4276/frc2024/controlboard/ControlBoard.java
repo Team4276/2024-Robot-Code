@@ -1,13 +1,14 @@
 package frc.team4276.frc2024.controlboard;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
+import frc.team4276.frc2024.subsystems.FourbarSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 
@@ -47,6 +48,53 @@ public class ControlBoard {
         mDriveSubsystem = DriveSubsystem.getInstance();
         mSuperstructure = Superstructure.getInstance();
         mClimberSubsystem = ClimberSubsystem.getInstance();
+    }
+
+    private double mTuningFourbarVoltage = 0.0;
+    private double mTuningFourbarSetpoint = 90.0;
+
+    public void updateTuning() {
+        mSuperstructure.setManual(false);
+
+        double sign = driver.getYButton() ? -1 : 1;
+
+        if (driver.getRightBumperReleased()) {
+            mTuningFourbarVoltage += 0.01 * sign;
+        }
+
+        if (driver.getLeftBumperReleased()) {
+            mTuningFourbarVoltage += 0.1 * sign;
+        }
+
+        SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Voltage", mTuningFourbarVoltage);
+
+        // mSuperstructure.setManualFourbarVoltage(mTuningFourbarVoltage);
+        
+        if (driver.getXButtonReleased()) {
+            mTuningFourbarSetpoint += 1 * sign;
+        }
+
+        if (driver.getBButtonReleased()) {
+            mTuningFourbarSetpoint += 10 * sign;
+        }
+
+        SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Setpoint", mTuningFourbarSetpoint);
+
+
+        FourbarSubsystem.getInstance().setFuseMotionSetpoint(mTuningFourbarSetpoint);
+
+        // mFourbarSubsystem.setFuseMotionSetpoint(SmartDashboard.getNumber("Debug/Test/Fourbar
+        // Des Position", 90.0));
+
+        // val = SmartDashboard.getNumber("Debug/Test/Desired Fourbar Voltage",
+        // Double.NaN);
+
+        // if (val != Double.NaN) {
+        // mFourbarSubsystem.setVoltage(val);
+        // }
+
+        // mFlywheelSubsystem.setTargetRPM(SmartDashboard.getNumber("Debug/Test/Flywheel
+        // Des RPM", 0.0));
     }
 
     public void update() {
@@ -95,7 +143,7 @@ public class ControlBoard {
             mSuperstructure.setForceDisablePrep(true);
             mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
 
-        } else if (!wantClimbMode()){
+        } else if (!wantClimbMode()) {
             mSuperstructure.setForceDisablePrep(false);
             mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
 
@@ -343,11 +391,10 @@ public class ControlBoard {
     public boolean wantRaiseClimber() {
         return false;
     }
-    
+
     public boolean wantSlowLowerClimber() {
         return false;
     }
-
 
     // Robot Button Board
     public boolean wantClimberCoastMode() {

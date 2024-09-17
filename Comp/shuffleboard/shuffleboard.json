@@ -1056,9 +1056,9 @@
               "_showGlyph": false
             }
           },
-          "11,0": {
+          "4,5": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -1069,9 +1069,9 @@
               "_showGlyph": false
             }
           },
-          "12,0": {
+          "0,5": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -1082,9 +1082,9 @@
               "_showGlyph": false
             }
           },
-          "13,0": {
+          "2,5": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -1383,6 +1383,162 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Debug/Swerve/Back Right Turn Position",
               "_title": "Swerve/Back Right Turn Position",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/Fourbar Des Position",
+              "_title": "Test/Fourbar Des Position",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/Flywheel Des RPM",
+              "_title": "Test/Flywheel Des RPM",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Distance",
+              "_title": "Regression Tuning/Distance",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Flywheel Setpoint",
+              "_title": "Regression Tuning/Flywheel Setpoint",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Fourbar Setpoint",
+              "_title": "Regression Tuning/Fourbar Setpoint",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Prev Shot Distance",
+              "_title": "Regression Tuning/Prev Shot Distance",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Prev Shot Flywheel Setpoint",
+              "_title": "Regression Tuning/Prev Shot Flywheel Setpoint",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Prev Shot Fourbar Setpoint",
+              "_title": "Regression Tuning/Prev Shot Fourbar Setpoint",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,5": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/Desired Fourbar Voltage",
+              "_title": "Test/Desired Fourbar Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/Tuning Fourbar Voltage",
+              "_title": "Test/Tuning Fourbar Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/Tuning Fourbar Setpoint",
+              "_title": "Test/Tuning Fourbar Setpoint",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/FF Voltage",
+              "_title": "Test/FF Voltage",
               "_glyph": 148,
               "_showGlyph": false
             }

@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
         mAutoModeSelector.updateModeCreator(false);
         mAutoModeExecutor = new AutoModeExecutor();
     }
-    
+
     private boolean mHasFlippedClimberSetting = false;
 
     @Override
@@ -218,13 +218,22 @@ public class Robot extends TimedRobot {
         } catch (Throwable t) {
             throw t;
         }
+
+        SmartDashboard.putNumber("Debug/Test/Fourbar Des Position", 90.0);
+        SmartDashboard.putNumber("Debug/Test/Desired Fourbar Voltage", 0.0);
+        SmartDashboard.putNumber("Debug/Test/Flywheel Des RPM", 0.0);
     }
+
+    double val = 0.0;
 
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
         try {
-            mControlBoard.update();
+
+            mControlBoard.updateTuning();
+
+            // mControlBoard.update();
 
         } catch (Throwable t) {
             System.out.println(t.getMessage());
@@ -239,16 +248,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        SmartDashboard.putNumber("Debug/Test/Fourbar Des Position", 90.0);
-        SmartDashboard.putNumber("Debug/Test/Fourbar Des Voltage", 0.0);
-        SmartDashboard.putNumber("Debug/Test/Flywheel Des RPM", 0.0);
     }
 
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {
-        // mFourbarSubsystem.setFuseMotionSetpoint(SmartDashboard.getNumber("Debug/Test/Fourbar Des Position", 90.0));
-        mFourbarSubsystem.setVoltage(SmartDashboard.getNumber("Debug/Test/Fourbar Des Voltage", 0.0));
-        mFlywheelSubsystem.setTargetRPM(SmartDashboard.getNumber("Debug/Test/Flywheel Des RPM", 0.0));
     }
 }
