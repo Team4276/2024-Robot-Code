@@ -1,7 +1,5 @@
 package frc.team4276.lib.drivers;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkBase;
@@ -12,7 +10,6 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.VIKCANSparkMax;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
-
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 
@@ -56,9 +53,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     protected SparkLimitSwitch mForwardLimitSwitch;
     protected SparkLimitSwitch mReverseLimitSwitch;
 
-    protected Supplier<Double> mPositionSupplier;
-    protected Supplier<Double> mVelocitySupplier;
-
     /**
      * Encoder Init needed
      * 
@@ -78,9 +72,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             mReverseLimitSwitch = mMaster.getReverseLimitSwitch(mConstants.kReverseLimitPolarity);
             mReverseLimitSwitch.enableLimitSwitch(true);
         }
-
-        mPositionSupplier = mMaster.getEncoder()::getPosition;
-        mVelocitySupplier = mMaster.getEncoder()::getVelocity;
 
         SparkPIDController pidfContoller = mMaster.getPIDController();
 
@@ -190,6 +181,14 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         }
     }
 
+    public double getPosition(){
+        return mMaster.getEncoder().getPosition();
+    }
+
+    public double getVelocity(){
+        return mMaster.getEncoder().getVelocity();
+    }
+
     public boolean isBrakeMode() {
         return mMaster.getIdleMode() == CANSparkBase.IdleMode.kBrake;
     }
@@ -222,8 +221,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     @Override
     public synchronized void readPeriodicInputs() {
         mPeriodicIO.meas_master_voltage = mMaster.getAppliedVoltage();
-        mPeriodicIO.meas_position = mPositionSupplier.get();
-        mPeriodicIO.meas_velocity = mVelocitySupplier.get();
+        mPeriodicIO.meas_position = getPosition();
+        mPeriodicIO.meas_velocity = getVelocity();
 
     }
 

@@ -24,8 +24,9 @@ public class CANSparkMaxFactory {
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Internal Encoder Pos
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000); // Analog Sensor
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000); // Alternate Encoder
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000); // Duty Cycle Absolute Encoder Pos
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000); // Duty Cycle Absolute Encoder Vel / Sen Freq
+        // DO NOT CHANGE PERIODIC FRAME PERIOD FOR ABSOLUTE ENCODER
+        // sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000); // Duty Cycle Absolute Encoder Pos
+        // sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000); // Duty Cycle Absolute Encoder Vel / Sen Freq
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 1000); // No Documentation
 
         sparkMax.enableVoltageCompensation(12.0);
@@ -45,8 +46,9 @@ public class CANSparkMaxFactory {
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000);
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000);
+        // DO NOT CHANGE PERIODIC FRAME PERIOD FOR ABSOLUTE ENCODER
+        // sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000);
+        // sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000);
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 1000);
 
         sparkMax.enableVoltageCompensation(12.0);
@@ -121,19 +123,17 @@ public class CANSparkMaxFactory {
     }
 
     public static void configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config) {
-        configAbsoluteEncoder(motor, config, Constants.kLooperDt);
-
+        motor.getAbsoluteEncoder().setInverted(config.kIsInverted);
+        motor.getAbsoluteEncoder().setPositionConversionFactor(config.kUnitsPerRotation);
+        motor.getAbsoluteEncoder().setVelocityConversionFactor(config.kUnitsPerRotation);
+        motor.getAbsoluteEncoder().setZeroOffset(config.kOffset);
+        motor.getAbsoluteEncoder().setAverageDepth(config.kAvgSamplingDepth);
     }
 
     public static void configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config, double periodSec) {
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, periodSec);
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, periodSec);
 
-        motor.getAbsoluteEncoder().setInverted(config.kIsInverted);
-        motor.getAbsoluteEncoder().setPositionConversionFactor(config.kUnitsPerRotation);
-        motor.getAbsoluteEncoder().setVelocityConversionFactor(config.kUnitsPerRotation);
-        motor.getAbsoluteEncoder().setZeroOffset(config.kOffset);
-        motor.getAbsoluteEncoder().setAverageDepth(config.kAvgSamplingDepth);
-
+        configAbsoluteEncoder(motor, config);
     }
 }

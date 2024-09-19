@@ -1,7 +1,5 @@
 package frc.team4276.lib.rev;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,26 +25,23 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         public double kLooperDt = Constants.kLooperDt; // check frame updates
         public double kMaxVel = 0.0; // Copy Subsystem
         public double kMaxAccel = 0.0; // Copy Subsystem
+        public EncoderMode kEncoderMode = EncoderMode.INTERNAL;
     }
 
     private int kProfileSlotFuse;
     private IFeedForward kFuseMotionFF;
     private double kLooperDt;
     private TrapezoidProfile kProfileFuse;
-    private Supplier<Double> poseSupplier;
-    private Supplier<Double> velSupplier;
 
     /**
      * Only use on init
      */
-    public void configFuseMotion(FuseMotionConfig config, Supplier<Double> pose_supplier,
-            Supplier<Double> vel_supplier) {
+    public void configFuseMotion(FuseMotionConfig config) {
         this.kFuseMotionFF = config.kFeedForward;
         this.kLooperDt = config.kLooperDt;
         this.kProfileFuse = new TrapezoidProfile(config.kMaxVel, config.kMaxAccel);
         this.kProfileSlotFuse = config.kProfileSlot;
-        this.poseSupplier = pose_supplier;
-        this.velSupplier = vel_supplier;
+        setEncoderMode(config.kEncoderMode);
     }
 
     private double[] setpoint_fuse = { Double.NaN, 0.0 };
@@ -69,8 +64,8 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
         this.setpoint_fuse[0] = setpoint;
         profile_timestamp_fuse = Timer.getFPGATimestamp();
-        profile_start_fuse[0] = poseSupplier.get();
-        profile_start_fuse[1] = velSupplier.get();
+        profile_start_fuse[0] = getPosition();
+        profile_start_fuse[1] = getVelocity();
 
         if (!isFuseMotion) {
             isFuseMotion = true;
@@ -123,4 +118,60 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         isFuseMotion = false;
         super.setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);
     }
+
+    private EncoderMode mEncoderMode = EncoderMode.INTERNAL;
+
+    public enum EncoderMode {
+        INTERNAL,
+        ABSOLUTE,
+        ALTERNATE
+    }
+
+    public void setEncoderMode(EncoderMode mode) {
+        mEncoderMode = mode;
+    }
+
+    /**
+     * Do not use Alternate Mode
+     * @return
+     */
+    public double getPosition(){
+        switch (mEncoderMode) {
+            default:
+                return super.getEncoder().getPosition();
+            case INTERNAL:
+                return super.getEncoder().getPosition();
+            
+            case ABSOLUTE:
+                return super.getAbsoluteEncoder().getPosition();
+
+            case ALTERNATE:
+                // DO NOT USE
+                return Double.NaN;
+
+        }
+    }
+
+    /**
+     * Do not use Alternate Mode
+     * @return
+     */
+    public double getVelocity(){
+        switch (mEncoderMode) {
+            default:
+                return super.getEncoder().getVelocity();
+            case INTERNAL:
+                return super.getEncoder().getVelocity();
+            
+            case ABSOLUTE:
+                return super.getAbsoluteEncoder().getVelocity();
+
+            case ALTERNATE:
+                // DO NOT USE
+                return Double.NaN;
+
+        }
+    }
+
+    
 }

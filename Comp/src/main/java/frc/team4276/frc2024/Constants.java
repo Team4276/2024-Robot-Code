@@ -24,6 +24,7 @@ import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
+import frc.team4276.lib.rev.VIKCANSparkMaxServo.EncoderMode;
 import frc.team4276.lib.swerve.MAXSwerveModule.MAXSwerveModuleConstants;
 
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
@@ -226,7 +227,7 @@ public final class Constants {
             kFeedForwardConstants.kGearRatio = 185.712;
             kFeedForwardConstants.kStallTorque = 3.28;
             kFeedForwardConstants.kMotorAmnt = 2;
-            kFeedForwardConstants.kEfficiency = 0.1;
+            kFeedForwardConstants.kEfficiency = 0.3;
 
             kFeedForwardConstants.kBottomLength = Units.inchesToMeters(8.001578);
             kFeedForwardConstants.kMotorLegLength = Units.inchesToMeters(11.000000);
@@ -252,7 +253,7 @@ public final class Constants {
             kSubsystemConstants.kName = "Fourbar";
 
             kSubsystemConstants.kMasterConstants.id = Ports.FOURBAR_MASTER;
-            kSubsystemConstants.kMasterConstants.isInverted = false;
+            kSubsystemConstants.kMasterConstants.isInverted = true;
 
             kSubsystemConstants.kFollowerConstants = new ServoMotorSubsystem.ServoMotorConfig[1];
 
@@ -265,8 +266,8 @@ public final class Constants {
             kSubsystemConstants.kIsCircular = false; // assume max position is 360
             kSubsystemConstants.kMinPosition = 42.0; // Input Bound
             kSubsystemConstants.kMaxPosition = 125.0; // Input Bound
-            kSubsystemConstants.kMaxVel = 5.0;
-            kSubsystemConstants.kMaxAccel = 1.0;
+            kSubsystemConstants.kMaxVel = 20.0;
+            kSubsystemConstants.kMaxAccel = 20.0;
             kSubsystemConstants.kS = 0.14; // Smart Motion Firmware
             kSubsystemConstants.kTol = 1.0;
             kSubsystemConstants.kForwardLimitPolarity = Type.kNormallyOpen;
@@ -302,7 +303,7 @@ public final class Constants {
 
             kSubsystemConstants.kPidfConfigs[2] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[2].kSlotId = 2; // Fuse Motion
-            kSubsystemConstants.kPidfConfigs[2].kP = 0.25;
+            kSubsystemConstants.kPidfConfigs[2].kP = 0.05;
             kSubsystemConstants.kPidfConfigs[2].kI = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kD = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kFF = 0.0;
@@ -317,6 +318,7 @@ public final class Constants {
             kSubsystemConstants.kFuseMotionConfig.kLooperDt = Constants.kLooperDt;
             kSubsystemConstants.kFuseMotionConfig.kMaxVel = kSubsystemConstants.kMaxVel;
             kSubsystemConstants.kFuseMotionConfig.kMaxAccel = kSubsystemConstants.kMaxAccel;
+            kSubsystemConstants.kFuseMotionConfig.kEncoderMode = EncoderMode.ABSOLUTE;
         }
 
         public static final RevUtil.SparkAbsoluteEncoderConfig kAbsoluteEncoderConfig = new RevUtil.SparkAbsoluteEncoderConfig();

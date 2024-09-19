@@ -24,14 +24,11 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
             RevUtil.SparkAbsoluteEncoderConfig encoderConfig) {
         super(constants);
 
-        CANSparkMaxFactory.configAbsoluteEncoder(mMaster, encoderConfig);
-
-        mPositionSupplier = mMaster.getAbsoluteEncoder()::getPosition;
-        mVelocitySupplier = mMaster.getAbsoluteEncoder()::getVelocity;
+        CANSparkMaxFactory.configAbsoluteEncoder(mMaster, encoderConfig, 0.02);
 
         mMaster.getPIDController().setFeedbackDevice(mMaster.getAbsoluteEncoder());
 
-        mMaster.configFuseMotion(mConstants.kFuseMotionConfig, mPositionSupplier, mVelocitySupplier);
+        mMaster.configFuseMotion(mConstants.kFuseMotionConfig);
 
         burnFlash();
     }
@@ -52,4 +49,16 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
             public void onStop(double timestamp) {}
         });
     }
+
+    @Override
+    public double getPosition() {
+        return mMaster.getAbsoluteEncoder().getPosition();
+    }
+    
+    @Override
+    public double getVelocity() {
+        return mMaster.getAbsoluteEncoder().getVelocity();
+    }
+
+
 }
