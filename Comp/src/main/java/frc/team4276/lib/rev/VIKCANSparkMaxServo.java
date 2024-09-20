@@ -42,13 +42,14 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         this.kProfileFuse = new TrapezoidProfile(config.kMaxVel, config.kMaxAccel);
         this.kProfileSlotFuse = config.kProfileSlot;
         setEncoderMode(config.kEncoderMode);
+        fuseMotionLooper = new Notifier(updateFuse);
     }
 
     private double[] setpoint_fuse = { Double.NaN, 0.0 };
     private double profile_timestamp_fuse;
     private double[] profile_start_fuse = { Double.NaN, Double.NaN };
 
-    private Notifier looper = new Notifier(this::updateFuse);
+    private Notifier fuseMotionLooper;
 
     private boolean isFuseMotion = false;
 
@@ -70,41 +71,53 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         if (!isFuseMotion) {
             isFuseMotion = true;
 
-            looper.startPeriodic(kLooperDt);
+            fuseMotionLooper.startPeriodic(kLooperDt);
         }
 
         return true;
     }
 
-    private synchronized void updateFuse() {
-        if (!isFuseMotion) {
-            looper.stop();
-            return;
-        }
+    double prevTime = 0.0;
 
-        double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
-                profile_start_fuse, setpoint_fuse);
-
-        if (kFuseMotionFF.isLinear()) {
-            getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
-                    kFuseMotionFF.calculate(state[0], state[1], 0.0), ArbFFUnits.kVoltage);
-
-        } else { // Asume setpoint given in degrees
-            double ff = kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0);
-
-            SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
-
-            if (ControlBoard.getInstance().driver.getAButton()) {
-                getPIDController().setReference(state[0], ControlType.kPosition,
-                        kProfileSlotFuse,
-                        ff, ArbFFUnits.kVoltage);
-
-            } else {
-                setVoltage(0.0);
+    private Runnable updateFuse = new Runnable() {
+        public void run() {
+            if (!isFuseMotion) {
+                fuseMotionLooper.stop();
+                return;
             }
 
+            double currTime = Timer.getFPGATimestamp();
+
+            System.out.println(currTime - prevTime);
+            
+            prevTime = currTime;
+
+            double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
+                    profile_start_fuse, setpoint_fuse);
+
+            if (kFuseMotionFF.isLinear()) {
+                getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
+                        kFuseMotionFF.calculate(state[0], state[1], 0.0), ArbFFUnits.kVoltage);
+
+            } else { // Asume setpoint given in degrees
+                double ff = kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0);
+
+                SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
+
+                if (ControlBoard.getInstance().driver.getAButton()) {
+                    getPIDController().setReference(state[0], ControlType.kPosition,
+                            kProfileSlotFuse,
+                            ff, ArbFFUnits.kVoltage);
+
+                } else {
+                    setVoltage(0.0);
+                }
+
+            }
         }
-    }
+    };
+
+    
 
     @Override
     public synchronized void setVoltage(double outputVolts) {

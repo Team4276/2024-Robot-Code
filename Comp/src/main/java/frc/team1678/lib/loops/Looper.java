@@ -37,6 +37,8 @@ public class Looper implements ILooper {
 
                     dt_ = now - timestamp_;
                     timestamp_ = now;
+                    
+                    System.out.println(dt_);
                 }
             }
         }

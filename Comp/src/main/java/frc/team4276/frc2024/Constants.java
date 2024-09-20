@@ -315,7 +315,7 @@ public final class Constants {
             kSubsystemConstants.kFuseMotionConfig = new VIKCANSparkMaxServo.FuseMotionConfig();
             kSubsystemConstants.kFuseMotionConfig.kProfileSlot = kSubsystemConstants.kSlotIdFuseMotion;
             kSubsystemConstants.kFuseMotionConfig.kFeedForward = new FourBarFeedForward(kFeedForwardConstants);
-            kSubsystemConstants.kFuseMotionConfig.kLooperDt = Constants.kLooperDt;
+            kSubsystemConstants.kFuseMotionConfig.kLooperDt = 0.005;
             kSubsystemConstants.kFuseMotionConfig.kMaxVel = kSubsystemConstants.kMaxVel;
             kSubsystemConstants.kFuseMotionConfig.kMaxAccel = kSubsystemConstants.kMaxAccel;
             kSubsystemConstants.kFuseMotionConfig.kEncoderMode = EncoderMode.ABSOLUTE;
