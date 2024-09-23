@@ -60,8 +60,10 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         if (kFuseMotionFF == null)
             return false;
 
-        if (isFuseMotion && setpoint_fuse[0] == setpoint)
+        if (isFuseMotion && setpoint_fuse[0] == setpoint) {
+            updateFuse();
             return true;
+        }
 
         this.setpoint_fuse[0] = setpoint;
         profile_timestamp_fuse = Timer.getFPGATimestamp();
@@ -71,10 +73,36 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         if (!isFuseMotion) {
             isFuseMotion = true;
 
-            fuseMotionLooper.startPeriodic(kLooperDt);
+            // fuseMotionLooper.startPeriodic(kLooperDt);
         }
 
+        updateFuse();
+
         return true;
+    }
+
+    private void updateFuse() {
+        double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
+                profile_start_fuse, setpoint_fuse);
+
+        if (kFuseMotionFF.isLinear()) {
+            getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
+                    kFuseMotionFF.calculate(state[0], state[1], 0.0), ArbFFUnits.kVoltage);
+
+        } else { // Asume setpoint given in degrees
+            double ff = kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0);
+
+            SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
+
+            if (ControlBoard.getInstance().driver.getAButton()) {
+                getPIDController().setReference(state[0], ControlType.kPosition,
+                        kProfileSlotFuse,
+                        ff, ArbFFUnits.kVoltage);
+
+            } else {
+                setVoltage(0.0);
+            }
+        }
     }
 
     double prevTime = 0.0;
@@ -89,35 +117,13 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
             double currTime = Timer.getFPGATimestamp();
 
             System.out.println(currTime - prevTime);
-            
+
             prevTime = currTime;
 
-            double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
-                    profile_start_fuse, setpoint_fuse);
+            updateFuse();
 
-            if (kFuseMotionFF.isLinear()) {
-                getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
-                        kFuseMotionFF.calculate(state[0], state[1], 0.0), ArbFFUnits.kVoltage);
-
-            } else { // Asume setpoint given in degrees
-                double ff = kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0);
-
-                SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
-
-                if (ControlBoard.getInstance().driver.getAButton()) {
-                    getPIDController().setReference(state[0], ControlType.kPosition,
-                            kProfileSlotFuse,
-                            ff, ArbFFUnits.kVoltage);
-
-                } else {
-                    setVoltage(0.0);
-                }
-
-            }
         }
     };
-
-    
 
     @Override
     public synchronized void setVoltage(double outputVolts) {
@@ -146,15 +152,16 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
     /**
      * Do not use Alternate Mode
+     * 
      * @return
      */
-    public double getPosition(){
+    public double getPosition() {
         switch (mEncoderMode) {
             default:
                 return super.getEncoder().getPosition();
             case INTERNAL:
                 return super.getEncoder().getPosition();
-            
+
             case ABSOLUTE:
                 return super.getAbsoluteEncoder().getPosition();
 
@@ -167,15 +174,16 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
     /**
      * Do not use Alternate Mode
+     * 
      * @return
      */
-    public double getVelocity(){
+    public double getVelocity() {
         switch (mEncoderMode) {
             default:
                 return super.getEncoder().getVelocity();
             case INTERNAL:
                 return super.getEncoder().getVelocity();
-            
+
             case ABSOLUTE:
                 return super.getAbsoluteEncoder().getVelocity();
 
@@ -186,5 +194,4 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         }
     }
 
-    
 }
