@@ -8,6 +8,7 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.controlboard.ControlBoard;
+import frc.team4276.lib.Threading.ThreadWait;
 import frc.team4276.lib.characterizations.IFeedForward;
 import frc.team4276.lib.motion.TrapezoidProfile;
 
@@ -60,10 +61,8 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         if (kFuseMotionFF == null)
             return false;
 
-        if (isFuseMotion && setpoint_fuse[0] == setpoint) {
-            updateFuse();
+        if (isFuseMotion && setpoint_fuse[0] == setpoint)
             return true;
-        }
 
         this.setpoint_fuse[0] = setpoint;
         profile_timestamp_fuse = Timer.getFPGATimestamp();
@@ -73,15 +72,37 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         if (!isFuseMotion) {
             isFuseMotion = true;
 
-            // fuseMotionLooper.startPeriodic(kLooperDt);
+            fuseMotionLooper.startPeriodic(kLooperDt);
         }
-
-        updateFuse();
 
         return true;
     }
 
-    private void updateFuse() {
+    double timestamp_ = 0.0;
+    double dt_ = 0.0;
+
+    private Runnable updateFuse = new Runnable() {
+        @Override
+        public void run() {
+            if (!isFuseMotion) {
+                fuseMotionLooper.stop();
+                return;
+            }
+            
+            double now = Timer.getFPGATimestamp();
+
+            updateFuse();
+
+            ThreadWait.threadWait(kLooperDt, timestamp_, now);
+            now = Timer.getFPGATimestamp();
+            dt_ = now - timestamp_;
+            timestamp_ = now;
+
+            System.out.println(dt_);
+        }
+    };
+
+    private synchronized void updateFuse() {
         double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
                 profile_start_fuse, setpoint_fuse);
 
@@ -104,26 +125,6 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
             }
         }
     }
-
-    double prevTime = 0.0;
-
-    private Runnable updateFuse = new Runnable() {
-        public void run() {
-            if (!isFuseMotion) {
-                fuseMotionLooper.stop();
-                return;
-            }
-
-            double currTime = Timer.getFPGATimestamp();
-
-            System.out.println(currTime - prevTime);
-
-            prevTime = currTime;
-
-            updateFuse();
-
-        }
-    };
 
     @Override
     public synchronized void setVoltage(double outputVolts) {

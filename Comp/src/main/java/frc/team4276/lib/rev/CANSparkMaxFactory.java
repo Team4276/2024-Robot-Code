@@ -8,6 +8,8 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.lib.rev.RevUtil.SparkAbsoluteEncoderConfig;
 
 public class CANSparkMaxFactory {
+    //TODO: fix to not break get methods
+    //TODO: create seperate function to burnflash for all subsystems
     
     /**
      * Set the periodic frame period when not using the internal encoder
@@ -19,14 +21,14 @@ public class CANSparkMaxFactory {
         sparkMax.restoreFactoryDefaults();
 
         // Clean up CAN usage
+        // DO NOT DO MULTIPLE PERIOD FRAME SETS TO THE SAME FRAME IN QUICK SUCCESSION
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Applied Output / Faults / Follower Sends
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Voltage / Temp / Current / Internal Encoder Vel
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Internal Encoder Pos
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000); // Analog Sensor
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000); // Alternate Encoder
-        // DO NOT CHANGE PERIODIC FRAME PERIOD FOR ABSOLUTE ENCODER
-        // sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000); // Duty Cycle Absolute Encoder Pos
-        // sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000); // Duty Cycle Absolute Encoder Vel / Sen Freq
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000); // Duty Cycle Absolute Encoder Pos
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000); // Duty Cycle Absolute Encoder Vel / Sen Freq
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 1000); // No Documentation
 
         sparkMax.enableVoltageCompensation(12.0);
@@ -46,9 +48,8 @@ public class CANSparkMaxFactory {
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000);
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000);
-        // DO NOT CHANGE PERIODIC FRAME PERIOD FOR ABSOLUTE ENCODER
-        // sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000);
-        // sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000);
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000);
+        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000);
         sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 1000);
 
         sparkMax.enableVoltageCompensation(12.0);
@@ -71,7 +72,7 @@ public class CANSparkMaxFactory {
 
         sparkMax.follow(master, isInverted);
 
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 1);
+        master.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 1);
 
         return sparkMax;
     }

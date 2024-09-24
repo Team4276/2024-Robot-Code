@@ -5,8 +5,10 @@ import java.util.function.Supplier;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.lib.util.Util;
 
 public class VIKCANSparkMax extends CANSparkMax {
@@ -29,6 +31,14 @@ public class VIKCANSparkMax extends CANSparkMax {
 
     public void setReference(double value, CANSparkBase.ControlType ctrl, int pidSlot, double arbFeedforward, SparkPIDController.ArbFFUnits arbFFUnits) {
         getPIDController().setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);
+    }
+
+    double[] frameConfigTimes = new double[8];
+
+    @Override
+    public REVLibError setPeriodicFramePeriod(PeriodicFrame frame, int periodMs) {
+        frameConfigTimes[frame.value] = Timer.getFPGATimestamp();
+        return super.setPeriodicFramePeriod(frame, periodMs);
     }
 
     public void setPeriodicFramePeriodSec(PeriodicFrame frame, double periodSec) {

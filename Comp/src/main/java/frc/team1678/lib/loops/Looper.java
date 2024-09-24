@@ -3,13 +3,11 @@ package frc.team1678.lib.loops;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.TreeUI;
-
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.Constants;
-import frc.team4276.frc2024.Threading.ThreadWait;
+import frc.team4276.lib.Threading.ThreadWait;
 
 /**
  * This code runs all of the robot's loops. Loop objects are stored in a List object. They are started when the robot
@@ -37,11 +35,11 @@ public class Looper implements ILooper {
                     for (Loop loop : loops_) {
                         loop.onLoop(now);
                     }
-                    ThreadWait.threadWait(0.02, timestamp_);
+                    ThreadWait.threadWait(0.02, timestamp_, now);
                     now = Timer.getFPGATimestamp();
                     dt_ = now - timestamp_;
                     timestamp_ = now;
-                    System.out.println(dt_);
+                    // System.out.println(dt_);
                 }
             }
         }

@@ -224,8 +224,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Debug/Test/Flywheel Des RPM", 0.0);
     }
 
-    double val = 0.0;
-
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
