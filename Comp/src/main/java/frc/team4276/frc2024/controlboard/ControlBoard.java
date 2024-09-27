@@ -80,18 +80,7 @@ public class ControlBoard {
 
         SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Setpoint", mTuningFourbarSetpoint);
 
-
-        FourbarSubsystem.getInstance().setFuseMotionSetpoint(mTuningFourbarSetpoint);
-
-        // mFourbarSubsystem.setFuseMotionSetpoint(SmartDashboard.getNumber("Debug/Test/Fourbar
-        // Des Position", 90.0));
-
-        // val = SmartDashboard.getNumber("Debug/Test/Desired Fourbar Voltage",
-        // Double.NaN);
-
-        // if (val != Double.NaN) {
-        // mFourbarSubsystem.setVoltage(val);
-        // }
+        FourbarSubsystem.getInstance().setFuseMotionSetpoint(mTuningFourbarSetpoint); //TODO: work on testing modes for superstructure tuning
 
         // mFlywheelSubsystem.setTargetRPM(SmartDashboard.getNumber("Debug/Test/Flywheel
         // Des RPM", 0.0));

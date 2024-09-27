@@ -46,6 +46,8 @@ public class Superstructure extends Subsystem {
     private ManualInput mRequestedManualInput = new ManualInput();
     private ManualInput mManualInput = new ManualInput();
 
+    private boolean mIsManualInputPositionControlled = true;
+
     private double mRegressionTuningDistance = 0.0;
     private double mRegressionTuningFlywheelSetpoint = 0.0;
     private double mRegressionTuningFourbarSetpoint = 0.0;
@@ -68,6 +70,7 @@ public class Superstructure extends Subsystem {
         double flywheel_voltage = 0.0;
         IntakeSubsystem.State intake_state = IntakeSubsystem.State.IDLE;
         double fourbar_voltage = 0.0;
+        double fourbar_position = 90.0;
     }
 
     private static Superstructure mInstance;
@@ -130,6 +133,12 @@ public class Superstructure extends Subsystem {
 
     public synchronized void setManualFourbarVoltage(double voltage) {
         mRequestedManualInput.fourbar_voltage = voltage;
+        mIsManualInputPositionControlled = false;
+    }
+
+    public synchronized void setManualFourbarPosition(double position) {
+        mRequestedManualInput.fourbar_position = position;
+        mIsManualInputPositionControlled = true;
     }
     
     public synchronized boolean isHoldingNote() {
@@ -202,13 +211,17 @@ public class Superstructure extends Subsystem {
         });
     }
 
-    private void updateManual() {
+    private synchronized void updateManual() {
         mFlywheelSubsystem.setOpenLoop(mManualInput.flywheel_voltage);
         mIntakeSubsystem.setState(mManualInput.intake_state);
-        mFourbarSubsystem.setVoltage(mManualInput.fourbar_voltage);
+        if(mIsManualInputPositionControlled){
+            mFourbarSubsystem.setFuseMotionSetpoint(mManualInput.fourbar_position);
+        } else {
+            mFourbarSubsystem.setVoltage(mManualInput.fourbar_voltage);
+        }
     }    
     
-    private void updateShootingSetpoints() {
+    private synchronized void updateShootingSetpoints() {
         if ((mGoalState != GoalState.READY && mGoalState != GoalState.SHOOT && mGoalState != GoalState.STOW) || !mIsDymanic)
             return;
 
@@ -251,7 +264,7 @@ public class Superstructure extends Subsystem {
     private double mNoteDetectTime = -1.0;
     private boolean hasRumbled = false;
 
-    private void updateNomimnal(double timestamp) {
+    private synchronized void updateNomimnal(double timestamp) {
         switch (mGoalState) {
             case SHOOT:
                 mIntakeSubsystem.setState(IntakeSubsystem.State.SHOOT);
@@ -338,7 +351,7 @@ public class Superstructure extends Subsystem {
             case IDLE:
                 mFlywheelSubsystem.setOpenLoop(0.0);
                 mIntakeSubsystem.setState(IntakeSubsystem.State.IDLE);
-                // mFourbarSubsystem.setVoltage(0.0);
+                mFourbarSubsystem.setVoltage(0.0);
 
                 break;
 
