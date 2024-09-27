@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.lib.util.Util;
 
 public class VIKCANSparkMax extends CANSparkMax {
@@ -17,6 +16,15 @@ public class VIKCANSparkMax extends CANSparkMax {
 
     public VIKCANSparkMax(int deviceId) {
         super(deviceId, MotorType.kBrushless);
+    }
+
+    @Override
+    public REVLibError burnFlash() {
+        REVLibError e = super.burnFlash();
+
+        requestPeriodicFrames();
+
+        return e;
     }
 
     public double getAppliedVoltage() {
@@ -33,16 +41,42 @@ public class VIKCANSparkMax extends CANSparkMax {
         getPIDController().setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);
     }
 
-    double[] frameConfigTimes = new double[8];
-
-    @Override
-    public REVLibError setPeriodicFramePeriod(PeriodicFrame frame, int periodMs) {
-        frameConfigTimes[frame.value] = Timer.getFPGATimestamp();
-        return super.setPeriodicFramePeriod(frame, periodMs);
-    }
-
     public void setPeriodicFramePeriodSec(PeriodicFrame frame, double periodSec) {
         setPeriodicFramePeriod(frame, (int)(periodSec * 1000));
+    }
+
+    double[] mQueuedPeriodicFrameTimes = {
+        0.01,
+        0.02,
+        0.02,
+        1.00,
+        1.00,
+        1.00,
+        1.00,
+        1.00
+    };
+
+    /**
+     * Queued requests are set after burnflash
+     */
+    public void queuePeriodicFramePeriodSec(PeriodicFrame frame, double periodSec) {
+        mQueuedPeriodicFrameTimes[frame.value] = periodSec;
+    }
+
+    /**
+     * Sends set requests for periodic frames
+     * Called automatically after burnflash
+     * Call on motor reset
+     */
+    public void requestPeriodicFrames(){
+        setPeriodicFramePeriodSec(PeriodicFrame.kStatus0, mQueuedPeriodicFrameTimes[0]); // Applied Output / Faults / Follower Sends
+        setPeriodicFramePeriodSec(PeriodicFrame.kStatus1, mQueuedPeriodicFrameTimes[1]); // Voltage / Temp / Current / Internal Encoder Vel
+        setPeriodicFramePeriodSec(PeriodicFrame.kStatus2, mQueuedPeriodicFrameTimes[2]); // Internal Encoder Pos
+        setPeriodicFramePeriodSec(PeriodicFrame.kStatus3, mQueuedPeriodicFrameTimes[3]); // Analog Sensor
+        setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, mQueuedPeriodicFrameTimes[4]); // Alternate Encoder
+        setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, mQueuedPeriodicFrameTimes[5]); // Duty Cycle Absolute Encoder Pos
+        setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, mQueuedPeriodicFrameTimes[6]); // Duty Cycle Absolute Encoder Vel / Sen Freq
+        setPeriodicFramePeriodSec(PeriodicFrame.kStatus7, mQueuedPeriodicFrameTimes[7]); // No Documentation
     }
 
     public void enableForwardLimit(Supplier<Boolean> boolSupplier) {

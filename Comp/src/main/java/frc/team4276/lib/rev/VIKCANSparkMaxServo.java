@@ -1,5 +1,7 @@
 package frc.team4276.lib.rev;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,7 +28,6 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         public double kLooperDt = Constants.kLooperDt; // check frame updates
         public double kMaxVel = 0.0; // Copy Subsystem
         public double kMaxAccel = 0.0; // Copy Subsystem
-        public EncoderMode kEncoderMode = EncoderMode.INTERNAL;
     }
 
     private int kProfileSlotFuse;
@@ -34,15 +35,19 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     private double kLooperDt;
     private TrapezoidProfile kProfileFuse;
 
+    private Supplier<Double> mPositionSupplier;
+    private Supplier<Double> mVelocitySupplier;
+
     /**
      * Only use on init
      */
-    public void configFuseMotion(FuseMotionConfig config) {
+    public void configFuseMotion(FuseMotionConfig config, Supplier<Double> positionSupplier, Supplier<Double> velocitySupplier) {
         this.kFuseMotionFF = config.kFeedForward;
         this.kLooperDt = config.kLooperDt;
         this.kProfileFuse = new TrapezoidProfile(config.kMaxVel, config.kMaxAccel);
         this.kProfileSlotFuse = config.kProfileSlot;
-        setEncoderMode(config.kEncoderMode);
+        mPositionSupplier = positionSupplier;
+        mVelocitySupplier = velocitySupplier;
         fuseMotionLooper = new Notifier(updateFuse);
     }
 
@@ -66,8 +71,8 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
         this.setpoint_fuse[0] = setpoint;
         profile_timestamp_fuse = Timer.getFPGATimestamp();
-        profile_start_fuse[0] = getPosition();
-        profile_start_fuse[1] = getVelocity();
+        profile_start_fuse[0] = mPositionSupplier.get();
+        profile_start_fuse[1] = mVelocitySupplier.get();
 
         if (!isFuseMotion) {
             isFuseMotion = true;
@@ -98,7 +103,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
             dt_ = now - timestamp_;
             timestamp_ = now;
 
-            System.out.println(dt_);
+            // System.out.println(dt_);
         }
     };
 
@@ -138,61 +143,4 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         isFuseMotion = false;
         super.setReference(value, ctrl, pidSlot, arbFeedforward, arbFFUnits);
     }
-
-    private EncoderMode mEncoderMode = EncoderMode.INTERNAL;
-
-    public enum EncoderMode {
-        INTERNAL,
-        ABSOLUTE,
-        ALTERNATE
-    }
-
-    public void setEncoderMode(EncoderMode mode) {
-        mEncoderMode = mode;
-    }
-
-    /**
-     * Do not use Alternate Mode
-     * 
-     * @return
-     */
-    public double getPosition() {
-        switch (mEncoderMode) {
-            default:
-                return super.getEncoder().getPosition();
-            case INTERNAL:
-                return super.getEncoder().getPosition();
-
-            case ABSOLUTE:
-                return super.getAbsoluteEncoder().getPosition();
-
-            case ALTERNATE:
-                // DO NOT USE
-                return Double.NaN;
-
-        }
-    }
-
-    /**
-     * Do not use Alternate Mode
-     * 
-     * @return
-     */
-    public double getVelocity() {
-        switch (mEncoderMode) {
-            default:
-                return super.getEncoder().getVelocity();
-            case INTERNAL:
-                return super.getEncoder().getVelocity();
-
-            case ABSOLUTE:
-                return super.getAbsoluteEncoder().getVelocity();
-
-            case ALTERNATE:
-                // DO NOT USE
-                return Double.NaN;
-
-        }
-    }
-
 }

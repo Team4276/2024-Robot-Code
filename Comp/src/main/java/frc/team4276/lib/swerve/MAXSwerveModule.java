@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import frc.team4276.frc2024.Constants;
@@ -46,20 +45,13 @@ public class MAXSwerveModule extends Subsystem {
         mDrive = CANSparkMaxFactory.createDefault(mConstants.kDriveId);
         mTurn = CANSparkMaxFactory.createDefault(mConstants.kTurnId);
 
-        CANSparkMaxFactory.configAbsoluteEncoder(mTurn);
-
         mDriveEncoder = mDrive.getEncoder();
-        mTurnEncoder = mTurn.getAbsoluteEncoder(Type.kDutyCycle);
+        mTurnEncoder = CANSparkMaxFactory.configAbsoluteEncoder(mTurn, MaxSwerveModuleConstants.kTurningEncoderConfig);
         mDrive.getPIDController().setFeedbackDevice(mDriveEncoder);
         mTurn.getPIDController().setFeedbackDevice(mTurnEncoder);
 
         mDriveEncoder.setPositionConversionFactor(MaxSwerveModuleConstants.kDrivingEncoderPositionFactor);
         mDriveEncoder.setVelocityConversionFactor(MaxSwerveModuleConstants.kDrivingEncoderVelocityFactor);
-
-        mTurnEncoder.setPositionConversionFactor(MaxSwerveModuleConstants.kTurningEncoderPositionFactor);
-        mTurnEncoder.setVelocityConversionFactor(MaxSwerveModuleConstants.kTurningEncoderVelocityFactor);
-
-        mTurnEncoder.setInverted(MaxSwerveModuleConstants.kTurningEncoderInverted);
 
         mTurn.getPIDController().setPositionPIDWrappingEnabled(true);
         mTurn.getPIDController()

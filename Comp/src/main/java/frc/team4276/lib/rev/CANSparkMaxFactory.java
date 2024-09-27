@@ -1,16 +1,13 @@
 package frc.team4276.lib.rev;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkPIDController;
 
-import frc.team4276.frc2024.Constants;
 import frc.team4276.lib.rev.RevUtil.SparkAbsoluteEncoderConfig;
 
 public class CANSparkMaxFactory {
-    //TODO: fix to not break get methods
-    //TODO: create seperate function to burnflash for all subsystems
-    
     /**
      * Set the periodic frame period when not using the internal encoder
      */
@@ -19,17 +16,6 @@ public class CANSparkMaxFactory {
 
         sparkMax.clearFaults();
         sparkMax.restoreFactoryDefaults();
-
-        // Clean up CAN usage
-        // DO NOT DO MULTIPLE PERIOD FRAME SETS TO THE SAME FRAME IN QUICK SUCCESSION
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Applied Output / Faults / Follower Sends
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Voltage / Temp / Current / Internal Encoder Vel
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Internal Encoder Pos
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000); // Analog Sensor
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000); // Alternate Encoder
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000); // Duty Cycle Absolute Encoder Pos
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000); // Duty Cycle Absolute Encoder Vel / Sen Freq
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 1000); // No Documentation
 
         sparkMax.enableVoltageCompensation(12.0);
 
@@ -42,22 +28,12 @@ public class CANSparkMaxFactory {
         sparkMax.clearFaults();
         sparkMax.restoreFactoryDefaults();
 
-        // Clean up CAN usage
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000);
-        sparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 1000);
-
         sparkMax.enableVoltageCompensation(12.0);
 
         return sparkMax;
     }
 
-    public static VIKCANSparkMax createDefaultFollower(int id, CANSparkMax master){
+    public static VIKCANSparkMax createDefaultFollower(int id, VIKCANSparkMax master){
         return createDefaultFollower(id, master, false);
     }
 
@@ -67,12 +43,12 @@ public class CANSparkMaxFactory {
      * @param isInverted Relative to master
      * @return
      */
-    public static VIKCANSparkMax createDefaultFollower(int id, CANSparkMax master, boolean isInverted){
+    public static VIKCANSparkMax createDefaultFollower(int id, VIKCANSparkMax master, boolean isInverted){
         VIKCANSparkMax sparkMax = createDefault(id);
 
         sparkMax.follow(master, isInverted);
 
-        master.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 1);
+        master.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus0, 1);
 
         return sparkMax;
     }
@@ -103,38 +79,29 @@ public class CANSparkMaxFactory {
     }
 
     public static void configAnalogSensor(VIKCANSparkMax motor, double periodSec) {
-        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus3, periodSec);
+        motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus3, periodSec);
 
     }
 
     public static void configAlternateEncoder(VIKCANSparkMax motor, double periodSec) {
-        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, periodSec);
-
-    }
-    
-    public static void configAbsoluteEncoder(VIKCANSparkMax motor) {
-        configAbsoluteEncoder(motor, Constants.kLooperDt);
+        motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus4, periodSec);
 
     }
 
-    public static void configAbsoluteEncoder(VIKCANSparkMax motor, double periodSec) {
-        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, periodSec);
-        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, periodSec);
+    public static AbsoluteEncoder configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config) {
+        AbsoluteEncoder e = motor.getAbsoluteEncoder();
 
-    }
+        e.setInverted(config.kIsInverted);
+        e.setPositionConversionFactor(config.kUnitsPerRotation);
+        e.setVelocityConversionFactor(config.kUnitsPerRotation);
+        if(config.kOffset != Double.NaN){
+            e.setZeroOffset(config.kOffset);
+        }
+        e.setAverageDepth(config.kAvgSamplingDepth);
+        
+        motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus5, config.kPeriodicFrameTime);
+        motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus6, config.kPeriodicFrameTime);
 
-    public static void configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config) {
-        motor.getAbsoluteEncoder().setInverted(config.kIsInverted);
-        motor.getAbsoluteEncoder().setPositionConversionFactor(config.kUnitsPerRotation);
-        motor.getAbsoluteEncoder().setVelocityConversionFactor(config.kUnitsPerRotation);
-        motor.getAbsoluteEncoder().setZeroOffset(config.kOffset);
-        motor.getAbsoluteEncoder().setAverageDepth(config.kAvgSamplingDepth);
-    }
-
-    public static void configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config, double periodSec) {
-        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, periodSec);
-        motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, periodSec);
-
-        configAbsoluteEncoder(motor, config);
+        return e;
     }
 }

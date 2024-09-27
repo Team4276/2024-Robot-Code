@@ -24,7 +24,6 @@ import frc.team4276.lib.drivers.ServoMotorSubsystem;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
-import frc.team4276.lib.rev.VIKCANSparkMaxServo.EncoderMode;
 import frc.team4276.lib.swerve.MAXSwerveModule.MAXSwerveModuleConstants;
 
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
@@ -198,6 +197,13 @@ public final class Constants {
 
         public static final int kDrivingMotorCurrentLimit = 50; // amps
         public static final int kTurningMotorCurrentLimit = 20; // amps
+
+        public static final RevUtil.SparkAbsoluteEncoderConfig kTurningEncoderConfig = new RevUtil.SparkAbsoluteEncoderConfig();
+        static {
+            kTurningEncoderConfig.kIsInverted = kTurningEncoderInverted;
+            kTurningEncoderConfig.kUnitsPerRotation = kTurningEncoderPositionFactor;
+            kTurningEncoderConfig.kPeriodicFrameTime = 0.02;
+        }
     }
 
     public static final class OIConstants {
@@ -264,8 +270,8 @@ public final class Constants {
             kSubsystemConstants.kSmartCurrentLimit = 40;
             kSubsystemConstants.kIdleMode = IdleMode.kBrake;
             kSubsystemConstants.kIsCircular = false; // assume max position is 360
-            kSubsystemConstants.kMinPosition = 42.0; // Input Bound
-            kSubsystemConstants.kMaxPosition = 125.0; // Input Bound
+            kSubsystemConstants.kMinPosition = 65.0; // Input Bound
+            kSubsystemConstants.kMaxPosition = 140.0; // Input Bound
             kSubsystemConstants.kMaxVel = 20.0;
             kSubsystemConstants.kMaxAccel = 20.0;
             kSubsystemConstants.kS = 0.14; // Smart Motion Firmware
@@ -318,15 +324,15 @@ public final class Constants {
             kSubsystemConstants.kFuseMotionConfig.kLooperDt = 0.005;
             kSubsystemConstants.kFuseMotionConfig.kMaxVel = kSubsystemConstants.kMaxVel;
             kSubsystemConstants.kFuseMotionConfig.kMaxAccel = kSubsystemConstants.kMaxAccel;
-            kSubsystemConstants.kFuseMotionConfig.kEncoderMode = EncoderMode.ABSOLUTE;
         }
 
-        public static final RevUtil.SparkAbsoluteEncoderConfig kAbsoluteEncoderConfig = new RevUtil.SparkAbsoluteEncoderConfig();
+        public static final RevUtil.SparkAbsoluteEncoderConfig kFourbarEncoderConfig = new RevUtil.SparkAbsoluteEncoderConfig();
         static {
-            kAbsoluteEncoderConfig.kIsInverted = true;
-            kAbsoluteEncoderConfig.kUnitsPerRotation = 360.0;
-            kAbsoluteEncoderConfig.kOffset = 95.0;
-            kAbsoluteEncoderConfig.kAvgSamplingDepth = 128;
+            kFourbarEncoderConfig.kIsInverted = true;
+            kFourbarEncoderConfig.kUnitsPerRotation = 360.0;
+            kFourbarEncoderConfig.kOffset = 95.0;
+            kFourbarEncoderConfig.kAvgSamplingDepth = 128;
+            kFourbarEncoderConfig.kPeriodicFrameTime = 0.02;
         }
     }
 
