@@ -58,14 +58,13 @@ public class VisionDeviceManager extends Subsystem {
     public void outputTelemetry() {
         if(mIsDisabled) return;
         for(PhotonDevice camera : mAllCameras) {
-            // Not technically error but its the only word I can think of
-            Pose3d error = camera.getLatestUpdate().relativeTo(new Pose3d(RobotState.getInstance().getWPILatestFieldToVehicle()));
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " X Translation Error", error.getX());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Y Translation Error", error.getY());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Height Error", error.getZ());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Yaw Error", error.getRotation().getZ());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Roll Error", error.getRotation().getX());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Pitch Error", error.getRotation().getY());
+            Pose3d displacement = camera.getLatestUpdate().relativeTo(new Pose3d(RobotState.getInstance().getWPILatestFieldToVehicle()));
+            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " X Translation Displacement", displacement.getX());
+            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Y Translation Displacement", displacement.getY());
+            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Height Displacement", displacement.getZ());
+            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Yaw Displacement", displacement.getRotation().getZ());
+            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Roll Displacement", displacement.getRotation().getX());
+            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Pitch Displacement", displacement.getRotation().getY());
         }
     }
 }

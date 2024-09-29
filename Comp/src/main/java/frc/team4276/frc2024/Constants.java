@@ -219,7 +219,7 @@ public final class Constants {
     public static final class RobotStateConstants {
         public static final boolean kVisionResetsHeading = false;
 
-        public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.07, 1), Math.pow(0.07, 1));
+        public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.05, 1), Math.pow(0.05, 1));
         public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.03, 1),
                 Math.pow(0.03, 1));
     }
