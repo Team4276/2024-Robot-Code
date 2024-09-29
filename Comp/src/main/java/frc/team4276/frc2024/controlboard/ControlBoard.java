@@ -8,10 +8,8 @@ import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
-import frc.team4276.frc2024.subsystems.FourbarSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
-
 import frc.team1678.lib.Util;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 
@@ -50,25 +48,29 @@ public class ControlBoard {
         mClimberSubsystem = ClimberSubsystem.getInstance();
     }
 
-    private double mTuningFourbarVoltage = 0.0;
+    private double mTuningFlywheelSetpoint = 4500;
     private double mTuningFourbarSetpoint = 90.0;
 
     public void updateTuning() {
-        mSuperstructure.setManual(false);
+        mSuperstructure.setTuning();
 
         double sign = driver.getYButton() ? -1 : 1;
 
         if (driver.getRightBumperReleased()) {
-            mTuningFourbarVoltage += 0.01 * sign;
+            mTuningFlywheelSetpoint += 100 * sign;
         }
 
         if (driver.getLeftBumperReleased()) {
-            mTuningFourbarVoltage += 0.1 * sign;
+            mTuningFlywheelSetpoint += 1000 * sign;
         }
 
-        SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Voltage", mTuningFourbarVoltage);
-
-        // mSuperstructure.setManualFourbarVoltage(mTuningFourbarVoltage);
+        SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Setpoint", mTuningFlywheelSetpoint);
+      
+        if(driver.getLT()) {
+            mSuperstructure.setTuningFlywheelRPM(mTuningFlywheelSetpoint);
+        } else {
+            mSuperstructure.setTuningFlywheelRPM(0.0);
+        }
         
         if (driver.getXButtonReleased()) {
             mTuningFourbarSetpoint += 1 * sign;
@@ -80,10 +82,13 @@ public class ControlBoard {
 
         SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Setpoint", mTuningFourbarSetpoint);
 
-        FourbarSubsystem.getInstance().setFuseMotionSetpoint(mTuningFourbarSetpoint); //TODO: work on testing modes for superstructure tuning
+        mSuperstructure.setTuningFourbarPostion(mTuningFourbarSetpoint);
 
-        // mFlywheelSubsystem.setTargetRPM(SmartDashboard.getNumber("Debug/Test/Flywheel
-        // Des RPM", 0.0));
+        if(driver.getRT()) {
+            mSuperstructure.setTuningIntakeState(IntakeSubsystem.State.SHOOT);
+        } else {
+            mSuperstructure.setTuningIntakeState(IntakeSubsystem.State.IDLE);
+        }
     }
 
     public void update() {
@@ -112,11 +117,11 @@ public class ControlBoard {
         }
 
         if (wantManual()) {
-            mSuperstructure.setManual(true);
+            mSuperstructure.setManual();;
             updateManual();
 
         } else {
-            mSuperstructure.setManual(false);
+            mSuperstructure.setNominal();
             updateNominal();
 
         }

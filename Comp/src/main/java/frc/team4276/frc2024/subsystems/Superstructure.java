@@ -27,7 +27,7 @@ public class Superstructure extends Subsystem {
     private BeamBreak mFrontBeam  = new BeamBreak(Ports.BEAM_FRONT);
     private BeamBreak mBackBeam = new BeamBreak(Ports.BEAM_BACK);
 
-    private boolean mIsManual = true;
+    private Mode mMode = Mode.NOMINAL;
 
     private GoalState mRequestedState = GoalState.IDLE;
     private GoalState mGoalState = GoalState.IDLE;
@@ -46,7 +46,7 @@ public class Superstructure extends Subsystem {
     private ManualInput mRequestedManualInput = new ManualInput();
     private ManualInput mManualInput = new ManualInput();
 
-    private boolean mIsManualInputPositionControlled = true;
+    private TuningInput mTuningInput = new TuningInput();
 
     private double mRegressionTuningDistance = 0.0;
     private double mRegressionTuningFlywheelSetpoint = 0.0;
@@ -63,13 +63,23 @@ public class Superstructure extends Subsystem {
         READY,
         SHOOT,
         EXHAUST
+    }
 
+    public enum Mode {
+        NOMINAL,
+        MANUAL,
+        TUNING
     }
 
     private class ManualInput {
         double flywheel_voltage = 0.0;
         IntakeSubsystem.State intake_state = IntakeSubsystem.State.IDLE;
         double fourbar_voltage = 0.0;
+    }
+
+    private class TuningInput {
+        double flywheel_rpm = 0.0;
+        IntakeSubsystem.State intake_state = IntakeSubsystem.State.IDLE;
         double fourbar_position = 90.0;
     }
 
@@ -81,6 +91,10 @@ public class Superstructure extends Subsystem {
         }
 
         return mInstance;
+    }
+
+    public synchronized void setNominal() {
+        mMode = Mode.NOMINAL;
     }
 
     public synchronized void setGoalState(GoalState state) {
@@ -103,8 +117,8 @@ public class Superstructure extends Subsystem {
         mIsDymanic = isDynamic;
     }
 
-    public synchronized void setManual(boolean isManual) {
-        mIsManual = isManual;
+    public synchronized void setManual() {
+        mMode = Mode.MANUAL;
     }
     
     public synchronized void offsetScoring(double delta_offset) {
@@ -133,12 +147,22 @@ public class Superstructure extends Subsystem {
 
     public synchronized void setManualFourbarVoltage(double voltage) {
         mRequestedManualInput.fourbar_voltage = voltage;
-        mIsManualInputPositionControlled = false;
     }
 
-    public synchronized void setManualFourbarPosition(double position) {
-        mRequestedManualInput.fourbar_position = position;
-        mIsManualInputPositionControlled = true;
+    public synchronized void setTuning(){
+        mMode = Mode.TUNING;
+    }
+
+    public synchronized void setTuningFlywheelRPM(double RPM){
+        mTuningInput.flywheel_rpm = RPM;
+    }
+
+    public synchronized void setTuningIntakeState(IntakeSubsystem.State state){
+        mTuningInput.intake_state = state;
+    }
+
+    public synchronized void setTuningFourbarPostion(double position){
+        mTuningInput.fourbar_position = position;
     }
     
     public synchronized boolean isHoldingNote() {
@@ -171,7 +195,7 @@ public class Superstructure extends Subsystem {
             mIsHoldingNote = mFrontBeam.get();
         }
 
-        if (mIsManual) {
+        if (mMode == Mode.MANUAL) {
             mGoalState = GoalState.IDLE;
             mManualInput = mRequestedManualInput;
             return;
@@ -190,17 +214,22 @@ public class Superstructure extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                try {
-                    if (mIsManual) {
-                        updateManual();
-                        return;
+                synchronized(this) {
+                    try {
+                        if (mMode == Mode.MANUAL) {
+                            updateManual();
+                            return;
+                        } else if (mMode == Mode.TUNING) {
+                            updateTuning();
+                            return;
+                        }
+
+                        updateShootingSetpoints();
+                        updateNomimnal(timestamp);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                    updateShootingSetpoints();
-                    updateNomimnal(timestamp);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
 
@@ -214,12 +243,29 @@ public class Superstructure extends Subsystem {
     private synchronized void updateManual() {
         mFlywheelSubsystem.setOpenLoop(mManualInput.flywheel_voltage);
         mIntakeSubsystem.setState(mManualInput.intake_state);
-        if(mIsManualInputPositionControlled){
-            mFourbarSubsystem.setFuseMotionSetpoint(mManualInput.fourbar_position);
-        } else {
-            mFourbarSubsystem.setVoltage(mManualInput.fourbar_voltage);
-        }
+        mFourbarSubsystem.setVoltage(mManualInput.fourbar_voltage);
+        
     }    
+
+    private synchronized void updateTuning() {
+        Pose2d robot_pose = RobotState.getInstance().getLatestFieldToVehicle();
+
+        double distance;
+
+        if (mIsFerry) {
+            distance = FerryUtil.getFerryParams(robot_pose)[0];
+
+        } else {
+            distance = ShootingUtil.getSpeakerShotParams(robot_pose)[0];
+
+        }
+
+        mFlywheelSubsystem.setTargetRPM(mTuningInput.flywheel_rpm);
+        mIntakeSubsystem.setState(mTuningInput.intake_state);
+        mFourbarSubsystem.setFuseMotionSetpoint(mTuningInput.fourbar_position);
+
+        SmartDashboard.putNumber("Debug/Test/Distance to target", distance);
+    }
     
     private synchronized void updateShootingSetpoints() {
         if ((mGoalState != GoalState.READY && mGoalState != GoalState.SHOOT && mGoalState != GoalState.STOW) || !mIsDymanic)
