@@ -178,22 +178,22 @@ public class ControlBoard {
         }
 
         if (wantIdle()) {
-            mSuperstructure.setGoalState(Superstructure.GoalState.IDLE);
+            mSuperstructure.idle();
 
         } else if (wantIntake()) {
-            mSuperstructure.setGoalState(Superstructure.GoalState.INTAKE);
+            mSuperstructure.intake();
 
         } else if (wantShoot()) {
-            mSuperstructure.setGoalState(Superstructure.GoalState.SHOOT);
+            mSuperstructure.shoot();
 
         } else if (wantReady()) {
-            mSuperstructure.setGoalState(Superstructure.GoalState.READY);
+            mSuperstructure.readyShoot();
 
         } else if (wantExhaust()) {
-            mSuperstructure.setGoalState(Superstructure.GoalState.EXHAUST);
+            mSuperstructure.exhaust();
 
         } else {
-            mSuperstructure.setGoalState(Superstructure.GoalState.STOW);
+            mSuperstructure.stow();
 
         }
     }

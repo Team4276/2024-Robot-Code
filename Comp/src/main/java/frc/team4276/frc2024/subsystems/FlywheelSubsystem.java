@@ -14,6 +14,7 @@ import frc.team4276.lib.rev.CANSparkMaxFactory;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+import frc.team1678.lib.requests.Request;
 
 public class FlywheelSubsystem extends Subsystem {
     private VIKCANSparkMax mTopMotor;
@@ -68,6 +69,21 @@ public class FlywheelSubsystem extends Subsystem {
                 FlywheelConstants.kA);
     }
 
+    public Request rpmRequest(double RPM) {
+        return new Request() {
+            @Override
+            public void act() {
+                setTargetRPM(RPM);
+            }
+
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
+        };
+
+    }
+
     public void setOpenLoop(double voltage) {
         setOpenLoop(voltage, voltage);
     }
@@ -99,12 +115,12 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public boolean isTopSpunUp() {
-        return Math.abs(mPeriodicIO.top_RPM - mPeriodicIO.top_demand) < FlywheelConstants.kFlywheelTolerance;
+        return (Math.abs(mPeriodicIO.top_RPM - mPeriodicIO.top_demand) < FlywheelConstants.kFlywheelTolerance) && (mPeriodicIO.top_demand > 2000);
     }
 
     public boolean isBottomSpunUp() {
         return Math.abs(
-                mPeriodicIO.bottom_RPM - mPeriodicIO.bottom_demand) < FlywheelConstants.kFlywheelTolerance;
+                mPeriodicIO.bottom_RPM - mPeriodicIO.bottom_demand) < FlywheelConstants.kFlywheelTolerance && (mPeriodicIO.bottom_demand > 2000);
     }
 
     @Override

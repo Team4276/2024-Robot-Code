@@ -9,6 +9,7 @@ import frc.team4276.lib.rev.CANSparkMaxFactory;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+import frc.team1678.lib.requests.Request;
 
 public class IntakeSubsystem extends Subsystem {
     private VIKCANSparkMax mMotor;
@@ -45,6 +46,21 @@ public class IntakeSubsystem extends Subsystem {
         mMotor.setWantBrakeMode(true);
         
         mMotor.burnFlash();
+    }
+
+    public Request stateRequest(State s){
+        return new Request(){
+
+            @Override
+            public void act() {
+                setState(s);
+            }
+
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
+        };
     }
     
     public void setState(State state) {

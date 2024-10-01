@@ -9,6 +9,7 @@ import com.revrobotics.AbsoluteEncoder;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+import frc.team1678.lib.requests.Request;
 
 public class FourbarSubsystem extends ServoMotorSubsystem {
 
@@ -51,6 +52,20 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
             @Override
             public void onStop(double timestamp) {}
         });
+    }
+
+    public Request positionRequest(double position){
+        return new Request() {
+            @Override
+            public void act() {
+                setFuseMotionSetpoint(position);
+            }
+
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
+        };
     }
 
     @Override

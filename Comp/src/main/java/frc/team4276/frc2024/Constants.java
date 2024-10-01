@@ -364,10 +364,12 @@ public final class Constants {
         public static final double kFourbarFerryState = 90.0;
 
         public static final int kNormalShotRPM = 3500;
+        public static final int kFerryRPM = 3500;
 
         public static final double kShotWaitTime = 0.5;
         public static final double kExhaustWaitTime = 0.5;
 
+        public static final int kSpinUpRPM = 2500;
         public static final double kSpinUpDistance = 6.0;
     }
 
