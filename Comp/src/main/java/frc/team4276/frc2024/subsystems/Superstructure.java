@@ -23,7 +23,7 @@ import frc.team1678.lib.requests.SequentialRequest;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 
-public class Superstructure extends Subsystem { //TODO: check and refactor
+public class Superstructure extends Subsystem {
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
     private FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
     private IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
@@ -134,7 +134,7 @@ public class Superstructure extends Subsystem { //TODO: check and refactor
         if(mGoalState == GoalState.STOW) return;
         mGoalState = GoalState.STOW;
 
-        if(mIsPrep){
+        if(!(!mIsPrep || mForceDisablePrep)){
             request(new ParallelRequest(
                 mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kSpinUpRPM),
                 mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
@@ -175,13 +175,10 @@ public class Superstructure extends Subsystem { //TODO: check and refactor
         if(mGoalState == GoalState.READY) return;
         mGoalState = GoalState.READY;
 
-        if(!mIsDymanic) {
+        if(mIsDymanic) {
             request(mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE));
 
-            return;
-        }
-
-        if(mIsFerry) {
+        } else if(mIsFerry) {
             request(new SequentialRequest(
                 new ParallelRequest(
                     mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
@@ -192,15 +189,20 @@ public class Superstructure extends Subsystem { //TODO: check and refactor
                 readyWait(),
                 rumbleRequest()
             ));
+        } else {
+            request(new SequentialRequest(
+                new ParallelRequest(
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
+                    mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarSubCloseState),
+                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kNormalShotRPM)
+                ),
 
-            return;
+                readyWait(),
+                rumbleRequest()
+            ));
         }
         
-        request(new ParallelRequest(
-            mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
-            mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarSubCloseState),
-            mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kNormalShotRPM)
-        ));
+        
     }
 
     private Request readyWait(){
@@ -274,10 +276,6 @@ public class Superstructure extends Subsystem { //TODO: check and refactor
     public synchronized void setDynamic(boolean isDynamic) {
         mIsDymanic = isDynamic;
     }
-
-    public synchronized void setManual() {
-        mMode = Mode.MANUAL;
-    }
     
     public synchronized void offsetScoring(double delta_offset) {
         mScoringOffset += delta_offset;
@@ -293,6 +291,10 @@ public class Superstructure extends Subsystem { //TODO: check and refactor
 
     public synchronized void setFerryOffset(double offset) {
         mFerryOffset = offset;
+    }
+
+    public synchronized void setManual() {
+        mMode = Mode.MANUAL;
     }
 
     public synchronized void setManualFlywheelVoltage(double voltage) {
@@ -347,7 +349,7 @@ public class Superstructure extends Subsystem { //TODO: check and refactor
             return;
         }
 
-        mIsPrep = !(!mRequestPrep || mForceDisablePrep);
+        mIsPrep = mRequestPrep;
 
         if(mGoalState != GoalState.SHOOT) {
             mPrevShotDistance = Double.NaN;
