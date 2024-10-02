@@ -117,11 +117,9 @@ public class ControlBoard {
         }
 
         if (wantManual()) {
-            mSuperstructure.setManual();;
             updateManual();
 
         } else {
-            mSuperstructure.setNominal();
             updateNominal();
 
         }
@@ -148,6 +146,8 @@ public class ControlBoard {
     }
 
     public void updateNominal() {
+        mSuperstructure.setNominal();
+
         mDriveSubsystem.overrideHeading(wantReady());
 
         mSuperstructure.setDynamic(wantDynamic());
@@ -199,6 +199,8 @@ public class ControlBoard {
     }
 
     public void updateManual() {
+        mSuperstructure.setManual();
+
         if (wantManualReadyFlywheel()) {
             mSuperstructure.setManualFlywheelVoltage(11.0);
         } else if (wantManualSpinup()) {

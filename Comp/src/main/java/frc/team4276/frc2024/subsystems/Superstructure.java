@@ -20,6 +20,7 @@ import frc.team1678.lib.requests.LambdaRequest;
 import frc.team1678.lib.requests.ParallelRequest;
 import frc.team1678.lib.requests.Request;
 import frc.team1678.lib.requests.SequentialRequest;
+
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 
@@ -47,7 +48,6 @@ public class Superstructure extends Subsystem {
     private boolean mRequestPrep = false;
     private boolean mForceDisablePrep = false;
 
-    private ManualInput mRequestedManualInput = new ManualInput();
     private ManualInput mManualInput = new ManualInput();
 
     private TuningInput mTuningInput = new TuningInput();
@@ -298,15 +298,15 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setManualFlywheelVoltage(double voltage) {
-        mRequestedManualInput.flywheel_voltage = voltage;
+        mManualInput.flywheel_voltage = voltage;
     }
 
     public synchronized void setManualIntakeState(IntakeSubsystem.State state) {
-        mRequestedManualInput.intake_state = state;
+        mManualInput.intake_state = state;
     }
 
     public synchronized void setManualFourbarVoltage(double voltage) {
-        mRequestedManualInput.fourbar_voltage = voltage;
+        mManualInput.fourbar_voltage = voltage;
     }
 
     public synchronized void setTuning(){
@@ -345,7 +345,6 @@ public class Superstructure extends Subsystem {
         if (mMode == Mode.MANUAL) {
             mActiveRequest = null;
             mQueuedRequests = null;
-            mManualInput = mRequestedManualInput;
             return;
         }
 
@@ -356,8 +355,6 @@ public class Superstructure extends Subsystem {
             mPrevShotFlywheelSetpoint = Double.NaN;
             mPrevShotFourbarSetpoint = Double.NaN;
         }
-
-        mManualInput = new ManualInput();
     }
 
     @Override
@@ -366,6 +363,8 @@ public class Superstructure extends Subsystem {
             @Override
             public void onStart(double timestamp) {
                 mQueuedRequests.clear();
+                mActiveRequest = null;
+                mHasNewRequest = false;
             }
 
             @Override
@@ -374,8 +373,8 @@ public class Superstructure extends Subsystem {
                     try {
                         switch (mMode) {
                             case NOMINAL:
-                                updateRequests();
                                 updateShootingSetpoints();
+                                updateRequests();
                                 
                                 break;
 
