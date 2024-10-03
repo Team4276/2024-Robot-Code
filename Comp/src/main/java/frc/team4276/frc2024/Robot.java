@@ -14,7 +14,7 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.field.AllianceChooser;
-import frc.team4276.frc2024.subsystems.ClimberSubsystem;
+// import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
-    private ClimberSubsystem mClimberSubsystem;
+    // private ClimberSubsystem mClimberSubsystem;
 
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
-            mClimberSubsystem = ClimberSubsystem.getInstance();
+            // mClimberSubsystem = ClimberSubsystem.getInstance();
 
             CameraServer.startAutomaticCapture();
 
@@ -78,9 +78,10 @@ public class Robot extends TimedRobot {
                     mSuperstructure,
                     mIntakeSubsystem,
                     mFlywheelSubsystem,
-                    mFourbarSubsystem,
+                    mFourbarSubsystem
                     // mVisionDeviceManager,
-                    mClimberSubsystem);
+                    // mClimberSubsystem
+                    );
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -147,7 +148,7 @@ public class Robot extends TimedRobot {
 
             // Safety for Climber
             if (mHasFlippedClimberSetting) {
-                mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
+                // mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
 
             } else if (!mControlBoard.wantClimberCoastMode()) {
                 mHasFlippedClimberSetting = true;

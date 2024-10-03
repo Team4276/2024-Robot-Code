@@ -103,14 +103,12 @@ public abstract class ServoMotorSubsystem extends Subsystem {
             follower.setSmartCurrentLimit(mConstants.kSmartCurrentLimit);
             follower.setIdleMode(mConstants.kIdleMode);
 
-            follower.burnFlash();
         }
-
-        mMaster.burnFlash();
 
         mPeriodicIO = new PeriodicIO();
     }
 
+    // Call once on init in children
     protected void burnFlash() {
         mMaster.burnFlash();
         for (VIKCANSparkMax follower : mFollowers) {
@@ -139,6 +137,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     public synchronized void setAbsoluteEncoderZero(double currentPosition) {
         mMaster.zeroAbsoluteEncoder(currentPosition);
+    }
+
+    public synchronized void getAbsoluteEncoderZeroOffset() {
+        mMaster.getAbsoluteEncoder().getZeroOffset();
     }
 
     public synchronized void setVoltage(double voltage) {

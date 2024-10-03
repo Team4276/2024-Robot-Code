@@ -330,7 +330,7 @@ public final class Constants {
         static {
             kFourbarEncoderConfig.kIsInverted = true;
             kFourbarEncoderConfig.kUnitsPerRotation = 360.0;
-            kFourbarEncoderConfig.kOffset = 95.0;
+            kFourbarEncoderConfig.kOffset = 0.0;
             kFourbarEncoderConfig.kAvgSamplingDepth = 128;
             kFourbarEncoderConfig.kPeriodicFrameTime = 0.02;
         }
@@ -365,11 +365,12 @@ public final class Constants {
 
         public static final int kNormalShotRPM = 3500;
         public static final int kFerryRPM = 3500;
+        public static final int kSpinUpRPM = 2500;
+        public static final int kPoopRPM = 1000;
 
         public static final double kShotWaitTime = 0.5;
         public static final double kExhaustWaitTime = 0.5;
 
-        public static final int kSpinUpRPM = 2500;
         public static final double kSpinUpDistance = 6.0;
     }
 

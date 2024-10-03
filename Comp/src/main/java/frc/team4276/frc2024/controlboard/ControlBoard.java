@@ -6,7 +6,7 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.Constants.OIConstants;
-import frc.team4276.frc2024.subsystems.ClimberSubsystem;
+// import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
@@ -25,7 +25,7 @@ public class ControlBoard {
 
     private DriveSubsystem mDriveSubsystem;
     private Superstructure mSuperstructure;
-    private ClimberSubsystem mClimberSubsystem;
+    // private ClimberSubsystem mClimberSubsystem;
 
     private static ControlBoard mInstance;
 
@@ -45,7 +45,7 @@ public class ControlBoard {
 
         mDriveSubsystem = DriveSubsystem.getInstance();
         mSuperstructure = Superstructure.getInstance();
-        mClimberSubsystem = ClimberSubsystem.getInstance();
+        // mClimberSubsystem = ClimberSubsystem.getInstance();
     }
 
     private double mTuningFlywheelSetpoint = 4500;
@@ -125,22 +125,22 @@ public class ControlBoard {
         }
 
         if (wantRaiseClimber()) {
-            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
+            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
 
         } else if (wantSlowLowerClimber() && wantClimbMode()) {
             mSuperstructure.setForceDisablePrep(true);
-            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
+            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
 
         } else if (wantLowerClimber() && wantClimbMode()) {
             mSuperstructure.setForceDisablePrep(true);
-            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
+            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
 
         } else if (!wantClimbMode()) {
             mSuperstructure.setForceDisablePrep(false);
-            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
+            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
 
         } else {
-            mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
+            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
 
         }
     }
@@ -178,22 +178,25 @@ public class ControlBoard {
         }
 
         if (wantIdle()) {
-            mSuperstructure.idle();
+            mSuperstructure.setGoalState(Superstructure.GoalState.IDLE);
 
         } else if (wantIntake()) {
-            mSuperstructure.intake();
+            mSuperstructure.setGoalState(Superstructure.GoalState.INTAKE);
 
         } else if (wantShoot()) {
-            mSuperstructure.shoot();
+            mSuperstructure.setGoalState(Superstructure.GoalState.SHOOT);
 
         } else if (wantReady()) {
-            mSuperstructure.readyShoot();
+            mSuperstructure.setGoalState(Superstructure.GoalState.READY);
 
         } else if (wantExhaust()) {
-            mSuperstructure.exhaust();
+            mSuperstructure.setGoalState(Superstructure.GoalState.EXHAUST);
+
+        } else if (wantPoop()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.POOP);
 
         } else {
-            mSuperstructure.stow();
+            mSuperstructure.setGoalState(Superstructure.GoalState.STOW);
 
         }
     }
@@ -303,6 +306,10 @@ public class ControlBoard {
 
     public boolean wantLowerClimber() {
         return driver.getRightBumper();
+    }
+
+    public boolean wantPoop() {
+        return false;
     }
 
     // Operator Controls

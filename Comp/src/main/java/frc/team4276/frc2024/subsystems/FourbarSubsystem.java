@@ -30,7 +30,7 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
 
         AbsoluteEncoder e = CANSparkMaxFactory.configAbsoluteEncoder(mMaster, encoderConfig);
 
-        mMaster.getPIDController().setFeedbackDevice(mMaster.getAbsoluteEncoder());
+        mMaster.getPIDController().setFeedbackDevice(e);
 
         mMaster.configFuseMotion(mConstants.kFuseMotionConfig, e::getPosition, e::getVelocity);
 

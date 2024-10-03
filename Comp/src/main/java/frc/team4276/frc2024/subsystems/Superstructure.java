@@ -24,7 +24,7 @@ import frc.team1678.lib.requests.SequentialRequest;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 
-public class Superstructure extends Subsystem {
+public class Superstructure extends Subsystem { //TODO: Refactor and check
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
     private FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
     private IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
@@ -41,11 +41,11 @@ public class Superstructure extends Subsystem {
     private double mFerryOffset = 0.0;
 
     private boolean mIsHoldingNote = false;
+    private boolean mDynamicSetpointsSet = false;
 
     private boolean mIsFerry = false;
     private boolean mIsDymanic = false;
     private boolean mIsPrep = false;
-    private boolean mRequestPrep = false;
     private boolean mForceDisablePrep = false;
 
     private ManualInput mManualInput = new ManualInput();
@@ -66,7 +66,8 @@ public class Superstructure extends Subsystem {
         INTAKE,
         READY,
         SHOOT,
-        EXHAUST
+        EXHAUST,
+        POOP
     }
 
     public enum Mode {
@@ -101,176 +102,20 @@ public class Superstructure extends Subsystem {
         mMode = Mode.NOMINAL;
     }
 
-    public synchronized void idle() {
-        if(mGoalState == GoalState.IDLE) return;
-        mGoalState = GoalState.IDLE;
-
-        request(idleRequest());
-    }
-
-    private Request idleRequest() {
-        return new ParallelRequest(
-                mFlywheelSubsystem.rpmRequest(0.0),
-                mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
-        );
-    }
-
-    private Request rumbleRequest() {
-        return new Request() {
-            @Override
-            public void act() {
-                ControlBoard.getInstance().driver.rumble(1.0);
-                ControlBoard.getInstance().operator.rumble(1.0);
-            }
-
-            @Override
-            public boolean isFinished() {
-                return true;
-            }
-        };
-    }
-
-    public synchronized void stow() {
-        if(mGoalState == GoalState.STOW) return;
-        mGoalState = GoalState.STOW;
-
-        if(!(!mIsPrep || mForceDisablePrep)){
-            request(new ParallelRequest(
-                mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kSpinUpRPM),
-                mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
-                mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
-            ));
-
-            return;
-        }
-
-        request(new ParallelRequest(
-            mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarStowState),
-            idleRequest()
-        ));
-    }
-
-    public synchronized void intake() {
-        if(mGoalState == GoalState.INTAKE) return;
-        mGoalState = GoalState.INTAKE;
-
-        request(new SequentialRequest(
-            new ParallelRequest(
-                idleRequest(),
-                mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarIntakeState),
-                mIntakeSubsystem.stateRequest(IntakeSubsystem.State.INTAKE)
-            ),
-
-            breakWait(mFrontBeam, true),
-            rumbleRequest(),
-            new LambdaRequest(() -> mIsHoldingNote = true),
-            new ParallelRequest(
-                mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
-                mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
-            )
-        ));
-    }
-
-    public synchronized void readyShoot() {
-        if(mGoalState == GoalState.READY) return;
-        mGoalState = GoalState.READY;
-
-        if(mIsDymanic) {
-            request(mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE));
-
-        } else if(mIsFerry) {
-            request(new SequentialRequest(
-                new ParallelRequest(
-                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
-                    mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarFerryState),
-                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kFerryRPM)
-                ),
-
-                readyWait(),
-                rumbleRequest()
-            ));
-        } else {
-            request(new SequentialRequest(
-                new ParallelRequest(
-                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
-                    mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarSubCloseState),
-                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kNormalShotRPM)
-                ),
-
-                readyWait(),
-                rumbleRequest()
-            ));
-        }
-        
-        
-    }
-
-    private Request readyWait(){
-        return new Request() {
-            @Override
-            public void act() {}
-
-            @Override
-            public boolean isFinished() {
-                return isReady();
-            }
-        };
-    }
-
-    public synchronized void shoot() {
-        if(mGoalState == GoalState.SHOOT) return;
-        mGoalState = GoalState.SHOOT;
-
-        request(new ParallelRequest(
-            mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SHOOT),
-            new LambdaRequest(() -> mIsHoldingNote = false),
-            new LambdaRequest(() -> writeShotData())
-        ));
-    }
-
-    private void writeShotData(){
-        mPrevShotDistance = mRegressionTuningDistance;
-        mPrevShotFlywheelSetpoint = mRegressionTuningFlywheelSetpoint;
-        mPrevShotFourbarSetpoint = mRegressionTuningFourbarSetpoint;
-    }
-
-    public synchronized void exhaust() {
-        if(mGoalState == GoalState.EXHAUST) return;
-        mGoalState = GoalState.EXHAUST;
-
-        request(new ParallelRequest(
-            mFlywheelSubsystem.rpmRequest(0.0),
-            mIntakeSubsystem.stateRequest(IntakeSubsystem.State.EXHAUST),
-            new LambdaRequest(() -> mIsHoldingNote = false)
-        ));
-    }
-
-    public synchronized void poop() {
-        //TODO: poop
-    }
-
-    private Request breakWait(BeamBreak b, boolean targetState){
-        return new Request() {
-            @Override
-            public void act() {}
-
-            @Override
-            public boolean isFinished() {
-                return b.get() == targetState;
-            }
-        };
-    }
-
-    public synchronized void setFerry(boolean isFerry) {
-        mIsFerry = isFerry;
+    public synchronized void setGoalState(GoalState state) {
+        mGoalState = state;
     }
 
     public synchronized void setPrep(boolean isPrep) {
-        mRequestPrep = isPrep;
+        mIsPrep = isPrep;
     }
 
     public synchronized void setForceDisablePrep(boolean forceDisablePrep) {
         mForceDisablePrep = forceDisablePrep;
+    }
+
+    public synchronized void setFerry(boolean isFerry) {
+        mIsFerry = isFerry;
     }
 
     public synchronized void setDynamic(boolean isDynamic) {
@@ -334,7 +179,7 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized boolean isReady() {
-        return mGoalState == GoalState.READY && mFlywheelSubsystem.isSpunUp() && mFourbarSubsystem.atSetpoint();
+        return mGoalState == GoalState.READY && mFlywheelSubsystem.isSpunUp() && mFourbarSubsystem.atSetpoint() && (mIsDymanic ? mDynamicSetpointsSet : true);
     }
 
     @Override
@@ -342,13 +187,12 @@ public class Superstructure extends Subsystem {
         mFrontBeam.update();
         mBackBeam.update();
 
-        if (mMode == Mode.MANUAL) {
+        if (mMode != Mode.NOMINAL) {
+            mGoalState = GoalState.IDLE;
             mActiveRequest = null;
             mQueuedRequests = null;
             return;
         }
-
-        mIsPrep = mRequestPrep;
 
         if(mGoalState != GoalState.SHOOT) {
             mPrevShotDistance = Double.NaN;
@@ -365,6 +209,7 @@ public class Superstructure extends Subsystem {
                 mQueuedRequests.clear();
                 mActiveRequest = null;
                 mHasNewRequest = false;
+                mAllRequestsComplete = true;
             }
 
             @Override
@@ -373,8 +218,9 @@ public class Superstructure extends Subsystem {
                     try {
                         switch (mMode) {
                             case NOMINAL:
-                                updateShootingSetpoints();
+                                updateNominal();
                                 updateRequests();
+                                updateShootingSetpoints();
                                 
                                 break;
 
@@ -402,6 +248,129 @@ public class Superstructure extends Subsystem {
                 stop();
             }
         });
+    }
+
+    private GoalState mPrevGoalState = GoalState.IDLE;
+    private boolean mPrevPrepVal = false;
+    private boolean mPrevFerryVal = false;
+
+    private void updateNominal() {
+        switch (mGoalState) {
+            case IDLE:
+                if(mPrevGoalState == mGoalState) break;
+
+                request(idleRequest());
+                
+                break;
+            case STOW:
+                if(mPrevGoalState == mGoalState && mIsPrep == mPrevPrepVal) break;
+                mPrevPrepVal = mIsPrep;
+
+                if(!(!mIsPrep || mForceDisablePrep)){
+                    request(new ParallelRequest(
+                        mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kSpinUpRPM),
+                        mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
+                        mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
+                    ));
+
+                    break;
+                }
+
+                request(new ParallelRequest(
+                    mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarStowState),
+                    idleRequest()
+                ));
+                
+                break;
+            case INTAKE:
+                if(mPrevGoalState == mGoalState) break;
+
+                request(new SequentialRequest(
+                    new ParallelRequest(
+                        idleRequest(),
+                        mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarIntakeState),
+                        mIntakeSubsystem.stateRequest(IntakeSubsystem.State.INTAKE)
+                    ),
+
+                    breakWait(mFrontBeam, true),
+                    rumbleRequest(),
+                    new LambdaRequest(() -> mIsHoldingNote = true),
+                    new ParallelRequest(
+                        mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
+                        mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
+                    )
+                ));
+                
+                break;
+            case READY:
+                if(mPrevGoalState == mGoalState && mPrevFerryVal == mIsFerry) break;
+                mPrevFerryVal = mIsFerry;
+
+                double fourbar_position;
+                double flywheel_rpm;
+
+                if (mIsFerry) {
+                    fourbar_position = SuperstructureConstants.kFourbarFerryState;
+                    flywheel_rpm = SuperstructureConstants.kFerryRPM;
+
+                } else {
+                    fourbar_position = SuperstructureConstants.kFourbarSubCloseState;
+                    flywheel_rpm = SuperstructureConstants.kNormalShotRPM;
+
+                }
+
+                request(new ParallelRequest(
+                    new LambdaRequest(() -> mDynamicSetpointsSet = false),
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
+                    mFourbarSubsystem.positionRequest(fourbar_position),
+                    mFlywheelSubsystem.rpmRequest(flywheel_rpm),
+                    readyWait(),
+                    rumbleRequest()
+                ));
+                
+                break;
+            case SHOOT:
+                if(mPrevGoalState == mGoalState) break;
+
+                request(new ParallelRequest(
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SHOOT),
+                    new LambdaRequest(() -> mIsHoldingNote = false),
+                    new LambdaRequest(() -> writeShotData())
+                ));
+                
+                break;
+            case EXHAUST:
+                if(mPrevGoalState == mGoalState) break;
+
+                request(new ParallelRequest(
+                    mFlywheelSubsystem.rpmRequest(0.0),
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.EXHAUST),
+                    new LambdaRequest(() -> mIsHoldingNote = false)
+                ));
+                
+                break;
+            case POOP:
+                if(mPrevGoalState == mGoalState) break;
+
+                request(new ParallelRequest(
+                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kPoopRPM),
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SLOW_FEED),
+                    new LambdaRequest(() -> mIsHoldingNote = false)
+                ));
+                
+                break;
+        
+            default:
+                break;
+        }
+
+        mPrevGoalState = mGoalState;
+    }
+
+    private void writeShotData(){
+        mPrevShotDistance = mRegressionTuningDistance;
+        mPrevShotFlywheelSetpoint = mRegressionTuningFlywheelSetpoint;
+        mPrevShotFourbarSetpoint = mRegressionTuningFourbarSetpoint;
     }
 
     private ArrayList<Request> mQueuedRequests = new ArrayList<>();
@@ -440,6 +409,53 @@ public class Superstructure extends Subsystem {
         mHasNewRequest = true;
         mAllRequestsComplete = false;
 
+    }
+
+
+    private Request idleRequest() {
+        return new ParallelRequest(
+                mFlywheelSubsystem.rpmRequest(0.0),
+                mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
+        );
+    }
+
+    private Request rumbleRequest() {
+        return new Request() {
+            @Override
+            public void act() {
+                ControlBoard.getInstance().driver.rumble(1.0);
+                ControlBoard.getInstance().operator.rumble(1.0);
+            }
+
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
+        };
+    }
+
+    private Request readyWait(){
+        return new Request() {
+            @Override
+            public void act() {}
+
+            @Override
+            public boolean isFinished() {
+                return isReady();
+            }
+        };
+    }
+
+    private Request breakWait(BeamBreak b, boolean targetState){
+        return new Request() {
+            @Override
+            public void act() {}
+
+            @Override
+            public boolean isFinished() {
+                return b.get() == targetState;
+            }
+        };
     }
     
     private void updateShootingSetpoints() {
@@ -480,6 +496,8 @@ public class Superstructure extends Subsystem {
         mFlywheelSubsystem.setTargetRPM(flywheel_setpoint);
         mFourbarSubsystem.setFuseMotionSetpoint(fourbar_setpoint);
         mDriveSubsystem.feedTrackingSetpoint(drive_heading_setpoint);
+
+        mDynamicSetpointsSet = true;
     }
 
     private void updateManual() {
