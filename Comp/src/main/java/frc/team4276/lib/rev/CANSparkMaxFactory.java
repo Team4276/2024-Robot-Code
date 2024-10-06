@@ -48,7 +48,7 @@ public class CANSparkMaxFactory {
 
         sparkMax.follow(master, isInverted);
 
-        master.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus0, 1);
+        master.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus0, 0.005);
 
         return sparkMax;
     }
@@ -99,8 +99,8 @@ public class CANSparkMaxFactory {
         }
         e.setAverageDepth(config.kAvgSamplingDepth);
         
-        motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus5, config.kPeriodicFrameTime);
-        motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus6, config.kPeriodicFrameTime);
+        // motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus5, config.kPeriodicFrameTime);
+        // motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus6, config.kPeriodicFrameTime);
 
         return e;
     }

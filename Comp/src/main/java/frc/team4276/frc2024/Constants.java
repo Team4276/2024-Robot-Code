@@ -259,7 +259,7 @@ public final class Constants {
             kSubsystemConstants.kName = "Fourbar";
 
             kSubsystemConstants.kMasterConstants.id = Ports.FOURBAR_MASTER;
-            kSubsystemConstants.kMasterConstants.isInverted = true;
+            kSubsystemConstants.kMasterConstants.isInverted = false;
 
             kSubsystemConstants.kFollowerConstants = new ServoMotorSubsystem.ServoMotorConfig[1];
 
@@ -272,8 +272,8 @@ public final class Constants {
             kSubsystemConstants.kIsCircular = false; // assume max position is 360
             kSubsystemConstants.kMinPosition = 65.0; // Input Bound
             kSubsystemConstants.kMaxPosition = 140.0; // Input Bound
-            kSubsystemConstants.kMaxVel = 20.0;
-            kSubsystemConstants.kMaxAccel = 20.0;
+            kSubsystemConstants.kMaxVel = 80.0;
+            kSubsystemConstants.kMaxAccel = 60.0;
             kSubsystemConstants.kS = 0.14; // Smart Motion Firmware
             kSubsystemConstants.kTol = 1.0;
             kSubsystemConstants.kForwardLimitPolarity = Type.kNormallyOpen;
@@ -328,11 +328,11 @@ public final class Constants {
 
         public static final RevUtil.SparkAbsoluteEncoderConfig kFourbarEncoderConfig = new RevUtil.SparkAbsoluteEncoderConfig();
         static {
-            kFourbarEncoderConfig.kIsInverted = true;
+            kFourbarEncoderConfig.kIsInverted = false;
             kFourbarEncoderConfig.kUnitsPerRotation = 360.0;
-            kFourbarEncoderConfig.kOffset = 0.0;
+            kFourbarEncoderConfig.kOffset = 214.5;
             kFourbarEncoderConfig.kAvgSamplingDepth = 128;
-            kFourbarEncoderConfig.kPeriodicFrameTime = 0.02;
+            kFourbarEncoderConfig.kPeriodicFrameTime = 0.2;
         }
     }
 
@@ -357,11 +357,11 @@ public final class Constants {
     }
 
     public static final class SuperstructureConstants {
-        public static final double kFourbarStowState = 50.0;
+        public static final double kFourbarStowState = 70.0;
         public static final double kFourbarPrepState = 90.7;
-        public static final double kFourbarIntakeState = 90.0;
-        public static final double kFourbarSubCloseState = 90.0;
-        public static final double kFourbarFerryState = 90.0;
+        public static final double kFourbarIntakeState = 135.0;
+        public static final double kFourbarSubCloseState = 135.0;
+        public static final double kFourbarFerryState = 135.0;
 
         public static final int kNormalShotRPM = 3500;
         public static final int kFerryRPM = 3500;

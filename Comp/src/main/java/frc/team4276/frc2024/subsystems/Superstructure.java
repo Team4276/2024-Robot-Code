@@ -24,7 +24,7 @@ import frc.team1678.lib.requests.SequentialRequest;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 
-public class Superstructure extends Subsystem { //TODO: Refactor and check
+public class Superstructure extends Subsystem {
     private DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
     private FlywheelSubsystem mFlywheelSubsystem = FlywheelSubsystem.getInstance();
     private IntakeSubsystem mIntakeSubsystem = IntakeSubsystem.getInstance();
@@ -190,7 +190,7 @@ public class Superstructure extends Subsystem { //TODO: Refactor and check
         if (mMode != Mode.NOMINAL) {
             mGoalState = GoalState.IDLE;
             mActiveRequest = null;
-            mQueuedRequests = null;
+            mQueuedRequests.clear();
             return;
         }
 
@@ -283,7 +283,7 @@ public class Superstructure extends Subsystem { //TODO: Refactor and check
                 
                 break;
             case INTAKE:
-                if(mPrevGoalState == mGoalState) break;
+                if(mPrevGoalState == mGoalState || mIsHoldingNote == true) break;
 
                 request(new SequentialRequest(
                     new ParallelRequest(
@@ -291,6 +291,9 @@ public class Superstructure extends Subsystem { //TODO: Refactor and check
                         mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarIntakeState),
                         mIntakeSubsystem.stateRequest(IntakeSubsystem.State.INTAKE)
                     ),
+                    breakWait(mBackBeam, true),
+
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SLOW_FEED),
 
                     breakWait(mFrontBeam, true),
                     rumbleRequest(),

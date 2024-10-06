@@ -230,9 +230,9 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         try {
 
-            mControlBoard.updateTuning();
+            // mControlBoard.updateTuning();
 
-            // mControlBoard.update();
+            mControlBoard.update();
 
         } catch (Throwable t) {
             System.out.println(t.getMessage());

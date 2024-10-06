@@ -54,29 +54,29 @@ public class ControlBoard {
     public void updateTuning() {
         mSuperstructure.setTuning();
 
-        double sign = driver.getYButton() ? -1 : 1;
+        double sign = operator.getYButton() ? -1 : 1;
 
-        if (driver.getRightBumperReleased()) {
+        if (operator.getRightBumperReleased()) {
             mTuningFlywheelSetpoint += 100 * sign;
         }
 
-        if (driver.getLeftBumperReleased()) {
+        if (operator.getLeftBumperReleased()) {
             mTuningFlywheelSetpoint += 1000 * sign;
         }
 
         SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Setpoint", mTuningFlywheelSetpoint);
       
-        if(driver.getLT()) {
+        if (operator.getLT()) {
             mSuperstructure.setTuningFlywheelRPM(mTuningFlywheelSetpoint);
         } else {
             mSuperstructure.setTuningFlywheelRPM(0.0);
         }
         
-        if (driver.getXButtonReleased()) {
+        if (operator.getXButtonReleased()) {
             mTuningFourbarSetpoint += 1 * sign;
         }
 
-        if (driver.getBButtonReleased()) {
+        if (operator.getBButtonReleased()) {
             mTuningFourbarSetpoint += 10 * sign;
         }
 
@@ -84,7 +84,7 @@ public class ControlBoard {
 
         mSuperstructure.setTuningFourbarPostion(mTuningFourbarSetpoint);
 
-        if(driver.getRT()) {
+        if (operator.getRT()) {
             mSuperstructure.setTuningIntakeState(IntakeSubsystem.State.SHOOT);
         } else {
             mSuperstructure.setTuningIntakeState(IntakeSubsystem.State.IDLE);
@@ -148,7 +148,7 @@ public class ControlBoard {
     public void updateNominal() {
         mSuperstructure.setNominal();
 
-        mDriveSubsystem.overrideHeading(wantReady());
+        // mDriveSubsystem.overrideHeading(wantReady());
 
         mSuperstructure.setDynamic(wantDynamic());
 
@@ -356,7 +356,7 @@ public class ControlBoard {
     }
 
     public boolean wantManual() {
-        return true;
+        return false;
     }
 
     public boolean wantManualSpinup() {

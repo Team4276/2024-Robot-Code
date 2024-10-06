@@ -19,7 +19,7 @@ public class IntakeSubsystem extends Subsystem {
     public enum State {
         IDLE(0.0),
         INTAKE(12.0),
-        SLOW_FEED(5.0),
+        SLOW_FEED(6.0),
         DEFEED(-2.0),
         EXHAUST(-8.0),
         SHOOT(12.0);
@@ -42,7 +42,7 @@ public class IntakeSubsystem extends Subsystem {
 
     private IntakeSubsystem() {
         mMotor = CANSparkMaxFactory.createDefault(Ports.INTAKE);
-        mMotor.setSmartCurrentLimit(40);
+        mMotor.setSmartCurrentLimit(50);
         mMotor.setWantBrakeMode(true);
         
         mMotor.burnFlash();
@@ -104,5 +104,8 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     public void outputTelemetry() {
         SmartDashboard.putString("Comp/Intake State", mState.name());
+        SmartDashboard.putNumber("Debug/Intake Current", mMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Debug/Intake Voltage", mMotor.getAppliedVoltage());
+
     }
 }

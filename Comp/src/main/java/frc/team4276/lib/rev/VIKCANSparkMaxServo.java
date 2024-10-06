@@ -90,7 +90,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         @Override
         public void run() {
             if (!isFuseMotion) {
-                fuseMotionLooper.stop();
+                // fuseMotionLooper.stop();
                 return;
             }
             
@@ -120,7 +120,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
             SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
 
-            if (ControlBoard.getInstance().driver.getAButton()) {
+            if (ControlBoard.getInstance().operator.getAButton()) {
                 getPIDController().setReference(state[0], ControlType.kPosition,
                         kProfileSlotFuse,
                         ff, ArbFFUnits.kVoltage);
