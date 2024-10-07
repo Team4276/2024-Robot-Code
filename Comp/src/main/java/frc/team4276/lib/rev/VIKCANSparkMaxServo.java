@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
+import frc.team254.lib.util.MovingAverage;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.lib.Threading.ThreadWait;
@@ -83,6 +84,9 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         return true;
     }
 
+    private MovingAverage mMovingAverage = new MovingAverage(100);
+    private double maxTime = 0.0;
+
     double timestamp_ = 0.0;
     double dt_ = 0.0;
 
@@ -90,7 +94,6 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         @Override
         public void run() {
             if (!isFuseMotion) {
-                // fuseMotionLooper.stop();
                 return;
             }
             
@@ -102,6 +105,14 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
             now = Timer.getFPGATimestamp();
             dt_ = now - timestamp_;
             timestamp_ = now;
+
+            if (dt_ > maxTime) {
+                maxTime = dt_;
+            }
+
+            mMovingAverage.addNumber(dt_);
+
+            System.out.println(maxTime);
 
             // System.out.println(dt_);
         }

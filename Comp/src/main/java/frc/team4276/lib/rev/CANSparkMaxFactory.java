@@ -14,8 +14,8 @@ public class CANSparkMaxFactory {
     public static VIKCANSparkMax createDefault(int id){
         VIKCANSparkMax sparkMax = new VIKCANSparkMax(id);
 
-        sparkMax.clearFaults();
         sparkMax.restoreFactoryDefaults();
+        sparkMax.clearFaults();
 
         sparkMax.enableVoltageCompensation(12.0);
 
@@ -25,8 +25,8 @@ public class CANSparkMaxFactory {
     public static VIKCANSparkMaxServo createDefaultServo(int id){
         VIKCANSparkMaxServo sparkMax = new VIKCANSparkMaxServo(id);
 
-        sparkMax.clearFaults();
         sparkMax.restoreFactoryDefaults();
+        sparkMax.clearFaults();
 
         sparkMax.enableVoltageCompensation(12.0);
 

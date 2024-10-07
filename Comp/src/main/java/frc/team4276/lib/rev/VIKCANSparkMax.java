@@ -51,8 +51,8 @@ public class VIKCANSparkMax extends CANSparkMax {
         0.02,
         1.00,
         1.00,
-        1.00,
-        1.00,
+        0.20,
+        0.20,
         1.00
     };
 
@@ -62,6 +62,8 @@ public class VIKCANSparkMax extends CANSparkMax {
     public void queuePeriodicFramePeriodSec(PeriodicFrame frame, double periodSec) {
         mQueuedPeriodicFrameTimes[frame.value] = periodSec;
     }
+    
+    //TODO: figure out wth is wrong with this
 
     /**
      * Sends set requests for periodic frames

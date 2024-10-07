@@ -148,7 +148,7 @@ public class ControlBoard {
     public void updateNominal() {
         mSuperstructure.setNominal();
 
-        // mDriveSubsystem.overrideHeading(wantReady());
+        // mDriveSubsystem.overrideHeading(wantReady() && wantDynamic());
 
         mSuperstructure.setDynamic(wantDynamic());
 
