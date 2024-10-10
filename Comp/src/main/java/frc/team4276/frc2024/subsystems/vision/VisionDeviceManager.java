@@ -11,7 +11,7 @@ import frc.team4276.frc2024.RobotState;
 
 public class VisionDeviceManager extends Subsystem {
     private PhotonDevice mFrontCamera;
-    private PhotonDevice mRearCamera;
+    // private PhotonDevice mRearCamera;
 
     private List<PhotonDevice> mAllCameras;
 
@@ -29,9 +29,11 @@ public class VisionDeviceManager extends Subsystem {
 
     private VisionDeviceManager(){
         mFrontCamera = new PhotonDevice(VisionConstants.kFrontCameraConstants);
-        mRearCamera = new PhotonDevice(VisionConstants.kBackCameraConstants);
+        // mRearCamera = new PhotonDevice(VisionConstants.kBackCameraConstants);
 
-        mAllCameras = List.of(mFrontCamera, mRearCamera);
+        mAllCameras = List.of(mFrontCamera
+        // , mRearCamera
+            );
     }
 
     public synchronized void setDisabled(boolean disable) {

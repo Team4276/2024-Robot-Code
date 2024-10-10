@@ -8,9 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
-import frc.team254.lib.util.MovingAverage;
 import frc.team4276.frc2024.Constants;
-import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.lib.Threading.ThreadWait;
 import frc.team4276.lib.characterizations.IFeedForward;
 import frc.team4276.lib.motion.TrapezoidProfile;
@@ -84,8 +82,8 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         return true;
     }
 
-    private MovingAverage mMovingAverage = new MovingAverage(100);
     private double maxTime = 0.0;
+    private int counter = 0;
 
     double timestamp_ = 0.0;
     double dt_ = 0.0;
@@ -108,11 +106,15 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
             if (dt_ > maxTime) {
                 maxTime = dt_;
+                System.out.println(maxTime);
+                counter = 0;
+
+            } else if(counter >= 100){
+                maxTime = dt_;
+
+            } else {
+                counter++;
             }
-
-            mMovingAverage.addNumber(dt_);
-
-            System.out.println(maxTime);
 
             // System.out.println(dt_);
         }
@@ -122,24 +124,21 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
                 profile_start_fuse, setpoint_fuse);
 
+        double ff;
+
         if (kFuseMotionFF.isLinear()) {
-            getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse,
-                    kFuseMotionFF.calculate(state[0], state[1], 0.0), ArbFFUnits.kVoltage);
+            ff = kFuseMotionFF.calculate(state[0], state[1], 0.0);
 
         } else { // Asume setpoint given in degrees
-            double ff = kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0);
+            ff = kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0);
 
-            SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
-
-            if (ControlBoard.getInstance().operator.getAButton()) {
-                getPIDController().setReference(state[0], ControlType.kPosition,
-                        kProfileSlotFuse,
-                        ff, ArbFFUnits.kVoltage);
-
-            } else {
-                setVoltage(0.0);
-            }
         }
+            
+        SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
+
+        // getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse, ff, ArbFFUnits.kVoltage);
+
+        setVoltage(0.0);
     }
 
     @Override

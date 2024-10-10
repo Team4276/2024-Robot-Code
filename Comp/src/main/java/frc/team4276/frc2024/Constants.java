@@ -6,8 +6,10 @@ package frc.team4276.frc2024;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
@@ -379,7 +381,9 @@ public final class Constants {
         static {
             kFrontCameraConstants.kCameraName = "Front Camera";
             kFrontCameraConstants.kCameraNameId = "Arducam_OV9281_USB_Camera";
-            kFrontCameraConstants.kRobotToCamera = new Transform3d();
+            kFrontCameraConstants.kRobotToCamera = new Transform3d(new Translation3d(
+                Units.inchesToMeters(9.591351), Units.inchesToMeters(7.500000) * -1.0, Units.inchesToMeters(5.575688)), 
+                new Rotation3d(0.0, Math.toRadians(20) * -1.0, 0.0));
         }
 
         public static final PhotonDeviceConstants kBackCameraConstants = new PhotonDeviceConstants();

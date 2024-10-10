@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             mDriveSubsystem = DriveSubsystem.getInstance();
-            // mVisionDeviceManager = VisionDeviceManager.getInstance();
+            mVisionDeviceManager = VisionDeviceManager.getInstance();
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
@@ -78,8 +78,8 @@ public class Robot extends TimedRobot {
                     mSuperstructure,
                     mIntakeSubsystem,
                     mFlywheelSubsystem,
-                    mFourbarSubsystem
-                    // mVisionDeviceManager,
+                    mFourbarSubsystem,
+                    mVisionDeviceManager
                     // mClimberSubsystem
                     );
 
