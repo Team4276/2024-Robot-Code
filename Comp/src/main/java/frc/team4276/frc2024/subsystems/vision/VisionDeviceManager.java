@@ -60,13 +60,15 @@ public class VisionDeviceManager extends Subsystem {
     public void outputTelemetry() {
         if(mIsDisabled) return;
         for(PhotonDevice camera : mAllCameras) {
-            Pose3d displacement = camera.getLatestUpdate().relativeTo(new Pose3d(RobotState.getInstance().getWPILatestFieldToVehicle()));
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " X Translation Displacement", displacement.getX());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Y Translation Displacement", displacement.getY());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Height Displacement", displacement.getZ());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Yaw Displacement", displacement.getRotation().getZ());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Roll Displacement", displacement.getRotation().getX());
-            SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Pitch Displacement", displacement.getRotation().getY());
+            if (camera.getLatestUpdate() != null) {
+                Pose3d displacement = camera.getLatestUpdate().relativeTo(new Pose3d(RobotState.getInstance().getWPILatestFieldToVehicle()));
+                SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " X Translation Displacement", displacement.getX());
+                SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Y Translation Displacement", displacement.getY());
+                SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Height Displacement", displacement.getZ());
+                SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Yaw Displacement", displacement.getRotation().getZ());
+                SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Roll Displacement", displacement.getRotation().getX());
+                SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " Pitch Displacement", displacement.getRotation().getY());
+            }
         }
     }
 }

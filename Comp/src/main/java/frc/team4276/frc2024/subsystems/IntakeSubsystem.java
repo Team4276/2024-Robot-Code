@@ -19,7 +19,7 @@ public class IntakeSubsystem extends Subsystem {
     public enum State {
         IDLE(0.0),
         INTAKE(12.0),
-        SLOW_FEED(6.0),
+        SLOW_FEED(4.0),
         DEFEED(-2.0),
         EXHAUST(-8.0),
         SHOOT(12.0);

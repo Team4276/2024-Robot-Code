@@ -148,7 +148,7 @@ public class ControlBoard {
     public void updateNominal() {
         mSuperstructure.setNominal();
 
-        // mDriveSubsystem.overrideHeading(wantReady() && wantDynamic());
+        mDriveSubsystem.overrideHeading(wantReady() && wantDynamic());
 
         mSuperstructure.setDynamic(wantDynamic());
 
@@ -322,7 +322,7 @@ public class ControlBoard {
     }
 
     public boolean wantDynamic() {
-        return false;
+        return true;
     }
 
     public boolean wantFerry() {
@@ -410,7 +410,7 @@ public class ControlBoard {
 
     // Extra
     public boolean enableFourbarFuse() {
-        return false;
+        return true;
     }
 
 }

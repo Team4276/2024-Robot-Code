@@ -138,7 +138,7 @@ public final class Constants {
 
         public static final double kAutoMaxError = 0.75; // Meters
 
-        public static final double kSnapHeadingKp = 4.0;
+        public static final double kSnapHeadingKp = 3.0;
         public static final double kSnapHeadingKi = 0.0;
         public static final double kSnapHeadingKd = 0.0;
 
@@ -235,7 +235,7 @@ public final class Constants {
             kFeedForwardConstants.kGearRatio = 185.712;
             kFeedForwardConstants.kStallTorque = 3.28;
             kFeedForwardConstants.kMotorAmnt = 2;
-            kFeedForwardConstants.kEfficiency = 0.15;
+            kFeedForwardConstants.kEfficiency = 0.1;
 
             kFeedForwardConstants.kBottomLength = Units.inchesToMeters(8.001578);
             kFeedForwardConstants.kMotorLegLength = Units.inchesToMeters(11.000000);

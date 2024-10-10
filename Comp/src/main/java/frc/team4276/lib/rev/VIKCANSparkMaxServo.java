@@ -107,7 +107,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
             if (dt_ > maxTime) {
                 maxTime = dt_;
-                System.out.println(maxTime);
+                // System.out.println(maxTime);
                 counter = 0;
 
             } else if(counter >= 100){

@@ -71,14 +71,14 @@ public class VIKCANSparkMax extends CANSparkMax {
      * Call on motor reset
      */
     public void requestPeriodicFrames(){
-        setPeriodicFramePeriodSec(PeriodicFrame.kStatus0, mQueuedPeriodicFrameTimes[0]); // Applied Output / Faults / Follower Sends
-        setPeriodicFramePeriodSec(PeriodicFrame.kStatus1, mQueuedPeriodicFrameTimes[1]); // Voltage / Temp / Current / Internal Encoder Vel
-        setPeriodicFramePeriodSec(PeriodicFrame.kStatus2, mQueuedPeriodicFrameTimes[2]); // Internal Encoder Pos
-        setPeriodicFramePeriodSec(PeriodicFrame.kStatus3, mQueuedPeriodicFrameTimes[3]); // Analog Sensor
-        setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, mQueuedPeriodicFrameTimes[4]); // Alternate Encoder
-        setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, mQueuedPeriodicFrameTimes[5]); // Duty Cycle Absolute Encoder Pos
-        setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, mQueuedPeriodicFrameTimes[6]); // Duty Cycle Absolute Encoder Vel / Sen Freq
-        setPeriodicFramePeriodSec(PeriodicFrame.kStatus7, mQueuedPeriodicFrameTimes[7]); // No Documentation
+        // setPeriodicFramePeriodSec(PeriodicFrame.kStatus0, mQueuedPeriodicFrameTimes[0]); // Applied Output / Faults / Follower Sends
+        // setPeriodicFramePeriodSec(PeriodicFrame.kStatus1, mQueuedPeriodicFrameTimes[1]); // Voltage / Temp / Current / Internal Encoder Vel
+        // setPeriodicFramePeriodSec(PeriodicFrame.kStatus2, mQueuedPeriodicFrameTimes[2]); // Internal Encoder Pos
+        // setPeriodicFramePeriodSec(PeriodicFrame.kStatus3, mQueuedPeriodicFrameTimes[3]); // Analog Sensor
+        // setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, mQueuedPeriodicFrameTimes[4]); // Alternate Encoder
+        // setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, mQueuedPeriodicFrameTimes[5]); // Duty Cycle Absolute Encoder Pos
+        // setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, mQueuedPeriodicFrameTimes[6]); // Duty Cycle Absolute Encoder Vel / Sen Freq
+        // setPeriodicFramePeriodSec(PeriodicFrame.kStatus7, mQueuedPeriodicFrameTimes[7]); // No Documentation
     }
 
     public void enableForwardLimit(Supplier<Boolean> boolSupplier) {
