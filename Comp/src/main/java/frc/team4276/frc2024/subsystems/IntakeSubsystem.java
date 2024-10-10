@@ -42,7 +42,7 @@ public class IntakeSubsystem extends Subsystem {
 
     private IntakeSubsystem() {
         mMotor = CANSparkMaxFactory.createDefault(Ports.INTAKE);
-        mMotor.setSmartCurrentLimit(50);
+        mMotor.setSmartCurrentLimit(40);
         mMotor.setWantBrakeMode(true);
         
         mMotor.burnFlash();

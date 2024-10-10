@@ -235,7 +235,7 @@ public final class Constants {
             kFeedForwardConstants.kGearRatio = 185.712;
             kFeedForwardConstants.kStallTorque = 3.28;
             kFeedForwardConstants.kMotorAmnt = 2;
-            kFeedForwardConstants.kEfficiency = 0.3;
+            kFeedForwardConstants.kEfficiency = 0.15;
 
             kFeedForwardConstants.kBottomLength = Units.inchesToMeters(8.001578);
             kFeedForwardConstants.kMotorLegLength = Units.inchesToMeters(11.000000);
