@@ -408,4 +408,9 @@ public class ControlBoard {
         return fourbarSetting.get();
     }
 
+    // Extra
+    public boolean enableFourbarFuse() {
+        return false;
+    }
+
 }

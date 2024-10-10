@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import frc.team4276.frc2024.Constants;
+import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.lib.Threading.ThreadWait;
 import frc.team4276.lib.characterizations.IFeedForward;
 import frc.team4276.lib.motion.TrapezoidProfile;
@@ -136,9 +137,15 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
             
         SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
 
-        // getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse, ff, ArbFFUnits.kVoltage);
+        if(ControlBoard.getInstance().enableFourbarFuse()){
+            getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse, ff, ArbFFUnits.kVoltage);
+            
+        } else {
+            setVoltage(0.0);
 
-        setVoltage(0.0);
+        }
+
+
     }
 
     @Override

@@ -29,6 +29,7 @@ public class LoggableRobotFile implements Runnable {
     private String outString;
     private DebugLevel outDebug;
     public boolean isNewData;
+    @SuppressWarnings("unused")
     private boolean stopThread = false;
 
     public enum DebugLevel {
@@ -57,6 +58,7 @@ public class LoggableRobotFile implements Runnable {
         logFile = new File(logPath);
     }
 
+    @SuppressWarnings("unused")
     public void init() {
         //no dead code just because of a condition on a constant 
         assert DebugConstants.maxDirSize > DebugConstants.reductionSize : "maxDirSize must be greater than reduction size";

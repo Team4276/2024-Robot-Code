@@ -7,6 +7,7 @@ import frc.team4276.frc2024.Constants.DebugConstants;
 
 public class PrintLogger {
     //prints to output set in constants 
+    @SuppressWarnings("unused")
     public static void print(String str){
         //no dead code its just because of the condition on a constant
         if(DebugConstants.printOutput == "DriverStation"){
