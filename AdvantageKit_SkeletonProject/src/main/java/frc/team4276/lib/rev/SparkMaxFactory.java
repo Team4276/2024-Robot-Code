@@ -1,18 +1,15 @@
 package frc.team4276.lib.rev;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
-
 import frc.team4276.lib.rev.RevUtil.SparkAbsoluteEncoderConfig;
 
-public class CANSparkMaxFactory {
-    /**
-     * Set the periodic frame period when not using the internal encoder
-     */
-    public static VIKCANSparkMax createDefault(int id){
-        VIKCANSparkMax sparkMax = new VIKCANSparkMax(id);
+public class SparkMaxFactory {
+    /** Set the periodic frame period when not using the internal encoder */
+    public static VIKSparkMax createDefault(int id) {
+        VIKSparkMax sparkMax = new VIKSparkMax(id);
 
         sparkMax.restoreFactoryDefaults();
         sparkMax.clearFaults();
@@ -22,7 +19,7 @@ public class CANSparkMaxFactory {
         return sparkMax;
     }
 
-    public static VIKCANSparkMax createDefaultFollower(int id, VIKCANSparkMax master){
+    public static VIKSparkMax createDefaultFollower(int id, VIKSparkMax master) {
         return createDefaultFollower(id, master, false);
     }
 
@@ -32,8 +29,8 @@ public class CANSparkMaxFactory {
      * @param isInverted Relative to master
      * @return
      */
-    public static VIKCANSparkMax createDefaultFollower(int id, VIKCANSparkMax master, boolean isInverted){
-        VIKCANSparkMax sparkMax = createDefault(id);
+    public static VIKSparkMax createDefaultFollower(int id, VIKSparkMax master, boolean isInverted) {
+        VIKSparkMax sparkMax = createDefault(id);
 
         sparkMax.follow(master, isInverted);
 
@@ -64,30 +61,30 @@ public class CANSparkMaxFactory {
         controller.setDFilter(config.kDFilter, config.kSlotId);
         controller.setIZone(config.kIZone, config.kSlotId);
         controller.setIMaxAccum(config.kIMaxAccum, config.kSlotId);
-        controller.setOutputRange(-1.0 * config.kPIDOutputRange, config.kPIDOutputRange, config.kSlotId);
+        controller.setOutputRange(
+                -1.0 * config.kPIDOutputRange, config.kPIDOutputRange, config.kSlotId);
     }
 
-    public static void configAnalogSensor(VIKCANSparkMax motor, double periodSec) {
+    public static void configAnalogSensor(VIKSparkMax motor, double periodSec) {
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus3, periodSec);
-
     }
 
-    public static void configAlternateEncoder(VIKCANSparkMax motor, double periodSec) {
+    public static void configAlternateEncoder(VIKSparkMax motor, double periodSec) {
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, periodSec);
-
     }
 
-    public static AbsoluteEncoder configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config) {
+    public static AbsoluteEncoder configAbsoluteEncoder(
+            VIKSparkMax motor, SparkAbsoluteEncoderConfig config) {
         AbsoluteEncoder e = motor.getAbsoluteEncoder();
 
         e.setInverted(config.kIsInverted);
         e.setPositionConversionFactor(config.kUnitsPerRotation);
         e.setVelocityConversionFactor(config.kUnitsPerRotation);
-        if(config.kOffset != Double.NaN){
+        if (config.kOffset != Double.NaN) {
             e.setZeroOffset(config.kOffset);
         }
         e.setAverageDepth(config.kAvgSamplingDepth);
-        
+
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus5, config.kPeriodicFrameTime);
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus6, config.kPeriodicFrameTime);
 

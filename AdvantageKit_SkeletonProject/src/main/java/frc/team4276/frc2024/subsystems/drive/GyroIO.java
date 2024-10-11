@@ -1,7 +1,7 @@
 package frc.team4276.frc2024.subsystems.drive;
 
-import org.littletonrobotics.junction.AutoLog;
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface GyroIO {
   @AutoLog
@@ -13,8 +13,4 @@ public interface GyroIO {
   }
 
   default void updateInputs(GyroIOInputs inputs) {}
-
 }
-
-
-
