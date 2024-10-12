@@ -8,8 +8,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 // Credit: 4481 (2024)
 
@@ -44,20 +45,21 @@ public class DriveToTrajectoryState{
      * @param targetState the desired position and speeds of the robot
      * @return the {@code ChassisSpeeds} containing the desired rotation speed to look to the target
      */
-    public ChassisSpeeds getTargetSpeeds(Pose2d currentPose, PathPlannerTrajectory.State targetState) {
-        double xFF = targetState.velocityMps * targetState.heading.getCos();
-        double yFF = targetState.velocityMps * targetState.heading.getSin();
-        double xFFAccel = targetState.accelerationMpsSq * targetState.heading.getCos() * accelFF;
-        double yFFAccel = targetState.accelerationMpsSq * targetState.heading.getSin() * accelFF;
-        double xFeedback = this.xController.calculate(currentPose.getX(), targetState.positionMeters.getX());
-        double yFeedback = this.yController.calculate(currentPose.getY(), targetState.positionMeters.getY());
-        double angVelConstraint = targetState.constraints.getMaxAngularVelocityRps();
-        double maxAngVelModule = Math.max(0.0, this.maxModuleSpeed - targetState.velocityMps) * this.mpsToRps;
-        double maxAngVel = Math.min(angVelConstraint, maxAngVelModule);
-        TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(maxAngVel, targetState.constraints.getMaxAngularAccelerationRpsSq());
-        double targetRotationVel = this.rotationController.calculate(currentPose.getRotation().getRadians(), new TrapezoidProfile.State(targetState.targetHolonomicRotation.getRadians(), 0.0), rotationConstraints);
+    public ChassisSpeeds getTargetSpeeds(Pose2d currentPose, PathPlannerTrajectoryState targetState) {
+        // double xFF = targetState.linearVelocity * targetState.pose.getRotation().getCos();
+        // double yFF = targetState.linearVelocity * targetState.pose.getRotation().getSin();
+        // double xFFAccel = targetState.accelerationMpsSq * targetState.pose.getRotation().getCos() * accelFF;
+        // double yFFAccel = targetState.accelerationMpsSq * targetState.pose.getRotation().getSin() * accelFF;
+        // double xFeedback = this.xController.calculate(currentPose.getX(), targetState.positionMeters.getX());
+        // double yFeedback = this.yController.calculate(currentPose.getY(), targetState.positionMeters.getY());
+        // double angVelConstraint = targetState.constraints.getMaxAngularVelocityRps();
+        // double maxAngVelModule = Math.max(0.0, this.maxModuleSpeed - targetState.velocityMps) * this.mpsToRps;
+        // double maxAngVel = Math.min(angVelConstraint, maxAngVelModule);
+        // TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(maxAngVel, targetState.constraints.getMaxAngularAccelerationRpsSq());
+        // double targetRotationVel = this.rotationController.calculate(currentPose.getRotation().getRadians(), new TrapezoidProfile.State(targetState.targetHolonomicRotation.getRadians(), 0.0), rotationConstraints);
 
-        return new ChassisSpeeds(xFFAccel + xFF + xFeedback, yFFAccel + yFF + yFeedback, targetRotationVel);
+        // return new ChassisSpeeds(xFFAccel + xFF + xFeedback, yFFAccel + yFF + yFeedback, targetRotationVel);
+        return new ChassisSpeeds();
     }
 
     public void reset(Pose2d currentPose, ChassisSpeeds currentSpeeds) {

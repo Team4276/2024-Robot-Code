@@ -208,11 +208,13 @@ public class ControlBoard {
             mSuperstructure.setManualFlywheelVoltage(11.0);
         } else if (wantManualSpinup()) {
             mSuperstructure.setManualFlywheelVoltage(Constants.FlywheelConstants.kPrep);
+        } else if (wantManualExhaust()) {
+            mSuperstructure.setManualFlywheelVoltage(-3.0);
         } else {
             mSuperstructure.setManualFlywheelVoltage(0.0);
         }
 
-        mSuperstructure.setManualFourbarVoltage(operator.getRightYDeadband() * 3.0);
+        mSuperstructure.setManualFourbarVoltage(operator.getRightYDeadband() * -3.0);
 
         if (wantManualIntake()) {
             mSuperstructure.setManualIntakeState(IntakeSubsystem.State.INTAKE);
@@ -293,7 +295,7 @@ public class ControlBoard {
     }
 
     public boolean wantExhaust() {
-        return driver.getLeftBumper();
+        return driver.getLeftBumper() || operator.getXButton();
     }
 
     public boolean wantShoot() {
@@ -314,11 +316,11 @@ public class ControlBoard {
 
     // Operator Controls
     public boolean wantStow() {
-        return false;
+        return operator.getAButton();
     }
 
     public boolean wantPrep() {
-        return false;
+        return operator.getLT();
     }
 
     public boolean wantDynamic() {
@@ -326,7 +328,7 @@ public class ControlBoard {
     }
 
     public boolean wantFerry() {
-        return false;
+        return operator.getBButton();
     }
 
     private boolean wasIdle = false;
@@ -356,7 +358,7 @@ public class ControlBoard {
     }
 
     public boolean wantManual() {
-        return false;
+        return true;
     }
 
     public boolean wantManualSpinup() {

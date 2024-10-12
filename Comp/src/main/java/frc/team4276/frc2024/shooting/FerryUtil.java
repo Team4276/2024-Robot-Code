@@ -15,8 +15,8 @@ public class FerryUtil {
         double flywheel_setpoint = RegressionMaps.kFerryFlywheelRPMs.get(robot_to_target.norm());
         double fourbar_setpoint = RegressionMaps.kFerryFourbarAngles.get(robot_to_target.norm());
         Rotation2d heading_setpoint = AllianceChooser.getInstance().isAllianceRed() ?
-            robot_to_target.direction() :
-            robot_to_target.direction().rotateBy(Rotation2d.fromDegrees(180));
+            robot_to_target.direction().rotateBy(Rotation2d.fromDegrees(180)) :
+            robot_to_target.direction();
 
         return new double[] { distance, flywheel_setpoint, fourbar_setpoint, heading_setpoint.getRadians()};
     }

@@ -5,6 +5,7 @@
 package frc.team4276.lib.swerve;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.AbsoluteEncoder;
@@ -112,6 +113,7 @@ public class MAXSwerveModule extends Subsystem {
             return;
 
         } else {
+            
             // Apply chassis angular offset to the desired state.
             ModuleState optimizedDesiredState = ModuleState.identity();
 
@@ -121,26 +123,7 @@ public class MAXSwerveModule extends Subsystem {
 
             var currAngle = Rotation2d.fromRadians(mTurnEncoder.getPosition()).toWPI();
 
-            ModuleState.optimize(desiredState, currAngle);
-
-            // double targetAngle = optimizedDesiredState.angle.getDegrees();
-
-            // if (Util.shouldReverse(
-            //         new frc.team254.lib.geometry.Rotation2d(targetAngle),
-            //         new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(mTurnEncoder.getPosition())))) {
-            //     optimizedDesiredState.speedMetersPerSecond *= -1;
-            //     optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
-            // }
-
-            // double desStateAngle = optimizedDesiredState.angle.getDegrees();
-            // double currStateAngle = Math.toDegrees(mTurnEncoder.getPosition());
-            // double scopedAngle = Util.placeInAppropriate0To360Scope(currStateAngle, desStateAngle); //TODO: culprit found
-            // double scopedAngleRadians = Math.toRadians(scopedAngle);
-
-            // optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(scopedAngleRadians);
-
-            // optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
-            //         Math.toDegrees(mTurnEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
+            optimizedDesiredState = ModuleState.optimize(optimizedDesiredState, currAngle);
 
             mPeriodicIO.driveDemand = optimizedDesiredState.speedMetersPerSecond;
             mPeriodicIO.rotationDemand = optimizedDesiredState.angle.getRadians();

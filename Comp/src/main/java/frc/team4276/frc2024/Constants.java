@@ -14,7 +14,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
 
-import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.config.PIDConstants;
 
 import com.revrobotics.SparkLimitSwitch.Type;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -138,12 +138,12 @@ public final class Constants {
 
         public static final double kAutoMaxError = 0.75; // Meters
 
-        public static final double kSnapHeadingKp = 3.0;
+        public static final double kSnapHeadingKp = 3.15;
         public static final double kSnapHeadingKi = 0.0;
-        public static final double kSnapHeadingKd = 0.0;
+        public static final double kSnapHeadingKd = 0.3;
 
-        public static final double kSnapPositionTolerance = 0.1;
-        public static final double kSnapAngularVelocityTolerance = 0.1;
+        public static final double kSnapPositionTolerance = 2 * Math.PI / 180;
+        public static final double kSnapAngularVelocityTolerance = 0.5;
 
     }
 
@@ -235,7 +235,7 @@ public final class Constants {
             kFeedForwardConstants.kGearRatio = 185.712;
             kFeedForwardConstants.kStallTorque = 3.28;
             kFeedForwardConstants.kMotorAmnt = 2;
-            kFeedForwardConstants.kEfficiency = 0.1;
+            kFeedForwardConstants.kEfficiency = 0.3;
 
             kFeedForwardConstants.kBottomLength = Units.inchesToMeters(8.001578);
             kFeedForwardConstants.kMotorLegLength = Units.inchesToMeters(11.000000);
@@ -311,7 +311,7 @@ public final class Constants {
 
             kSubsystemConstants.kPidfConfigs[2] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[2].kSlotId = 2; // Fuse Motion
-            kSubsystemConstants.kPidfConfigs[2].kP = 0.05;
+            kSubsystemConstants.kPidfConfigs[2].kP = 0.025;
             kSubsystemConstants.kPidfConfigs[2].kI = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kD = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kFF = 0.0;

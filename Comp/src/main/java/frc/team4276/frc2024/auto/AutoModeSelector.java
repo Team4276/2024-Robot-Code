@@ -21,7 +21,8 @@ public class AutoModeSelector {
         SUB_SS_2Piece,
         Close5Piece,
         SHOOT,
-        BOX_BOX
+        BOX_BOX,
+        TEST_2
 
     }
 
@@ -49,6 +50,7 @@ public class AutoModeSelector {
         mModeChooser.addOption("Mid 3 Piece Stage", DesiredMode.MID_3PIECE_STAGE);
         mModeChooser.addOption("Taxi", DesiredMode.TAXI);
         mModeChooser.addOption("Box Box", DesiredMode.BOX_BOX);
+        mModeChooser.addOption("Test 2", DesiredMode.TEST_2);
         SmartDashboard.putData("Comp/Auto Mode", mModeChooser);
 
     }
@@ -69,25 +71,15 @@ public class AutoModeSelector {
         switch (mode) {
         case DO_NOTHING:
             return Optional.of(new DoNothingMode());
-        case EXAMPLE:
-            return Optional.of(new ActionExample());
-        case SPIN_TEST:
-            return Optional.of(new PPTest("Spin test"));
-        case STRESS_TEST:
-            return Optional.of(new PPTest("Stress Test"));
-        case MID_3PIECE_STAGE:
-            return Optional.of(new PPTest("Mid3PieceStage"));
-        case TAXI:
-            return Optional.of(new PPTest("Taxi"));
-        case BOX_BOX:
-            return Optional.of(new PPTest("BoxBox"));
+        // case TEST_2:
+        //     return Optional.of(new ChoreoTest("Test2"));
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;
         }
 
         System.err.println("No valid auto mode found for  " + mode);
-        return Optional.empty();
+        return Optional.of(new DoNothingMode());
     }
 
     public static SendableChooser<DesiredMode> getModeChooser() {

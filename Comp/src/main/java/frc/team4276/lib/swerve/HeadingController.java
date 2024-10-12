@@ -31,6 +31,7 @@ public class HeadingController {
 
         mPIDF.setInputRange(-Math.PI, Math.PI);
         mPIDF.setContinuous();
+        mPIDF.setDeadband(DriveConstants.kSnapPositionTolerance);
 
         mPIDF.setOutputRange(-DriveConstants.kMaxAngularVel, DriveConstants.kMaxAngularVel);
 

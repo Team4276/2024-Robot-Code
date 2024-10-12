@@ -3,7 +3,8 @@ package frc.team4276.lib.path;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 // Credit 4481 (2024)
 
@@ -40,11 +41,11 @@ public class AdaptiveTrajectoryTimeSampler {
      * @return {@code PathPlannerTrajectory.state} containing the information such as
      * the desired Pose2d and heading of the sampled point
      */
-    public PathPlannerTrajectory.State getTargetTrajectoryState(PathPlannerTrajectory trajectory, Pose2d currentPose, double timestamp) {
+    public PathPlannerTrajectoryState getTargetTrajectoryState(PathPlannerTrajectory trajectory, Pose2d currentPose, double timestamp) {
         //Sample the trajectory based on time, keeping in account the time offset that has been set previously
-        PathPlannerTrajectory.State sampledState = trajectory.sample(timestamp - startTime - timeOffset);
+        PathPlannerTrajectoryState sampledState = trajectory.sample(timestamp - startTime - timeOffset);
         //Get the coordinates of the sampled points as Translation2d
-        Translation2d sampledTranslation = sampledState.positionMeters;
+        Translation2d sampledTranslation = sampledState.pose.getTranslation();
         //Calculate the distance of the robot to this sampled point
         double distanceToPoint = currentPose.getTranslation().getDistance(sampledTranslation);
 
@@ -63,10 +64,10 @@ public class AdaptiveTrajectoryTimeSampler {
         prevTime = timestamp;
 
         //Sample the trajectory again, but now with the increased offset
-        PathPlannerTrajectory.State frozenState = trajectory.sample(timestamp - startTime - timeOffset);
-        frozenState.velocityMps = 0;
-        frozenState.accelerationMpsSq = 0;
-        frozenState.headingAngularVelocityRps = 0;
+        PathPlannerTrajectoryState frozenState = trajectory.sample(timestamp - startTime - timeOffset);
+        // frozenState.linearVelocity = 0;
+        // frozenState = 0;
+        // frozenState.headingAngularVelocityRps = 0;
         return frozenState;
 
     }

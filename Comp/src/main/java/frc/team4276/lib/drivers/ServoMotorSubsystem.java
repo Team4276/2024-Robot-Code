@@ -12,6 +12,7 @@ import frc.team4276.lib.rev.VIKCANSparkMax;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
+import frc.team254.lib.util.Util;
 
 public abstract class ServoMotorSubsystem extends Subsystem {
     public static class ServoMotorConfig {
@@ -164,7 +165,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
     public synchronized void setFuseMotionSetpoint(double position) {
         if (mControlState != ControlState.FUSE_MOTION) {
             mControlState = ControlState.FUSE_MOTION;
-        } else if (mPeriodicIO.demand == position) {
+        } else if (Util.epsilonEquals(mPeriodicIO.demand, position, 1.0)) {
             return;
         }
 
@@ -292,7 +293,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         if(Constants.disableExtraTelemetry) return;
 
         // SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Voltage", mPeriodicIO.meas_master_voltage);
-        // SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Position", mPeriodicIO.meas_position);
+        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Position", mPeriodicIO.meas_position);
         // SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Velocity", mPeriodicIO.meas_velocity);
         // SmartDashboard.putString("Debug/" + mConstants.kName + " Controlstate", mControlState.name());
         // SmartDashboard.putBoolean("Debug/" + mConstants.kName + " is Maintain", mIsMaintain);

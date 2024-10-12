@@ -1,7 +1,8 @@
 package frc.team4276.lib.swerve;
 
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
@@ -29,12 +30,16 @@ public class MotionPlanner {
         mDriveToTrajectoryState = new DriveToTrajectoryState(DriveConstants.kAutoTranslationPIDConstants,
                 DriveConstants.kAutoRotationPIDConstants, Constants.kLooperDt, DriveConstants.kMaxVel,
                 DriveConstants.kTrackWidth * Math.sqrt(2), DriveConstants.kAutoAccelFF);
+
+        mDriveToTrajectoryState = new DriveToTrajectoryState(DriveConstants.kAutoTranslationPIDConstants, 
+            DriveConstants.kAutoRotationPIDConstants, Constants.kLooperDt, 0, 0, DriveConstants.kAutoAccelFF);
         
         mAdaptiveTrajectoryTimeSampler = new AdaptiveTrajectoryTimeSampler(DriveConstants.kAutoMaxError);
     }
 
     public synchronized void setTrajectory(PathPlannerPath path, Pose2d currentPose, ChassisSpeeds currentSpeeds, double timestamp){
-        mTrajectory = new PathPlannerTrajectory(path, currentSpeeds.toWPI(), currentPose.getRotation().toWPI());
+        // mTrajectory = new PathPlannerTrajectory(path, currentSpeeds.toWPI(), currentPose.getRotation().toWPI());
+        mTrajectory = new PathPlannerTrajectory(path, null, null, null);
         mIsFinished = false;
         mDriveToTrajectoryState.reset(currentPose.toWPI(), currentSpeeds.toWPI());
         mAdaptiveTrajectoryTimeSampler.setStartTime(timestamp);
@@ -43,7 +48,7 @@ public class MotionPlanner {
     public synchronized ChassisSpeeds update(Pose2d currentPose, double timestamp) {
         if(mTrajectory == null) return ChassisSpeeds.identity();
 
-        PathPlannerTrajectory.State targetState = mAdaptiveTrajectoryTimeSampler.getTargetTrajectoryState(mTrajectory, currentPose.toWPI(), timestamp);
+        PathPlannerTrajectoryState targetState = mAdaptiveTrajectoryTimeSampler.getTargetTrajectoryState(mTrajectory, currentPose.toWPI(), timestamp);
 
         if (mAdaptiveTrajectoryTimeSampler.getCurrentSampledTime(timestamp) > mTrajectory.getTotalTimeSeconds()) {
             mIsFinished = true;

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.DriveFeedforward;
 
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.RobotState;
@@ -128,7 +129,7 @@ public class DriveSubsystem extends Subsystem {
         mPeriodicIO.des_chassis_speeds = speeds;
     }
 
-    public synchronized void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
+    public synchronized void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds, DriveFeedforward[] ff) {
         updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
     }
 
