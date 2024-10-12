@@ -86,8 +86,6 @@ public class MAXSwerveModule extends Subsystem {
             return;
         }
 
-        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Des Rotation", desiredState.angle.getDegrees());
-
         mPeriodicIO.driveDemand = desiredState.speedMetersPerSecond;
 
         final double targetClamped = desiredState.angle.plus(Rotation2d.fromRadians(mConstants.kOffset).toWPI()).getDegrees();
@@ -123,6 +121,7 @@ public class MAXSwerveModule extends Subsystem {
 
             double targetAngle = optimizedDesiredState.angle.getDegrees();
 
+            //TODO: find the culprit here
             if (Util.shouldReverse(
                     new frc.team254.lib.geometry.Rotation2d(targetAngle),
                     new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(mTurnEncoder.getPosition())))) {
@@ -192,7 +191,7 @@ public class MAXSwerveModule extends Subsystem {
     public void outputTelemetry() {
         if(Constants.disableExtraTelemetry) return;
         
-        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
-        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
+        // SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
+        // SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
     }
 }

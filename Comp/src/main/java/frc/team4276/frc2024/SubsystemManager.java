@@ -83,7 +83,7 @@ public class SubsystemManager implements ILooper {
             totalLoops++;
 
             if(totalLoops >= 50) {
-                SmartDashboard.putNumber("Comp/Avg Loop Time", totalLoopTime / totalLoops);
+                // SmartDashboard.putNumber("Comp/Avg Loop Time", totalLoopTime / totalLoops);
                 totalLoopTime = 0.0;
                 totalLoops = 0;
             }

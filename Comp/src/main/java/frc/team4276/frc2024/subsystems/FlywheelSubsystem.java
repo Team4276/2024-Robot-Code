@@ -180,9 +180,9 @@ public class FlywheelSubsystem extends Subsystem {
     public void outputTelemetry() {
         if(Constants.disableExtraTelemetry) return;
         
-        SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.top_RPM);
-        SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.bottom_RPM);
-        SmartDashboard.putNumber("Debug/Top Voltage", mPeriodicIO.top_voltage);
-        SmartDashboard.putNumber("Debug/Bottom Voltage", mPeriodicIO.bottom_voltage);
+        // SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.top_RPM);
+        // SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.bottom_RPM);
+        // SmartDashboard.putNumber("Debug/Top Voltage", mPeriodicIO.top_voltage);
+        // SmartDashboard.putNumber("Debug/Bottom Voltage", mPeriodicIO.bottom_voltage);
     }
 }

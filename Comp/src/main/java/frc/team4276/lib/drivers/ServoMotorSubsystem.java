@@ -291,11 +291,11 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
         if(Constants.disableExtraTelemetry) return;
 
-        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Voltage", mPeriodicIO.meas_master_voltage);
-        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Position", mPeriodicIO.meas_position);
-        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Velocity", mPeriodicIO.meas_velocity);
-        SmartDashboard.putString("Debug/" + mConstants.kName + " Controlstate", mControlState.name());
-        SmartDashboard.putBoolean("Debug/" + mConstants.kName + " is Maintain", mIsMaintain);
+        // SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Voltage", mPeriodicIO.meas_master_voltage);
+        // SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Position", mPeriodicIO.meas_position);
+        // SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Velocity", mPeriodicIO.meas_velocity);
+        // SmartDashboard.putString("Debug/" + mConstants.kName + " Controlstate", mControlState.name());
+        // SmartDashboard.putBoolean("Debug/" + mConstants.kName + " is Maintain", mIsMaintain);
 
     }
 

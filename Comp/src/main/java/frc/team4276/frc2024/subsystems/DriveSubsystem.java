@@ -104,7 +104,7 @@ public class DriveSubsystem extends Subsystem {
         if (mControlState != DriveControlState.OPEN_LOOP && mControlState != DriveControlState.HEADING_CONTROL) {
             mControlState = DriveControlState.OPEN_LOOP;
         }
-
+        
         if (mControlState == DriveControlState.HEADING_CONTROL) {
             if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
                 mControlState = DriveControlState.OPEN_LOOP;
@@ -458,8 +458,8 @@ public class DriveSubsystem extends Subsystem {
 
         if(Constants.disableExtraTelemetry) return;
         
-        SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
-        SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
+        // SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
+        // SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
 
     }
 }

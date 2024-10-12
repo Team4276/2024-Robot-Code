@@ -64,7 +64,7 @@ public class ControlBoard {
             mTuningFlywheelSetpoint += 1000 * sign;
         }
 
-        SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Setpoint", mTuningFlywheelSetpoint);
+        // SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Setpoint", mTuningFlywheelSetpoint);
       
         if (operator.getLT()) {
             mSuperstructure.setTuningFlywheelRPM(mTuningFlywheelSetpoint);
@@ -80,7 +80,7 @@ public class ControlBoard {
             mTuningFourbarSetpoint += 10 * sign;
         }
 
-        SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Setpoint", mTuningFourbarSetpoint);
+        // SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Setpoint", mTuningFourbarSetpoint);
 
         mSuperstructure.setTuningFourbarPostion(mTuningFourbarSetpoint);
 
@@ -124,25 +124,25 @@ public class ControlBoard {
 
         }
 
-        if (wantRaiseClimber()) {
-            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
+        // if (wantRaiseClimber()) {
+        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
 
-        } else if (wantSlowLowerClimber() && wantClimbMode()) {
-            mSuperstructure.setForceDisablePrep(true);
-            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
+        // } else if (wantSlowLowerClimber() && wantClimbMode()) {
+        //     mSuperstructure.setForceDisablePrep(true);
+        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
 
-        } else if (wantLowerClimber() && wantClimbMode()) {
-            mSuperstructure.setForceDisablePrep(true);
-            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
+        // } else if (wantLowerClimber() && wantClimbMode()) {
+        //     mSuperstructure.setForceDisablePrep(true);
+        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
 
-        } else if (!wantClimbMode()) {
-            mSuperstructure.setForceDisablePrep(false);
-            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
+        // } else if (!wantClimbMode()) {
+        //     mSuperstructure.setForceDisablePrep(false);
+        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
 
-        } else {
-            // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
+        // } else {
+        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
 
-        }
+        // }
     }
 
     public void updateNominal() {

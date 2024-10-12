@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
     private DriveSubsystem mDriveSubsystem;
-    private VisionDeviceManager mVisionDeviceManager;
+    // private VisionDeviceManager mVisionDeviceManager;
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         try {
             mDriveSubsystem = DriveSubsystem.getInstance();
-            mVisionDeviceManager = VisionDeviceManager.getInstance();
+            // mVisionDeviceManager = VisionDeviceManager.getInstance();
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
@@ -78,8 +78,8 @@ public class Robot extends TimedRobot {
                     mSuperstructure,
                     mIntakeSubsystem,
                     mFlywheelSubsystem,
-                    mFourbarSubsystem,
-                    mVisionDeviceManager
+                    mFourbarSubsystem
+                    // mVisionDeviceManager
                     // mClimberSubsystem
                     );
 
@@ -129,7 +129,7 @@ public class Robot extends TimedRobot {
         mAutoModeExecutor = new AutoModeExecutor();
     }
 
-    private boolean mHasFlippedClimberSetting = false;
+    // private boolean mHasFlippedClimberSetting = false;
 
     @Override
     public void disabledPeriodic() {
@@ -146,14 +146,14 @@ public class Robot extends TimedRobot {
                 mAutoModeExecutor.setAutoMode(autoMode.get());
             }
 
-            // Safety for Climber
-            if (mHasFlippedClimberSetting) {
-                // mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
+            // // Safety for Climber
+            // if (mHasFlippedClimberSetting) {
+            //     // mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
 
-            } else if (!mControlBoard.wantClimberCoastMode()) {
-                mHasFlippedClimberSetting = true;
+            // } else if (!mControlBoard.wantClimberCoastMode()) {
+            //     mHasFlippedClimberSetting = true;
 
-            }
+            // }
 
             mFourbarSubsystem.setWantBrakeMode(!mControlBoard.wantFourbarCoastMode());
 
@@ -220,9 +220,9 @@ public class Robot extends TimedRobot {
             throw t;
         }
 
-        SmartDashboard.putNumber("Debug/Test/Fourbar Des Position", 90.0);
-        SmartDashboard.putNumber("Debug/Test/Desired Fourbar Voltage", 0.0);
-        SmartDashboard.putNumber("Debug/Test/Flywheel Des RPM", 0.0);
+        // SmartDashboard.putNumber("Debug/Test/Fourbar Des Position", 90.0);
+        // SmartDashboard.putNumber("Debug/Test/Desired Fourbar Voltage", 0.0);
+        // SmartDashboard.putNumber("Debug/Test/Flywheel Des RPM", 0.0);
     }
 
     /** This function is called periodically during operator control. */
@@ -242,7 +242,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopExit() {
-        mHasFlippedClimberSetting = false;
+        // mHasFlippedClimberSetting = false;
     }
 
     @Override

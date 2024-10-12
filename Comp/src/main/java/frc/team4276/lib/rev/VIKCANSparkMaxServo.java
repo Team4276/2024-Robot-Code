@@ -100,7 +100,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
             updateFuse();
 
-            ThreadWait.threadWait(kLooperDt, timestamp_, now);
+            // ThreadWait.threadWait(kLooperDt, timestamp_, now);
             now = Timer.getFPGATimestamp();
             dt_ = now - timestamp_;
             timestamp_ = now;
@@ -135,7 +135,7 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
         }
             
-        SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
+        // SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
 
         if(ControlBoard.getInstance().enableFourbarFuse()){
             getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse, ff, ArbFFUnits.kVoltage);
