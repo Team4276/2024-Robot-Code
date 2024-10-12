@@ -119,18 +119,28 @@ public class MAXSwerveModule extends Subsystem {
                     Constants.DriveConstants.kMaxVel);
             optimizedDesiredState.angle = desiredState.angle.plus(edu.wpi.first.math.geometry.Rotation2d.fromRadians(mConstants.kOffset));
 
-            double targetAngle = optimizedDesiredState.angle.getDegrees();
+            var currAngle = Rotation2d.fromRadians(mTurnEncoder.getPosition()).toWPI();
 
-            //TODO: find the culprit here
-            if (Util.shouldReverse(
-                    new frc.team254.lib.geometry.Rotation2d(targetAngle),
-                    new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(mTurnEncoder.getPosition())))) {
-                optimizedDesiredState.speedMetersPerSecond *= -1;
-                optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
-            }
+            ModuleState.optimize(desiredState, currAngle);
 
-            optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
-                    Math.toDegrees(mTurnEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
+            // double targetAngle = optimizedDesiredState.angle.getDegrees();
+
+            // if (Util.shouldReverse(
+            //         new frc.team254.lib.geometry.Rotation2d(targetAngle),
+            //         new frc.team254.lib.geometry.Rotation2d(Math.toDegrees(mTurnEncoder.getPosition())))) {
+            //     optimizedDesiredState.speedMetersPerSecond *= -1;
+            //     optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(optimizedDesiredState.angle.getRadians() + Math.PI);
+            // }
+
+            // double desStateAngle = optimizedDesiredState.angle.getDegrees();
+            // double currStateAngle = Math.toDegrees(mTurnEncoder.getPosition());
+            // double scopedAngle = Util.placeInAppropriate0To360Scope(currStateAngle, desStateAngle); //TODO: culprit found
+            // double scopedAngleRadians = Math.toRadians(scopedAngle);
+
+            // optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(scopedAngleRadians);
+
+            // optimizedDesiredState.angle = new edu.wpi.first.math.geometry.Rotation2d(Math.toRadians(Util.placeInAppropriate0To360Scope(
+            //         Math.toDegrees(mTurnEncoder.getPosition()), optimizedDesiredState.angle.getDegrees())));
 
             mPeriodicIO.driveDemand = optimizedDesiredState.speedMetersPerSecond;
             mPeriodicIO.rotationDemand = optimizedDesiredState.angle.getRadians();
@@ -190,6 +200,8 @@ public class MAXSwerveModule extends Subsystem {
     @Override
     public void outputTelemetry() {
         if(Constants.disableExtraTelemetry) return;
+
+        // Shuffleboard.getTab("Debug/Swerve").get;
         
         // SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
         // SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
