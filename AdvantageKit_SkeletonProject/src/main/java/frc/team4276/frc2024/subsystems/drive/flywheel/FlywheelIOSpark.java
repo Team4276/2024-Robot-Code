@@ -64,4 +64,9 @@ public class FlywheelIOSpark implements FlywheelIO {
     mTopMotor.setVoltage(topFeedforward);
     mBottomMotor.setVoltage(bottomFeedforward);
   }
+  @Override
+  public void stop(){
+    mTopMotor.setVoltage(0);
+    mBottomMotor.setVoltage(0);
+  }
 }
