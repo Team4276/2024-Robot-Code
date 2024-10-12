@@ -5,7 +5,6 @@
 package frc.team4276.lib.swerve;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.AbsoluteEncoder;
@@ -75,39 +74,8 @@ public class MAXSwerveModule extends Subsystem {
 
         mPeriodicIO = new PeriodicIO();
     }
-
-    /**
-     * Sets the desired state for the module.
-     *
-     * @param desiredState Desired state with speed and angle.
-     */
-    public void setDesiredState(ModuleState desiredState, boolean isOpenLoop) {
-        if (Math.abs(desiredState.speedMetersPerSecond) < 0.001 && !isOpenLoop) {
-            stop();
-            return;
-        }
-
-        mPeriodicIO.driveDemand = desiredState.speedMetersPerSecond;
-
-        final double targetClamped = desiredState.angle.plus(Rotation2d.fromRadians(mConstants.kOffset).toWPI()).getDegrees();
-        final double angleUnclamped = mPeriodicIO.turnPosition;
-        final Rotation2d angleClamped = Rotation2d.fromDegrees(angleUnclamped);
-        final Rotation2d relativeAngle = Rotation2d.fromDegrees(targetClamped).rotateBy(angleClamped.inverse());
-        double relativeDegrees = relativeAngle.getDegrees();
-        if (relativeDegrees > 90.0) {
-            relativeDegrees -= 180.0;
-            mPeriodicIO.driveDemand *= -1.0;
-
-        } else if (relativeDegrees < -90.0) {
-            relativeDegrees += 180.0;
-            mPeriodicIO.driveDemand *= -1.0;
-        }
-
-        mPeriodicIO.rotationDemand = angleUnclamped + relativeDegrees;
-            
-    }
     
-    public void setDesiredStateOld(ModuleState desiredState, boolean isOpenLoop) {
+    public void setDesiredState(ModuleState desiredState, boolean isOpenLoop) {
         if (Math.abs(desiredState.speedMetersPerSecond) < 0.001 && !isOpenLoop) {
             stop();
             return;
@@ -115,15 +83,11 @@ public class MAXSwerveModule extends Subsystem {
         } else {
             
             // Apply chassis angular offset to the desired state.
-            ModuleState optimizedDesiredState = ModuleState.identity();
+            ModuleState optimizedDesiredState = ModuleState.fromSpeeds(
+                desiredState.angle.plus(edu.wpi.first.math.geometry.Rotation2d.fromRadians(mConstants.kOffset)), 
+                Util.limit(desiredState.speedMetersPerSecond, Constants.DriveConstants.kMaxVel));
 
-            optimizedDesiredState.speedMetersPerSecond = Util.limit(desiredState.speedMetersPerSecond,
-                    Constants.DriveConstants.kMaxVel);
-            optimizedDesiredState.angle = desiredState.angle.plus(edu.wpi.first.math.geometry.Rotation2d.fromRadians(mConstants.kOffset));
-
-            var currAngle = Rotation2d.fromRadians(mTurnEncoder.getPosition()).toWPI();
-
-            optimizedDesiredState = ModuleState.optimize(optimizedDesiredState, currAngle);
+            optimizedDesiredState = ModuleState.optimize(optimizedDesiredState, Rotation2d.fromRadians(mTurnEncoder.getPosition()).toWPI());
 
             mPeriodicIO.driveDemand = optimizedDesiredState.speedMetersPerSecond;
             mPeriodicIO.rotationDemand = optimizedDesiredState.angle.getRadians();
@@ -183,10 +147,8 @@ public class MAXSwerveModule extends Subsystem {
     @Override
     public void outputTelemetry() {
         if(Constants.disableExtraTelemetry) return;
-
-        // Shuffleboard.getTab("Debug/Swerve").get;
         
-        // SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
-        // SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
+        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
+        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
     }
 }

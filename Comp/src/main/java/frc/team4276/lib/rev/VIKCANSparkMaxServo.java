@@ -4,13 +4,11 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.controlboard.ControlBoard;
-import frc.team4276.lib.Threading.ThreadWait;
 import frc.team4276.lib.characterizations.IFeedForward;
 import frc.team4276.lib.motion.TrapezoidProfile;
 
@@ -83,41 +81,14 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         return true;
     }
 
-    private double maxTime = 0.0;
-    private int counter = 0;
-
-    double timestamp_ = 0.0;
-    double dt_ = 0.0;
-
     private Runnable updateFuse = new Runnable() {
         @Override
         public void run() {
             if (!isFuseMotion) {
                 return;
             }
-            
-            double now = Timer.getFPGATimestamp();
 
             updateFuse();
-
-            // ThreadWait.threadWait(kLooperDt, timestamp_, now);
-            now = Timer.getFPGATimestamp();
-            dt_ = now - timestamp_;
-            timestamp_ = now;
-
-            if (dt_ > maxTime) {
-                maxTime = dt_;
-                // System.out.println(maxTime);
-                counter = 0;
-
-            } else if(counter >= 100){
-                maxTime = dt_;
-
-            } else {
-                counter++;
-            }
-
-            // System.out.println(dt_);
         }
     };
 
@@ -134,8 +105,6 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
             ff = kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0);
 
         }
-            
-        // SmartDashboard.putNumber("Debug/Test/FF Voltage", ff);
 
         if(ControlBoard.getInstance().enableFourbarFuse()){
             getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse, ff, ArbFFUnits.kVoltage);

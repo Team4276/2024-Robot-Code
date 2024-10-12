@@ -437,10 +437,10 @@ public class DriveSubsystem extends Subsystem {
     public synchronized void writePeriodicOutputs() {
         for (int i = 0; i < mModules.length; i++) {
             if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
-                mModules[i].setDesiredStateOld(mPeriodicIO.des_module_states[i], true);
+                mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
             } else if (mControlState == DriveControlState.PATH_FOLLOWING
                     || mControlState == DriveControlState.FORCE_ORIENT) {
-                mModules[i].setDesiredStateOld(mPeriodicIO.des_module_states[i], false);
+                mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
             }
 
             mModules[i].writePeriodicOutputs();
@@ -459,8 +459,8 @@ public class DriveSubsystem extends Subsystem {
 
         if(Constants.disableExtraTelemetry) return;
         
-        // SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
-        // SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
+        SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
+        SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
 
     }
 }

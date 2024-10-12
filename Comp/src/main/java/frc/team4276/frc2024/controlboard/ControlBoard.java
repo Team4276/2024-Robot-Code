@@ -6,7 +6,6 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.Constants.OIConstants;
-// import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
@@ -20,12 +19,10 @@ public class ControlBoard {
     public final BetterXboxController driver;
     public final BetterXboxController operator;
 
-    private final DigitalInput climberSetting;
     private final DigitalInput fourbarSetting;
 
     private DriveSubsystem mDriveSubsystem;
     private Superstructure mSuperstructure;
-    // private ClimberSubsystem mClimberSubsystem;
 
     private static ControlBoard mInstance;
 
@@ -40,12 +37,10 @@ public class ControlBoard {
         driver = new BetterXboxController(OIConstants.kDriverControllerPort);
         operator = new BetterXboxController(OIConstants.kOpControllerPort);
 
-        climberSetting = new DigitalInput(Ports.CLIMBER_BRAKE_SWITCH);
         fourbarSetting = new DigitalInput(Ports.FOURBAR_BRAKE_SWITCH);
 
         mDriveSubsystem = DriveSubsystem.getInstance();
         mSuperstructure = Superstructure.getInstance();
-        // mClimberSubsystem = ClimberSubsystem.getInstance();
     }
 
     private double mTuningFlywheelSetpoint = 4500;
@@ -64,7 +59,7 @@ public class ControlBoard {
             mTuningFlywheelSetpoint += 1000 * sign;
         }
 
-        // SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Setpoint", mTuningFlywheelSetpoint);
+        SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Setpoint", mTuningFlywheelSetpoint);
       
         if (operator.getLT()) {
             mSuperstructure.setTuningFlywheelRPM(mTuningFlywheelSetpoint);
@@ -80,7 +75,7 @@ public class ControlBoard {
             mTuningFourbarSetpoint += 10 * sign;
         }
 
-        // SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Setpoint", mTuningFourbarSetpoint);
+        SmartDashboard.putNumber("Debug/Test/Tuning Fourbar Setpoint", mTuningFourbarSetpoint);
 
         mSuperstructure.setTuningFourbarPostion(mTuningFourbarSetpoint);
 
@@ -123,26 +118,6 @@ public class ControlBoard {
             updateNominal();
 
         }
-
-        // if (wantRaiseClimber()) {
-        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.RAISE);
-
-        // } else if (wantSlowLowerClimber() && wantClimbMode()) {
-        //     mSuperstructure.setForceDisablePrep(true);
-        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.SLOW_LOWER);
-
-        // } else if (wantLowerClimber() && wantClimbMode()) {
-        //     mSuperstructure.setForceDisablePrep(true);
-        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.LOWER);
-
-        // } else if (!wantClimbMode()) {
-        //     mSuperstructure.setForceDisablePrep(false);
-        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
-
-        // } else {
-        //     // mClimberSubsystem.setDesiredState(ClimberSubsystem.State.IDLE);
-
-        // }
     }
 
     public void updateNominal() {
@@ -306,10 +281,6 @@ public class ControlBoard {
         return driver.getRT();
     }
 
-    public boolean wantLowerClimber() {
-        return driver.getRightBumper();
-    }
-
     public boolean wantPoop() {
         return false;
     }
@@ -358,7 +329,7 @@ public class ControlBoard {
     }
 
     public boolean wantManual() {
-        return true;
+        return false;
     }
 
     public boolean wantManualSpinup() {
@@ -389,22 +360,7 @@ public class ControlBoard {
         return false;
     }
 
-    public boolean wantClimbMode() {
-        return false;
-    }
-
-    public boolean wantRaiseClimber() {
-        return false;
-    }
-
-    public boolean wantSlowLowerClimber() {
-        return false;
-    }
-
     // Robot Button Board
-    public boolean wantClimberCoastMode() {
-        return climberSetting.get();
-    }
 
     public boolean wantFourbarCoastMode() {
         return fourbarSetting.get();

@@ -1,7 +1,5 @@
 package frc.team4276.lib.characterizations;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import frc.team4276.lib.util.Util;
 
 import frc.team254.lib.geometry.Translation2d;
@@ -62,8 +60,6 @@ public class FourBarFeedForward implements IFeedForward {
     private Translation2d motor_to_leg_com_;
     private Translation2d support_to_leg_com_;
     private Translation2d motor_leg_to_top_com_;
-
-    // private Translation2d total_motor_to_com_;
 
     public static class FourBarFeedForwardConstants {
         public double kS;
@@ -134,16 +130,8 @@ public class FourBarFeedForward implements IFeedForward {
         double gravity_voltage = calcGravityVoltage(posRad);
         double velocity_voltage = kV * velRad;
 
-        // SmartDashboard.putNumber("Debug/Fourbar Gravity Voltage", gravity_voltage);
-        // SmartDashboard.putNumber("Debug/Fourbar Velocity Voltage", velocity_voltage);
         return gravity_voltage + (kS * Math.signum(velRad)) + velocity_voltage;
     }
-
-    // private double calcAccelerationVoltage(){
-        
-    //     // total COM distance * total mass * efficiency * nominal voltage
-    //     return (0) * (kMotorLegMass + kTopMass + kSupportLegMass) * kEfficiency * 12 / (kStallTorque * kMotorAmnt * kGearRatio);
-    // }
 
     private double calcGravityVoltage(double position_setpoint) {
         // desired torque * nominal voltage / max torque

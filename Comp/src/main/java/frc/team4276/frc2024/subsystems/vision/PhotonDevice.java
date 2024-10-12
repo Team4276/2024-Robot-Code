@@ -66,8 +66,9 @@ public class PhotonDevice extends Subsystem {
     public void readPeriodicInputs() {
         PhotonPipelineResult result = mCamera.getLatestResult();
 
-        if(!result.hasTargets()) 
-            return;
+        if(result == null) return;
+
+        if(!result.hasTargets()) return;
 
         Optional<EstimatedRobotPose> estimatedRobotPose = mPoseEstimator.update(result);
 

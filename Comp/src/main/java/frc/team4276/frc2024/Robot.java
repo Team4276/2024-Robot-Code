@@ -8,13 +8,11 @@ import java.util.Optional;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.field.AllianceChooser;
-// import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
@@ -47,7 +45,6 @@ public class Robot extends TimedRobot {
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
-    // private ClimberSubsystem mClimberSubsystem;
 
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
@@ -68,7 +65,6 @@ public class Robot extends TimedRobot {
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
-            // mClimberSubsystem = ClimberSubsystem.getInstance();
 
             CameraServer.startAutomaticCapture();
 
@@ -80,8 +76,7 @@ public class Robot extends TimedRobot {
                     mFlywheelSubsystem,
                     mFourbarSubsystem,
                     mVisionDeviceManager
-                    // mClimberSubsystem
-                    );
+                );
 
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
@@ -129,8 +124,6 @@ public class Robot extends TimedRobot {
         mAutoModeExecutor = new AutoModeExecutor();
     }
 
-    // private boolean mHasFlippedClimberSetting = false;
-
     @Override
     public void disabledPeriodic() {
         try {
@@ -145,15 +138,6 @@ public class Robot extends TimedRobot {
             if (autoMode.isPresent()) {
                 mAutoModeExecutor.setAutoMode(autoMode.get());
             }
-
-            // // Safety for Climber
-            // if (mHasFlippedClimberSetting) {
-            //     // mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
-
-            // } else if (!mControlBoard.wantClimberCoastMode()) {
-            //     mHasFlippedClimberSetting = true;
-
-            // }
 
             mFourbarSubsystem.setWantBrakeMode(!mControlBoard.wantFourbarCoastMode());
 
@@ -219,10 +203,6 @@ public class Robot extends TimedRobot {
         } catch (Throwable t) {
             throw t;
         }
-
-        // SmartDashboard.putNumber("Debug/Test/Fourbar Des Position", 90.0);
-        // SmartDashboard.putNumber("Debug/Test/Desired Fourbar Voltage", 0.0);
-        // SmartDashboard.putNumber("Debug/Test/Flywheel Des RPM", 0.0);
     }
 
     /** This function is called periodically during operator control. */
@@ -242,7 +222,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopExit() {
-        // mHasFlippedClimberSetting = false;
     }
 
     @Override

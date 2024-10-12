@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.lib.drivers.Subsystem;
 
 import frc.team1678.lib.loops.ILooper;
@@ -57,36 +55,20 @@ public class SubsystemManager implements ILooper {
         mAllSubsystems = Arrays.asList(allSubsystems);
     }
 
-    private double totalLoopTime = 0.0;
-    private int totalLoops = 0;
-
-    private double prevTime = 0.0;
-
     private class EnabledLoop implements Loop {
         @Override
         public void onStart(double timestamp) {
             mLoops.forEach(l -> l.onStart(timestamp));
-            prevTime = timestamp;
         }
 
         @Override
         public void onLoop(double timestamp) {
-            prevTime = Timer.getFPGATimestamp();
             
             mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
             mLoops.forEach(l -> l.onLoop(timestamp));
             mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
 
             outputToSmartDashboard();
-            
-            totalLoopTime += Timer.getFPGATimestamp() - prevTime;
-            totalLoops++;
-
-            if(totalLoops >= 50) {
-                // SmartDashboard.putNumber("Comp/Avg Loop Time", totalLoopTime / totalLoops);
-                totalLoopTime = 0.0;
-                totalLoops = 0;
-            }
         }
 
         @Override

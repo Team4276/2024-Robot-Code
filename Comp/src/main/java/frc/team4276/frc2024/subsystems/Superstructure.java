@@ -268,7 +268,7 @@ public class Superstructure extends Subsystem {
 
                 if(!(!mIsPrep || mForceDisablePrep)){
                     request(new ParallelRequest(
-                        mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kSpinUpRPM),
+                        mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kSpinUpRPM), 
                         mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
                         mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
                     ));
@@ -551,14 +551,14 @@ public class Superstructure extends Subsystem {
 
         if(Constants.disableExtraTelemetry) return;
 
-        // SmartDashboard.putNumber("Debug/Regression Tuning/Distance", mRegressionTuningDistance);
-        // SmartDashboard.putNumber("Debug/Regression Tuning/Flywheel Setpoint", mRegressionTuningFlywheelSetpoint);
-        // SmartDashboard.putNumber("Debug/Regression Tuning/Fourbar Setpoint", mRegressionTuningFourbarSetpoint);
+        SmartDashboard.putNumber("Debug/Regression Tuning/Distance", mRegressionTuningDistance);
+        SmartDashboard.putNumber("Debug/Regression Tuning/Flywheel Setpoint", mRegressionTuningFlywheelSetpoint);
+        SmartDashboard.putNumber("Debug/Regression Tuning/Fourbar Setpoint", mRegressionTuningFourbarSetpoint);
 
-        // if(mPrevShotDistance != Double.NaN){
-        //     SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Distance", mPrevShotDistance);
-        //     SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Flywheel Setpoint", mPrevShotFlywheelSetpoint);
-        //     SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Fourbar Setpoint", mPrevShotFourbarSetpoint);
-        // }
+        if(mPrevShotDistance != Double.NaN){
+            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Distance", mPrevShotDistance);
+            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Flywheel Setpoint", mPrevShotFlywheelSetpoint);
+            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Fourbar Setpoint", mPrevShotFourbarSetpoint);
+        }
     }
 }
