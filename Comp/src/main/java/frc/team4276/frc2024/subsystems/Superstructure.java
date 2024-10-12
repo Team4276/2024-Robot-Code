@@ -220,7 +220,7 @@ public class Superstructure extends Subsystem {
                             case NOMINAL:
                                 updateNominal();
                                 updateRequests();
-                                // updateShootingSetpoints();
+                                updateShootingSetpoints();
                                 
                                 break;
 
@@ -252,6 +252,7 @@ public class Superstructure extends Subsystem {
 
     private GoalState mPrevGoalState = GoalState.IDLE;
     private boolean mPrevPrepVal = false;
+    private boolean mPrevFerryVal = false;
 
     private void updateNominal() {
         switch (mGoalState) {
@@ -305,60 +306,29 @@ public class Superstructure extends Subsystem {
                 
                 break;
             case READY:
+                if(mPrevGoalState == mGoalState && mPrevFerryVal == mIsFerry) break;
+                mPrevFerryVal = mIsFerry;
+
                 double fourbar_position;
                 double flywheel_rpm;
-            
-                if (mIsDymanic){
-                    Pose2d robot_pose = RobotState.getInstance().getLatestFieldToVehicle();
 
-                    double distance;
-                    double flywheel_setpoint;
-                    double fourbar_setpoint;
-                    Rotation2d drive_heading_setpoint;
-
-                    if (mIsFerry) {
-                        double[] params = FerryUtil.getFerryParams(robot_pose);
-                        distance = params[0];
-                        flywheel_setpoint = params[1];
-                        fourbar_setpoint = params[2] + mFerryOffset;
-                        drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
-
-                    } else {
-                        double[] params = ShootingUtil.getSpeakerShotParams(robot_pose);
-                        distance = params[0];
-                        flywheel_setpoint = params[1];
-                        fourbar_setpoint = params[2] + mScoringOffset;
-                        drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
-
-                    }
-
-                    mRegressionTuningDistance = distance;
-                    mRegressionTuningFlywheelSetpoint = flywheel_setpoint;
-                    mRegressionTuningFourbarSetpoint = fourbar_setpoint;
-
-                    fourbar_position = fourbar_setpoint;
-                    flywheel_rpm = flywheel_setpoint;
-                    mDriveSubsystem.feedTrackingSetpoint(drive_heading_setpoint);
+                if (mIsFerry) {
+                    fourbar_position = SuperstructureConstants.kFourbarFerryState;
+                    flywheel_rpm = SuperstructureConstants.kFerryRPM;
 
                 } else {
-                    if (mIsFerry) {
-                        fourbar_position = SuperstructureConstants.kFourbarFerryState;
-                        flywheel_rpm = SuperstructureConstants.kFerryRPM;
-                    } else {
-                        fourbar_position = SuperstructureConstants.kFourbarSubCloseState;
-                        flywheel_rpm = SuperstructureConstants.kNormalShotRPM;
+                    fourbar_position = SuperstructureConstants.kFourbarSubCloseState;
+                    flywheel_rpm = SuperstructureConstants.kNormalShotRPM;
 
-                    }
                 }
 
                 request(new ParallelRequest(
+                    new LambdaRequest(() -> mDynamicSetpointsSet = false),
                     mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
                     mFourbarSubsystem.positionRequest(fourbar_position),
                     mFlywheelSubsystem.rpmRequest(flywheel_rpm),
-                    new SequentialRequest(
-                        readyWait(),
-                        rumbleRequest()
-                    )
+                    readyWait(),
+                    rumbleRequest()
                 ));
                 
                 break;
