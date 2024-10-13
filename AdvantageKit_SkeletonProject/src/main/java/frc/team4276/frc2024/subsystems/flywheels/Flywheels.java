@@ -26,7 +26,9 @@ public class Flywheels extends SubsystemBase {
     // TODO: impl when we have a supplier for the needed rpms just put a command to
     // get top and
     // command to get bottom instead of the zeros
-    SHOOT(0.0, 0.0);
+    SHOOT(0.0, 0.0),
+
+    CHARACTERIZING(0.0, 0.0);
     public double RPM_TOP, RPM_BOTTOM;
 
     Goal(double RPM_TOP, double RPM_BOTTOM) {
@@ -57,8 +59,20 @@ public class Flywheels extends SubsystemBase {
   }
 
   private void setGoal(Goal goal) {
+    if (goal == Goal.CHARACTERIZING || goal == Goal.IDLE) {
+      closedLoop = false;
+      this.goal = goal;
+      return;
+    }
+    // this will run one more time then needed atm need to fix later
     closedLoop = true;
     this.goal = goal;
+  }
+
+  public void runCharacterization(double input) {
+    setGoal(Goal.CHARACTERIZING);
+    io.runCharacterizationTop(input);
+    io.runCharacterizationBottom(input);
   }
 
   public boolean isTopSpunUp() {
