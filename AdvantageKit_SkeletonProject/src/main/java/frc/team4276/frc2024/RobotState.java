@@ -9,9 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N2;
-import frc.team254.lib.util.MovingAverage;
 import frc.team4276.frc2024.field.Field;
 import frc.team4276.frc2024.shooting.RegressionMaps;
+import frc.team4276.lib.MovingAverage;
 
 public class RobotState {
   private Translation2d mEstimatedPose = new Translation2d();
@@ -47,10 +47,27 @@ public class RobotState {
     }
   }
 
+  public record ArmAngles(double angle) {
+
+    public ArmAngles(double angle) {
+      this.angle = angle;
+    }
+
+    public static ArmAngles fromSpeaker(double robot_to_target) {
+      double angle = RegressionMaps.kSpeakerFourbarAngles.get(robot_to_target);
+      return new ArmAngles(angle);
+    }
+
+    public static ArmAngles fromFerry(double robot_to_target) {
+      double angle = RegressionMaps.kFerryFourbarAngles.get(robot_to_target);
+      return new ArmAngles(angle);
+    }
+  }
+
   public record AimingParameters(
       Rotation2d driveHeading,
-      Rotation2d armAngle,
-      double effectiveDistance,
+      double fourbarSetpoint,
+      double distance,
       FlywheelSpeeds flywheelSpeeds) {
 
     public FlywheelSpeeds getFlywheelSpeeds() {
@@ -165,14 +182,22 @@ public class RobotState {
       e.printStackTrace();
     }
   }
-
+  // TODO: impl drive Heading
   public AimingParameters getFerryAimingParameters() {
-    return new AimingParameters(null, null, 0, FlywheelSpeeds.fromFerry(getPOIs().kBank.getNorm()));
+    // does getting distiance like this work?
+    double distance = getPOIs().kSpeakerCenter.getNorm();
+
+    double armAngle = ArmAngles.fromFerry(distance).angle();
+    FlywheelSpeeds flywheel_speeds = FlywheelSpeeds.fromFerry(distance);
+    return new AimingParameters(null, armAngle, distance, flywheel_speeds);
   }
 
   public AimingParameters getSpeakerAimingParameters() {
-    return new AimingParameters(
-        null, null, 0, FlywheelSpeeds.fromSpeaker(getPOIs().kSpeakerCenter.getNorm()));
+    double distance = getPOIs().kSpeakerCenter.getNorm();
+
+    double armAngle = ArmAngles.fromFerry(distance).angle();
+    FlywheelSpeeds flywheel_speeds = FlywheelSpeeds.fromFerry(distance);
+    return new AimingParameters(null, armAngle, distance, flywheel_speeds);
   }
 
   // Use on enabled init
