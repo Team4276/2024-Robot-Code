@@ -75,7 +75,10 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during all modes. */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    // idk if we need this will set this to take up all cpu time on the roborio saw 6328 use it
+    // Threads.setCurrentThreadPriority(true, 10);
+  }
 
   /** This function is called once when autonomous is enabled. */
   @Override

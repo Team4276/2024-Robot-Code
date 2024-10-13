@@ -4,7 +4,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// TODO: need to add manual volatge control, proper logging, characterization
+// TODO: need to add proper logging
 import frc.team4276.frc2024.RobotState;
 import java.util.function.DoubleSupplier;
 
@@ -22,7 +22,7 @@ public class Flywheels extends SubsystemBase {
   private boolean closedLoop;
 
   public enum Goal {
-    // TODO: maybe move to constants
+    // maybe move to constants
 
     IDLE(() -> 0.0, () -> 0.0),
     FERRY(
@@ -62,7 +62,6 @@ public class Flywheels extends SubsystemBase {
     if (DriverStation.isDisabled()) {
       setGoal(Goal.IDLE);
     }
-    // need to fix open loop logic just temp atm
     if (closedLoop) {
       io.runVelocity(
           mTopFF.calculate(this.goal.getRpmTop()), mBottomFF.calculate(this.goal.getRpmBottom()));
@@ -77,7 +76,7 @@ public class Flywheels extends SubsystemBase {
       this.goal = goal;
       return;
     }
-    // this will run one more time then needed atm need to fix later
+    // TODO: this will run one more time then needed atm need to fix later
     closedLoop = true;
     this.goal = goal;
   }
