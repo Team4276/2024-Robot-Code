@@ -47,6 +47,8 @@ public final class Constants {
 
   public static final double kLooperDt = 0.02;
 
+  public static final boolean isTuning = false;
+
   public static final class RobotStateConstants {
     public static final boolean kVisionResetsHeading = false;
 
