@@ -1,6 +1,5 @@
 package frc.team4276.frc2024.subsystems.drive;
 
-import com.pathplanner.lib.util.PIDConstants;
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -118,10 +117,10 @@ public class DriveConstants {
   public static final double kAutoRotationKp = 4.0;
   public static final double kAutoRotationKd = 0.0;
 
-  public static final PIDConstants kAutoTranslationPIDConstants =
-      new PIDConstants(kAutoTranslationKp, 0, kAutoTranslationKd);
-  public static final PIDConstants kAutoRotationPIDConstants =
-      new PIDConstants(kAutoRotationKp, 0, kAutoRotationKd);
+  //   public static final PIDConstants kAutoTranslationPIDConstants =
+  //       new PIDConstants(kAutoTranslationKp, 0, kAutoTranslationKd);
+  //   public static final PIDConstants kAutoRotationPIDConstants =
+  //       new PIDConstants(kAutoRotationKp, 0, kAutoRotationKd);
 
   public static final double kAutoAccelFF = 0.0;
 

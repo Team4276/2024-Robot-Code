@@ -13,6 +13,11 @@
 
 package frc.team4276.frc2024;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -33,5 +38,16 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public static final double kLooperDt = 0.02;
+
+  public static final class RobotStateConstants {
+    public static final boolean kVisionResetsHeading = false;
+
+    public static final Matrix<N2, N1> kStateStdDevs =
+        VecBuilder.fill(Math.pow(0.05, 1), Math.pow(0.05, 1));
+    public static final Matrix<N2, N1> kLocalMeasurementStdDevs =
+        VecBuilder.fill(Math.pow(0.03, 1), Math.pow(0.03, 1));
   }
 }

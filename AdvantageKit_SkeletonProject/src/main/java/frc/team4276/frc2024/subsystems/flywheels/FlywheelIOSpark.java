@@ -1,4 +1,4 @@
-package frc.team4276.frc2024.subsystems.drive.flywheel;
+package frc.team4276.frc2024.subsystems.flywheels;
 
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
@@ -64,8 +64,9 @@ public class FlywheelIOSpark implements FlywheelIO {
     mTopMotor.setVoltage(topFeedforward);
     mBottomMotor.setVoltage(bottomFeedforward);
   }
+
   @Override
-  public void stop(){
+  public void stop() {
     mTopMotor.setVoltage(0);
     mBottomMotor.setVoltage(0);
   }

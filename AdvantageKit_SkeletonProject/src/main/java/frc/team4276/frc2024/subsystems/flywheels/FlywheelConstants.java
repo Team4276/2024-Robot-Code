@@ -1,4 +1,4 @@
-package frc.team4276.frc2024.subsystems.drive.flywheel;
+package frc.team4276.frc2024.subsystems.flywheels;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
