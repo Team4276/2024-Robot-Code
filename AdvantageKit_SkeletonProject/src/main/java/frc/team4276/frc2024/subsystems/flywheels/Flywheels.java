@@ -4,7 +4,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// TODO: need to add manual volatge control, proper logging, characterization, and atGoal()
+// TODO: need to add manual volatge control, proper logging, characterization
 
 public class Flywheels extends SubsystemBase {
   private final FlywheelIO io;

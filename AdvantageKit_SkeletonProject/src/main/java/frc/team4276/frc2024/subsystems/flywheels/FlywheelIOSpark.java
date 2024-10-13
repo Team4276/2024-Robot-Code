@@ -60,6 +60,16 @@ public class FlywheelIOSpark implements FlywheelIO {
   }
 
   @Override
+  public void runCharacterizationTop(double volatge) {
+    mTopMotor.setVoltage(volatge);
+  }
+
+  @Override
+  public void runCharacterizationBottom(double volatge) {
+    mBottomMotor.setVoltage(volatge);
+  }
+
+  @Override
   public void runVelocity(double topFeedforward, double bottomFeedforward) {
     mTopMotor.setVoltage(topFeedforward);
     mBottomMotor.setVoltage(bottomFeedforward);

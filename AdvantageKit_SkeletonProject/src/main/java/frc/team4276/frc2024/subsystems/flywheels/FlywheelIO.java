@@ -37,10 +37,8 @@ public interface FlywheelIO {
   default void runVelocity(double topFeedforward, double bottomFeedforward) {}
 
   /** Run left flywheels at voltage */
-  // TODO: impl
-  default void runCharacterizationLeft(double input) {}
+  default void runCharacterizationTop(double input) {}
 
   /** Run right flywheels at voltage */
-  // TODO: impl
-  default void runCharacterizationRight(double input) {}
+  default void runCharacterizationBottom(double input) {}
 }
