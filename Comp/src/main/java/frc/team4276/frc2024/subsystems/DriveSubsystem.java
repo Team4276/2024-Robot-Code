@@ -10,17 +10,13 @@ import java.util.List;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.DriveFeedforward;
-
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
-import frc.team4276.lib.drivers.Pigeon;
+import frc.team4276.lib.drivers.ADISGyro;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
-import frc.team4276.lib.swerve.MotionPlanner;
 
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
@@ -30,7 +26,6 @@ import frc.team1678.lib.swerve.ChassisSpeeds;
 
 import frc.team254.lib.util.Util;
 import frc.team254.lib.geometry.Rotation2d;
-import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Twist2d;
 
@@ -39,7 +34,7 @@ public class DriveSubsystem extends Subsystem {
 
     private SwerveDriveOdometry mOdometry;
 
-    private Pigeon mPigeon;
+    private ADISGyro mGyro;
 
     private PeriodicIO mPeriodicIO;
 
@@ -61,8 +56,6 @@ public class DriveSubsystem extends Subsystem {
     }
     
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
-
-    private MotionPlanner mMotionPlanner;
 
     private HeadingController mHeadingController;
 
@@ -88,15 +81,13 @@ public class DriveSubsystem extends Subsystem {
                 new MAXSwerveModule(DriveConstants.kBRConstants)
         };
 
-        mPigeon = Pigeon.getInstance();
+        mGyro = ADISGyro.getInstance();
 
         mPeriodicIO = new PeriodicIO();
 
         mOdometry = new SwerveDriveOdometry(
                 DriveConstants.kDriveKinematics,
                 mPeriodicIO.meas_module_states);
-
-        mMotionPlanner = new MotionPlanner();
 
         mHeadingController = HeadingController.getInstance();
     }
@@ -129,16 +120,8 @@ public class DriveSubsystem extends Subsystem {
         mPeriodicIO.des_chassis_speeds = speeds;
     }
 
-    public synchronized void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds, DriveFeedforward[] ff) {
+    public synchronized void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
         updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
-    }
-
-    public synchronized void setPathFollowingPath(PathPlannerPath path) {
-        if (mControlState != DriveControlState.PATH_FOLLOWING) {
-            mControlState = DriveControlState.PATH_FOLLOWING;
-        }
-
-        mMotionPlanner.setTrajectory(path, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, mPeriodicIO.timestamp);
     }
 
     public synchronized void feedTrackingSetpoint(Rotation2d angle) {
@@ -194,11 +177,7 @@ public class DriveSubsystem extends Subsystem {
                         Rotation2d.fromDegrees(-45),
                         Rotation2d.fromDegrees(45)));
     }
-
-    public synchronized boolean isPathFinished() {
-        return mMotionPlanner.isFinished();
-    }
-
+    
     public synchronized Rotation2d getHeading() {
         return mPeriodicIO.heading;
     }
@@ -234,13 +213,17 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized void resetGyro(double angleDeg) {
-        Rotation2d prevOffset = mPigeon.getYawOffset();
-        mPigeon.setYaw(angleDeg);
-        mOdometry.offsetGyro(mPigeon.getYawOffset().rotateBy(prevOffset.inverse()).toWPI());
+        Rotation2d prevOffset = mGyro.getYawOffset();
+        mGyro.setYaw(angleDeg);
+        mOdometry.offsetGyro(mGyro.getYawOffset().rotateBy(prevOffset.inverse()).toWPI());
     }
 
     public synchronized void resetOdometry(Pose2d pose) {
         mOdometry.resetPosition(mPeriodicIO.meas_module_states, pose.toWPI());
+    }
+
+    public synchronized void resetOdometryWPI(edu.wpi.first.math.geometry.Pose2d pose){
+        resetOdometry(Pose2d.fromWPI(pose));
     }
 
     private class PeriodicIO {
@@ -256,9 +239,6 @@ public class DriveSubsystem extends Subsystem {
         };
         Rotation2d heading = Rotation2d.identity();
         Rotation2d pitch = Rotation2d.identity();
-        
-        Translation2d path_translation_error = Translation2d.identity();
-        Rotation2d path_heading_error = Rotation2d.identity();
 
         // Outputs
         ModuleState[] des_module_states = new ModuleState[] {
@@ -280,8 +260,8 @@ public class DriveSubsystem extends Subsystem {
 
         mPeriodicIO.meas_chassis_speeds = DriveConstants.kDriveKinematics
                 .toChassisSpeeds(mPeriodicIO.meas_module_states);
-        mPeriodicIO.heading = mPigeon.getYaw();
-        mPeriodicIO.pitch = mPigeon.getPitch();
+        mPeriodicIO.heading = mGyro.getYaw();
+        mPeriodicIO.pitch = mGyro.getPitch();
 
     }
 
@@ -305,7 +285,6 @@ public class DriveSubsystem extends Subsystem {
                             case HEADING_CONTROL:
                                 break;
                             case PATH_FOLLOWING:
-                                updatePathFollowing();
                                 break;
 
                             default:
@@ -316,7 +295,7 @@ public class DriveSubsystem extends Subsystem {
                         updateSetpoint();
 
                         mOdometry.update(
-                                mPigeon.getYaw().toWPI(),
+                                mGyro.getYaw().toWPI(),
                                 mPeriodicIO.meas_module_states);
                         RobotState.getInstance().addOdomObservations(
                                 mPeriodicIO.timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
@@ -331,13 +310,6 @@ public class DriveSubsystem extends Subsystem {
             }
         });
 
-    }
-
-    private void updatePathFollowing() {
-        mPeriodicIO.des_chassis_speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.timestamp);
-
-        mPeriodicIO.path_translation_error = mMotionPlanner.getTranslationError();
-        mPeriodicIO.path_heading_error = mMotionPlanner.getRotationError();
     }
 
     private void updateSetpoint() {
@@ -458,9 +430,6 @@ public class DriveSubsystem extends Subsystem {
         }
 
         if(Constants.disableExtraTelemetry) return;
-        
-        SmartDashboard.putNumber("Debug/Motion Planner/Translation Error", mPeriodicIO.path_translation_error.norm());
-        SmartDashboard.putNumber("Debug/Motion Planner/Heading Error", mPeriodicIO.path_heading_error.getDegrees());
 
     }
 }

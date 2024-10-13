@@ -61,7 +61,6 @@ public class AutoModeSelector {
             desiredMode = DesiredMode.DO_NOTHING;
         }
         if (mCachedDesiredMode != desiredMode || force_regen) {
-            //System.out.println("Auto selection changed, updating creator: desiredMode->" + desiredMode.name());
             mAutoMode = getAutoModeForParams(desiredMode);
         }
         mCachedDesiredMode = desiredMode;
@@ -71,8 +70,8 @@ public class AutoModeSelector {
         switch (mode) {
         case DO_NOTHING:
             return Optional.of(new DoNothingMode());
-        // case TEST_2:
-        //     return Optional.of(new ChoreoTest("Test2"));
+        case TEST_2:
+            return Optional.of(new ChoreoTest("Test2"));
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

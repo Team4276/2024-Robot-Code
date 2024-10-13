@@ -6,15 +6,13 @@ import frc.team4276.frc2024.Constants;
 
 import frc.team254.lib.geometry.Rotation2d;
 
-// Modified Version of 1678s 2023 Pigeon class
+public class ADISGyro {
 
-public class Pigeon {
+    private static ADISGyro mInstance;
 
-    private static Pigeon mInstance;
-
-    public static Pigeon getInstance() {
+    public static ADISGyro getInstance() {
         if (mInstance == null) {
-            mInstance = new Pigeon();
+            mInstance = new ADISGyro();
         }
         return mInstance;
     }
@@ -28,7 +26,7 @@ public class Pigeon {
     private Rotation2d rollAdjustmentAngle = Rotation2d.identity();
     private Rotation2d pitchAdjustmentAngle = Rotation2d.identity();
 
-    private Pigeon() {        
+    private ADISGyro() {        
         mGyro = new ADIS16470_IMU();
     }
 

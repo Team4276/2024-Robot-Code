@@ -12,10 +12,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
-
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.SparkLimitSwitch.Type;
 import com.revrobotics.CANSparkBase.IdleMode;
 
@@ -133,6 +136,17 @@ public final class Constants {
                 kAutoTranslationKd);
         public static final PIDConstants kAutoRotationPIDConstants = new PIDConstants(kAutoRotationKp, 0,
                 kAutoRotationKd);
+
+        public static final PPHolonomicDriveController kAutoDriveControllerConstants = 
+            new PPHolonomicDriveController(kAutoTranslationPIDConstants, kAutoRotationPIDConstants);
+
+        public static final ModuleConfig kPPModuleconfig = new ModuleConfig(
+            Units.inchesToMeters(1.5), kMaxAttainableVel, 1.0, DCMotor.getNEO(1), 40, 1);
+
+        public static final double kMOI = 0.5 * Units.lbsToKilograms(120.0) * Math.pow(Units.inchesToMeters(18), 2);
+
+        public static final RobotConfig kPPRobotConfig = new RobotConfig(Units.lbsToKilograms(120.0), 
+            kMOI, kPPModuleconfig, kTrackWidth, kWheelBase);
 
         public static final double kAutoAccelFF = 0.0;
 
