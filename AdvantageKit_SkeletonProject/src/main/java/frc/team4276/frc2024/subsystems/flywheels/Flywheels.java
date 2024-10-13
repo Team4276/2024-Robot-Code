@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // TODO: need to add manual volatge control, proper logging, characterization
+import frc.team4276.frc2024.RobotState;
+import java.util.function.DoubleSupplier;
 
 public class Flywheels extends SubsystemBase {
   private final FlywheelIO io;
@@ -22,16 +24,28 @@ public class Flywheels extends SubsystemBase {
   public enum Goal {
     // TODO: maybe move to constants
 
-    IDLE(0.0, 0.0),
-    // TODO: impl when we have a supplier for the needed rpms just put a command to
-    // get top and
-    // command to get bottom instead of the zeros
-    SHOOT(0.0, 0.0),
+    IDLE(() -> 0.0, () -> 0.0),
+    // idk how I feel abt this method maybe a better way
+    FERRY(
+        () -> RobotState.getInstance().getFerryAimingParameters().flywheelSpeeds.leftSpeed(),
+        () -> RobotState.getInstance().getFerryAimingParameters().flywheelSpeeds.rightSpeed()),
 
-    CHARACTERIZING(0.0, 0.0);
-    public double RPM_TOP, RPM_BOTTOM;
+    SPEAKER(
+        () -> RobotState.getInstance().getFerryAimingParameters().flywheelSpeeds.leftSpeed(),
+        () -> RobotState.getInstance().getFerryAimingParameters().flywheelSpeeds.rightSpeed()),
 
-    Goal(double RPM_TOP, double RPM_BOTTOM) {
+    CHARACTERIZING(() -> 0.0, () -> 0.0);
+    public DoubleSupplier RPM_TOP, RPM_BOTTOM;
+
+    public double getRpmTop() {
+      return RPM_BOTTOM.getAsDouble();
+    }
+
+    public double getRpmBottom() {
+      return RPM_BOTTOM.getAsDouble();
+    }
+
+    Goal(DoubleSupplier RPM_TOP, DoubleSupplier RPM_BOTTOM) {
       this.RPM_TOP = RPM_TOP;
       this.RPM_BOTTOM = RPM_BOTTOM;
     }
@@ -52,7 +66,7 @@ public class Flywheels extends SubsystemBase {
     // need to fix open loop logic just temp atm
     if (closedLoop) {
       io.runVelocity(
-          mTopFF.calculate(this.goal.RPM_TOP), mBottomFF.calculate(this.goal.RPM_BOTTOM));
+          mTopFF.calculate(this.goal.getRpmTop()), mBottomFF.calculate(this.goal.getRpmBottom()));
     } else if (goal == Goal.IDLE) {
       io.stop();
     }
@@ -76,22 +90,28 @@ public class Flywheels extends SubsystemBase {
   }
 
   public boolean isTopSpunUp() {
-    return (Math.abs(mInputs.topVelocityRpm - goal.RPM_TOP) < FlywheelConstants.kFlywheelTolerance)
-        && (goal.RPM_TOP > 2000);
+    return (Math.abs(mInputs.topVelocityRpm - goal.getRpmTop())
+            < FlywheelConstants.kFlywheelTolerance)
+        && (goal.getRpmTop() > 2000);
   }
 
   public boolean isBottomSpunUp() {
-    return Math.abs(mInputs.bottomVelocityRpm - goal.RPM_BOTTOM)
+    return Math.abs(mInputs.bottomVelocityRpm - goal.getRpmBottom())
             < FlywheelConstants.kFlywheelTolerance
-        && (goal.RPM_BOTTOM > 2000);
+        && (goal.getRpmBottom() > 2000);
   }
 
   private boolean atGoal() {
     return isTopSpunUp() && isBottomSpunUp();
   }
 
-  public Command shootCommand() {
-    return startEnd(() -> setGoal(Goal.SHOOT), () -> setGoal(Goal.IDLE))
-        .withName("Flywheels Shoot");
+  public Command SpeakerShootCommand() {
+    return startEnd(() -> setGoal(Goal.SPEAKER), () -> setGoal(Goal.IDLE))
+        .withName("Flywheels Speaker Shoot");
+  }
+
+  public Command FerryShootCommand() {
+    return startEnd(() -> setGoal(Goal.FERRY), () -> setGoal(Goal.IDLE))
+        .withName("Flywheels Ferry Shoot");
   }
 }

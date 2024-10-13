@@ -5,11 +5,13 @@ import edu.wpi.first.math.StateSpaceUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.ExtendedKalmanFilter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N2;
 import frc.team254.lib.util.MovingAverage;
 import frc.team4276.frc2024.field.Field;
+import frc.team4276.frc2024.shooting.RegressionMaps;
 
 public class RobotState {
   private Translation2d mEstimatedPose = new Translation2d();
@@ -23,6 +25,33 @@ public class RobotState {
   private final TimeInterpolatableBuffer<edu.wpi.first.math.geometry.Pose2d> mOdomPoseBuffer;
 
   private Field.POIs mPOIs = Field.Red.kPOIs;
+
+  // not really sure what 6328 is doing with theirs so I made this
+  public record FlywheelSpeeds(double leftSpeed, double rightSpeed) {
+
+    public FlywheelSpeeds(double leftSpeed, double rightSpeed) {
+      this.leftSpeed = leftSpeed;
+      this.rightSpeed = rightSpeed;
+    }
+
+    public static FlywheelSpeeds fromSpeaker(double robot_to_target) {
+      double leftSpeed = RegressionMaps.kSpeakerFlywheelRPMs.get(robot_to_target);
+      double rightSpeed = RegressionMaps.kSpeakerFlywheelRPMs.get(robot_to_target);
+      return new FlywheelSpeeds(leftSpeed, rightSpeed);
+    }
+
+    public static FlywheelSpeeds fromFerry(double robot_to_target) {
+      double leftSpeed = RegressionMaps.kFerryFlywheelRPMs.get(robot_to_target);
+      double rightSpeed = RegressionMaps.kFerryFlywheelRPMs.get(robot_to_target);
+      return new FlywheelSpeeds(leftSpeed, rightSpeed);
+    }
+  }
+
+  public record AimingParameters(
+      Rotation2d driveHeading,
+      Rotation2d armAngle,
+      double effectiveDistance,
+      FlywheelSpeeds flywheelSpeeds) {}
 
   private static RobotState mInstance;
 
@@ -130,6 +159,15 @@ public class RobotState {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  public AimingParameters getFerryAimingParameters() {
+    return new AimingParameters(null, null, 0, FlywheelSpeeds.fromFerry(getPOIs().kBank.getNorm()));
+  }
+
+  public AimingParameters getSpeakerAimingParameters() {
+    return new AimingParameters(
+        null, null, 0, FlywheelSpeeds.fromSpeaker(getPOIs().kSpeakerCenter.getNorm()));
   }
 
   // Use on enabled init
