@@ -32,7 +32,7 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
 
         mMaster.getPIDController().setFeedbackDevice(e);
 
-        mMaster.configFuseMotion(mConstants.kFuseMotionConfig, e::getPosition, e::getVelocity);
+        mMaster.configFuseMotion(mConstants.kFuseMotionConfig, e::getPosition);
 
         burnFlash();
     }

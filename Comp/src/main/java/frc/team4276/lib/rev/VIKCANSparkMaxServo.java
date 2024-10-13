@@ -2,8 +2,8 @@ package frc.team4276.lib.rev;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.Timer;
 
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
@@ -34,48 +34,43 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     private TrapezoidProfile kProfileFuse;
 
     private Supplier<Double> mPositionSupplier;
-    private Supplier<Double> mVelocitySupplier;
+
+    private boolean isFuseConfiged = false;
 
     /**
      * Only use on init
      */
-    public void configFuseMotion(FuseMotionConfig config, Supplier<Double> positionSupplier, Supplier<Double> velocitySupplier) {
+    public void configFuseMotion(FuseMotionConfig config, Supplier<Double> positionSupplier) {
         this.kFuseMotionFF = config.kFeedForward;
         this.kLooperDt = config.kLooperDt;
         this.kProfileFuse = new TrapezoidProfile(config.kMaxVel, config.kMaxAccel);
         this.kProfileSlotFuse = config.kProfileSlot;
         mPositionSupplier = positionSupplier;
-        mVelocitySupplier = velocitySupplier;
         fuseMotionLooper = new Notifier(updateFuse);
+        fuseMotionLooper.startPeriodic(kLooperDt);
+        isFuseConfiged = true;
     }
 
     private double[] setpoint_fuse = { Double.NaN, 0.0 };
-    private double profile_timestamp_fuse;
-    private double[] profile_start_fuse = { Double.NaN, Double.NaN };
+    private double[] stateSetpoint = {0.0, 0.0};
 
     private Notifier fuseMotionLooper;
-
     private boolean isFuseMotion = false;
 
     /**
      * @return true if successful
      */
     public synchronized boolean setFuseMotionSetpoint(double setpoint) {
-        if (kFuseMotionFF == null)
+        if (!isFuseConfiged)
             return false;
-
-        if (isFuseMotion && setpoint_fuse[0] == setpoint)
-            return true;
+        
+        isFuseMotion = true;
 
         this.setpoint_fuse[0] = setpoint;
-        profile_timestamp_fuse = Timer.getFPGATimestamp();
-        profile_start_fuse[0] = mPositionSupplier.get();
-        profile_start_fuse[1] = mVelocitySupplier.get();
 
-        if (!isFuseMotion) {
-            isFuseMotion = true;
+        if (!isFuseMotion || DriverStation.isDisabled()) {
+            stateSetpoint[0] = mPositionSupplier.get();
 
-            fuseMotionLooper.startPeriodic(kLooperDt);
         }
 
         return true;
@@ -84,30 +79,28 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
     private Runnable updateFuse = new Runnable() {
         @Override
         public void run() {
-            if (!isFuseMotion) {
-                return;
-            }
+            if (!isFuseMotion) return;
 
             updateFuse();
         }
     };
 
     private synchronized void updateFuse() {
-        double[] state = kProfileFuse.calculate(Timer.getFPGATimestamp() - profile_timestamp_fuse,
-                profile_start_fuse, setpoint_fuse);
+        stateSetpoint = kProfileFuse.calculate(kLooperDt,
+                stateSetpoint, setpoint_fuse);
 
         double ff;
 
         if (kFuseMotionFF.isLinear()) {
-            ff = kFuseMotionFF.calculate(state[0], state[1], 0.0);
+            ff = kFuseMotionFF.calculate(stateSetpoint[0], stateSetpoint[1], 0.0);
 
         } else { // Asume setpoint given in degrees
-            ff = kFuseMotionFF.calculate(Math.toRadians(state[0]), Math.toRadians(state[1]), 0.0);
+            ff = kFuseMotionFF.calculate(Math.toRadians(stateSetpoint[0]), Math.toRadians(stateSetpoint[1]), 0.0);
 
         }
 
         if(ControlBoard.getInstance().enableFourbarFuse()){
-            getPIDController().setReference(state[0], ControlType.kPosition, kProfileSlotFuse, ff, ArbFFUnits.kVoltage);
+            getPIDController().setReference(stateSetpoint[0], ControlType.kPosition, kProfileSlotFuse, ff);
             
         } else {
             setVoltage(0.0);
