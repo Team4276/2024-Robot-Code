@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Flywheels extends SubsystemBase {
   private final FlywheelIO io;
-  private final FlywheelsIOInputsAutoLogged inputs = new FlywheelsIOInputsAutoLogged();
+  private final FlywheelsIOInputsAutoLogged mInputs = new FlywheelsIOInputsAutoLogged();
   private SimpleMotorFeedforward mTopFF =
       new SimpleMotorFeedforward(
           FlywheelConstants.kS_Top, FlywheelConstants.kV_Top, FlywheelConstants.kA);
@@ -17,7 +17,7 @@ public class Flywheels extends SubsystemBase {
           FlywheelConstants.kS_Bottom, FlywheelConstants.kV_Bottom, FlywheelConstants.kA);
 
   private Goal goal = Goal.IDLE;
-  private boolean openLoop;
+  private boolean closedLoop;
 
   public enum Goal {
     // TODO: maybe move to constants
@@ -42,13 +42,13 @@ public class Flywheels extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
+    io.updateInputs(mInputs);
 
     if (DriverStation.isDisabled()) {
       setGoal(Goal.IDLE);
     }
     // need to fix open loop logic just temp atm
-    if (!openLoop) {
+    if (closedLoop) {
       io.runVelocity(
           mTopFF.calculate(this.goal.RPM_TOP), mBottomFF.calculate(this.goal.RPM_BOTTOM));
     } else if (goal == Goal.IDLE) {
@@ -57,12 +57,23 @@ public class Flywheels extends SubsystemBase {
   }
 
   private void setGoal(Goal goal) {
-    openLoop = false;
+    closedLoop = true;
     this.goal = goal;
   }
 
+  public boolean isTopSpunUp() {
+    return (Math.abs(mInputs.topVelocityRpm - goal.RPM_TOP) < FlywheelConstants.kFlywheelTolerance)
+        && (goal.RPM_TOP > 2000);
+  }
+
+  public boolean isBottomSpunUp() {
+    return Math.abs(mInputs.bottomVelocityRpm - goal.RPM_BOTTOM)
+            < FlywheelConstants.kFlywheelTolerance
+        && (goal.RPM_BOTTOM > 2000);
+  }
+
   private boolean atGoal() {
-    return goal == Goal.IDLE;
+    return isTopSpunUp() && isBottomSpunUp();
   }
 
   public Command shootCommand() {

@@ -6,22 +6,22 @@ import org.littletonrobotics.junction.AutoLog;
 public interface FlywheelIO {
   @AutoLog
   class FlywheelsIOInputs {
-    public boolean leftMotorConnected = true;
-    public boolean rightMotorConnected = true;
+    public boolean topMotorConnected = true;
+    public boolean bottomMotorConnected = true;
 
-    public double leftPositionRads = 0.0;
-    public double leftVelocityRpm = 0.0;
-    public double leftAppliedVolts = 0.0;
-    public double leftSupplyCurrentAmps = 0.0;
-    public double leftTorqueCurrentAmps = 0.0;
-    public double leftTempCelsius = 0.0;
+    public double topPositionRads = 0.0;
+    public double topVelocityRpm = 0.0;
+    public double topAppliedVolts = 0.0;
+    public double topSupplyCurrentAmps = 0.0;
+    public double topTorqueCurrentAmps = 0.0;
+    public double topTempCelsius = 0.0;
 
-    public double rightPositionRads = 0.0;
-    public double rightVelocityRpm = 0.0;
-    public double rightAppliedVolts = 0.0;
-    public double rightSupplyCurrentAmps = 0.0;
-    public double rightTorqueCurrentAmps = 0.0;
-    public double rightTempCelsius = 0.0;
+    public double bottomPositionRads = 0.0;
+    public double bottomVelocityRpm = 0.0;
+    public double bottomAppliedVolts = 0.0;
+    public double bottomSupplyCurrentAmps = 0.0;
+    public double bottomTorqueCurrentAmps = 0.0;
+    public double bottomtTempCelsius = 0.0;
   }
 
   /** Update inputs */

@@ -40,17 +40,17 @@ public class FlywheelIOSpark implements FlywheelIO {
 
   @Override
   public void updateInputs(FlywheelsIOInputs inputs) {
-    inputs.leftPositionRads = Units.rotationsToRadians(mTopEncoder.getPosition());
-    inputs.leftVelocityRpm = mTopEncoder.getVelocity();
-    inputs.leftAppliedVolts = mTopMotor.getAppliedOutput() * mTopMotor.getBusVoltage();
-    inputs.leftSupplyCurrentAmps = mTopMotor.getOutputCurrent();
-    inputs.leftTempCelsius = mTopMotor.getMotorTemperature();
+    inputs.topPositionRads = Units.rotationsToRadians(mTopEncoder.getPosition());
+    inputs.topVelocityRpm = mTopEncoder.getVelocity();
+    inputs.topAppliedVolts = mTopMotor.getAppliedOutput() * mTopMotor.getBusVoltage();
+    inputs.topSupplyCurrentAmps = mTopMotor.getOutputCurrent();
+    inputs.topTempCelsius = mTopMotor.getMotorTemperature();
 
-    inputs.rightPositionRads = Units.rotationsToRadians(mBottomEncoder.getPosition());
-    inputs.rightVelocityRpm = mBottomEncoder.getVelocity();
-    inputs.rightAppliedVolts = mBottomMotor.getAppliedOutput() * mBottomMotor.getBusVoltage();
-    inputs.rightSupplyCurrentAmps = mBottomMotor.getOutputCurrent();
-    inputs.rightTempCelsius = mBottomMotor.getMotorTemperature();
+    inputs.bottomPositionRads = Units.rotationsToRadians(mBottomEncoder.getPosition());
+    inputs.bottomVelocityRpm = mBottomEncoder.getVelocity();
+    inputs.bottomAppliedVolts = mBottomMotor.getAppliedOutput() * mBottomMotor.getBusVoltage();
+    inputs.bottomSupplyCurrentAmps = mBottomMotor.getOutputCurrent();
+    inputs.bottomtTempCelsius = mBottomMotor.getMotorTemperature();
   }
 
   @Override
