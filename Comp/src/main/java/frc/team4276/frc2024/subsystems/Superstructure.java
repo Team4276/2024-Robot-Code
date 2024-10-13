@@ -179,7 +179,11 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized boolean isReady() {
-        return mGoalState == GoalState.READY && mFlywheelSubsystem.isSpunUp() && mFourbarSubsystem.atSetpoint() && (mIsDymanic ? mDynamicSetpointsSet : true);
+        return mGoalState == GoalState.READY && 
+            mFlywheelSubsystem.isSpunUp() && 
+            mFourbarSubsystem.atSetpoint() && 
+            (mIsDymanic ? mDynamicSetpointsSet : true) &&
+            mIsHoldingNote;
     }
 
     @Override

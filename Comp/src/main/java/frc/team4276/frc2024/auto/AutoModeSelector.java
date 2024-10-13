@@ -10,18 +10,6 @@ import frc.team4276.frc2024.auto.modes.*;
 public class AutoModeSelector {
     public enum DesiredMode {
         DO_NOTHING, 
-        EXAMPLE,
-        SPIN_TEST,
-        STRESS_TEST,
-        MID_3PIECE_STAGE,
-        SUB_MIDDLE_2_PIECE,
-        TAXI,
-        SHOOT_TEST,
-        SUB_AS_2PIECE,
-        SUB_SS_2Piece,
-        Close5Piece,
-        SHOOT,
-        BOX_BOX,
         TEST_2
 
     }
@@ -44,12 +32,6 @@ public class AutoModeSelector {
 
     private AutoModeSelector() {
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
-        mModeChooser.addOption("Example", DesiredMode.EXAMPLE);
-        mModeChooser.addOption("Spin test", DesiredMode.SPIN_TEST);
-        mModeChooser.addOption("Stress test", DesiredMode.STRESS_TEST);
-        mModeChooser.addOption("Mid 3 Piece Stage", DesiredMode.MID_3PIECE_STAGE);
-        mModeChooser.addOption("Taxi", DesiredMode.TAXI);
-        mModeChooser.addOption("Box Box", DesiredMode.BOX_BOX);
         mModeChooser.addOption("Test 2", DesiredMode.TEST_2);
         SmartDashboard.putData("Comp/Auto Mode", mModeChooser);
 

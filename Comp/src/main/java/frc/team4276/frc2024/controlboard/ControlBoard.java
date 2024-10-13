@@ -92,7 +92,7 @@ public class ControlBoard {
 
         if (wantDemoLimits()) {
             mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kDemoLimits);
-        } else {
+        } else if (wantCompLimits()) {
             mDriveSubsystem.setKinematicLimits(Constants.DriveConstants.kUncappedLimits);
         }
 
@@ -114,7 +114,7 @@ public class ControlBoard {
         if (wantManual()) {
             updateManual();
 
-        } else {
+        }  {
             updateNominal();
 
         }
@@ -166,9 +166,6 @@ public class ControlBoard {
 
         } else if (wantExhaust()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.EXHAUST);
-
-        } else if (wantPoop()) {
-            mSuperstructure.setGoalState(Superstructure.GoalState.POOP);
 
         } else {
             mSuperstructure.setGoalState(Superstructure.GoalState.STOW);
@@ -248,21 +245,12 @@ public class ControlBoard {
         return driver.getXButton();
     }
 
-    boolean isDemo = false;
-    boolean hasReleased = false;
+    public boolean wantCompLimits() {
+        return driver.getPOVUP();
+    }
 
     public boolean wantDemoLimits() {
-        if (!driver.getPOVUP()) {
-            hasReleased = true;
-
-        }
-
-        if (driver.getPOVUP() && hasReleased) {
-            hasReleased = false;
-            isDemo = !isDemo;
-        }
-
-        return isDemo;
+        return driver.getPOVDOWN();
     }
 
     public boolean wantIntake() {
@@ -281,10 +269,6 @@ public class ControlBoard {
         return driver.getRT();
     }
 
-    public boolean wantPoop() {
-        return false;
-    }
-
     // Operator Controls
     public boolean wantStow() {
         return operator.getAButton();
@@ -294,18 +278,30 @@ public class ControlBoard {
         return operator.getLT();
     }
 
+    private boolean isDynamic = true;
+
     public boolean wantDynamic() {
-        return true;
+        if(operator.getLeftStickButtonReleased()) {
+            isDynamic = !isDynamic;
+        }
+
+        return isDynamic;
     }
 
+    private boolean isFerry = false;
+
     public boolean wantFerry() {
-        return operator.getBButton();
+        if(operator.getYButtonReleased()) {
+            isFerry = !isFerry;
+        }
+
+        return isFerry;
     }
 
     private boolean wasIdle = false;
 
     public boolean wantIdle() {
-        if (operator.getBButtonPressed()) {
+        if (operator.getBButtonReleased()) {
             wasIdle = !wasIdle;
         }
 
@@ -328,8 +324,16 @@ public class ControlBoard {
         return operator.getPOVDOWN();
     }
 
+    private boolean isManual = false;
+
     public boolean wantManual() {
-        return false;
+        if (operator.getPOVRIGHT() && operator.getRightStickButton()) {
+            isManual = false; // Nominal
+        } else if (operator.getPOVLEFT() && operator.getRightStickButton()) {
+            isManual = true; // Manual
+        }
+
+        return isManual;
     }
 
     public boolean wantManualSpinup() {

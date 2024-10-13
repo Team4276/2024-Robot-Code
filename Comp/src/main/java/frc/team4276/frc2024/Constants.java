@@ -383,11 +383,9 @@ public final class Constants {
         public static final int kFerryRPM = 3500;
         public static final int kSpinUpRPM = 2500;
         public static final int kPoopRPM = 1000;
+        public static final int kExhaustRPM = -1000;
 
-        public static final double kShotWaitTime = 0.5;
-        public static final double kExhaustWaitTime = 0.5;
-
-        public static final double kSpinUpDistance = 6.0;
+        public static final double kSpinUpDistance = 4.0;
     }
 
     public static final class VisionConstants {
