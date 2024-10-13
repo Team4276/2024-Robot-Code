@@ -7,12 +7,12 @@
 
 package frc.team4276.lib;
 
+import frc.team4276.frc2024.Constants;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import frc.team4276.frc2024.Constants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**

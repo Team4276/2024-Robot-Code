@@ -8,8 +8,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N2;
-import frc.team254.lib.util.MovingAverage;
 import frc.team4276.frc2024.field.Field;
+import frc.team4276.lib.MovingAverage;
 
 public class RobotState {
   private Translation2d mEstimatedPose = new Translation2d();
