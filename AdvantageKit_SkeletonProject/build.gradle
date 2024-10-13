@@ -132,17 +132,6 @@ tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
 
-// Create version file
-project.compileJava.dependsOn(createVersionFile)
-gversion {
-    srcDir       = "src/main/java/"
-    classPackage = "frc.team4276.frc2024"
-    className    = "BuildConstants"
-    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-    timeZone     = "America/Cupertino"
-    indent       = "  "
-}
-
 // Spotless formatting
 project.compileJava.dependsOn(spotlessApply)
 spotless {
