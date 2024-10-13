@@ -25,14 +25,13 @@ public class Flywheels extends SubsystemBase {
     // TODO: maybe move to constants
 
     IDLE(() -> 0.0, () -> 0.0),
-    // idk how I feel abt this method maybe a better way
     FERRY(
-        () -> RobotState.getInstance().getFerryAimingParameters().flywheelSpeeds.leftSpeed(),
-        () -> RobotState.getInstance().getFerryAimingParameters().flywheelSpeeds.rightSpeed()),
+        () -> RobotState.getInstance().getFerryAimingParameters().getFlywheelSpeeds().leftSpeed(),
+        () -> RobotState.getInstance().getFerryAimingParameters().getFlywheelSpeeds().rightSpeed()),
 
     SPEAKER(
-        () -> RobotState.getInstance().getFerryAimingParameters().flywheelSpeeds.leftSpeed(),
-        () -> RobotState.getInstance().getFerryAimingParameters().flywheelSpeeds.rightSpeed()),
+        () -> RobotState.getInstance().getFerryAimingParameters().getFlywheelSpeeds().leftSpeed(),
+        () -> RobotState.getInstance().getFerryAimingParameters().getFlywheelSpeeds().rightSpeed()),
 
     CHARACTERIZING(() -> 0.0, () -> 0.0);
     public DoubleSupplier RPM_TOP, RPM_BOTTOM;

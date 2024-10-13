@@ -51,7 +51,12 @@ public class RobotState {
       Rotation2d driveHeading,
       Rotation2d armAngle,
       double effectiveDistance,
-      FlywheelSpeeds flywheelSpeeds) {}
+      FlywheelSpeeds flywheelSpeeds) {
+
+    public FlywheelSpeeds getFlywheelSpeeds() {
+      return flywheelSpeeds;
+    }
+  }
 
   private static RobotState mInstance;
 
