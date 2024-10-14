@@ -2,6 +2,7 @@ package frc.team4276.frc2024.subsystems.flywheels;
 
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.lib.rev.SparkMaxFactory;
 import frc.team4276.lib.rev.VIKSparkMax;

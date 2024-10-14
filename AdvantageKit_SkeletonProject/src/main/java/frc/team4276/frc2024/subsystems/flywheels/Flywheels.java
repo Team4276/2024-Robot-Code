@@ -1,12 +1,24 @@
 package frc.team4276.frc2024.subsystems.flywheels;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 // TODO: need to add proper logging
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.lib.Util;
+import edu.wpi.first.units.Measure;
+
 
 import java.util.function.DoubleSupplier;
 
@@ -20,6 +32,8 @@ public class Flywheels extends SubsystemBase {
 
     private Goal goal = Goal.IDLE;
     private boolean closedLoop;
+    private SysIdRoutine m_sysIdRoutine;
+
 
     public enum Goal {
         IDLE(() -> 0.0, () -> 0.0),
@@ -56,6 +70,29 @@ public class Flywheels extends SubsystemBase {
     public Flywheels(FlywheelIO io) {
         this.io = io;
         setDefaultCommand(runOnce(() -> setGoal(Goal.IDLE)).withName("Flywheels Idle"));
+        
+        m_sysIdRoutine = new SysIdRoutine(
+                // Config for SysId adjust ramp rate or step voltage if necessary
+                // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+                new SysIdRoutine.Config(),
+
+                new SysIdRoutine.Mechanism(
+                        voltage -> runCharacterization(voltage.magnitude()),
+                        log -> {
+                            log.motor("flywheel-top")
+                            //WHY CANT THEY JUST TAKE A NUMBER
+                                    .voltage(Volts.of(mInputs.topAppliedVolts))
+                                    .angularPosition(Radians.of(mInputs.bottomPositionRads))
+                                    .angularVelocity(RadiansPerSecond.of(RotationsPerSecond.of(mInputs.topVelocityRpm/60).in(RadiansPerSecond)));
+
+                            log.motor("flywheel-bottom")
+                                    .voltage(Volts.of(mInputs.bottomAppliedVolts))
+                                    .angularPosition(Radians.of(mInputs.bottomPositionRads))
+                                    .angularVelocity(RadiansPerSecond.of(RotationsPerSecond.of(mInputs.topVelocityRpm/60).in(RadiansPerSecond)));
+
+                        },
+                        this
+                ));
     }
 
     @Override
@@ -101,6 +138,14 @@ public class Flywheels extends SubsystemBase {
 
     public boolean atGoal() {
         return isTopSpunUp() && isBottomSpunUp();
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutine.dynamic(direction);
     }
 
     public Command SpeakerShootCommand() {
