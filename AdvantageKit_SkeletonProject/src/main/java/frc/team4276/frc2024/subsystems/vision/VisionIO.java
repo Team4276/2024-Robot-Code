@@ -7,19 +7,19 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public interface VisionIO {
 
-  // TODO: expand for other inputs
-  // @AutoLog
-  class VisionIOInputs {
-    public PhotonPipelineResult result;
+    // TODO: expand for other inputs
+    // @AutoLog
+    class VisionIOInputs {
+        public PhotonPipelineResult result;
 
-    public Pose3d estimatedPose;
+        public Pose3d estimatedPose;
 
-    public double timestampSeconds;
+        public double timestampSeconds;
 
-    public List<PhotonTrackedTarget> targetsUsed;
+        public List<PhotonTrackedTarget> targetsUsed;
 
-    public boolean isValid;
-  }
+        public boolean isValid;
+    }
 
-  void updateInputs(VisionIOInputs inputs);
+    void updateInputs(VisionIOInputs inputs);
 }

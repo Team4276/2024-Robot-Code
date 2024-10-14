@@ -10,22 +10,25 @@ package frc.team4276.frc2024.subsystems.feedtake;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface GenericRollerSystemIO {
-  @AutoLog
-  abstract class GenericRollerSystemIOInputs {
-    public boolean connected = true;
-    public double positionRads = 0.0;
-    public double velocityRadsPerSec = 0.0;
-    public double appliedVoltage = 0.0;
-    public double supplyCurrentAmps = 0.0;
-    public double torqueCurrentAmps = 0.0;
-    public double tempCelsius = 0.0;
-  }
+    @AutoLog
+    abstract class GenericRollerSystemIOInputs {
+        public boolean connected = true;
+        public double positionRads = 0.0;
+        public double velocityRadsPerSec = 0.0;
+        public double appliedVoltage = 0.0;
+        public double supplyCurrentAmps = 0.0;
+        public double torqueCurrentAmps = 0.0;
+        public double tempCelsius = 0.0;
+    }
 
-  default void updateInputs(GenericRollerSystemIOInputs inputs) {}
+    default void updateInputs(GenericRollerSystemIOInputs inputs) {
+    }
 
-  /** Run feeder at volts */
-  default void runVolts(double volts) {}
+    /** Run feeder at volts */
+    default void runVolts(double volts) {
+    }
 
-  /** Stop feeder */
-  default void stop() {}
+    /** Stop feeder */
+    default void stop() {
+    }
 }

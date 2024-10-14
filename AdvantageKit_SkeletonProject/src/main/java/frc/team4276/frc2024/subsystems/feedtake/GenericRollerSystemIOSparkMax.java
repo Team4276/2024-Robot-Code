@@ -6,40 +6,39 @@ import frc.team4276.lib.rev.SparkMaxFactory;
 import frc.team4276.lib.rev.VIKSparkMax;
 
 public abstract class GenericRollerSystemIOSparkMax implements GenericRollerSystemIO {
-  private final VIKSparkMax motor;
-  private final RelativeEncoder encoder;
+    private final VIKSparkMax motor;
+    private final RelativeEncoder encoder;
 
-  private final double reduction;
+    private final double reduction;
 
-  public GenericRollerSystemIOSparkMax(
-      int id, int currentLimit, boolean invert, boolean brake, double reduction) {
-    this.reduction = reduction;
-    motor = SparkMaxFactory.createDefault(id);
+    public GenericRollerSystemIOSparkMax(
+            int id, int currentLimit, boolean invert, boolean brake, double reduction) {
+        this.reduction = reduction;
+        motor = SparkMaxFactory.createDefault(id);
 
-    motor.setSmartCurrentLimit(currentLimit);
-    motor.setInverted(invert);
-    motor.setWantBrakeMode(brake);
+        motor.setSmartCurrentLimit(currentLimit);
+        motor.setInverted(invert);
+        motor.setWantBrakeMode(brake);
 
-    encoder = motor.getEncoder();
-  }
+        encoder = motor.getEncoder();
+    }
 
-  @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
-    inputs.positionRads = Units.rotationsToRadians(encoder.getPosition()) / reduction;
-    inputs.velocityRadsPerSec =
-        Units.rotationsPerMinuteToRadiansPerSecond(encoder.getVelocity()) / reduction;
-    inputs.appliedVoltage = motor.getAppliedOutput() * motor.getBusVoltage();
-    inputs.supplyCurrentAmps = motor.getOutputCurrent();
-    inputs.tempCelsius = motor.getMotorTemperature();
-  }
+    @Override
+    public void updateInputs(GenericRollerSystemIOInputs inputs) {
+        inputs.positionRads = Units.rotationsToRadians(encoder.getPosition()) / reduction;
+        inputs.velocityRadsPerSec = Units.rotationsPerMinuteToRadiansPerSecond(encoder.getVelocity()) / reduction;
+        inputs.appliedVoltage = motor.getAppliedOutput() * motor.getBusVoltage();
+        inputs.supplyCurrentAmps = motor.getOutputCurrent();
+        inputs.tempCelsius = motor.getMotorTemperature();
+    }
 
-  @Override
-  public void runVolts(double volts) {
-    motor.setVoltage(volts);
-  }
+    @Override
+    public void runVolts(double volts) {
+        motor.setVoltage(volts);
+    }
 
-  @Override
-  public void stop() {
-    motor.stopMotor();
-  }
+    @Override
+    public void stop() {
+        motor.stopMotor();
+    }
 }

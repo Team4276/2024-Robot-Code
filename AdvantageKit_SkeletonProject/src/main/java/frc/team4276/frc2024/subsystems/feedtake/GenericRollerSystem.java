@@ -12,36 +12,35 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public abstract class GenericRollerSystem<G extends GenericRollerSystem.VoltageGoal> {
-  public interface VoltageGoal {
-    DoubleSupplier getVoltageSupplier();
-  }
-
-  public abstract G getGoal();
-
-  private final String name;
-  private final GenericRollerSystemIO io;
-  protected final GenericRollerSystemIOInputsAutoLogged inputs =
-      new GenericRollerSystemIOInputsAutoLogged();
-  protected final Timer stateTimer = new Timer();
-  private G lastGoal;
-
-  public GenericRollerSystem(String name, GenericRollerSystemIO io) {
-    this.name = name;
-    this.io = io;
-
-    stateTimer.start();
-  }
-
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs(name, inputs);
-
-    if (getGoal() != lastGoal) {
-      stateTimer.reset();
-      lastGoal = getGoal();
+    public interface VoltageGoal {
+        DoubleSupplier getVoltageSupplier();
     }
 
-    io.runVolts(getGoal().getVoltageSupplier().getAsDouble());
-    Logger.recordOutput("Rollers/" + name + "Goal", getGoal().toString());
-  }
+    public abstract G getGoal();
+
+    private final String name;
+    private final GenericRollerSystemIO io;
+    protected final GenericRollerSystemIOInputsAutoLogged inputs = new GenericRollerSystemIOInputsAutoLogged();
+    protected final Timer stateTimer = new Timer();
+    private G lastGoal;
+
+    public GenericRollerSystem(String name, GenericRollerSystemIO io) {
+        this.name = name;
+        this.io = io;
+
+        stateTimer.start();
+    }
+
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs(name, inputs);
+
+        if (getGoal() != lastGoal) {
+            stateTimer.reset();
+            lastGoal = getGoal();
+        }
+
+        io.runVolts(getGoal().getVoltageSupplier().getAsDouble());
+        Logger.recordOutput("Rollers/" + name + "Goal", getGoal().toString());
+    }
 }

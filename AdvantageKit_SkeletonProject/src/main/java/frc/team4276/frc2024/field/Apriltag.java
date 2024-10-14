@@ -3,39 +3,39 @@ package frc.team4276.frc2024.field;
 import edu.wpi.first.math.geometry.Pose2d;
 
 public class Apriltag {
-  private int id;
-  private Pose2d tagInField;
-  private double height;
-  private boolean isInit;
+    private int id;
+    private Pose2d tagInField;
+    private double height;
+    private boolean isInit;
 
-  public Apriltag(int id, Pose2d tagInField, double height) {
-    this.id = id;
-    this.tagInField = tagInField;
-    this.height = height;
-    isInit = true;
-  }
-
-  public int getId() {
-    if (isInit) {
-      return id;
+    public Apriltag(int id, Pose2d tagInField, double height) {
+        this.id = id;
+        this.tagInField = tagInField;
+        this.height = height;
+        isInit = true;
     }
 
-    return -2;
-  }
+    public int getId() {
+        if (isInit) {
+            return id;
+        }
 
-  public Pose2d getTagInField() {
-    if (isInit) {
-      return tagInField;
+        return -2;
     }
 
-    return new Pose2d();
-  }
+    public Pose2d getTagInField() {
+        if (isInit) {
+            return tagInField;
+        }
 
-  public double getHeight() {
-    if (isInit) {
-      return height;
+        return new Pose2d();
     }
 
-    return 0.0;
-  }
+    public double getHeight() {
+        if (isInit) {
+            return height;
+        }
+
+        return 0.0;
+    }
 }
