@@ -1,37 +1,73 @@
 package frc.team4276.frc2024.subsystems.feedtake;
 
-import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.team4276.frc2024.subsystems.feedtake.Roller.Goal;
 
-public class Feedtake extends GenericRollerSystem<Feedtake.Goal> {
+//TODO: damn abstraction; fix to not look stupid
+public class Feedtake extends SubsystemBase {
+    private final Roller roller;
+    private final RollerSensorsIO sensorsIO;
+    private final RollerSensorsIOInputsAutoLogged sensorsInputs = new RollerSensorsIOInputsAutoLogged();
 
-    public enum Goal implements GenericRollerSystem.VoltageGoal {
-        IDLE(() -> 0.0),
-        INTAKE(() -> 12.0),
-        SLOW_FEED(() -> 4.0),
-        DEFEED(() -> -2.0),
-        EXHAUST(() -> -8.0),
-        SHOOT(() -> 12.0);
+    private Roller.Goal goal = Goal.IDLE;
 
-        private final DoubleSupplier voltageSupplier;
+    public Feedtake(Roller roller, RollerSensorsIO sensorsIO) {
+        this.roller = roller;
+        this.sensorsIO = sensorsIO;
 
-        private Goal(DoubleSupplier voltageSupplier) {
-            this.voltageSupplier = voltageSupplier;
-        }
-
-        @Override
-        public DoubleSupplier getVoltageSupplier() {
-            return voltageSupplier;
-        }
+        setDefaultCommand(setGoalCommand(Roller.Goal.IDLE));
     }
 
-    private Feedtake.Goal goal = Feedtake.Goal.IDLE;
-
     @Override
-    public Goal getGoal() {
+    public void periodic() {
+        sensorsIO.updateInputs(sensorsInputs);
+
+        if (DriverStation.isDisabled()) {
+            goal = Goal.IDLE;
+        }
+
+        roller.setGoal(goal);
+        
+        roller.periodic();
+    }
+
+    public Roller.Goal getGoal(){
         return goal;
     }
 
-    public Feedtake(FeedtakeIO io) {
-        super("Feedtake", io);
+    private void setGoal(Roller.Goal goal) {
+        this.goal = goal;
     }
+
+    public Command setGoalCommand(Roller.Goal goal) {
+        return startEnd(() -> setGoal(goal), () -> setGoal(Roller.Goal.IDLE));
+    }
+
+    public Command intakeCommand() {
+        return new SequentialCommandGroup(
+            run(() -> setGoal(Roller.Goal.INTAKE)).until(() -> sensorsInputs.backTrigger),
+            run(() -> setGoal(Roller.Goal.SLOW_FEED)).until(() -> sensorsInputs.frontTrigger)
+        );
+    }
+
+    public Command farShotCommand() {
+        return new SequentialCommandGroup(
+            run(() -> setGoal(Roller.Goal.DEFEED)).until(() -> !sensorsInputs.frontTrigger),
+            new WaitUntilCommand(() -> sensorsInputs.backTrigger),
+            setGoalCommand(Goal.SHOOT)
+        );
+    }
+
+    public Command farShotStageCommand() {
+        return new SequentialCommandGroup(
+            run(() -> setGoal(Roller.Goal.DEFEED)).until(() -> !sensorsInputs.frontTrigger),
+            new WaitUntilCommand(() -> sensorsInputs.backTrigger)
+        );
+    }
+
+
 }
