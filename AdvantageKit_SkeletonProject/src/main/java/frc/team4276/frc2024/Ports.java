@@ -24,5 +24,5 @@ public class Ports {
     public static final int BEAM_BACK = 0;
     public static final int BEAM_FRONT = 1;
 
-    public static final int FOURBAR_BRAKE_SWITCH = 7;
+    public static final int ARM_COAST_SWITCH = 7;
 }
