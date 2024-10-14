@@ -31,14 +31,17 @@ public class WaitForDIOTripCommand extends Command {
 
     switch (mode) {
       case TRIP:
-        if (!prevValue && currValue) return true;
+        if (!prevValue && currValue)
+          return true;
 
         break;
       case RELEASE:
-        if (prevValue && !currValue) return true;
+        if (prevValue && !currValue)
+          return true;
 
       case BOTH:
-        if ((prevValue && !currValue) || (!prevValue && currValue)) return true;
+        if ((prevValue && !currValue) || (!prevValue && currValue))
+          return true;
 
       default:
         break;

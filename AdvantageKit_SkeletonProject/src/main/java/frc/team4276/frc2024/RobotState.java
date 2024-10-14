@@ -14,202 +14,195 @@ import frc.team4276.frc2024.shooting.RegressionMaps;
 import frc.team4276.lib.MovingAverage;
 
 public class RobotState {
-  private Translation2d mEstimatedPose = new Translation2d();
-  private MovingAverage mEstimatedVisionHeading = new MovingAverage(100);
+    private Translation2d mEstimatedPose = new Translation2d();
+    private MovingAverage mEstimatedVisionHeading = new MovingAverage(100);
 
-  private ExtendedKalmanFilter<N2, N2, N2> mKalmanFilter;
-  private boolean mHasUpdated = false;
+    private ExtendedKalmanFilter<N2, N2, N2> mKalmanFilter;
+    private boolean mHasUpdated = false;
 
-  private static final double kObservationBufferTime = 1.0;
+    private static final double kObservationBufferTime = 1.0;
 
-  private final TimeInterpolatableBuffer<edu.wpi.first.math.geometry.Pose2d> mOdomPoseBuffer;
+    private final TimeInterpolatableBuffer<edu.wpi.first.math.geometry.Pose2d> mOdomPoseBuffer;
 
-  private Field.POIs mPOIs = Field.Red.kPOIs;
+    private Field.POIs mPOIs = Field.Red.kPOIs;
 
-  // not really sure what 6328 is doing with theirs so I made this
-  public record FlywheelSpeeds(double leftSpeed, double rightSpeed) {
+    public record AimingParameters(
+            Rotation2d driveHeading,
+            double fourbarSetpoint,
+            double flywheelRpm,
+            double distance) {
 
-    public FlywheelSpeeds(double leftSpeed, double rightSpeed) {
-      this.leftSpeed = leftSpeed;
-      this.rightSpeed = rightSpeed;
+        public Rotation2d getDriveHeading() {
+            return driveHeading;
+        }
+
+        public double getFourbarSetpoint() {
+            return fourbarSetpoint;
+        }
+
+        public double getFlywheelRpm() {
+            return flywheelRpm;
+        }
+
+        public double getDistance() {
+            return distance;
+        }
     }
 
-    public static FlywheelSpeeds fromSpeaker(double robot_to_target) {
-      double leftSpeed = RegressionMaps.kSpeakerFlywheelRPMs.get(robot_to_target);
-      double rightSpeed = RegressionMaps.kSpeakerFlywheelRPMs.get(robot_to_target);
-      return new FlywheelSpeeds(leftSpeed, rightSpeed);
+    private AimingParameters latestSpeakerParams;
+    private AimingParameters latestFerryParams;
+
+    private static RobotState mInstance;
+
+    public static RobotState getInstance() {
+        if (mInstance == null) {
+            mInstance = new RobotState();
+        }
+        return mInstance;
     }
 
-    public static FlywheelSpeeds fromFerry(double robot_to_target) {
-      double leftSpeed = RegressionMaps.kFerryFlywheelRPMs.get(robot_to_target);
-      double rightSpeed = RegressionMaps.kFerryFlywheelRPMs.get(robot_to_target);
-      return new FlywheelSpeeds(leftSpeed, rightSpeed);
-    }
-  }
+    private RobotState() {
+        mOdomPoseBuffer = TimeInterpolatableBuffer.createBuffer(kObservationBufferTime);
 
-  public record ArmAngles(double angle) {
-
-    public ArmAngles(double angle) {
-      this.angle = angle;
+        reset(0.0, new Pose2d());
     }
 
-    public static ArmAngles fromSpeaker(double robot_to_target) {
-      double angle = RegressionMaps.kSpeakerFourbarAngles.get(robot_to_target);
-      return new ArmAngles(angle);
+    public synchronized void reset(double start_time, Pose2d initial_pose) {
+        mOdomPoseBuffer.addSample(start_time, initial_pose);
+        mEstimatedPose = initial_pose.getTranslation();
     }
 
-    public static ArmAngles fromFerry(double robot_to_target) {
-      double angle = RegressionMaps.kFerryFourbarAngles.get(robot_to_target);
-      return new ArmAngles(angle);
-    }
-  }
-
-  public record AimingParameters(
-      Rotation2d driveHeading,
-      double fourbarSetpoint,
-      double distance,
-      FlywheelSpeeds flywheelSpeeds) {
-
-    public FlywheelSpeeds getFlywheelSpeeds() {
-      return flywheelSpeeds;
-    }
-  }
-
-  private static RobotState mInstance;
-
-  public static RobotState getInstance() {
-    if (mInstance == null) {
-      mInstance = new RobotState();
-    }
-    return mInstance;
-  }
-
-  private RobotState() {
-    mOdomPoseBuffer = TimeInterpolatableBuffer.createBuffer(kObservationBufferTime);
-
-    reset(0.0, new Pose2d());
-  }
-
-  public synchronized void reset(double start_time, Pose2d initial_pose) {
-    mOdomPoseBuffer.addSample(start_time, initial_pose);
-    mEstimatedPose = initial_pose.getTranslation();
-  }
-
-  public synchronized void resetKalmanFilters() {
-    mKalmanFilter =
-        new ExtendedKalmanFilter<N2, N2, N2>(
-            Nat.N2(), // Dimensions of output (x, y)
-            Nat.N2(), // Dimensions of predicted error shift (dx, dy) (always 0)
-            Nat.N2(), // Dimensions of vision (x, y)
-            (x, u) -> u, // The derivative of the output is predicted shift (always 0)
-            (x, u) -> x, // The output is position (x, y)
-            Constants.RobotStateConstants
-                .kStateStdDevs, // Standard deviation of position (uncertainty propagation
-            // with no vision)
-            Constants.RobotStateConstants
-                .kLocalMeasurementStdDevs, // Standard deviation of vision measurements
-            Constants.kLooperDt);
-  }
-
-  public synchronized Field.POIs getPOIs() {
-    return mPOIs;
-  }
-
-  public synchronized void setBlue() {
-    mPOIs = Field.Blue.kPOIs;
-  }
-
-  public synchronized void setRed() {
-    mPOIs = Field.Red.kPOIs;
-  }
-
-  public synchronized void visionHeadingUpdate(double heading_rad) {
-    mEstimatedVisionHeading.addNumber(heading_rad);
-  }
-
-  public synchronized void addOdomObservations(double timestamp, Pose2d odom_to_robot) {
-    mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), Constants.kLooperDt);
-
-    mOdomPoseBuffer.addSample(timestamp, odom_to_robot);
-  }
-
-  public static class VisionUpdate {
-    public final double timestamp;
-    public final Translation2d fieldToVis;
-    public final double distStDev;
-
-    public VisionUpdate(double timestamp, Translation2d fieldToVis, double distStDev) {
-      this.timestamp = timestamp;
-      this.fieldToVis = fieldToVis;
-      this.distStDev = distStDev;
-    }
-  }
-
-  public synchronized void visionUpdate(VisionUpdate update) {
-    double visionTimestamp = update.timestamp;
-
-    if (mOdomPoseBuffer.getInternalBuffer().lastKey() - kObservationBufferTime > visionTimestamp)
-      return;
-
-    Pose2d sample = mOdomPoseBuffer.getSample(visionTimestamp).get();
-
-    mEstimatedPose =
-        update.fieldToVis.plus(
-            mOdomPoseBuffer
-                .getInternalBuffer()
-                .lastEntry()
-                .getValue()
-                .getTranslation()
-                .minus(sample.getTranslation()));
-
-    if (!mHasUpdated) {
-      mKalmanFilter.setXhat(0, mEstimatedPose.getX());
-      mKalmanFilter.setXhat(1, mEstimatedPose.getY());
-
-      mHasUpdated = true;
-      return;
+    public synchronized void resetKalmanFilters() {
+        mKalmanFilter = new ExtendedKalmanFilter<N2, N2, N2>(
+                Nat.N2(), // Dimensions of output (x, y)
+                Nat.N2(), // Dimensions of predicted error shift (dx, dy) (always 0)
+                Nat.N2(), // Dimensions of vision (x, y)
+                (x, u) -> u, // The derivative of the output is predicted shift (always 0)
+                (x, u) -> x, // The output is position (x, y)
+                Constants.RobotStateConstants.kStateStdDevs, // Standard deviation of position (uncertainty propagation
+                // with no vision)
+                Constants.RobotStateConstants.kLocalMeasurementStdDevs, // Standard deviation of vision measurements
+                Constants.kLooperDt);
     }
 
-    try {
-      mKalmanFilter.correct(
-          VecBuilder.fill(0.0, 0.0),
-          VecBuilder.fill(mEstimatedPose.getX(), mEstimatedPose.getX()),
-          StateSpaceUtil.makeCovarianceMatrix(
-              Nat.N2(), VecBuilder.fill(update.distStDev, update.distStDev)));
-      mEstimatedPose.plus(new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1)));
-
-    } catch (Exception e) {
-      e.printStackTrace();
+    public synchronized Field.POIs getPOIs() {
+        return mPOIs;
     }
-  }
-  // TODO: impl drive Heading
-  public AimingParameters getFerryAimingParameters() {
-    // does getting distiance like this work?
-    double distance = getPOIs().kSpeakerCenter.getNorm();
 
-    double armAngle = ArmAngles.fromFerry(distance).angle();
-    FlywheelSpeeds flywheel_speeds = FlywheelSpeeds.fromFerry(distance);
-    return new AimingParameters(null, armAngle, distance, flywheel_speeds);
-  }
-
-  public AimingParameters getSpeakerAimingParameters() {
-    double distance = getPOIs().kSpeakerCenter.getNorm();
-
-    double armAngle = ArmAngles.fromFerry(distance).angle();
-    FlywheelSpeeds flywheel_speeds = FlywheelSpeeds.fromFerry(distance);
-    return new AimingParameters(null, armAngle, distance, flywheel_speeds);
-  }
-
-  // Use on enabled init
-  public synchronized double getHeadingFromVision() {
-    if (mEstimatedVisionHeading.getSize() == 0) {
-      return getLatestFieldToVehicle().getRotation().getRadians();
+    public synchronized void setBlue() {
+        mPOIs = Field.Blue.kPOIs;
     }
-    return mEstimatedVisionHeading.getAverage();
-  }
 
-  public synchronized Pose2d getLatestFieldToVehicle() {
-    return new Pose2d(
-        mEstimatedPose, mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getRotation());
-  }
+    public synchronized void setRed() {
+        mPOIs = Field.Red.kPOIs;
+    }
+
+    public synchronized void visionHeadingUpdate(double heading_rad) {
+        mEstimatedVisionHeading.addNumber(heading_rad);
+    }
+
+    public synchronized void addOdomObservations(double timestamp, Pose2d odom_to_robot) {
+        latestSpeakerParams = null;
+        latestFerryParams = null;
+
+        mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), Constants.kLooperDt);
+
+        mOdomPoseBuffer.addSample(timestamp, odom_to_robot);
+    }
+
+    public static class VisionUpdate {
+        public final double timestamp;
+        public final Translation2d fieldToVis;
+        public final double distStDev;
+
+        public VisionUpdate(double timestamp, Translation2d fieldToVis, double distStDev) {
+            this.timestamp = timestamp;
+            this.fieldToVis = fieldToVis;
+            this.distStDev = distStDev;
+        }
+    }
+
+    public synchronized void visionUpdate(VisionUpdate update) {
+        latestSpeakerParams = null;
+        latestFerryParams = null;
+        
+        double visionTimestamp = update.timestamp;
+
+        if (mOdomPoseBuffer.getInternalBuffer().lastKey() - kObservationBufferTime > visionTimestamp)
+            return;
+
+        Pose2d sample = mOdomPoseBuffer.getSample(visionTimestamp).get();
+
+        mEstimatedPose = update.fieldToVis.plus(
+                mOdomPoseBuffer
+                        .getInternalBuffer()
+                        .lastEntry()
+                        .getValue()
+                        .getTranslation()
+                        .minus(sample.getTranslation()));
+
+        if (!mHasUpdated) {
+            mKalmanFilter.setXhat(0, mEstimatedPose.getX());
+            mKalmanFilter.setXhat(1, mEstimatedPose.getY());
+
+            mHasUpdated = true;
+            return;
+        }
+
+        try {
+            mKalmanFilter.correct(
+                    VecBuilder.fill(0.0, 0.0),
+                    VecBuilder.fill(mEstimatedPose.getX(), mEstimatedPose.getX()),
+                    StateSpaceUtil.makeCovarianceMatrix(
+                            Nat.N2(), VecBuilder.fill(update.distStDev, update.distStDev)));
+            mEstimatedPose.plus(new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1)));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized Pose2d getLatestFieldToVehicle() {
+        return new Pose2d(mEstimatedPose, mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getRotation());
+    }
+
+    public AimingParameters getSpeakerAimingParameters() {
+        if (latestSpeakerParams != null) {
+            return latestSpeakerParams; // return cached params if no new updates
+        }
+
+        Translation2d robot_to_target = getPOIs().kSpeakerCenter.minus(getLatestFieldToVehicle().getTranslation());
+
+        double distance = robot_to_target.getNorm();
+        double armAngle = RegressionMaps.kSpeakerFourbarAngles.get(distance);
+        double flywheel_speeds = RegressionMaps.kSpeakerFlywheelRPMs.get(distance);
+        
+        latestSpeakerParams = new AimingParameters(robot_to_target.getAngle(), armAngle, flywheel_speeds, distance);
+
+        return latestSpeakerParams;
+    }
+
+    public AimingParameters getFerryAimingParameters() {
+        if (latestFerryParams != null) {
+            return latestFerryParams; // return cached params if no new updates
+        }
+
+        Translation2d robot_to_target = getPOIs().kSpeakerCenter.minus(getLatestFieldToVehicle().getTranslation());
+
+        double distance = robot_to_target.getNorm();
+        double armAngle = RegressionMaps.kFerryFourbarAngles.get(distance);
+        double flywheel_speeds = RegressionMaps.kFerryFlywheelRPMs.get(distance);
+
+        latestFerryParams = new AimingParameters(robot_to_target.getAngle(), armAngle, flywheel_speeds, distance);
+
+        return latestFerryParams;
+    }
+
+    /** Use on auton init */
+    public synchronized double getHeadingFromVision() {
+        if (mEstimatedVisionHeading.getSize() == 0) {
+            return getLatestFieldToVehicle().getRotation().getRadians();
+        }
+        return mEstimatedVisionHeading.getAverage();
+    }
 }

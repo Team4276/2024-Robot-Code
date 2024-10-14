@@ -15,9 +15,15 @@ public class FlywheelConstants {
   // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel
   public static double kV_Top = 0.002;
   public static double kV_Bottom = 0.002;
-  public static double kA = 0;
+  public static double kA = 0.0;
 
-  public static double kPrep = 4.0; // Volts
+  public static double kPrepRpm = 2000.0;
+  public static double kAmpTopRpm = 0.0;
+  public static double kAmpBottomRpm = 2000.0;
+  public static double kBlindSubRpm = 4000.0;
+  public static double kBlindPodiumRpm = 4500.0;
+  public static double kBlindFerryRpm = 4500.0;
+  public static double kBlindPoopRpm = 4500.0;
 
   public static double kFlywheelTolerance = 300.0; // RPM
 }

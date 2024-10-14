@@ -28,7 +28,7 @@ public interface FlywheelIO {
   default void updateInputs(FlywheelsIOInputs inputs) {}
 
   /** Run both motors at voltage */
-  default void runVolts(double leftVolts, double rightVolts) {}
+  default void runVolts(double topVolts, double bottomVolts) {}
 
   /** Stop both flywheels */
   default void stop() {}
