@@ -2,6 +2,11 @@ package frc.team4276.frc2024.subsystems.drive;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.team4276.lib.rev.SparkMaxFactory;
 import frc.team4276.lib.rev.VIKSparkMax;
 
@@ -21,6 +26,9 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     private RelativeEncoder driveEncoder;
 
+    private SparkPIDController drivePid;
+    private SparkPIDController turnPid;
+
     public ModuleIOSparkMax(ModuleConfig config) {
         // Init motor & encoder objects
         driveMotor = SparkMaxFactory.createDefault(config.kDriveId);
@@ -35,20 +43,35 @@ public class ModuleIOSparkMax implements ModuleIO {
         turnMotor.setCANTimeout(250);
 
         for (int i = 0; i < 30; i++) {
-            turnMotor.setInverted(true);
-            driveMotor.setSmartCurrentLimit(40);
-            turnMotor.setSmartCurrentLimit(30);
+            driveMotor.setSmartCurrentLimit(50);
             driveMotor.enableVoltageCompensation(12.0);
+            driveMotor.setWantBrakeMode(true);
+            
+            turnMotor.setSmartCurrentLimit(20);
             turnMotor.enableVoltageCompensation(12.0);
+            turnMotor.setWantBrakeMode(true);
+            turnMotor.setInverted(true);
 
+            driveEncoder.setPositionConversionFactor(DriveConstants.kDrivingEncoderPositionFactor);
+            driveEncoder.setVelocityConversionFactor(DriveConstants.kDrivingEncoderVelocityFactor);
             driveEncoder.setPosition(0.0);
-            driveEncoder.setMeasurementPeriod(10);
-            driveEncoder.setAverageDepth(2);
 
-            // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, (int) (1000.0 /
-            // odometryFrequency));
-            // turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, (int) (1000.0 /
-            // odometryFrequency));
+            turnAbsoluteEncoder.setInverted(true);
+            turnAbsoluteEncoder.setPositionConversionFactor(DriveConstants.kTurningEncoderPositionFactor);
+            turnAbsoluteEncoder.setVelocityConversionFactor(DriveConstants.kTurningEncoderVelocityFactor);
+
+            drivePid = driveMotor.getPIDController();
+            drivePid.setFeedbackDevice(driveEncoder);
+            drivePid.setP(DriveConstants.kDrivingPIDFConfig.kP);
+            drivePid.setFF(DriveConstants.kDrivingPIDFConfig.kFF);
+            drivePid.setPositionPIDWrappingEnabled(true);
+            drivePid.setPositionPIDWrappingMaxInput(DriveConstants.kTurningEncoderPositionPIDMaxInput);
+            drivePid.setPositionPIDWrappingMinInput(DriveConstants.kTurningEncoderPositionPIDMinInput);
+
+            turnPid = turnMotor.getPIDController();
+            turnPid.setFeedbackDevice(turnAbsoluteEncoder);
+            turnPid.setP(DriveConstants.kTurningPIDFConfig.kP);
+
         }
 
         driveMotor.burnFlash();
@@ -56,21 +79,65 @@ public class ModuleIOSparkMax implements ModuleIO {
 
         driveMotor.setCANTimeout(0);
         turnMotor.setCANTimeout(0);
-
-        // absoluteEncoderValue = () -> Rotation2d.fromRotations(
-        // turnAbsoluteEncoder.getVoltage() / RobotController.getVoltage5V())
-        // .minus(absoluteEncoderOffset);
-
-        // drivePositionQueue =
-        // SparkMaxOdometryThread.getInstance().registerSignal(driveEncoder::getPosition);
-        // turnPositionQueue = SparkMaxOdometryThread.getInstance()
-        // .registerSignal(() -> absoluteEncoderValue.get().getRadians());
-
-        // // Init Controllers
-        // driveController = new PIDController(moduleConstants.drivekP(), 0.0,
-        // moduleConstants.drivekD());
-        // turnController = new PIDController(moduleConstants.turnkP(), 0.0,
-        // moduleConstants.turnkD());
-        // turnController.enableContinuousInput(-Math.PI, Math.PI);
     }
+
+        /** Updates the set of loggable inputs. */
+        public void updateInputs(ModuleIOInputs inputs) {
+            inputs.drivePositionRads = driveEncoder.getPosition() * 2 * Math.PI;
+            inputs.driveVelocityRadsPerSec = driveEncoder.getPosition();
+            inputs.driveAppliedVolts = driveMotor.getAppliedVoltage();
+            inputs.driveSupplyCurrentAmps = driveMotor.getOutputCurrent();
+
+            inputs.turnAbsolutePosition = Rotation2d.fromRadians(turnAbsoluteEncoder.getPosition());
+            inputs.turnVelocityRadsPerSec = turnAbsoluteEncoder.getVelocity();
+            inputs.turnAppliedVolts = turnMotor.getAppliedVoltage();
+            inputs.turnSupplyCurrentAmps = turnMotor.getOutputCurrent();
+
+            inputs.odometryDrivePositionsMeters = new double[] {};
+            inputs.odometryTurnPositions = new Rotation2d[] {};
+        }
+    
+        /** Run drive motor at volts */
+        public void runDriveVolts(double volts) {
+            driveMotor.setVoltage(volts);
+        }
+    
+        /** Run turn motor at volts */
+        public void runTurnVolts(double volts) {
+            turnMotor.setVoltage(volts);
+        }
+    
+        /** Run characterization input (amps or volts) into drive motor */
+        public void runCharacterization(double input) {
+        }
+    
+        /** Run to drive velocity setpoint with feedforward */
+        public void runDriveVelocitySetpoint(double velocityRadsPerSec, double feedForward) {
+            driveMotor.setReference(velocityRadsPerSec, ControlType.kVelocity, 0, feedForward, ArbFFUnits.kVoltage);
+        }
+    
+        /** Run to turn position setpoint */
+        public void runTurnPositionSetpoint(double angleRads) {
+            turnMotor.setReference(angleRads, ControlType.kPosition, 0, 0.0, ArbFFUnits.kVoltage);
+        }
+    
+        /** Configure drive PID */
+        public void setDrivePID(double kP, double kI, double kD) {
+        }
+    
+        /** Configure turn PID */
+        public void setTurnPID(double kP, double kI, double kD) {
+        }
+    
+        /** Enable or disable brake mode on the drive motor. */
+        public void setDriveBrakeMode(boolean enable) {
+        }
+    
+        /** Enable or disable brake mode on the turn motor. */
+        public void setTurnBrakeMode(boolean enable) {
+        }
+    
+        /** Disable output to all motors */
+        public void stop() {
+        }
 }
