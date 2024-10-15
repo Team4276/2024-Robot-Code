@@ -287,9 +287,9 @@ public final class Constants {
             kSubsystemConstants.kIdleMode = IdleMode.kBrake;
             kSubsystemConstants.kIsCircular = false; // assume max position is 360
             kSubsystemConstants.kMinPosition = 65.0; // Input Bound
-            kSubsystemConstants.kMaxPosition = 140.0; // Input Bound
-            kSubsystemConstants.kMaxVel = 80.0;
-            kSubsystemConstants.kMaxAccel = 60.0;
+            kSubsystemConstants.kMaxPosition = 135.0; // Input Bound
+            kSubsystemConstants.kMaxVel = 150.0;
+            kSubsystemConstants.kMaxAccel = 175.0;
             kSubsystemConstants.kS = 0.14; // Smart Motion Firmware
             kSubsystemConstants.kTol = 1.0;
             kSubsystemConstants.kForwardLimitPolarity = Type.kNormallyOpen;

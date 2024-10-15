@@ -114,7 +114,10 @@ public class ControlBoard {
         if (wantManual()) {
             updateManual();
 
-        }  {
+        } else if (wantTuning()) {
+            updateTuning();
+
+        } else {
             updateNominal();
 
         }
@@ -372,6 +375,10 @@ public class ControlBoard {
 
     // Extra
     public boolean enableFourbarFuse() {
+        return true;
+    }
+
+    public boolean wantTuning() {
         return true;
     }
 

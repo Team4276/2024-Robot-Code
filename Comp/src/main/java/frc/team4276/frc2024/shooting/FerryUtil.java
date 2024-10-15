@@ -1,7 +1,6 @@
 package frc.team4276.frc2024.shooting;
 
 import frc.team4276.frc2024.RobotState;
-import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
@@ -14,9 +13,7 @@ public class FerryUtil {
         double distance = robot_to_target.norm();
         double flywheel_setpoint = RegressionMaps.kFerryFlywheelRPMs.get(robot_to_target.norm());
         double fourbar_setpoint = RegressionMaps.kFerryFourbarAngles.get(robot_to_target.norm());
-        Rotation2d heading_setpoint = AllianceChooser.getInstance().isAllianceRed() ?
-            robot_to_target.direction().rotateBy(Rotation2d.fromDegrees(180)) :
-            robot_to_target.direction();
+        Rotation2d heading_setpoint = robot_to_target.direction();
 
         return new double[] { distance, flywheel_setpoint, fourbar_setpoint, heading_setpoint.getRadians()};
     }

@@ -6,10 +6,10 @@ public class RegressionMaps {
     public static InterpolatingDoubleTreeMap kSpeakerFourbarAngles = new InterpolatingDoubleTreeMap();
     static {
         kSpeakerFourbarAngles.put(1.0, 135.0);
-        kSpeakerFourbarAngles.put(1.5, 130.0);
-        kSpeakerFourbarAngles.put(2.0, 127.0);
-        kSpeakerFourbarAngles.put(2.5, 124.0);
-        kSpeakerFourbarAngles.put(3.0, 120.0);
+        kSpeakerFourbarAngles.put(1.5, 135.0);
+        kSpeakerFourbarAngles.put(2.0, 120.0);
+        kSpeakerFourbarAngles.put(2.5, 110.0);
+        kSpeakerFourbarAngles.put(3.0, 106.5);
         kSpeakerFourbarAngles.put(3.5, 115.0);
         kSpeakerFourbarAngles.put(4.0, 110.0);
         kSpeakerFourbarAngles.put(4.5, 110.0);

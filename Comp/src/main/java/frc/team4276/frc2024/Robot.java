@@ -6,7 +6,6 @@ package frc.team4276.frc2024;
 
 import java.util.Optional;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.team4276.frc2024.auto.AutoInitializer;
 import frc.team4276.frc2024.auto.AutoModeBase;
@@ -66,8 +65,6 @@ public class Robot extends TimedRobot {
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
-
-            CameraServer.startAutomaticCapture();
 
             // Set subsystems
             mSubsystemManager.setSubsystems(
@@ -212,8 +209,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         try {
-
-            // mControlBoard.updateTuning();
 
             mControlBoard.update();
 

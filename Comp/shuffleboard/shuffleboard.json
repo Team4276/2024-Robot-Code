@@ -846,6 +846,19 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "6,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Loaded path with alliance",
+              "_title": "Loaded path with alliance",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -1539,6 +1552,58 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Debug/Test/FF Voltage",
               "_title": "Test/FF Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera X Translation Displacement",
+              "_title": "Vision Tuning/Back Camera X Translation Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera Y Translation Displacement",
+              "_title": "Vision Tuning/Back Camera Y Translation Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera Height Displacement",
+              "_title": "Vision Tuning/Back Camera Height Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera Yaw Displacement",
+              "_title": "Vision Tuning/Back Camera Yaw Displacement",
               "_glyph": 148,
               "_showGlyph": false
             }
