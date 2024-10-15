@@ -10,11 +10,11 @@ public class RegressionMaps {
         kSpeakerFourbarAngles.put(2.0, 120.0);
         kSpeakerFourbarAngles.put(2.5, 110.0);
         kSpeakerFourbarAngles.put(3.0, 106.5);
-        kSpeakerFourbarAngles.put(3.5, 115.0);
-        kSpeakerFourbarAngles.put(4.0, 110.0);
-        kSpeakerFourbarAngles.put(4.5, 110.0);
-        kSpeakerFourbarAngles.put(5.0, 110.0);
-        kSpeakerFourbarAngles.put(5.5, 105.0);
+        kSpeakerFourbarAngles.put(3.5, 105.0);
+        kSpeakerFourbarAngles.put(4.0, 104.0);
+        kSpeakerFourbarAngles.put(4.5, 103.0);
+        kSpeakerFourbarAngles.put(5.0, 102.0);
+        kSpeakerFourbarAngles.put(5.5, 101.0);
         kSpeakerFourbarAngles.put(6.0, 100.0);
         kSpeakerFourbarAngles.put(6.5, 95.0);
         kSpeakerFourbarAngles.put(7.0, 90.0);
