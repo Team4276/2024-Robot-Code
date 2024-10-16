@@ -10,7 +10,8 @@ import frc.team4276.frc2024.auto.modes.*;
 public class AutoModeSelector {
     public enum DesiredMode {
         DO_NOTHING, 
-        TEST_2
+        TEST_2,
+        FOUR_NOTE_CLOSE_SAFE
 
     }
 
@@ -33,6 +34,7 @@ public class AutoModeSelector {
     private AutoModeSelector() {
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Test 2", DesiredMode.TEST_2);
+        mModeChooser.addOption("FourNoteCloseSafe", DesiredMode.FOUR_NOTE_CLOSE_SAFE);
         SmartDashboard.putData("Comp/Auto Mode", mModeChooser);
 
     }
@@ -54,6 +56,8 @@ public class AutoModeSelector {
             return Optional.of(new DoNothingMode());
         case TEST_2:
             return Optional.of(new ChoreoTest("Test2"));
+        case FOUR_NOTE_CLOSE_SAFE:
+            return Optional.of(new FourNoteCloseSafe());
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

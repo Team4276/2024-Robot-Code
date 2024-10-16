@@ -504,7 +504,7 @@ public class Superstructure extends Subsystem {
             fourbar_setpoint = params[2] + mFerryOffset;
             drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
 
-            // mIsPrep = true;
+            // mIsPrep = true; //TODO: test logic again
         } else {
             double[] params = ShootingUtil.getSpeakerShotParams(robot_pose);
             distance = params[0];
