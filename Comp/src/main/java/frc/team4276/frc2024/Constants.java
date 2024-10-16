@@ -353,7 +353,7 @@ public final class Constants {
     }
 
     public static class FlywheelConstants {
-        public static IdleMode kIdleMode = IdleMode.kBrake;
+        public static IdleMode kIdleMode = IdleMode.kCoast;
         public static int kSmartCurrentLimit = 50;
 
         public static int kAvgSamplingDepth = 8;
@@ -378,12 +378,15 @@ public final class Constants {
         public static final double kFourbarIntakeState = 135.0;
         public static final double kFourbarSubCloseState = 135.0;
         public static final double kFourbarFerryState = 135.0;
+        public static final double kFourbarAmpState = 120;
 
         public static final int kNormalShotRPM = 3500;
         public static final int kFerryRPM = 3500;
         public static final int kSpinUpRPM = 2500;
         public static final int kPoopRPM = 1000;
         public static final int kExhaustRPM = -1000;
+        public static final int kAmpTopRPM = 0;
+        public static final int kAmpBotRPM = 3500;
 
         public static final double kSpinUpDistance = 4.0;
     }

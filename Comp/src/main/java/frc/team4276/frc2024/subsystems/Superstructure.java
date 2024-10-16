@@ -65,6 +65,7 @@ public class Superstructure extends Subsystem {
         STOW,
         INTAKE,
         READY,
+        AMP,
         SHOOT,
         EXHAUST,
         POOP
@@ -83,7 +84,8 @@ public class Superstructure extends Subsystem {
     }
 
     private class TuningInput {
-        double flywheel_rpm = 0.0;
+        double flywheel_top_rpm = 0.0;
+        double flywheel_bot_rpm = 0.0;
         IntakeSubsystem.State intake_state = IntakeSubsystem.State.IDLE;
         double fourbar_position = 90.0;
     }
@@ -159,7 +161,13 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized void setTuningFlywheelRPM(double RPM){
-        mTuningInput.flywheel_rpm = RPM;
+        mTuningInput.flywheel_top_rpm = RPM;
+        mTuningInput.flywheel_bot_rpm = RPM;
+    }
+
+    public synchronized void setTuningFlywheelRPMs(double topRpm, double botRpm){
+        mTuningInput.flywheel_top_rpm = topRpm;
+        mTuningInput.flywheel_bot_rpm = botRpm;
     }
 
     public synchronized void setTuningIntakeState(IntakeSubsystem.State state){
@@ -179,10 +187,10 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized boolean isReady() {
-        return mGoalState == GoalState.READY && 
+        return (mGoalState == GoalState.READY || mGoalState == GoalState.AMP) && 
             mFlywheelSubsystem.isSpunUp() && 
             mFourbarSubsystem.atSetpoint() && 
-            (mIsDymanic ? mDynamicSetpointsSet : true) &&
+            (mIsDymanic && mGoalState == GoalState.READY ? mDynamicSetpointsSet : true) &&
             mIsHoldingNote;
     }
 
@@ -291,7 +299,6 @@ public class Superstructure extends Subsystem {
 
                 request(new SequentialRequest(
                     new ParallelRequest(
-                        idleRequest(),
                         mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarIntakeState),
                         mIntakeSubsystem.stateRequest(IntakeSubsystem.State.INTAKE)
                     ),
@@ -331,11 +338,25 @@ public class Superstructure extends Subsystem {
                     mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
                     mFourbarSubsystem.positionRequest(fourbar_position),
                     mFlywheelSubsystem.rpmRequest(flywheel_rpm),
-                    readyWait(),
-                    rumbleRequest()
+                    new SequentialRequest(
+                        readyWait(),
+                        rumbleRequest()
+                    )
                 ));
                 
                 break;
+            case AMP:
+                if(mPrevGoalState == mGoalState) break;
+
+                request(new ParallelRequest(
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
+                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kAmpTopRPM, SuperstructureConstants.kAmpBotRPM),
+                    mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarAmpState),
+                    new SequentialRequest(
+                        readyWait(),
+                        rumbleRequest()
+                    )
+                ));
             case SHOOT:
                 if(mPrevGoalState == mGoalState) break;
 
@@ -527,7 +548,7 @@ public class Superstructure extends Subsystem {
 
         }
 
-        mFlywheelSubsystem.setTargetRPM(mTuningInput.flywheel_rpm);
+        mFlywheelSubsystem.setTargetRPM(mTuningInput.flywheel_top_rpm, mTuningInput.flywheel_bot_rpm);
         mIntakeSubsystem.setState(mTuningInput.intake_state);
         mFourbarSubsystem.setFuseMotionSetpoint(mTuningInput.fourbar_position);
 

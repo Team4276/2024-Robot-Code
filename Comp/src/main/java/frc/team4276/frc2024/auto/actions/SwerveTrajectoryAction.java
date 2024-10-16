@@ -11,12 +11,23 @@ public class SwerveTrajectoryAction implements Action {
     private Command command;
     private Pose2d initial;
 
-    /**
-     * Alliance Test
-     */
     public SwerveTrajectoryAction(String name) {
         try {
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
+
+            initial = Pose2d.fromWPI(path.getStartingDifferentialPose());
+                
+            command = AutoBuilder.followPath(path);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+        public SwerveTrajectoryAction(String name, int split) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name, split);
 
             initial = Pose2d.fromWPI(path.getStartingDifferentialPose());
                 

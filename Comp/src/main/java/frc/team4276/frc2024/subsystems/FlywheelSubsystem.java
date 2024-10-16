@@ -70,10 +70,14 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public Request rpmRequest(double RPM) {
+        return rpmRequest(RPM, RPM);
+    }
+
+    public Request rpmRequest(double topRPM, double botRPM) {
         return new Request() {
             @Override
             public void act() {
-                setTargetRPM(RPM);
+                setTargetRPM(topRPM, botRPM);
             }
 
             @Override
@@ -83,6 +87,7 @@ public class FlywheelSubsystem extends Subsystem {
         };
 
     }
+
 
     public void setOpenLoop(double voltage) {
         setOpenLoop(voltage, voltage);

@@ -43,7 +43,8 @@ public class ControlBoard {
         mSuperstructure = Superstructure.getInstance();
     }
 
-    private double mTuningFlywheelSetpoint = 4500;
+    private double mTuningFlywheelTopSetpoint = 4500;
+    private double mTuningFlywheelBotSetpoint = 4500;
     private double mTuningFourbarSetpoint = 90.0;
 
     public void updateTuning() {
@@ -51,18 +52,44 @@ public class ControlBoard {
 
         double sign = operator.getYButton() ? -1 : 1;
 
-        if (operator.getRightBumperReleased()) {
-            mTuningFlywheelSetpoint += 100 * sign;
+        
+
+        if (operator.getPOVUP()) {
+            if (operator.getRightBumperReleased()) {
+                mTuningFlywheelTopSetpoint += 100 * sign;
+
+            } else if (operator.getLeftBumperReleased()) {
+                mTuningFlywheelTopSetpoint += 1000 * sign;
+
+            }
+
+        } else if(operator.getPOVDOWN()){
+            if (operator.getRightBumperReleased()) {
+                mTuningFlywheelBotSetpoint += 100 * sign;
+                
+            } else if (operator.getLeftBumperReleased()) {
+                mTuningFlywheelBotSetpoint += 1000 * sign;
+
+            }
+
+        } else {
+            if (operator.getRightBumperReleased()) {
+                mTuningFlywheelTopSetpoint += 100 * sign;
+                mTuningFlywheelBotSetpoint += 100 * sign;
+
+            } else if (operator.getLeftBumperReleased()) {
+                mTuningFlywheelTopSetpoint += 1000 * sign;
+                mTuningFlywheelBotSetpoint += 1000 * sign;
+
+            }
         }
 
-        if (operator.getLeftBumperReleased()) {
-            mTuningFlywheelSetpoint += 1000 * sign;
-        }
+        SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Top Setpoint", mTuningFlywheelTopSetpoint);
+        SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Bot Setpoint", mTuningFlywheelBotSetpoint); //TODO: try rlly low speeds (2854)
 
-        SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Setpoint", mTuningFlywheelSetpoint);
       
         if (operator.getLT()) {
-            mSuperstructure.setTuningFlywheelRPM(mTuningFlywheelSetpoint);
+            mSuperstructure.setTuningFlywheelRPMs(mTuningFlywheelTopSetpoint, mTuningFlywheelBotSetpoint);
         } else {
             mSuperstructure.setTuningFlywheelRPM(0.0);
         }
