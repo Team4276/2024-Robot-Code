@@ -103,7 +103,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        SmartDashboard.putString("Comp/Intake State", mState.name());
+        SmartDashboard.putString("Debug/Intake State", mState.name());
         // SmartDashboard.putNumber("Debug/Intake Current", mMotor.getOutputCurrent());
         // SmartDashboard.putNumber("Debug/Intake Voltage", mMotor.getAppliedVoltage());
 

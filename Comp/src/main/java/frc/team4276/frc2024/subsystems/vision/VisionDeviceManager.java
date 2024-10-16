@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.Constants.VisionConstants;
 import frc.team4276.lib.drivers.Subsystem;
+import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.RobotState;
 
 public class VisionDeviceManager extends Subsystem {
@@ -15,7 +16,7 @@ public class VisionDeviceManager extends Subsystem {
 
     private List<PhotonDevice> mAllCameras;
 
-    private boolean mIsDisabled = false;
+    private boolean mIsDisabled = true;
     
     private static VisionDeviceManager mInstance;
 
@@ -59,7 +60,10 @@ public class VisionDeviceManager extends Subsystem {
     @Override
     public void outputTelemetry() {
         if(mIsDisabled) return;
-        for(PhotonDevice camera : mAllCameras) {
+
+        if(Constants.disableExtraTelemetry) return;
+
+        for(PhotonDevice camera : mAllCameras) { //TODO: get rid of this probably when calibration is finished
             if (camera.getLatestUpdate() != null) {
                 Pose3d displacement = camera.getLatestUpdate().relativeTo(new Pose3d(RobotState.getInstance().getWPILatestFieldToVehicle()));
                 SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " X Translation Displacement", displacement.getX());

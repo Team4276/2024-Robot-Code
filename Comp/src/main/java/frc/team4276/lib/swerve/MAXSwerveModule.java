@@ -4,7 +4,7 @@
 
 package frc.team4276.lib.swerve;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.AbsoluteEncoder;
@@ -73,6 +73,10 @@ public class MAXSwerveModule extends Subsystem {
         mTurn.burnFlash();
 
         mPeriodicIO = new PeriodicIO();
+
+        //TODO: add other swerve debugs
+        Shuffleboard.getTab("Swerve").addDouble(mConstants.kName + " Rotation Demand", () -> mPeriodicIO.rotationDemand);
+        Shuffleboard.getTab("Swerve").addDouble(mConstants.kName + " Turn Position", () -> mPeriodicIO.turnPosition);
     }
     
     public void setDesiredState(ModuleState desiredState, boolean isOpenLoop) {
@@ -147,8 +151,6 @@ public class MAXSwerveModule extends Subsystem {
     @Override
     public void outputTelemetry() {
         if(Constants.disableExtraTelemetry) return;
-        
-        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Rotation Demand", mPeriodicIO.rotationDemand);
-        SmartDashboard.putNumber("Debug/Swerve/" + mConstants.kName + " Turn Position", mPeriodicIO.turnPosition);
+
     }
 }

@@ -42,6 +42,7 @@ public class Superstructure extends Subsystem {
 
     private boolean mIsHoldingNote = false;
     private boolean mDynamicSetpointsSet = false;
+    private boolean mIsShotDoable = true;
 
     private boolean mIsFerry = false;
     private boolean mIsDymanic = false;
@@ -210,6 +211,10 @@ public class Superstructure extends Subsystem {
             mPrevShotDistance = Double.NaN;
             mPrevShotFlywheelSetpoint = Double.NaN;
             mPrevShotFourbarSetpoint = Double.NaN;
+        }
+
+        if(!mIsDymanic) {
+            mIsShotDoable = true;
         }
     }
 
@@ -515,6 +520,8 @@ public class Superstructure extends Subsystem {
             // mIsPrep = distance < SuperstructureConstants.kSpinUpDistance;
         }
 
+        mIsShotDoable = distance < SuperstructureConstants.kDoableShotDistance;
+
         mRegressionTuningDistance = distance;
         mRegressionTuningFlywheelSetpoint = flywheel_setpoint;
         mRegressionTuningFourbarSetpoint = fourbar_setpoint;
@@ -565,10 +572,11 @@ public class Superstructure extends Subsystem {
         SmartDashboard.putNumber("Comp/Ferry Offset", mFerryOffset);
 
         SmartDashboard.putBoolean("Comp/Is Prep", mIsPrep);
+        SmartDashboard.putBoolean("Comp/Is Ferry", mIsFerry);
+        SmartDashboard.putBoolean("Comp/Is Dynamic", mIsDymanic);
+        SmartDashboard.putBoolean("Comp/Is Shot Doable", mIsShotDoable);
 
         SmartDashboard.putString("Comp/Superstructure Goal", mGoalState.name());
-        
-        SmartDashboard.putBoolean("Comp/Flywheels Spun Up", mFlywheelSubsystem.isSpunUp());
 
         SmartDashboard.putBoolean("Comp/Ready", isReady());
         

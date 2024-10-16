@@ -600,10 +600,10 @@
               "_showGlyph": false
             }
           },
-          "0,2": {
+          "0,3": {
             "size": [
-              5,
-              3
+              2,
+              2
             ],
             "content": {
               "_type": "Number Bar",
@@ -619,10 +619,10 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "5,2": {
+          "2,3": {
             "size": [
-              5,
-              3
+              2,
+              2
             ],
             "content": {
               "_type": "Number Bar",
@@ -638,10 +638,10 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "10,2": {
+          "4,3": {
             "size": [
-              6,
-              3
+              2,
+              2
             ],
             "content": {
               "_type": "Number Bar",
@@ -657,10 +657,10 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "10,8": {
+          "12,3": {
             "size": [
-              3,
-              1
+              2,
+              2
             ],
             "content": {
               "_type": "Text View",
@@ -670,7 +670,7 @@
               "_showGlyph": false
             }
           },
-          "7,5": {
+          "4,5": {
             "size": [
               3,
               2
@@ -681,8 +681,8 @@
               "_title": "Scoring Offset",
               "_glyph": 148,
               "_showGlyph": false,
-              "Range/Min": 0.0,
-              "Range/Max": 360.0,
+              "Range/Min": -180.0,
+              "Range/Max": 180.0,
               "Range/Center": 0.0,
               "Visuals/Num tick marks": 5,
               "Visuals/Show text": true,
@@ -704,9 +704,9 @@
               "Colors/Color when false": "#FF0000FF"
             }
           },
-          "4,5": {
+          "14,3": {
             "size": [
-              3,
+              2,
               2
             ],
             "content": {
@@ -715,34 +715,6 @@
               "_title": "Superstructure Goal",
               "_glyph": 148,
               "_showGlyph": false
-            }
-          },
-          "7,7": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Comp/Intake State",
-              "_title": "Intake State",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "17,5": {
-            "size": [
-              4,
-              4
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Comp/Flywheels Spun Up",
-              "_title": "Flywheels Spun Up",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
             }
           },
           "16,0": {
@@ -762,10 +734,10 @@
               "Visuals/Counter clockwise": false
             }
           },
-          "10,5": {
+          "7,5": {
             "size": [
               3,
-              3
+              2
             ],
             "content": {
               "_type": "Simple Dial",
@@ -778,33 +750,7 @@
               "Visuals/Show value": true
             }
           },
-          "4,7": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Comp/Climber State",
-              "_title": "Climber State",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "0,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Comp/Ferry Offset",
-              "_title": "Ferry Offset",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "1,0": {
+          "8,3": {
             "size": [
               2,
               2
@@ -819,10 +765,10 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "3,0": {
+          "17,5": {
             "size": [
-              2,
-              2
+              4,
+              4
             ],
             "content": {
               "_type": "Boolean Box",
@@ -834,30 +780,84 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "5,0": {
+          "4,7": {
             "size": [
-              1,
-              1
+              3,
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Comp/Avg Loop Time",
-              "_title": "Avg Loop Time",
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Comp/Ferry Offset",
+              "_title": "Ferry Offset",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Range/Min": -180.0,
+              "Range/Max": 180.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "6,0": {
+          "7,7": {
             "size": [
-              1,
-              1
+              3,
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Comp/Loaded path with alliance",
-              "_title": "Loaded path with alliance",
+              "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/Comp/Fourbar Measured Position",
+              "_title": "Fourbar Measured Position",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Range/Min": 0.0,
+              "Range/Max": 360.0,
+              "Visuals/Show value": true
+            }
+          },
+          "10,3": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Comp/Is Ferry",
+              "_title": "Is Ferry",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "6,3": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Comp/Is Dynamic",
+              "_title": "Is Dynamic",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "10,5": {
+            "size": [
+              3,
+              4
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Comp/Is Shot Doable",
+              "_title": "Is Shot Doable",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -874,58 +874,6 @@
         "vgap": 8.0,
         "titleType": 0,
         "tiles": {
-          "5,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Front Left Rotation Demand",
-              "_title": "Front Left Rotation Demand",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Front Right Rotation Demand",
-              "_title": "Front Right Rotation Demand",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "5,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Back Left Rotation Demand",
-              "_title": "Back Left Rotation Demand",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Back Right Rotation Demand",
-              "_title": "Back Right Rotation Demand",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "0,0": {
             "size": [
               1,
@@ -935,84 +883,6 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Debug/looper_dt",
               "_title": "looper_dt",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "9,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Front Left Des Rotation",
-              "_title": "Front Left Des Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Front Right Des Rotation",
-              "_title": "Front Right Des Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "9,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Back Left Des Rotation",
-              "_title": "Back Left Des Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Back Right Des Rotation",
-              "_title": "Back Right Des Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "5,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Motion Planner/Translation Error",
-              "_title": "Motion Planner/Translation Error",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "6,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Motion Planner/Heading Error",
-              "_title": "Motion Planner/Heading Error",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -1117,285 +987,6 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Debug/Fourbar Controlstate",
               "_title": "Fourbar Controlstate",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "1,1": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar is Maintain",
-              "_title": "Fourbar is Maintain",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "3,1": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Debug/Right Climber Limit",
-              "_title": "Right Climber Limit",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "5,1": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Debug/Left Climber Limit",
-              "_title": "Left Climber Limit",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "7,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Gravity Voltage",
-              "_title": "Fourbar Gravity Voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Velocity Voltage",
-              "_title": "Fourbar Velocity Voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "1,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Front Left Turn Position",
-              "_title": "Front Left Turn Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "3,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Front Right Turn Position",
-              "_title": "Front Right Turn Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "1,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Back Left Turn Position",
-              "_title": "Back Left Turn Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "3,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Back Right Turn Position",
-              "_title": "Back Right Turn Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "1,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Front Left Des Rotation",
-              "_title": "Swerve/Front Left Des Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "2,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Front Right Des Rotation",
-              "_title": "Swerve/Front Right Des Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "3,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Back Left Des Rotation",
-              "_title": "Swerve/Back Left Des Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Back Right Des Rotation",
-              "_title": "Swerve/Back Right Des Rotation",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "9,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Front Left Rotation Demand",
-              "_title": "Swerve/Front Left Rotation Demand",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "10,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Front Left Turn Position",
-              "_title": "Swerve/Front Left Turn Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Front Right Rotation Demand",
-              "_title": "Swerve/Front Right Rotation Demand",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Front Right Turn Position",
-              "_title": "Swerve/Front Right Turn Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "13,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Back Left Rotation Demand",
-              "_title": "Swerve/Back Left Rotation Demand",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "0,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Back Left Turn Position",
-              "_title": "Swerve/Back Left Turn Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Back Right Rotation Demand",
-              "_title": "Swerve/Back Right Rotation Demand",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Swerve/Back Right Turn Position",
-              "_title": "Swerve/Back Right Turn Position",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -1543,19 +1134,6 @@
               "_showGlyph": false
             }
           },
-          "13,5": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/FF Voltage",
-              "_title": "Test/FF Voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "13,0": {
             "size": [
               1,
@@ -1607,28 +1185,82 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "1,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/Tuning Flywheel Top Setpoint",
+              "_title": "Test/Tuning Flywheel Top Setpoint",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/Tuning Flywheel Bot Setpoint",
+              "_title": "Test/Tuning Flywheel Bot Setpoint",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Test/Distance to target",
+              "_title": "Test/Distance to target",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Intake State",
+              "_title": "Intake State",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Debug/Flywheels Spun Up",
+              "_title": "Flywheels Spun Up",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
           }
         }
-      }
-    },
-    {
-      "title": "PID Calibration",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "Debug/PID/",
-      "widgetPane": {
-        "gridSize": 64.0,
-        "showGrid": true,
-        "hgap": 8.0,
-        "vgap": 8.0,
-        "titleType": 1,
-        "tiles": {}
       }
     }
   ],
   "windowGeometry": {
-    "x": 0.800000011920929,
-    "y": 0.800000011920929,
-    "width": 1534.4000244140625,
-    "height": 814.4000244140625
+    "x": -7.199999809265137,
+    "y": -7.199999809265137,
+    "width": 1550.4000244140625,
+    "height": 830.4000244140625
   }
 }

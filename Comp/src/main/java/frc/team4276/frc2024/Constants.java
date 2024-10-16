@@ -389,6 +389,7 @@ public final class Constants {
         public static final int kAmpBotRPM = 3500;
 
         public static final double kSpinUpDistance = 4.0;
+        public static final double kDoableShotDistance = 4.0;
     }
 
     public static final class VisionConstants {
