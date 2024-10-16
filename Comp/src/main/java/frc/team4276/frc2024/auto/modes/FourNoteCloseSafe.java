@@ -19,7 +19,6 @@ public class FourNoteCloseSafe extends AutoModeBase {
     private final SwerveTrajectoryAction traj5;
     private final SwerveTrajectoryAction traj6;
     private final SwerveTrajectoryAction traj7;
-    private final SwerveTrajectoryAction traj8;
 
     public FourNoteCloseSafe(){
         traj1 = new SwerveTrajectoryAction("Close_4Note_Safe", 1);
@@ -29,7 +28,6 @@ public class FourNoteCloseSafe extends AutoModeBase {
         traj5 = new SwerveTrajectoryAction("Close_4Note_Safe", 5);
         traj6 = new SwerveTrajectoryAction("Close_4Note_Safe", 6);
         traj7 = new SwerveTrajectoryAction("Close_4Note_Safe", 7);
-        traj8 = new SwerveTrajectoryAction("Close_4Note_Safe", 8);
     }
 
     private double kShotWaitTime = 0.5;
