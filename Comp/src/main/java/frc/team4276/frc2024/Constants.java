@@ -379,6 +379,7 @@ public final class Constants {
         public static final double kFourbarSubCloseState = 135.0;
         public static final double kFourbarFerryState = 135.0;
         public static final double kFourbarAmpState = 120;
+        public static final double kFourbarSkimState = 120;
 
         public static final int kNormalShotRPM = 3500;
         public static final int kFerryRPM = 3500;

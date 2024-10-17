@@ -56,6 +56,7 @@ public class Superstructure extends Subsystem {
     public enum GoalState {
         IDLE,
         STOW,
+        SKIM,
         INTAKE,
         READY,
         AMP,
@@ -284,6 +285,12 @@ public class Superstructure extends Subsystem {
                     idleRequest()
                 ));
                 
+                break;
+            case SKIM:
+                if(mPrevGoalState == mGoalState) break;
+
+                request(mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarSkimState));
+
                 break;
             case INTAKE:
                 if(mPrevGoalState == mGoalState || mIsHoldingNote == true) break;

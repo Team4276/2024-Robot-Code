@@ -33,7 +33,6 @@ public class FourNoteCloseSafe extends AutoModeBase {
     private double kShotWaitTime = 0.5;
     private double kIntakeWaitTime = 1.0;
 
-    //TODO: add intake ready checks to subsystem
     @Override
     protected void routine() throws AutoModeEndedException {
         // Set Control States
