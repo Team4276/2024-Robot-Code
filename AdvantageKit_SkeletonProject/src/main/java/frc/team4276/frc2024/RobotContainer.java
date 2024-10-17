@@ -2,6 +2,7 @@ package frc.team4276.frc2024;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.team4276.frc2024.subsystems.arm.Arm;
 import frc.team4276.frc2024.subsystems.arm.ArmConstants;
 import frc.team4276.frc2024.subsystems.arm.ArmIOSparkMax;
