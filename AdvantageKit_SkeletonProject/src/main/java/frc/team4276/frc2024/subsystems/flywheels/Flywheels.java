@@ -1,7 +1,6 @@
 package frc.team4276.frc2024.subsystems.flywheels;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,14 +9,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 // TODO: need to add proper logging
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.lib.Util;
-import edu.wpi.first.units.Measure;
 
 
 import java.util.function.DoubleSupplier;

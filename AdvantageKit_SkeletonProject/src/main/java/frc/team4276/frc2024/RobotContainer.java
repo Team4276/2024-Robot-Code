@@ -46,8 +46,32 @@ public class RobotContainer {
     private void configureAutos(){
         //TODO: impl
     }
+    
+    private void bindShooting(){
+
+    }
+    private void bindDrive(){
+    
+    }
+    private void bindIntake(){
+    
+    }
+    private void bindFlywheelSysID(){
+    //hold each button until the motor stops moving. Press the buttons in the order they are set here
+      driver.a().whileTrue(flywheels.sysIdQuasistatic(Direction.kForward));
+      driver.b().whileTrue(flywheels.sysIdQuasistatic(Direction.kReverse));
+      driver.rightBumper().whileTrue(flywheels.sysIdDynamic(Direction.kForward));
+      driver.leftBumper().whileTrue(flywheels.sysIdDynamic(Direction.kReverse));
+    }
 
     private void configureButtonBinds(){
         //TODO: impl
-    }
+        if(!Constants.SysIdMode){
+          bindShooting();
+          bindDrive();
+          bindIntake();
+        }else{
+         bindFlywheelSysID();
+      }
+     }
 }

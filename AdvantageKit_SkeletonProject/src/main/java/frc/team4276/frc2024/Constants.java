@@ -37,6 +37,11 @@ import frc.team4276.frc2024.subsystems.vision.VisionIOPhoton.PhotonDeviceConstan
  */
 public final class Constants {
     public static final Mode currentMode = Mode.REAL;
+    
+    public static final boolean SysIdMode = false;
+    static {
+        assert !(SysIdMode && currentMode != Mode.REAL) : "Robot must be in REAL mode when SysIdMode is enabled.";
+    }
 
     public static enum Mode {
         /** Running on a real robot. */
@@ -46,7 +51,7 @@ public final class Constants {
         SIM,
 
         /** Replaying from a log file. */
-        REPLAY
+        REPLAY,
     }
 
     public static final double kLooperDt = 0.02;
