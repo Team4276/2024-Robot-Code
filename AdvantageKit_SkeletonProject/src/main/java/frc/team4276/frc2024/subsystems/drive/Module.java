@@ -3,6 +3,7 @@ package frc.team4276.frc2024.subsystems.drive;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -24,11 +25,11 @@ public class Module {
 
     /** Runs to {@link SwerveModuleState} */
     public void runSetpoint(SwerveModuleState setpoint) {
-        setpointState = setpoint;
+        setpointState = SwerveModuleState.optimize(setpoint, getAngle());
 
         io.runDriveVelocitySetpoint(
-                setpoint.speedMetersPerSecond / DriveConstants.kWheelRadiusMeters, 0.0);
-        io.runTurnPositionSetpoint(setpoint.angle.getRadians());
+                setpointState.speedMetersPerSecond / DriveConstants.kWheelRadiusMeters, 0.0);
+        io.runTurnPositionSetpoint(setpointState.angle.getRadians());
     }
 
     public SwerveModuleState getSetpointState() {
@@ -73,32 +74,27 @@ public class Module {
     }
 
     /** Get position of wheel rotations in radians */
-    public double getPositionRads() {
-        return inputs.drivePositionRads;
-    }
-
-    /** Get position of wheel in meters. */
-    public double getPositionMeters() {
-        return inputs.drivePositionRads * DriveConstants.kWheelRadiusMeters;
+    public double getPositionMetres() {
+        return inputs.drivePositionMetres;
     }
 
     /** Get velocity of wheel in m/s. */
-    public double getVelocityMetersPerSec() {
-        return inputs.driveVelocityRadsPerSec * DriveConstants.kWheelRadiusMeters;
+    public double getVelocityMetresPerSec() {
+        return inputs.driveVelocityMetresPerSec;
     }
 
     /** Get current {@link SwerveModulePosition} of module. */
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getPositionMeters(), getAngle());
+        return new SwerveModulePosition(getPositionMetres(), getAngle());
     }
 
     /** Get current {@link SwerveModuleState} of module. */
     public SwerveModuleState getState() {
-        return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
+        return new SwerveModuleState(getVelocityMetresPerSec(), getAngle());
     }
 
     /** Get velocity of drive wheel for characterization */
     public double getCharacterizationVelocity() {
-        return inputs.driveVelocityRadsPerSec;
+        return inputs.driveVelocityMetresPerSec;
     }
 }

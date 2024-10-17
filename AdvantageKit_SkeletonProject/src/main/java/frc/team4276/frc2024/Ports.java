@@ -12,8 +12,8 @@ public class Ports {
     public static final int BACK_LEFT_TURN = 8;
 
     /* Subsystems */
-    public static final int FOURBAR_MASTER = 9;
-    public static final int FOURBAR_FOLLOWER = 13;
+    public static final int ARM_MASTER = 9;
+    public static final int ARM_FOLLOWER = 13;
 
     public static final int FLYWHEEL_TOP = 10;
     public static final int FLYWHEEL_BOTTOM = 11;
@@ -24,5 +24,5 @@ public class Ports {
     public static final int BEAM_BACK = 0;
     public static final int BEAM_FRONT = 1;
 
-    public static final int FOURBAR_BRAKE_SWITCH = 7;
+    public static final int ARM_COAST_SWITCH = 7;
 }

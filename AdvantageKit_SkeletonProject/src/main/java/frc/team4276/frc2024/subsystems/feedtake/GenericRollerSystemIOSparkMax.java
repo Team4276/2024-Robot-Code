@@ -21,6 +21,8 @@ public abstract class GenericRollerSystemIOSparkMax implements GenericRollerSyst
         motor.setWantBrakeMode(brake);
 
         encoder = motor.getEncoder();
+
+        motor.burnFlash();
     }
 
     @Override
