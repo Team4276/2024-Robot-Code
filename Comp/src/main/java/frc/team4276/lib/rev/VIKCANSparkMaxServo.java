@@ -46,46 +46,36 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
         this.kProfileFuse = new TrapezoidProfile(config.kMaxVel, config.kMaxAccel);
         this.kProfileSlotFuse = config.kProfileSlot;
         mPositionSupplier = positionSupplier;
-        fuseMotionLooper = new Notifier(updateFuse);
+        fuseMotionLooper = new Notifier(this::updateFuse);
         fuseMotionLooper.startPeriodic(kLooperDt);
         isFuseConfiged = true;
     }
 
     private double[] setpoint_fuse = { Double.NaN, 0.0 };
-    private double[] stateSetpoint = {0.0, 0.0};
+    private double[] stateSetpoint = { Double.NaN, 0.0 };
 
     private Notifier fuseMotionLooper;
     private boolean isFuseMotion = false;
 
-    /**
-     * @return true if successful
-     */
-    public synchronized boolean setFuseMotionSetpoint(double setpoint) {
+    public synchronized void setFuseMotionSetpoint(double setpoint) {
         if (!isFuseConfiged)
-            return false;
-        
-        isFuseMotion = true;
+            return;
 
         this.setpoint_fuse[0] = setpoint;
 
-        if (!isFuseMotion || DriverStation.isDisabled()) {
-            stateSetpoint[0] = mPositionSupplier.get();
+        isFuseMotion = true;
 
-        }
-
-        return true;
+        return;
     }
 
-    private Runnable updateFuse = new Runnable() {
-        @Override
-        public void run() {
-            if (!isFuseMotion) return;
-
-            updateFuse();
-        }
-    };
-
     private synchronized void updateFuse() {
+        if (!isFuseMotion || DriverStation.isDisabled()) {
+            stateSetpoint[0] = mPositionSupplier.get();
+            
+            return;
+
+        }
+
         stateSetpoint = kProfileFuse.calculate(kLooperDt,
                 stateSetpoint, setpoint_fuse);
 
@@ -99,14 +89,13 @@ public class VIKCANSparkMaxServo extends VIKCANSparkMax {
 
         }
 
-        if(ControlBoard.getInstance().enableFourbarFuse()){
+        if (ControlBoard.getInstance().enableFourbarFuse()) {
             getPIDController().setReference(stateSetpoint[0], ControlType.kPosition, kProfileSlotFuse, ff);
-            
+
         } else {
             setVoltage(0.0);
 
         }
-
 
     }
 

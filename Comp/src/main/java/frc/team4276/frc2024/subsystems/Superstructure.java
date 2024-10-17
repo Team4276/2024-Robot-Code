@@ -509,7 +509,7 @@ public class Superstructure extends Subsystem {
             fourbar_setpoint = params[2] + mFerryOffset;
             drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
 
-            // mIsPrep = true; //TODO: test logic again
+            mIsPrep = true;
         } else {
             double[] params = ShootingUtil.getSpeakerShotParams(robot_pose);
             distance = params[0];
@@ -517,7 +517,7 @@ public class Superstructure extends Subsystem {
             fourbar_setpoint = params[2] + mScoringOffset;
             drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
 
-            // mIsPrep = distance < SuperstructureConstants.kSpinUpDistance;
+            mIsPrep = distance < SuperstructureConstants.kSpinUpDistance;
         }
 
         mIsShotDoable = distance < SuperstructureConstants.kDoableShotDistance;
