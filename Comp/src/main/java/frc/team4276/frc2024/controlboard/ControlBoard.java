@@ -52,8 +52,6 @@ public class ControlBoard {
 
         double sign = operator.getYButton() ? -1 : 1;
 
-        
-
         if (operator.getPOVUP()) {
             if (operator.getRightBumperReleased()) {
                 mTuningFlywheelTopSetpoint += 100 * sign;
@@ -406,7 +404,7 @@ public class ControlBoard {
     }
 
     public boolean wantTuning() {
-        return true;
+        return false;
     }
 
 }

@@ -154,7 +154,7 @@ public final class Constants {
 
         public static final double kSnapHeadingKp = 3.15;
         public static final double kSnapHeadingKi = 0.0;
-        public static final double kSnapHeadingKd = 0.3;
+        public static final double kSnapHeadingKd = 0.0;
 
         public static final double kSnapPositionTolerance = 2 * Math.PI / 180;
         public static final double kSnapAngularVelocityTolerance = 0.5;
@@ -325,7 +325,7 @@ public final class Constants {
 
             kSubsystemConstants.kPidfConfigs[2] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[2].kSlotId = 2; // Fuse Motion
-            kSubsystemConstants.kPidfConfigs[2].kP = 0.025;
+            kSubsystemConstants.kPidfConfigs[2].kP = 0.02;
             kSubsystemConstants.kPidfConfigs[2].kI = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kD = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kFF = 0.0;

@@ -16,7 +16,7 @@ public class VisionDeviceManager extends Subsystem {
 
     private List<PhotonDevice> mAllCameras;
 
-    private boolean mIsDisabled = true;
+    private boolean mIsDisabled = false;
     
     private static VisionDeviceManager mInstance;
 
