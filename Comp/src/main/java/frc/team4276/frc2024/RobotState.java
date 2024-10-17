@@ -124,7 +124,7 @@ public class RobotState {
 
         try {
             mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0),
-                    VecBuilder.fill(mEstimatedPose.getTranslation().x(), mEstimatedPose.getTranslation().x()),
+                    VecBuilder.fill(mEstimatedPose.getTranslation().x(), mEstimatedPose.getTranslation().y()),
                     StateSpaceUtil.makeCovarianceMatrix(Nat.N2(), VecBuilder.fill(update.distStDev, update.distStDev)));
             mEstimatedPose.translateBy(new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1)));
 

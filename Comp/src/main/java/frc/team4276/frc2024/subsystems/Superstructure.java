@@ -53,14 +53,6 @@ public class Superstructure extends Subsystem {
 
     private TuningInput mTuningInput = new TuningInput();
 
-    private double mRegressionTuningDistance = 0.0;
-    private double mRegressionTuningFlywheelSetpoint = 0.0;
-    private double mRegressionTuningFourbarSetpoint = 0.0;
-
-    private double mPrevShotDistance = 0.0;
-    private double mPrevShotFlywheelSetpoint = 0.0;
-    private double mPrevShotFourbarSetpoint = 0.0;
-
     public enum GoalState {
         IDLE,
         STOW,
@@ -205,12 +197,6 @@ public class Superstructure extends Subsystem {
             mActiveRequest = null;
             mQueuedRequests.clear();
             return;
-        }
-
-        if(mGoalState != GoalState.SHOOT) {
-            mPrevShotDistance = Double.NaN;
-            mPrevShotFlywheelSetpoint = Double.NaN;
-            mPrevShotFourbarSetpoint = Double.NaN;
         }
 
         if(!mIsDymanic) {
@@ -367,8 +353,7 @@ public class Superstructure extends Subsystem {
 
                 request(new ParallelRequest(
                     mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SHOOT),
-                    new LambdaRequest(() -> mIsHoldingNote = false),
-                    new LambdaRequest(() -> writeShotData())
+                    new LambdaRequest(() -> mIsHoldingNote = false)
                 ));
                 
                 break;
@@ -398,12 +383,6 @@ public class Superstructure extends Subsystem {
         }
 
         mPrevGoalState = mGoalState;
-    }
-
-    private void writeShotData(){
-        mPrevShotDistance = mRegressionTuningDistance;
-        mPrevShotFlywheelSetpoint = mRegressionTuningFlywheelSetpoint;
-        mPrevShotFourbarSetpoint = mRegressionTuningFourbarSetpoint;
     }
 
     private ArrayList<Request> mQueuedRequests = new ArrayList<>();
@@ -522,10 +501,6 @@ public class Superstructure extends Subsystem {
 
         mIsShotDoable = distance < SuperstructureConstants.kDoableShotDistance;
 
-        mRegressionTuningDistance = distance;
-        mRegressionTuningFlywheelSetpoint = flywheel_setpoint;
-        mRegressionTuningFourbarSetpoint = fourbar_setpoint;
-
         if(mGoalState == GoalState.STOW) return;
 
         mFlywheelSubsystem.setTargetRPM(flywheel_setpoint);
@@ -583,15 +558,5 @@ public class Superstructure extends Subsystem {
         SmartDashboard.putBoolean("Comp/Is Holding Note", mIsHoldingNote);
 
         if(Constants.disableExtraTelemetry) return;
-
-        SmartDashboard.putNumber("Debug/Regression Tuning/Distance", mRegressionTuningDistance);
-        SmartDashboard.putNumber("Debug/Regression Tuning/Flywheel Setpoint", mRegressionTuningFlywheelSetpoint);
-        SmartDashboard.putNumber("Debug/Regression Tuning/Fourbar Setpoint", mRegressionTuningFourbarSetpoint);
-
-        if(mPrevShotDistance != Double.NaN){
-            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Distance", mPrevShotDistance);
-            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Flywheel Setpoint", mPrevShotFlywheelSetpoint);
-            SmartDashboard.putNumber("Debug/Regression Tuning/Prev Shot Fourbar Setpoint", mPrevShotFourbarSetpoint);
-        }
     }
 }

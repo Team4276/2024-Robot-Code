@@ -192,6 +192,9 @@ public class ControlBoard {
         } else if (wantReady()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.READY);
 
+        } else if (wantAmp()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.AMP);
+
         } else if (wantExhaust()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.EXHAUST);
 
@@ -295,6 +298,10 @@ public class ControlBoard {
 
     public boolean wantReady() {
         return driver.getRT();
+    }
+
+    public boolean wantAmp() {
+        return driver.getRightBumper();
     }
 
     // Operator Controls

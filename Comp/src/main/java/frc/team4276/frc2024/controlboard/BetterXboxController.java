@@ -23,7 +23,7 @@ public class BetterXboxController extends XboxController {
 
     public void update(){
         if(Timer.getFPGATimestamp() < rumbleEndTime){
-            setRumble(RumbleType.kBothRumble, 1.0);
+            setRumble(RumbleType.kBothRumble, 0.5);
             return;
         }
 

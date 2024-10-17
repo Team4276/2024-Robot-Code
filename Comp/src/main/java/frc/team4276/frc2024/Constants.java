@@ -289,7 +289,7 @@ public final class Constants {
             kSubsystemConstants.kMinPosition = 65.0; // Input Bound
             kSubsystemConstants.kMaxPosition = 135.0; // Input Bound
             kSubsystemConstants.kMaxVel = 150.0;
-            kSubsystemConstants.kMaxAccel = 175.0;
+            kSubsystemConstants.kMaxAccel = 175.0; //TODO: tune to be faster
             kSubsystemConstants.kS = 0.14; // Smart Motion Firmware
             kSubsystemConstants.kTol = 1.0;
             kSubsystemConstants.kForwardLimitPolarity = Type.kNormallyOpen;
