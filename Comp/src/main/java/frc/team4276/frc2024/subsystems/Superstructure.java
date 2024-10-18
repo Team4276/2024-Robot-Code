@@ -301,16 +301,16 @@ public class Superstructure extends Subsystem {
                         mIntakeSubsystem.stateRequest(IntakeSubsystem.State.INTAKE)
                     ),
                     breakWait(mBackBeam, true),
-
-                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SLOW_FEED),
+                    
+                    new ParallelRequest(
+                        mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
+                        mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SLOW_FEED)
+                    ),
 
                     breakWait(mFrontBeam, true),
                     rumbleRequest(),
                     new LambdaRequest(() -> mIsHoldingNote = true),
-                    new ParallelRequest(
-                        mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
-                        mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
-                    )
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
                 ));
                 
                 break;
@@ -368,7 +368,7 @@ public class Superstructure extends Subsystem {
                 if(mPrevGoalState == mGoalState) break;
 
                 request(new ParallelRequest(
-                    mFlywheelSubsystem.rpmRequest(0.0),
+                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kExhaustRPM),
                     mIntakeSubsystem.stateRequest(IntakeSubsystem.State.EXHAUST),
                     new LambdaRequest(() -> mIsHoldingNote = false)
                 ));
