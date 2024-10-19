@@ -132,8 +132,9 @@ public class ControlBoard {
                     getSwerveTranslation().x(),
                     getSwerveTranslation().y(),
                     getSwerveRotation(),
-                    mDriveSubsystem.getHeading().toWPI(),
-                    AllianceChooser.getInstance().isAllianceRed()));
+                    mDriveSubsystem.getHeading().rotateBy(Rotation2d.fromDegrees(
+                    AllianceChooser.getInstance().isAllianceRed() ? 180 : 0)).toWPI()
+                    )); //TODO: figure out why this broke
         }
 
         if (wantManual()) {

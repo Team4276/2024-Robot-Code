@@ -47,7 +47,7 @@ public class AllianceChooser {
         return false;
     }
 
-    public boolean isAllianceRed(){
+    public synchronized boolean isAllianceRed(){
         return getAlliance() == Alliance.Red;
     }
 }

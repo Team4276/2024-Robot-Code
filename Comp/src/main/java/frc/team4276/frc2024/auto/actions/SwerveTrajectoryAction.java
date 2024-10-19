@@ -6,6 +6,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.team254.lib.geometry.Pose2d;
+import frc.team4276.frc2024.field.AllianceChooser;
 
 public class SwerveTrajectoryAction implements Action {
     private Command command;
@@ -15,7 +16,9 @@ public class SwerveTrajectoryAction implements Action {
         try {
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
 
-            initial = Pose2d.fromWPI(path.getStartingDifferentialPose());
+            var p = AllianceChooser.getInstance().isAllianceRed() ? path.flipPath() : path;
+
+            initial = Pose2d.fromWPI(p.getStartingDifferentialPose());
                 
             command = AutoBuilder.followPath(path);
 
@@ -29,7 +32,9 @@ public class SwerveTrajectoryAction implements Action {
         try {
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name, split);
 
-            initial = Pose2d.fromWPI(path.getStartingDifferentialPose());
+            var p = AllianceChooser.getInstance().isAllianceRed() ? path.flipPath() : path;
+
+            initial = Pose2d.fromWPI(p.getStartingDifferentialPose());
                 
             command = AutoBuilder.followPath(path);
 

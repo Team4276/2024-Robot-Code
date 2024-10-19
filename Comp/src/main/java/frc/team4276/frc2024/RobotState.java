@@ -2,6 +2,7 @@ package frc.team4276.frc2024;
 
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.StateSpaceUtil;
 import edu.wpi.first.math.VecBuilder;
@@ -85,6 +86,14 @@ public class RobotState {
     public synchronized void addOdomObservations(double timestamp, Pose2d odom_to_robot) {
         mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), Constants.kLooperDt);
 
+        Translation2d dx = odom_to_robot.getTranslation().translateBy(
+            Translation2d.fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getTranslation()).inverse());
+
+        SmartDashboard.putNumber("Debug/Vision Delta X", dx.x());
+        SmartDashboard.putNumber("Debug/Vision Delta Y", dx.y());
+
+        mEstimatedPose.translateBy(dx);
+
         mOdomPoseBuffer.addSample(timestamp, odom_to_robot.toWPI());
     }
 
@@ -147,6 +156,10 @@ public class RobotState {
     }
 
     public synchronized edu.wpi.first.math.geometry.Pose2d getWPILatestFieldToVehicle() {
-        return getLatestFieldToVehicle().toWPI();
+        edu.wpi.first.math.geometry.Pose2d p = getLatestFieldToVehicle().toWPI();
+        SmartDashboard.putNumber("Debug/WPI Field to Vehicle X", p.getX());
+        SmartDashboard.putNumber("Debug/WPI Field to Vehicle Y", p.getY());
+        SmartDashboard.putNumber("Debug/WPI Field to Vehicle Rot", p.getRotation().getDegrees());
+        return p;
     }
 }

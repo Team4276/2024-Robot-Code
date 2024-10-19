@@ -7,6 +7,7 @@ package frc.team1678.lib.swerve;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Class for swerve drive odometry. Odometry allows you to track the robot's
@@ -125,6 +126,9 @@ public class SwerveDriveOdometry {
 					current.angle);
 			previous.distanceMeters = current.distanceMeters;
 		}
+
+		
+		SmartDashboard.putNumber("Module 1 Delta Distance", moduleDeltas[0].distanceMeters);
 
 		var twist = m_kinematics.toTwist2d(moduleDeltas);
 		twist.dtheta = gyroAngle.minus(m_prevRotation).getRadians();

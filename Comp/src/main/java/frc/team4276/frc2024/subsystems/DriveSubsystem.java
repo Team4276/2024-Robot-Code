@@ -7,6 +7,7 @@ package frc.team4276.frc2024.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -294,9 +295,23 @@ public class DriveSubsystem extends Subsystem {
 
                         updateSetpoint();
 
+                        SwerveModulePosition[] a = new SwerveModulePosition[4];
+
+                        for (int i = 0; i < a.length; i++) {
+                            a[i] = new SwerveModulePosition(mPeriodicIO.meas_module_states[i].distanceMeters, 
+                                mPeriodicIO.meas_module_states[i].angle);
+                        }
+                        
+                        SmartDashboard.putNumber("Debug/Module 1 distance", a[0].distanceMeters);
+
+
+                        //TODO: fix odometry
                         mOdometry.update(
                                 mGyro.getYaw().toWPI(),
-                                mPeriodicIO.meas_module_states);
+                                a);
+
+                        SmartDashboard.putNumber("Debug/Odom X", mOdometry.getPoseMeters().getX());
+                        SmartDashboard.putNumber("Debug/Odom Y", mOdometry.getPoseMeters().getY());
                         RobotState.getInstance().addOdomObservations(
                                 mPeriodicIO.timestamp, Pose2d.fromWPI(mOdometry.getPoseMeters()));
                     }
