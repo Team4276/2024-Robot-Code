@@ -135,6 +135,13 @@ public class SwerveDriveOdometry {
 
 		var newPose = m_poseMeters.exp(twist);
 
+		SwerveModulePosition[] positions = new SwerveModulePosition[4]; //TODO: if this don't work switch to WPI class
+
+		for (int i = 0; i < modulePositions.length; i++) {
+			positions[i] = modulePositions[i].copy();
+		}
+
+		m_previousModulePositions =	positions;
 		m_prevRotation = gyroAngle;
 		m_poseMeters = new Pose2d(newPose.getTranslation(), gyroAngle);
 
