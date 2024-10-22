@@ -2,6 +2,7 @@ package frc.team4276.frc2024.controlboard;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.field.AllianceChooser;
@@ -9,6 +10,7 @@ import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
+
 import frc.team1678.lib.Util;
 import frc.team1678.lib.swerve.ChassisSpeeds;
 
@@ -151,11 +153,26 @@ public class ControlBoard {
     public void updateNominal() {
         mSuperstructure.setNominal();
 
-        mDriveSubsystem.overrideHeading(wantReady() && wantDynamic());
+        if(wantReady() && wantDynamic() && !wantAmpOrHoldCancelDynamic()) {
+            mDriveSubsystem.overrideHeading(true);
+        } else {
+            mDriveSubsystem.overrideHeading(false);
+        }
 
-        mSuperstructure.setDynamic(wantDynamic());
+        if (wantDynamic() && !wantAmpOrHoldCancelDynamic()){
+            mSuperstructure.setDynamic(true);
+            
+        } else {
+            mSuperstructure.setDynamic(false);
 
-        mSuperstructure.setFerry(wantFerry());
+        }
+
+        if (wantFerry()) {
+            mSuperstructure.setFerry(true);
+        } else {
+            mSuperstructure.setFerry(false);
+        }
+
 
         if (wantOffsetFerry()) {
             if (wantIncrementOffset()) {
@@ -192,7 +209,7 @@ public class ControlBoard {
         } else if (wantReady()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.READY);
 
-        } else if (wantAmp()) {
+        } else if (wantAmpOrHoldCancelDynamic() && !wantReady()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.AMP);
 
         } else if (wantExhaust()) {
@@ -300,7 +317,7 @@ public class ControlBoard {
         return driver.getRT();
     }
 
-    public boolean wantAmp() {
+    public boolean wantAmpOrHoldCancelDynamic() {
         return driver.getRightBumper();
     }
 
