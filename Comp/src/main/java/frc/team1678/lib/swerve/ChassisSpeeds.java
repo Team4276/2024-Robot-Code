@@ -105,7 +105,7 @@ public class ChassisSpeeds {
             Rotation2d robotAngle,
             boolean isRedAlliance) {
                 if (isRedAlliance){
-                    robotAngle.rotateBy(Rotation2d.fromDegrees(180.0));
+                    robotAngle = robotAngle.rotateBy(Rotation2d.fromDegrees(180.0));
                 }
         return new ChassisSpeeds(
                 vxMetersPerSecond * robotAngle.getCos() + vyMetersPerSecond * robotAngle.getSin(),

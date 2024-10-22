@@ -2,7 +2,6 @@ package frc.team4276.frc2024;
 
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.StateSpaceUtil;
 import edu.wpi.first.math.VecBuilder;
@@ -18,7 +17,7 @@ import frc.team254.lib.geometry.Translation2d;
 import frc.team254.lib.util.MovingAverage;
 
 public class RobotState {
-    private Translation2d mEstimatedPose = new Translation2d();
+    private Translation2d mEstimatedPose = Translation2d.identity();
     private MovingAverage mEstimatedVisionHeading = new MovingAverage(100);
 
     private ExtendedKalmanFilter<N2, N2, N2> mKalmanFilter;
@@ -86,19 +85,8 @@ public class RobotState {
     public synchronized void addOdomObservations(double timestamp, Pose2d odom_to_robot) {
         mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), Constants.kLooperDt);
 
-        Translation2d dx = odom_to_robot.getTranslation().translateBy(
-            Translation2d.fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getTranslation()).inverse());
-
-        SmartDashboard.putNumber("Debug/Vision Delta X", dx.x());
-        SmartDashboard.putNumber("Debug/Vision Delta Y", dx.y());
-        
-        SmartDashboard.putNumber("Debug/Pre Odom Pose X", mEstimatedPose.x());
-        SmartDashboard.putNumber("Debug/Pre Odom Pose Y", mEstimatedPose.y());
-
-        mEstimatedPose = mEstimatedPose.translateBy(dx);
-
-        SmartDashboard.putNumber("Debug/Odom Pose X", mEstimatedPose.x());
-        SmartDashboard.putNumber("Debug/Odom Pose Y", mEstimatedPose.y());
+        mEstimatedPose = mEstimatedPose.translateBy(odom_to_robot.getTranslation().translateBy(Translation2d
+                .fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getTranslation()).inverse()));
 
         mOdomPoseBuffer.addSample(timestamp, odom_to_robot.toWPI());
     }
@@ -124,20 +112,11 @@ public class RobotState {
         if (!mPoseAcceptor.shouldAcceptVision(DriveSubsystem.getInstance().getMeasSpeeds()))
             return;
 
-        
-        var sample = mOdomPoseBuffer.getSample(visionTimestamp).get().getTranslation();
+        mEstimatedPose = update.fieldToVis
+                .translateBy(Translation2d.fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue()
+                        .getTranslation().minus(mOdomPoseBuffer.getSample(visionTimestamp).get().getTranslation())));
 
-        var delta = mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getTranslation().minus(sample);
-
-        SmartDashboard.putNumber("Debug/Delta X", delta.getX());
-        SmartDashboard.putNumber("Debug/Delta Y", delta.getY());
-
-        mEstimatedPose = update.fieldToVis.translateBy(Translation2d.fromWPI(delta));
-
-        SmartDashboard.putNumber("Debug/Estimated pose X", mEstimatedPose.x());
-        SmartDashboard.putNumber("Debug/Estimated pose Y", mEstimatedPose.y());
-
-        if(!mHasUpdated) {
+        if (!mHasUpdated) {
             mKalmanFilter.setXhat(0, mEstimatedPose.x());
             mKalmanFilter.setXhat(1, mEstimatedPose.y());
 
@@ -158,24 +137,18 @@ public class RobotState {
 
     // Use on enabled init
     public synchronized double getHeadingFromVision() {
-        if(mEstimatedVisionHeading.getSize() == 0) {
+        if (mEstimatedVisionHeading.getSize() == 0) {
             return getLatestFieldToVehicle().getRotation().getRadians();
         }
         return mEstimatedVisionHeading.getAverage();
     }
 
     public synchronized Pose2d getLatestFieldToVehicle() {
-        SmartDashboard.putNumber("Debug/Estimated Pose X", mEstimatedPose.x());
-        SmartDashboard.putNumber("Debug/Estimated Pose Y", mEstimatedPose.y());
         return new Pose2d(mEstimatedPose,
                 Rotation2d.fromWPI(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getRotation()));
     }
 
     public synchronized edu.wpi.first.math.geometry.Pose2d getWPILatestFieldToVehicle() {
-        edu.wpi.first.math.geometry.Pose2d p = getLatestFieldToVehicle().toWPI();
-        SmartDashboard.putNumber("Debug/WPI Field to Vehicle X", p.getX());
-        SmartDashboard.putNumber("Debug/WPI Field to Vehicle Y", p.getY());
-        SmartDashboard.putNumber("Debug/WPI Field to Vehicle Rot", p.getRotation().getDegrees());
-        return p;
+        return getLatestFieldToVehicle().toWPI();
     }
 }

@@ -135,7 +135,7 @@ public class SwerveDriveOdometry {
 
 		var newPose = m_poseMeters.exp(twist);
 
-		SwerveModulePosition[] positions = new SwerveModulePosition[4]; //TODO: if this don't work switch to WPI class
+		SwerveModulePosition[] positions = new SwerveModulePosition[4];
 
 		for (int i = 0; i < modulePositions.length; i++) {
 			positions[i] = modulePositions[i].copy();
