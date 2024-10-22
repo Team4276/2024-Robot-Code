@@ -446,5 +446,9 @@ public class DriveSubsystem extends Subsystem {
 
         if(Constants.disableExtraTelemetry) return;
 
+        SmartDashboard.putNumber("Debug/Des chassis speds X", mPeriodicIO.des_chassis_speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("Debug/Des chassis speds Y", mPeriodicIO.des_chassis_speeds.vyMetersPerSecond);
+        SmartDashboard.putNumber("Debug/Des chassis speds rot", mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
+
     }
 }

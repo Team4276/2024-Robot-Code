@@ -101,8 +101,11 @@ public class MAXSwerveModule extends Subsystem {
 
 
     public void stop() {
-        mDrive.set(0);
-        mTurn.set(0);
+        mPeriodicIO.driveDemand = 0.0;
+        mPeriodicIO.rotationDemand = mPeriodicIO.turnPosition;
+
+        mDrive.setVoltage(0.0);
+        mTurn.setVoltage(0.0);
     }
 
     /**

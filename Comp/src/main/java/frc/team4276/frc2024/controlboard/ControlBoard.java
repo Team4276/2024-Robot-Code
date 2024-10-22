@@ -408,7 +408,7 @@ public class ControlBoard {
 
     // Extra
     public boolean enableFourbarFuse() {
-        return true;
+        return false;
     }
 
     public boolean wantTuning() {

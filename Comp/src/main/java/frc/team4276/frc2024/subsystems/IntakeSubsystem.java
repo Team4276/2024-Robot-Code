@@ -98,7 +98,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        mMotor.setVoltage(mState.voltage);
+        // mMotor.setVoltage(mState.voltage);
     }
 
     @Override

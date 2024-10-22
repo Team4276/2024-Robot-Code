@@ -72,7 +72,11 @@ public class PhotonDevice extends Subsystem {
 
         Optional<EstimatedRobotPose> estimatedRobotPose = mPoseEstimator.update(result);
 
+        if (estimatedRobotPose.get().targetsUsed.size() == 0) return;
+
         if(estimatedRobotPose.isPresent()) {
+            System.out.println("Vision update");
+
             double total_tag_dist = 0.0;
             double lowest_dist = Double.POSITIVE_INFINITY;
 
