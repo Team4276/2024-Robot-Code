@@ -181,11 +181,19 @@ public class Superstructure extends Subsystem {
     }
 
     public synchronized boolean isReady() {
-        return (mGoalState == GoalState.READY || mGoalState == GoalState.AMP) && 
-            mFlywheelSubsystem.isSpunUp() && 
-            mFourbarSubsystem.atSetpoint() && 
+        if(mGoalState == GoalState.READY) {
+            return mFlywheelSubsystem.isSpunUp() && 
+            mFourbarSubsystem.atSetpoint(2.0) && 
             (mIsDymanic && mGoalState == GoalState.READY ? mDynamicSetpointsSet : true) &&
             mIsHoldingNote;
+            
+        } else if (mGoalState == GoalState.AMP) {
+            return mFlywheelSubsystem.isSpunUp() && 
+            mFourbarSubsystem.atSetpoint() && 
+            mIsHoldingNote;
+        }
+
+        return false;
     }
 
     @Override
@@ -357,6 +365,15 @@ public class Superstructure extends Subsystem {
                 ));
             case SHOOT:
                 if(mPrevGoalState == mGoalState) break;
+
+                if(mPrevGoalState == GoalState.AMP) {
+                    request(new ParallelRequest(
+                        mIntakeSubsystem.stateRequest(IntakeSubsystem.State.AMP),
+                        new LambdaRequest(() -> mIsHoldingNote = false)
+                    ));
+
+                    break;
+                }
 
                 request(new ParallelRequest(
                     mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SHOOT),

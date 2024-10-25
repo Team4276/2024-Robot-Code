@@ -39,7 +39,7 @@ public class PhotonDevice extends Subsystem {
         mConstants = constants;
 
         mCamera = new PhotonCamera(mConstants.kCameraNameId);
-        
+
         mPoseEstimator = new PhotonPoseEstimator(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField(),
                 PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, mCamera, mConstants.kRobotToCamera);
 
@@ -53,37 +53,39 @@ public class PhotonDevice extends Subsystem {
     public String getName() {
         return mConstants.kCameraName;
     }
-  
-    public boolean getConnected(){
+
+    public boolean getConnected() {
         return mCamera.isConnected();
     }
 
-    public Pose3d getLatestUpdate(){
+    public Pose3d getLatestUpdate() {
         return mLatestUpdate;
     }
 
     @Override
     public void readPeriodicInputs() {
-        PhotonPipelineResult result = mCamera.getLatestResult();
+        try {
+            PhotonPipelineResult result = mCamera.getLatestResult();
 
-        if(result == null) return;
+            if (result == null)
+                return;
 
-        if(!result.hasTargets()) return;
+            if (!result.hasTargets())
+                return;
 
-        Optional<EstimatedRobotPose> estimatedRobotPose = mPoseEstimator.update(result);
+            Optional<EstimatedRobotPose> estimatedRobotPose = mPoseEstimator.update(result);
 
-        if (estimatedRobotPose.get().targetsUsed.size() == 0) return;
-
-        if(estimatedRobotPose.isPresent()) {
-            System.out.println("Vision update");
+            if (!estimatedRobotPose.isPresent())
+                return;
 
             double total_tag_dist = 0.0;
             double lowest_dist = Double.POSITIVE_INFINITY;
 
-            for(PhotonTrackedTarget target : estimatedRobotPose.get().targetsUsed) {
-                double dist = estimatedRobotPose.get().estimatedPose.getTranslation().toTranslation2d().getDistance(Field.kAprilTagMap.get(target.getFiducialId()).getTagInField().toWPI().getTranslation()) ;
-				total_tag_dist += dist;
-				lowest_dist = Math.min(dist, lowest_dist);
+            for (PhotonTrackedTarget target : estimatedRobotPose.get().targetsUsed) {
+                double dist = estimatedRobotPose.get().estimatedPose.getTranslation().toTranslation2d().getDistance(
+                        Field.kAprilTagMap.get(target.getFiducialId()).getTagInField().toWPI().getTranslation());
+                total_tag_dist += dist;
+                lowest_dist = Math.min(dist, lowest_dist);
             }
 
             double avg_dist = total_tag_dist / estimatedRobotPose.get().targetsUsed.size();
@@ -91,19 +93,25 @@ public class PhotonDevice extends Subsystem {
             double std_dev_multiplier = 1.0;
 
             double distStDev = std_dev_multiplier
-					* (0.1)
-					* ((0.01 * Math.pow(lowest_dist, 2.0)) + (0.005 * Math.pow(avg_dist, 2.0)))
-					/ estimatedRobotPose.get().targetsUsed.size();
-			distStDev = Math.max(0.02, distStDev);
+                    * (0.1)
+                    * ((0.01 * Math.pow(lowest_dist, 2.0)) + (0.005 * Math.pow(avg_dist, 2.0)))
+                    / estimatedRobotPose.get().targetsUsed.size();
+            distStDev = Math.max(0.02, distStDev);
 
-            RobotState.getInstance().visionUpdate(new RobotState.VisionUpdate(estimatedRobotPose.get().timestampSeconds, 
-                new Translation2d(estimatedRobotPose.get().estimatedPose.getX(), estimatedRobotPose.get().estimatedPose.getY()),
-                distStDev));
+            RobotState.getInstance()
+                    .visionUpdate(new RobotState.VisionUpdate(estimatedRobotPose.get().timestampSeconds,
+                            new Translation2d(estimatedRobotPose.get().estimatedPose.getX(),
+                                    estimatedRobotPose.get().estimatedPose.getY()),
+                            distStDev));
 
-            RobotState.getInstance().visionHeadingUpdate(estimatedRobotPose.get().estimatedPose.getRotation().getZ());
+            RobotState.getInstance()
+                    .visionHeadingUpdate(estimatedRobotPose.get().estimatedPose.getRotation().getZ());
 
             mLatestUpdate = estimatedRobotPose.get().estimatedPose;
+        } catch (Throwable e) {
+            throw e;
         }
+
     }
 
     @Override
@@ -126,6 +134,5 @@ public class PhotonDevice extends Subsystem {
     @Override
     public void writePeriodicOutputs() {
     }
-
 
 }

@@ -177,8 +177,8 @@ public class FlywheelSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        // mTopMotor.setVoltage(mPeriodicIO.top_demand);
-        // mBottomMotor.setVoltage(mPeriodicIO.bottom_demand);
+        mTopMotor.setVoltage(mPeriodicIO.top_demand);
+        mBottomMotor.setVoltage(mPeriodicIO.bottom_demand);
     }
 
     @Override

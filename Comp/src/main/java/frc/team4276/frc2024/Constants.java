@@ -386,8 +386,8 @@ public final class Constants {
         public static final int kSpinUpRPM = 2500;
         public static final int kPoopRPM = 1000;
         public static final int kExhaustRPM = -1000;
-        public static final int kAmpTopRPM = 0;
-        public static final int kAmpBotRPM = 3500;
+        public static final int kAmpTopRPM = 1300;
+        public static final int kAmpBotRPM = 1700;
 
         public static final double kSpinUpDistance = 4.0;
         public static final double kDoableShotDistance = 4.0;

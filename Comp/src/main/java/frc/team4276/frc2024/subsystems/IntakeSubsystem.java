@@ -20,6 +20,7 @@ public class IntakeSubsystem extends Subsystem {
         IDLE(0.0),
         INTAKE(12.0),
         SLOW_FEED(4.0),
+        AMP(10.0),
         DEFEED(-2.0),
         EXHAUST(-8.0),
         SHOOT(12.0);
@@ -98,14 +99,14 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        // mMotor.setVoltage(mState.voltage);
+        mMotor.setVoltage(mState.voltage);
     }
 
     @Override
     public void outputTelemetry() {
         SmartDashboard.putString("Debug/Intake State", mState.name());
-        // SmartDashboard.putNumber("Debug/Intake Current", mMotor.getOutputCurrent());
-        // SmartDashboard.putNumber("Debug/Intake Voltage", mMotor.getAppliedVoltage());
+        SmartDashboard.putNumber("Debug/Intake Current", mMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Debug/Intake Voltage", mMotor.getAppliedVoltage());
 
     }
 }

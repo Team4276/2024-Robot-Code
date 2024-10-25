@@ -201,9 +201,13 @@ public abstract class ServoMotorSubsystem extends Subsystem {
      * @return
      */
     public boolean atSetpoint() {
+        return atSetpoint(mConstants.kTol);
+    }
+
+    public boolean atSetpoint(double tol) {
         if(mControlState == ControlState.VOLTAGE) return false;
 
-        return Math.abs(mPeriodicIO.meas_position - mPeriodicIO.demand) < mConstants.kTol;
+        return Math.abs(mPeriodicIO.meas_position - mPeriodicIO.demand) < tol;
     }
 
     @Override
@@ -293,10 +297,10 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
         if(Constants.disableExtraTelemetry) return;
 
-        // SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Voltage", mPeriodicIO.meas_master_voltage);
-        // SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Velocity", mPeriodicIO.meas_velocity);
-        // SmartDashboard.putString("Debug/" + mConstants.kName + " Controlstate", mControlState.name());
-        // SmartDashboard.putBoolean("Debug/" + mConstants.kName + " is Maintain", mIsMaintain);
+        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Voltage", mPeriodicIO.meas_master_voltage);
+        SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Velocity", mPeriodicIO.meas_velocity);
+        SmartDashboard.putString("Debug/" + mConstants.kName + " Controlstate", mControlState.name());
+        SmartDashboard.putBoolean("Debug/" + mConstants.kName + " is Maintain", mIsMaintain);
 
     }
 

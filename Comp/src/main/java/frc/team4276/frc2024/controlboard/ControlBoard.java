@@ -73,15 +73,15 @@ public class ControlBoard {
             }
 
         } else {
-            if (operator.getRightBumperReleased()) {
-                mTuningFlywheelTopSetpoint += 100 * sign;
-                mTuningFlywheelBotSetpoint += 100 * sign;
+            // if (operator.getRightBumperReleased()) {
+            //     mTuningFlywheelTopSetpoint += 100 * sign;
+            //     mTuningFlywheelBotSetpoint += 100 * sign;
 
-            } else if (operator.getLeftBumperReleased()) {
-                mTuningFlywheelTopSetpoint += 1000 * sign;
-                mTuningFlywheelBotSetpoint += 1000 * sign;
+            // } else if (operator.getLeftBumperReleased()) {
+            //     mTuningFlywheelTopSetpoint += 1000 * sign;
+            //     mTuningFlywheelBotSetpoint += 1000 * sign;
 
-            }
+            // }
         }
 
         SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Top Setpoint", mTuningFlywheelTopSetpoint);
@@ -107,7 +107,9 @@ public class ControlBoard {
         mSuperstructure.setTuningFourbarPostion(mTuningFourbarSetpoint);
 
         if (operator.getRT()) {
-            mSuperstructure.setTuningIntakeState(IntakeSubsystem.State.SHOOT);
+            mSuperstructure.setTuningIntakeState(IntakeSubsystem.State.AMP);
+        } else if(operator.getAButton()){
+            mSuperstructure.setTuningIntakeState(IntakeSubsystem.State.DEFEED);
         } else {
             mSuperstructure.setTuningIntakeState(IntakeSubsystem.State.IDLE);
         }
@@ -424,11 +426,11 @@ public class ControlBoard {
 
     // Extra
     public boolean enableFourbarFuse() {
-        return false;
+        return true;
     }
 
     public boolean wantTuning() {
-        return false;
+        return true;
     }
 
 }
