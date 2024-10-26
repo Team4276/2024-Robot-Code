@@ -430,7 +430,7 @@ public class ControlBoard {
     }
 
     public boolean wantTuning() {
-        return true;
+        return false;
     }
 
 }

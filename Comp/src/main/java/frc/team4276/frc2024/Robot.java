@@ -7,7 +7,7 @@ package frc.team4276.frc2024;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-
+import edu.wpi.first.wpilibj.Timer;
 import frc.team4276.frc2024.auto.AutoInitializer;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
@@ -167,9 +167,11 @@ public class Robot extends TimedRobot {
 
                 mDriveSubsystem.resetGyro(autoMode.get().getStartingPose().getRotation().getDegrees());
                 mDriveSubsystem.resetOdometry(autoMode.get().getStartingPose());
+                RobotState.getInstance().reset(Timer.getFPGATimestamp(), autoMode.get().getStartingPose());
             } else {
                 mDriveSubsystem.resetGyro(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
                 mDriveSubsystem.resetOdometry(Pose2d.identity());
+                RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
             }
 

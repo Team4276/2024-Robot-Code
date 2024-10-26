@@ -57,7 +57,7 @@ public class AutoModeSelector {
         case TEST_2:
             return Optional.of(new ChoreoTest("Test2"));
         case FOUR_NOTE_CLOSE_SAFE:
-            return Optional.of(new FourNoteCloseSafe());
+            return Optional.of(new Close_4Note_Safe());
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

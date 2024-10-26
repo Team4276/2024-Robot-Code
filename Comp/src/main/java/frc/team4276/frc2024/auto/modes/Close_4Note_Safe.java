@@ -9,7 +9,7 @@ import frc.team4276.frc2024.auto.actions.WaitForAction;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 
-public class FourNoteCloseSafe extends AutoModeBase {
+public class Close_4Note_Safe extends AutoModeBase {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
     private final SwerveTrajectoryAction traj1;
@@ -20,7 +20,7 @@ public class FourNoteCloseSafe extends AutoModeBase {
     private final SwerveTrajectoryAction traj6;
     private final SwerveTrajectoryAction traj7;
 
-    public FourNoteCloseSafe(){
+    public Close_4Note_Safe(){
         traj1 = new SwerveTrajectoryAction("Close_4Note_Safe", 1);
         traj2 = new SwerveTrajectoryAction("Close_4Note_Safe", 2);
         traj3 = new SwerveTrajectoryAction("Close_4Note_Safe", 3);

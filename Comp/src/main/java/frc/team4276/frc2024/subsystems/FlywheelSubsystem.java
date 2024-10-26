@@ -111,6 +111,8 @@ public class FlywheelSubsystem extends Subsystem {
             mIsOpenLoop = false;
         }
 
+        mPeriodicIO.des_top_rpm = top_RPM;
+        mPeriodicIO.des_bot_rpm = bottom_RPM;
         mPeriodicIO.top_demand = mTopFF.calculate(top_RPM);
         mPeriodicIO.bottom_demand = mBottomFF.calculate(bottom_RPM);
     }
@@ -139,6 +141,8 @@ public class FlywheelSubsystem extends Subsystem {
         double bottom_RPM = 0.0;
         double top_voltage = 0.0;
         double bottom_voltage = 0.0;
+        double des_top_rpm = 0.0;
+        double des_bot_rpm = 0.0;
 
         // Outputs
         double top_demand;
@@ -187,6 +191,8 @@ public class FlywheelSubsystem extends Subsystem {
         if(Constants.disableExtraTelemetry) return;
         
         SmartDashboard.putBoolean("Debug/Flywheels Spun Up", isSpunUp());
+        SmartDashboard.putNumber("Debug/Des Top RPM", mPeriodicIO.des_top_rpm);
+        SmartDashboard.putNumber("Debug/Des Bottom RPM", mPeriodicIO.des_bot_rpm);
         SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.top_RPM);
         SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.bottom_RPM);
         SmartDashboard.putNumber("Debug/Top Voltage", mPeriodicIO.top_voltage);

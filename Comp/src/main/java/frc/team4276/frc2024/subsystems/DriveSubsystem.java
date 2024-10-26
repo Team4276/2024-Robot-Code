@@ -425,6 +425,9 @@ public class DriveSubsystem extends Subsystem {
     public synchronized void outputTelemetry() {
         SmartDashboard.putNumber("Comp/Heading", mPeriodicIO.heading.getDegrees());
         SmartDashboard.putString("Comp/Drive Mode", mControlState.name());
+
+        SmartDashboard.putNumber("Comp/Pos X", RobotState.getInstance().getLatestFieldToVehicle().getTranslation().x());
+        SmartDashboard.putNumber("Comp/Pos Y", RobotState.getInstance().getLatestFieldToVehicle().getTranslation().y());
         
         for(int i = 0; i < mModules.length; i++) {
             mModules[i].outputTelemetry();

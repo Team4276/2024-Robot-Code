@@ -152,7 +152,7 @@ public final class Constants {
 
         public static final double kAutoMaxError = 0.75; // Meters
 
-        public static final double kSnapHeadingKp = 3.15;
+        public static final double kSnapHeadingKp = 3.3;
         public static final double kSnapHeadingKi = 0.0;
         public static final double kSnapHeadingKd = 0.0;
 
@@ -360,8 +360,8 @@ public final class Constants {
         public static int kMeasurementPeriod = 10;
         public static double kUnitsPerRotation = 1.0;
 
-        public static double kS_Top = 0.188;
-        public static double kS_Bottom = 0.188;
+        public static double kS_Top = 0.15;
+        public static double kS_Bottom = 0.15;
         // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel
         public static double kV_Top = 0.002;
         public static double kV_Bottom = 0.002;
@@ -382,7 +382,7 @@ public final class Constants {
         public static final double kFourbarSkimState = 120;
 
         public static final int kNormalShotRPM = 3500;
-        public static final int kFerryRPM = 3500;
+        public static final int kFerryRPM = 4500;
         public static final int kSpinUpRPM = 2500;
         public static final int kPoopRPM = 1000;
         public static final int kExhaustRPM = -1000;
