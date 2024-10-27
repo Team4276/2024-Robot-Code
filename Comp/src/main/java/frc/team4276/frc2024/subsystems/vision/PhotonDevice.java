@@ -65,6 +65,8 @@ public class PhotonDevice extends Subsystem {
     @Override
     public void readPeriodicInputs() {
         try {
+            if (!mCamera.isConnected()) return;
+
             PhotonPipelineResult result = mCamera.getLatestResult();
 
             if (result == null)

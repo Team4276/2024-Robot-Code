@@ -7,7 +7,9 @@ package frc.team4276.frc2024.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
+import choreo.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team4276.frc2024.Constants;
@@ -17,7 +19,7 @@ import frc.team4276.lib.drivers.ADISGyro;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
-
+import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.swerve.ModuleState;
@@ -52,11 +54,13 @@ public class DriveSubsystem extends Subsystem {
         FORCE_ORIENT,
         OPEN_LOOP,
         HEADING_CONTROL,
-        PATH_FOLLOWING
+        PATH_FOLLOWING,
+        PATH_FOLLOWING_CHOR
     }
     
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
+    private MotionPlanner mMotionPlanner;
     private HeadingController mHeadingController;
 
     private boolean mOverrideHeading = false;
@@ -89,6 +93,7 @@ public class DriveSubsystem extends Subsystem {
                 DriveConstants.kDriveKinematics,
                 mPeriodicIO.meas_module_states);
 
+        mMotionPlanner = new MotionPlanner();
         mHeadingController = HeadingController.getInstance();
     }
 
@@ -110,6 +115,14 @@ public class DriveSubsystem extends Subsystem {
         }
 
         mPeriodicIO.des_chassis_speeds = speeds;
+    }
+
+    public synchronized void setChoreoTraj(Trajectory<?> traj) {
+        if(mControlState != DriveControlState.PATH_FOLLOWING_CHOR) {
+            mControlState = DriveControlState.PATH_FOLLOWING_CHOR;
+        }
+
+        mMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
     }
 
     public synchronized void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
@@ -206,6 +219,10 @@ public class DriveSubsystem extends Subsystem {
         return mKinematicLimits;
     }
 
+    public synchronized boolean isTrajFinished() {
+        return mMotionPlanner.isFinished();
+    }
+
     public synchronized void resetDriveEncoders() {
         for (MAXSwerveModule mod : mModules) {
             mod.resetEncoders();
@@ -286,7 +303,10 @@ public class DriveSubsystem extends Subsystem {
                                 break;
                             case PATH_FOLLOWING:
                                 break;
+                            case PATH_FOLLOWING_CHOR:
+                                mPeriodicIO.des_chassis_speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp);
 
+                                break;
                             default:
                                 stop();
                                 break;
@@ -412,7 +432,8 @@ public class DriveSubsystem extends Subsystem {
             if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
             } else if (mControlState == DriveControlState.PATH_FOLLOWING
-                    || mControlState == DriveControlState.FORCE_ORIENT) {
+                    || mControlState == DriveControlState.FORCE_ORIENT
+                    || mControlState == DriveControlState.PATH_FOLLOWING_CHOR) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
             }
 
@@ -434,6 +455,15 @@ public class DriveSubsystem extends Subsystem {
         }
 
         if(Constants.disableExtraTelemetry) return;
+        
+        Shuffleboard.getTab("Path").addNumber("X Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::x);
+        Shuffleboard.getTab("Path").addNumber("Y Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::y);
+        Shuffleboard.getTab("Path").addNumber("Rotation", RobotState.getInstance().getLatestFieldToVehicle().getRotation()::getDegrees);
+        
+        Shuffleboard.getTab("Path").addNumber("X Error", mMotionPlanner.getTranslationError()::x);
+        Shuffleboard.getTab("Path").addNumber("Y Error", mMotionPlanner.getTranslationError()::y);
+        Shuffleboard.getTab("Path").addNumber("Translation Error", mMotionPlanner.getTranslationError()::norm);
+        Shuffleboard.getTab("Path").addNumber("Rotation Error", mMotionPlanner.getRotationError()::getDegrees);
 
     }
 }

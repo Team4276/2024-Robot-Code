@@ -300,7 +300,7 @@ public class Superstructure extends Subsystem {
                 request(mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarSkimState));
 
                 break;
-            case INTAKE: //TODO: make faster updates
+            case INTAKE:
                 if(mPrevGoalState == mGoalState || mIsHoldingNote == true) break;
 
                 request(new SequentialRequest(

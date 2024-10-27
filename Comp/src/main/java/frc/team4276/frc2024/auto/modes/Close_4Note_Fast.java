@@ -1,62 +1,58 @@
 package frc.team4276.frc2024.auto.modes;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.team254.lib.geometry.Pose2d;
-import frc.team254.lib.geometry.Rotation2d;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
-import frc.team4276.frc2024.auto.actions.SwerveTrajectoryAction;
+import frc.team4276.frc2024.auto.actions.ChoreoTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.WaitAction;
 import frc.team4276.frc2024.auto.actions.WaitForAction;
-import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
+
+import frc.team254.lib.geometry.Pose2d;
 
 public class Close_4Note_Fast extends AutoModeBase {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
     private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
-    private final SwerveTrajectoryAction traj1;
-    private final SwerveTrajectoryAction traj2;
-    private final SwerveTrajectoryAction traj3;
-    private final SwerveTrajectoryAction traj4;
+    private final ChoreoTrajectoryAction traj1;
+    private final ChoreoTrajectoryAction traj2;
+    private final ChoreoTrajectoryAction traj3;
+    private final ChoreoTrajectoryAction traj4;
+    private final ChoreoTrajectoryAction traj5;
+    private final ChoreoTrajectoryAction traj6;
 
     public Close_4Note_Fast(){
-        traj1 = new SwerveTrajectoryAction("Close_4Note_Fast", 1);
-        traj2 = new SwerveTrajectoryAction("Close_4Note_Fast", 2);
-        traj3 = new SwerveTrajectoryAction("Close_4Note_Fast", 3);
-        traj4 = new SwerveTrajectoryAction("Close_4Note_Fast", 4);
+        traj1 = new ChoreoTrajectoryAction("Close_4Note_Fast", 1);
+        traj2 = new ChoreoTrajectoryAction("Close_4Note_Fast", 2);
+        traj3 = new ChoreoTrajectoryAction("Close_4Note_Fast", 3);
+        traj4 = new ChoreoTrajectoryAction("Close_4Note_Fast", 4);
+        traj5 = new ChoreoTrajectoryAction("Close_4Note_Fast", 5);
+        traj6 = new ChoreoTrajectoryAction("Close_4Note_Fast", 6);
     }
 
-    //TODO: add auto wait time for shots in superstructure logic
     private double kShotWaitTime = 0.5;
     private double kReadyWaitTime = 1.0;
 
     @Override
     protected void routine() throws AutoModeEndedException {
-        // boolean isRed = AllianceChooser.getInstance().isAllianceRed();
-
         // Set Control States
         mSuperstructure.setDynamic(true);
         mSuperstructure.setNominal();
         mSuperstructure.setPrep(true);
 
         // Note 1 Shoot
+        runAction(traj1);
         mSuperstructure.setGoalState(GoalState.READY);
-        mDriveSubsystem.overrideHeading(true);
         runAction(new WaitAction(kReadyWaitTime));
         mSuperstructure.setGoalState(GoalState.SHOOT);
         runAction(new WaitAction(kShotWaitTime));
         mSuperstructure.setGoalState(GoalState.SKIM);
-        mDriveSubsystem.overrideHeading(false);
-        // mDriveSubsystem.setHeadingSetpoint(isRed ? Rotation2d.fromDegrees(180.0) : 
-        //     Rotation2d.fromDegrees(0.0)); //TODO: fix this its jank as fuck
 
         // Note 2 Drive and Pickup and Drive to Score
-        runAction(traj1);
-        mSuperstructure.setGoalState(GoalState.INTAKE);
         runAction(traj2);
+        mSuperstructure.setGoalState(GoalState.INTAKE);
+        runAction(traj3);
         
         // Note 2 Score
         mSuperstructure.setGoalState(GoalState.READY);
@@ -66,7 +62,7 @@ public class Close_4Note_Fast extends AutoModeBase {
         mSuperstructure.setGoalState(GoalState.INTAKE);
 
         // Note 3 Drive and Pickup and Score
-        runAction(traj3);
+        runAction(traj4);
         runAction(new WaitForAction(mSuperstructure::isHoldingNote));
         mSuperstructure.setGoalState(GoalState.READY);
         runAction(new WaitAction(kReadyWaitTime));
@@ -74,11 +70,20 @@ public class Close_4Note_Fast extends AutoModeBase {
         runAction(new WaitAction(kShotWaitTime));
         mSuperstructure.setGoalState(GoalState.SKIM);
 
-        // Note 4 Drive and Pickup
-
-
-        // Note 4 Drive and Shoot
+        // Note 4 Drive and Pickup and Score
+        runAction(traj5);
+        mSuperstructure.setGoalState(GoalState.INTAKE);
+        runAction(traj6);
+        runAction(new WaitForAction(mSuperstructure::isHoldingNote));
+        mSuperstructure.setGoalState(GoalState.READY);
+        mDriveSubsystem.overrideHeading(true);
+        runAction(new WaitAction(2.0));
+        mSuperstructure.setGoalState(GoalState.SHOOT);
+        runAction(new WaitAction(kShotWaitTime));
+        mSuperstructure.setGoalState(GoalState.STOW);
         
+        // Nominal Control States
+        mDriveSubsystem.overrideHeading(false);
         mSuperstructure.setPrep(false);
 
     }

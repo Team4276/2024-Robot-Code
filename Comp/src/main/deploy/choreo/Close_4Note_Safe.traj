@@ -10,7 +10,7 @@
     {"x":2.494586706161499, "y":5.578441619873047, "heading":-3.141592653589793, "intervals":7, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":1.5295066833496094, "y":5.578441619873047, "heading":-3.141592653589793, "intervals":9, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":2.0332822799682617, "y":6.995152473449707, "heading":-3.141592653589793, "intervals":5, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":2.48030424118042, "y":6.994457721710205, "heading":-3.141592653589793, "intervals":9, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":2.48030424118042, "y":6.994457721710205, "heading":-3.141592653589793, "intervals":9, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":1.547287940979004, "y":5.588292121887207, "heading":-3.141592653589793, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
@@ -118,7 +118,7 @@
     {"t":5.527309908255578, "x":1.6406420189632789, "y":5.7289217600458295, "heading":-3.141592653589793, "vx":-0.9568907738374032, "vy":-1.4415172320520744, "omega":0.0, "ax":4.903828355504768, "ay":7.38789215137634, "alpha":0.0, "fx":[66.73017377539831,66.7301737753983,66.7301737753983,66.7301737753983], "fy":[100.53274530741578,100.5327453074158,100.5327453074158,100.5327453074158]},
     {"t":5.624863833185719, "x":1.570627867291823, "y":5.623450525006239, "heading":-3.141592653589793, "vx":-0.4785030705742199, "vy":-0.7207993557247216, "omega":0.0, "ax":4.905010955908773, "ay":7.388727375560587, "alpha":0.0, "fx":[66.74626633099885,66.74626633099885,66.74626633099885,66.74626633099885], "fy":[100.54411084693204,100.54411084693204,100.54411084693204,100.54411084693204]},
     {"t":5.72241775811586, "x":1.547287940979004, "y":5.588292121887207, "heading":-3.141592653589793, "vx":0.0, "vy":0.0, "omega":0.0, "ax":0.0, "ay":0.0, "alpha":0.0, "fx":[0.0,0.0,0.0,0.0], "fy":[0.0,0.0,0.0,0.0]}],
-  "splits":[0,9,14,23,30,37,46,51]
+  "splits":[0,9,14,23,30,37,46]
  },
  "events":[
    {"name":"Intake", "from":{"target":1, "targetTimestamp":0.8531521848229163, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
