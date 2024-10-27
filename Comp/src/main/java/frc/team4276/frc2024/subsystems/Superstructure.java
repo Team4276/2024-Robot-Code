@@ -520,7 +520,7 @@ public class Superstructure extends Subsystem {
             fourbar_setpoint = params[2] + mScoringOffset;
             drive_heading_setpoint = Rotation2d.fromRadians(params[3]);
 
-            mIsPrep = distance < SuperstructureConstants.kSpinUpDistance;
+            mIsPrep = mIsPrep ? distance < SuperstructureConstants.kSpinUpDistance + 1.0: distance < SuperstructureConstants.kSpinUpDistance;
         }
 
         mIsShotDoable = distance < SuperstructureConstants.kDoableShotDistance;

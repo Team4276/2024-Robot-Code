@@ -54,7 +54,7 @@ public class PhotonDevice extends Subsystem {
         return mConstants.kCameraName;
     }
 
-    public boolean getConnected() {
+    public boolean isConnected() {
         return mCamera.isConnected();
     }
 

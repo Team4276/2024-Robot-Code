@@ -148,6 +148,7 @@ public final class Constants {
         public static final RobotConfig kPPRobotConfig = new RobotConfig(Units.lbsToKilograms(120.0), 
             kMOI, kPPModuleconfig, kTrackWidth, kWheelBase);
 
+        //TODO: tune
         public static final double kAutoTransAccelFF = 0.0;
         public static final double kAutoRotAccelFF = 0.0;
 

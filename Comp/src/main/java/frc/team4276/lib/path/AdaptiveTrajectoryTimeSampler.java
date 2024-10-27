@@ -57,6 +57,7 @@ public class AdaptiveTrajectoryTimeSampler {
             return sampledState;
         }
 
+        //TODO: fix replanner
         //Increase the offset to make sure the sampled point stays the same until the error is below the threshold again
         double dt = timestamp - prevTime;
         timeOffset += dt;

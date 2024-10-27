@@ -11,7 +11,9 @@ public class AutoModeSelector {
     public enum DesiredMode {
         DO_NOTHING, 
         TEST_2,
-        FOUR_NOTE_CLOSE_SAFE
+        CLOSE_4NOTE_SAFE,
+        CLOSE_4NOTE_FAST,
+        CLOSE_5NOTE_MIDSTEAL,
 
     }
 
@@ -34,7 +36,9 @@ public class AutoModeSelector {
     private AutoModeSelector() {
         mModeChooser.setDefaultOption("Do Nothing", DesiredMode.DO_NOTHING);
         mModeChooser.addOption("Test 2", DesiredMode.TEST_2);
-        mModeChooser.addOption("FourNoteCloseSafe", DesiredMode.FOUR_NOTE_CLOSE_SAFE);
+        mModeChooser.addOption("CloseFourNoteSafe", DesiredMode.CLOSE_4NOTE_SAFE);
+        mModeChooser.addOption("CloseFourNoteFast", DesiredMode.CLOSE_4NOTE_FAST);
+        mModeChooser.addOption("CloseFourNoteMidSteal", DesiredMode.CLOSE_5NOTE_MIDSTEAL);
         SmartDashboard.putData("Comp/Auto Mode", mModeChooser);
 
     }
@@ -56,8 +60,12 @@ public class AutoModeSelector {
             return Optional.of(new DoNothingMode());
         case TEST_2:
             return Optional.of(new ChoreoTest("Test2"));
-        case FOUR_NOTE_CLOSE_SAFE:
+        case CLOSE_4NOTE_SAFE:
             return Optional.of(new Close_4Note_Safe());
+        case CLOSE_4NOTE_FAST:
+            return Optional.of(new Close_4Note_Fast());
+        case CLOSE_5NOTE_MIDSTEAL:
+            return Optional.of(new Close_5Note_MidSteal());
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

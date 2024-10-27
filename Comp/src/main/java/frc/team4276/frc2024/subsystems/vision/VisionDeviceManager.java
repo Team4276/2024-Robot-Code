@@ -64,6 +64,8 @@ public class VisionDeviceManager extends Subsystem {
         if(Constants.disableExtraTelemetry) return;
 
         for(PhotonDevice camera : mAllCameras) { //TODO: get rid of this probably when calibration is finished
+            if(!camera.isConnected()) return;
+
             if (camera.getLatestUpdate() != null) {
                 Pose3d displacement = camera.getLatestUpdate().relativeTo(new Pose3d(RobotState.getInstance().getWPILatestFieldToVehicle()));
                 SmartDashboard.putNumber("Debug/Vision Tuning/" + camera.getName() + " X Translation Displacement", displacement.getX());
