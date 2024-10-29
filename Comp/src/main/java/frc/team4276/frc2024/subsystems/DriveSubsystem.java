@@ -18,7 +18,7 @@ import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.lib.drivers.ADISGyro;
 import frc.team4276.lib.drivers.Subsystem;
-import frc.team4276.lib.swerve.HeadingController;
+import frc.team4276.lib.swerve.ProfiledHeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team1678.lib.loops.Loop;
@@ -62,7 +62,7 @@ public class DriveSubsystem extends Subsystem {
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
     private MotionPlanner mMotionPlanner;
-    private HeadingController mHeadingController;
+    private ProfiledHeadingController mHeadingController;
 
     private boolean mOverrideHeading = false;
 
@@ -95,7 +95,7 @@ public class DriveSubsystem extends Subsystem {
                 mPeriodicIO.meas_module_states);
 
         mMotionPlanner = new MotionPlanner();
-        mHeadingController = HeadingController.getInstance();
+        mHeadingController = ProfiledHeadingController.getInstance();
     }
 
     public synchronized void teleopDrive(ChassisSpeeds speeds) {
@@ -107,7 +107,7 @@ public class DriveSubsystem extends Subsystem {
             if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
                 mControlState = DriveControlState.OPEN_LOOP;
             } else {
-                mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
+                mPeriodicIO.des_chassis_speeds = new ChassisSpeeds( //TODO: clean this up
                         speeds.vxMetersPerSecond,
                         speeds.vyMetersPerSecond,
                         mHeadingController.update(mPeriodicIO.heading.getRadians(), mPeriodicIO.timestamp));
@@ -148,7 +148,7 @@ public class DriveSubsystem extends Subsystem {
         }
 
         if (mHeadingController.getTargetRad() != angle.getRadians()) {
-            mHeadingController.setTarget(angle.getRadians());
+            mHeadingController.setTarget(angle.getRadians(), mPeriodicIO.heading.getRadians(), mPeriodicIO.meas_chassis_speeds.omegaRadiansPerSecond);
         }
     }
 
@@ -289,6 +289,7 @@ public class DriveSubsystem extends Subsystem {
 
             @Override
             public void onStart(double timestamp) {
+                mHeadingController.reset(mPeriodicIO.heading.getRadians(), 0.0);
             }
 
             @Override

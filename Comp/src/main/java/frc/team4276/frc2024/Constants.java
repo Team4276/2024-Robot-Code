@@ -105,9 +105,10 @@ public final class Constants {
 
         public static final double kMaxVel = MaxSwerveModuleConstants.kDriveWheelFreeSpeedRps; // meters per second
         public static final double kMaxAttainableVel = kMaxVel * 0.8;
-        public static final double kMaxAttainableAccel = 8.9;
+        public static final double kMaxAttainableAccel = 8.8;
 
         public static final double kMaxAngularVel = kMaxVel * 2 / (kTrackWidth * Math.sqrt(2)); // radians per second
+        public static final double kMaxAngularAccel = kMaxAttainableAccel * 2 / (kTrackWidth * Math.sqrt(2)); // radians per second
 
         public static final DriveSubsystem.KinematicLimits kUncappedLimits = new DriveSubsystem.KinematicLimits();
         static {
@@ -160,6 +161,14 @@ public final class Constants {
 
         public static final double kSnapPositionTolerance = 2 * Math.PI / 180;
         public static final double kSnapAngularVelocityTolerance = 0.5;
+        
+        //TODO: tune
+        public static final double kProfiledSnapHeadingKp = 3.3;
+        public static final double kProfiledSnapHeadingKi = 0.0;
+        public static final double kProfiledSnapHeadingKd = 0.0;
+
+        public static final double kProfiledSnapPositionTolerance = 2 * Math.PI / 180;
+        public static final double kProfiledSnapAngularVelocityTolerance = 0.5;
 
     }
 
