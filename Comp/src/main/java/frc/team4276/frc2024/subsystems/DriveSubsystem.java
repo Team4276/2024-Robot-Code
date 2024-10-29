@@ -7,6 +7,7 @@ package frc.team4276.frc2024.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
+import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -117,7 +118,7 @@ public class DriveSubsystem extends Subsystem {
         mPeriodicIO.des_chassis_speeds = speeds;
     }
 
-    public synchronized void setChoreoTraj(Trajectory<?> traj) {
+    public synchronized void setChoreoTraj(Trajectory<SwerveSample> traj) {
         if(mControlState != DriveControlState.PATH_FOLLOWING_CHOR) {
             mControlState = DriveControlState.PATH_FOLLOWING_CHOR;
         }

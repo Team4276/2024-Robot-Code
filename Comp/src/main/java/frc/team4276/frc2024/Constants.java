@@ -328,12 +328,12 @@ public final class Constants {
             kSubsystemConstants.kPidfConfigs[2] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[2].kSlotId = 2; // Fuse Motion
             kSubsystemConstants.kPidfConfigs[2].kP = 0.02;
-            kSubsystemConstants.kPidfConfigs[2].kI = 0.0;
+            kSubsystemConstants.kPidfConfigs[2].kI = 0.001; //TODO: tune in client
             kSubsystemConstants.kPidfConfigs[2].kD = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kFF = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kDFilter = 0.0;
-            kSubsystemConstants.kPidfConfigs[2].kIZone = 0.0;
-            kSubsystemConstants.kPidfConfigs[2].kIMaxAccum = 0.0;
+            kSubsystemConstants.kPidfConfigs[2].kIZone = 1.0;
+            kSubsystemConstants.kPidfConfigs[2].kIMaxAccum = 0.04;
             kSubsystemConstants.kPidfConfigs[2].kPIDOutputRange = 1.0;
 
             kSubsystemConstants.kFuseMotionConfig = new VIKCANSparkMaxServo.FuseMotionConfig();
