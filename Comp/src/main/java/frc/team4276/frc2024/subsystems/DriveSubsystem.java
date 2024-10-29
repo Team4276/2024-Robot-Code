@@ -246,23 +246,23 @@ public class DriveSubsystem extends Subsystem {
     private class PeriodicIO {
         // Inputs/Desired States
         double timestamp = Timer.getFPGATimestamp();
-        ChassisSpeeds des_chassis_speeds = new ChassisSpeeds();
-        ChassisSpeeds meas_chassis_speeds = new ChassisSpeeds();
+        ChassisSpeeds des_chassis_speeds = ChassisSpeeds.identity();
+        ChassisSpeeds meas_chassis_speeds = ChassisSpeeds.identity();
         ModuleState[] meas_module_states = new ModuleState[] {
-                new ModuleState(),
-                new ModuleState(),
-                new ModuleState(),
-                new ModuleState()
+                ModuleState.identity(),
+                ModuleState.identity(),
+                ModuleState.identity(),
+                ModuleState.identity()
         };
         Rotation2d heading = Rotation2d.identity();
         Rotation2d pitch = Rotation2d.identity();
 
         // Outputs
         ModuleState[] des_module_states = new ModuleState[] {
-                new ModuleState(),
-                new ModuleState(),
-                new ModuleState(),
-                new ModuleState()
+                ModuleState.identity(),
+                ModuleState.identity(),
+                ModuleState.identity(),
+                ModuleState.identity()
         };
     }
 

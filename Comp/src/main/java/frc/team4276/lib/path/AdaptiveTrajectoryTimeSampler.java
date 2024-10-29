@@ -51,26 +51,23 @@ public class AdaptiveTrajectoryTimeSampler {
         double distanceToPoint = currentPose.getTranslation().getDistance(sampledTranslation);
 
         //Check if the distance to the target position is smaller than the maximum error
-        if (distanceToPoint < maxError){
+        // if (distanceToPoint < maxError){
             //Everything is fine, update the previous time and return the sampled state
             prevTime = timestamp;
             return sampledState;
-        }
+        // }
 
         //TODO: fix replanner
-        //Increase the offset to make sure the sampled point stays the same until the error is below the threshold again
-        double dt = timestamp - prevTime;
-        timeOffset += dt;
+        // //Increase the offset to make sure the sampled point stays the same until the error is below the threshold again
+        // double dt = timestamp - prevTime;
+        // timeOffset += dt;
 
-        //Update the previous time
-        prevTime = timestamp;
+        // //Update the previous time
+        // prevTime = timestamp;
 
-        //Sample the trajectory again, but now with the increased offset
-        TrajectorySample<?> frozenState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
-        // frozenState.linearVelocity = 0;
-        // frozenState = 0;
-        // frozenState.headingAngularVelocityRps = 0;
-        return frozenState;
+        // //Sample the trajectory again, but now with the increased offset
+        // TrajectorySample<?> frozenState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
+        // return frozenState;
 
     }
 
