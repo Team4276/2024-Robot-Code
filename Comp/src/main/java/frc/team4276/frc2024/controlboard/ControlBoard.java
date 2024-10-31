@@ -212,8 +212,13 @@ public class ControlBoard {
             mSuperstructure.setGoalState(Superstructure.GoalState.READY);
 
         } else if (wantAmpOrHoldCancelDynamic() && !wantReady()) {
-            mSuperstructure.setGoalState(Superstructure.GoalState.AMP);
+            if(false){
 
+
+            } else {
+                mSuperstructure.setGoalState(Superstructure.GoalState.AMP);
+
+            }
         } else if (wantExhaust()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.EXHAUST);
 

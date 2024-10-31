@@ -24,11 +24,14 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.vision.PhotonDevice.PhotonDeviceConstants;
+import frc.team4276.lib.characterizations.ElevatorFeedForward;
 import frc.team4276.lib.characterizations.FourBarFeedForward;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
+import frc.team4276.lib.drivers.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
 import frc.team4276.lib.rev.RevUtil;
 import frc.team4276.lib.rev.VIKCANSparkMaxServo;
+import frc.team4276.lib.rev.RevUtil.SparkRelativeEncoderConfig;
 import frc.team4276.lib.swerve.MAXSwerveModule.MAXSwerveModuleConstants;
 
 import frc.team1678.lib.swerve.SwerveDriveKinematics;
@@ -364,23 +367,100 @@ public final class Constants {
     }
 
     public static class FlywheelConstants {
-        public static IdleMode kIdleMode = IdleMode.kCoast;
-        public static int kSmartCurrentLimit = 50;
+        public static final IdleMode kIdleMode = IdleMode.kCoast;
+        public static final int kSmartCurrentLimit = 50;
 
-        public static int kAvgSamplingDepth = 8;
-        public static int kMeasurementPeriod = 10;
-        public static double kUnitsPerRotation = 1.0;
+        public static final int kAvgSamplingDepth = 8;
+        public static final int kMeasurementPeriod = 10;
+        public static final double kUnitsPerRotation = 1.0;
 
-        public static double kS_Top = 0.15;
-        public static double kS_Bottom = 0.15;
+        public static final double kS_Top = 0.15;
+        public static final double kS_Bottom = 0.15;
         // Math: (V * S / m) / 60 sec / 39.37 in/m * circumference of flywheel
-        public static double kV_Top = 0.002;
-        public static double kV_Bottom = 0.002;
-        public static double kA = 0;
+        public static final double kV_Top = 0.002;
+        public static final double kV_Bottom = 0.002;
+        public static final double kA = 0;
 
-        public static double kPrep = 4.0; // Volts
+        public static final double kPrep = 4.0; // Volts
 
-        public static double kFlywheelTolerance = 300.0; // RPM
+        public static final double kFlywheelTolerance = 300.0; // RPM
+    }
+
+    public static class ClimberSubsystemConstants {
+        public static final ServoMotorSubsystemConstants kClimberServoConstants = new ServoMotorSubsystemConstants();
+        static {
+            kClimberServoConstants.kName = "Climber";
+
+            kClimberServoConstants.kMasterConstants.id = Ports.CLIMBER_RIGHT;
+            kClimberServoConstants.kMasterConstants.isInverted = false;
+
+            kClimberServoConstants.kFollowerConstants = new ServoMotorSubsystem.ServoMotorConfig[1];
+            
+            kClimberServoConstants.kFollowerConstants[0] = new ServoMotorSubsystem.ServoMotorConfig();
+            kClimberServoConstants.kFollowerConstants[0].id = Ports.CLIMBER_LEFT;
+            kClimberServoConstants.kFollowerConstants[0].isInverted = true;
+
+            kClimberServoConstants.kSmartCurrentLimit = 40;
+            kClimberServoConstants.kIdleMode = IdleMode.kBrake;
+            kClimberServoConstants.kIsCircular = false; // assume max position is 360
+            kClimberServoConstants.kMinPosition = 0.0; // Input Bound
+            kClimberServoConstants.kMaxPosition = 0.0; // Input Bound
+            kClimberServoConstants.kMaxVel = 0.0;
+            kClimberServoConstants.kMaxAccel = 0.0;
+            kClimberServoConstants.kS = 0.0; // Smart Motion Firmware
+            kClimberServoConstants.kTol = 0.0;
+            kClimberServoConstants.kForwardLimitPolarity = Type.kNormallyOpen;
+            kClimberServoConstants.kReverseLimitPolarity = Type.kNormallyOpen;
+
+            kClimberServoConstants.kSlotIdSmartMotionCruise = 0;
+            kClimberServoConstants.kSlotIdSmartMotionMaintain = 1;
+            kClimberServoConstants.kSlotIdFuseMotion = 2;
+
+            kClimberServoConstants.kPidfConfigs = new CANSparkMaxFactory.CANSparkMaxPIDFConfig[3];
+
+            kClimberServoConstants.kPidfConfigs[0] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
+            kClimberServoConstants.kPidfConfigs[0].kSlotId = 0; // Smart Motion Cruise (Velocity Control)
+            kClimberServoConstants.kPidfConfigs[0].kP = 0.0;
+            kClimberServoConstants.kPidfConfigs[0].kI = 0.0;
+            kClimberServoConstants.kPidfConfigs[0].kD = 0.0;
+            kClimberServoConstants.kPidfConfigs[0].kFF = 0.0;
+            kClimberServoConstants.kPidfConfigs[0].kDFilter = 0.0;
+            kClimberServoConstants.kPidfConfigs[0].kIZone = 0.0;
+            kClimberServoConstants.kPidfConfigs[0].kIMaxAccum = 0.0;
+            kClimberServoConstants.kPidfConfigs[0].kPIDOutputRange = 1.0;
+
+            kClimberServoConstants.kPidfConfigs[1] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
+            kClimberServoConstants.kPidfConfigs[1].kSlotId = 1; // Smart Motion Maintain (Position Control)
+            kClimberServoConstants.kPidfConfigs[1].kP = 0.0;
+            kClimberServoConstants.kPidfConfigs[1].kI = 0.0;
+            kClimberServoConstants.kPidfConfigs[1].kD = 0.0;
+            kClimberServoConstants.kPidfConfigs[1].kFF = 0.0;
+            kClimberServoConstants.kPidfConfigs[1].kDFilter = 0.0;
+            kClimberServoConstants.kPidfConfigs[1].kIZone = 0.0;
+            kClimberServoConstants.kPidfConfigs[1].kIMaxAccum = 0.0;
+            kClimberServoConstants.kPidfConfigs[1].kPIDOutputRange = 1.0;
+
+            kClimberServoConstants.kPidfConfigs[2] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
+            kClimberServoConstants.kPidfConfigs[2].kSlotId = 2; // Fuse Motion
+            kClimberServoConstants.kPidfConfigs[2].kP = 0.0;
+            kClimberServoConstants.kPidfConfigs[2].kI = 0.0;
+            kClimberServoConstants.kPidfConfigs[2].kD = 0.0;
+            kClimberServoConstants.kPidfConfigs[2].kFF = 0.0;
+            kClimberServoConstants.kPidfConfigs[2].kDFilter = 0.0;
+            kClimberServoConstants.kPidfConfigs[2].kIZone = 0.0;
+            kClimberServoConstants.kPidfConfigs[2].kIMaxAccum = 0.00;
+            kClimberServoConstants.kPidfConfigs[2].kPIDOutputRange = 1.0;
+
+            kClimberServoConstants.kFuseMotionConfig = new VIKCANSparkMaxServo.FuseMotionConfig();
+            kClimberServoConstants.kFuseMotionConfig.kProfileSlot = kClimberServoConstants.kSlotIdFuseMotion;
+            kClimberServoConstants.kFuseMotionConfig.kFeedForward = new ElevatorFeedForward(
+                kClimberServoConstants.kS, 0.0, 0.12);
+            kClimberServoConstants.kFuseMotionConfig.kLooperDt = 0.02;
+            kClimberServoConstants.kFuseMotionConfig.kMaxVel = kClimberServoConstants.kMaxVel;
+            kClimberServoConstants.kFuseMotionConfig.kMaxAccel = kClimberServoConstants.kMaxAccel;
+        }
+
+        public static final SparkRelativeEncoderConfig kEncoderConfig = new SparkRelativeEncoderConfig(); // Use defaults bc why not
     }
 
     public static final class SuperstructureConstants {

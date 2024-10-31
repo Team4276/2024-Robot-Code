@@ -2,10 +2,9 @@ package frc.team4276.lib.rev;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkPIDController;
-
-import frc.team4276.lib.rev.RevUtil.SparkAbsoluteEncoderConfig;
 
 public class CANSparkMaxFactory {
     /**
@@ -78,6 +77,19 @@ public class CANSparkMaxFactory {
         controller.setOutputRange(-1.0 * config.kPIDOutputRange, config.kPIDOutputRange, config.kSlotId);
     }
 
+    public static RelativeEncoder configRelativeEncoder(VIKCANSparkMax motor, RevUtil.SparkRelativeEncoderConfig config){
+        RelativeEncoder e = motor.getEncoder();
+
+        e.setAverageDepth(config.kAvgSamplingDepth);
+        e.setInverted(config.kIsInverted); 
+        e.setMeasurementPeriod(config.kMeasurementPeriod);
+        e.setPositionConversionFactor(config.kUnitsPerRotation);
+        e.setVelocityConversionFactor(config.kUnitsPerRotation / 60.0);
+
+        return e;
+
+    }
+
     public static void configAnalogSensor(VIKCANSparkMax motor, double periodSec) {
         motor.queuePeriodicFramePeriodSec(PeriodicFrame.kStatus3, periodSec);
 
@@ -88,7 +100,7 @@ public class CANSparkMaxFactory {
 
     }
 
-    public static AbsoluteEncoder configAbsoluteEncoder(VIKCANSparkMax motor, SparkAbsoluteEncoderConfig config) {
+    public static AbsoluteEncoder configAbsoluteEncoder(VIKCANSparkMax motor, RevUtil.SparkAbsoluteEncoderConfig config) {
         AbsoluteEncoder e = motor.getAbsoluteEncoder();
 
         e.setInverted(config.kIsInverted);

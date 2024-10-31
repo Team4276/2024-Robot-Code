@@ -27,7 +27,7 @@ public class IntakeSubsystem extends Subsystem {
 
         public double voltage;
 
-        State(double voltage) {
+        private State(double voltage) {
             this.voltage = voltage;
         }
     }
