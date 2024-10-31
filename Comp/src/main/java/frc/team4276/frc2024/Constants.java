@@ -357,7 +357,7 @@ public final class Constants {
         static {
             kFourbarEncoderConfig.kIsInverted = false;
             kFourbarEncoderConfig.kUnitsPerRotation = 360.0;
-            kFourbarEncoderConfig.kOffset = 214.5;
+            kFourbarEncoderConfig.kOffset = 94.5;
             kFourbarEncoderConfig.kAvgSamplingDepth = 128;
             kFourbarEncoderConfig.kPeriodicFrameTime = 0.2;
         }
@@ -401,7 +401,7 @@ public final class Constants {
         public static final int kAmpBotRPM = 1700;
 
         public static final double kSpinUpDistance = 4.0;
-        public static final double kDoableShotDistance = 4.0;
+        public static final double kDoableShotDistance = 4.0; //TODD: tune
     }
 
     public static final class VisionConstants {
