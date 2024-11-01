@@ -740,14 +740,11 @@
               2
             ],
             "content": {
-              "_type": "Simple Dial",
+              "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Comp/Fourbar Setpoint",
               "_title": "Fourbar Setpoint",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Range/Min": 0.0,
-              "Range/Max": 360.0,
-              "Visuals/Show value": true
+              "_showGlyph": false
             }
           },
           "8,3": {
@@ -805,14 +802,11 @@
               2
             ],
             "content": {
-              "_type": "Simple Dial",
+              "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Comp/Fourbar Measured Position",
               "_title": "Fourbar Measured Position",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Range/Min": 0.0,
-              "Range/Max": 360.0,
-              "Visuals/Show value": true
+              "_showGlyph": false
             }
           },
           "10,3": {
@@ -858,6 +852,58 @@
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "0,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Pos X",
+              "_title": "Pos X",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Pos Y",
+              "_title": "Pos Y",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Climber Setpoint",
+              "_title": "Climber Setpoint",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Climber Measured Position",
+              "_title": "Climber Measured Position",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }
@@ -1030,7 +1076,7 @@
               "_showGlyph": false
             }
           },
-          "10,2": {
+          "11,1": {
             "size": [
               1,
               1
@@ -1278,15 +1324,242 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "7,1": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Debug/Climber Coast Mode",
+              "_title": "Climber Coast Mode",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Intake Current",
+              "_title": "Intake Current",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Intake Voltage",
+              "_title": "Intake Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Des Top RPM",
+              "_title": "Des Top RPM",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Des Bottom RPM",
+              "_title": "Des Bottom RPM",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,3": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar is Maintain",
+              "_title": "Fourbar is Maintain",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "3,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Climber Measured Voltage",
+              "_title": "Climber Measured Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Climber Measured Velocity",
+              "_title": "Climber Measured Velocity",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Climber Controlstate",
+              "_title": "Climber Controlstate",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,3": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Debug/Climber is Maintain",
+              "_title": "Climber is Maintain",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "9,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Climber Voltage Test",
+              "_title": "Climber Voltage Test",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME X Translation Displacement",
+              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME X Translation Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Y Translation Displacement",
+              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Y Translation Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Height Displacement",
+              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Height Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Yaw Displacement",
+              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Yaw Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Roll Displacement",
+              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Roll Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Pitch Displacement",
+              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Pitch Displacement",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
     }
   ],
   "windowGeometry": {
-    "x": -7.199999809265137,
-    "y": -7.199999809265137,
-    "width": 1550.4000244140625,
-    "height": 830.4000244140625
+    "x": 0.800000011920929,
+    "y": 0.800000011920929,
+    "width": 1534.4000244140625,
+    "height": 814.4000244140625
   }
 }

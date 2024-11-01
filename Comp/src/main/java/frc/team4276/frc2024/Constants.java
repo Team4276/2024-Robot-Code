@@ -454,7 +454,7 @@ public final class Constants {
             kClimberServoConstants.kFuseMotionConfig = new VIKCANSparkMaxServo.FuseMotionConfig();
             kClimberServoConstants.kFuseMotionConfig.kProfileSlot = kClimberServoConstants.kSlotIdFuseMotion;
             kClimberServoConstants.kFuseMotionConfig.kFeedForward = new ElevatorFeedForward(
-                kClimberServoConstants.kS, 0.0, 0.12);
+                kClimberServoConstants.kS, 0.0, 0.05);
             kClimberServoConstants.kFuseMotionConfig.kLooperDt = 0.02;
             kClimberServoConstants.kFuseMotionConfig.kMaxVel = kClimberServoConstants.kMaxVel;
             kClimberServoConstants.kFuseMotionConfig.kMaxAccel = kClimberServoConstants.kMaxAccel;

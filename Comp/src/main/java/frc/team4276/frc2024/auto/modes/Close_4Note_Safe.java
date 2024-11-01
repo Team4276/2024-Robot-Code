@@ -6,8 +6,6 @@ import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.ChoreoTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.SeriesAction;
 import frc.team4276.frc2024.auto.actions.SuperstructureAction;
-import frc.team4276.frc2024.auto.actions.WaitAction;
-import frc.team4276.frc2024.auto.actions.WaitForAction;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
@@ -38,7 +36,7 @@ public class Close_4Note_Safe extends AutoModeBase {
     private double kReadyWaitTime = 1.5;
 
     @Override
-    protected void routine() throws AutoModeEndedException { // TODO: use new logic
+    protected void routine() throws AutoModeEndedException {
         // Set Control States
         mSuperstructure.setDynamic(false);
         mSuperstructure.setNominal();
@@ -66,28 +64,26 @@ public class Close_4Note_Safe extends AutoModeBase {
         // Note 3 Drive and Pickup
             traj4,
             new SuperstructureAction(GoalState.INTAKE, kIntakeWaitTime),
-            traj5,
 
         
         // Note 3 Drive and Score
+            traj5,
+            new SuperstructureAction(GoalState.READY, kReadyWaitTime),
+            new SuperstructureAction(GoalState.SHOOT, kShotWaitTime),
+            new SuperstructureAction(GoalState.STOW),
+
+        // Note 4 Drive and Pickup
+            traj6,
+            new SuperstructureAction(GoalState.INTAKE, kIntakeWaitTime),
+
+
+        
+        // Note 4 Drive and Shoot
+            traj7,
             new SuperstructureAction(GoalState.READY, kReadyWaitTime),
             new SuperstructureAction(GoalState.SHOOT, kShotWaitTime),
             new SuperstructureAction(GoalState.STOW)
-
         ));
-
-        // Note 4 Drive and Pickup
-        runAction(traj6);
-        mSuperstructure.setGoalState(GoalState.INTAKE);
-        runAction(new WaitAction(kIntakeWaitTime));
-        runAction(traj7);
-
-        // Note 4 Drive and Shoot
-        mSuperstructure.setGoalState(GoalState.READY);
-        runAction(new WaitForAction(mSuperstructure::isReady));
-        mSuperstructure.setGoalState(GoalState.SHOOT);
-        runAction(new WaitAction(kShotWaitTime));
-        mSuperstructure.setGoalState(GoalState.STOW);
         
         mSuperstructure.setDynamic(true);
         mSuperstructure.setPrep(false);
