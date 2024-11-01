@@ -74,7 +74,6 @@ public class MAXSwerveModule extends Subsystem {
 
         mPeriodicIO = new PeriodicIO();
 
-        //TODO: add other swerve debugs
         Shuffleboard.getTab("Swerve").addDouble(mConstants.kName + " Rotation Demand", () -> mPeriodicIO.rotationDemand);
         Shuffleboard.getTab("Swerve").addDouble(mConstants.kName + " Turn Position", () -> mPeriodicIO.turnPosition);
     }

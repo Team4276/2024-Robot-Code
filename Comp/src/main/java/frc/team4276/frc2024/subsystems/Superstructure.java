@@ -358,6 +358,7 @@ public class Superstructure extends Subsystem {
                     mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
                     mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kAmpTopRPM, SuperstructureConstants.kAmpBotRPM),
                     mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarAmpState),
+                    new LambdaRequest(() -> mDriveSubsystem.setHeadingSetpoint(Rotation2d.fromDegrees(90.0))),
                     new SequentialRequest(
                         readyWait(),
                         rumbleRequest()

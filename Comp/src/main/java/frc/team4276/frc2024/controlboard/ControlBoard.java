@@ -90,7 +90,7 @@ public class ControlBoard {
         }
 
         SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Top Setpoint", mTuningFlywheelTopSetpoint);
-        SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Bot Setpoint", mTuningFlywheelBotSetpoint); //TODO: try rlly low speeds (2854)
+        SmartDashboard.putNumber("Debug/Test/Tuning Flywheel Bot Setpoint", mTuningFlywheelBotSetpoint);
 
       
         if (operator.getLT()) {

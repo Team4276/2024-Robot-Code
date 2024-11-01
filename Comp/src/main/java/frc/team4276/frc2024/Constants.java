@@ -340,7 +340,7 @@ public final class Constants {
             kSubsystemConstants.kPidfConfigs[2] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[2].kSlotId = 2; // Fuse Motion
             kSubsystemConstants.kPidfConfigs[2].kP = 0.02;
-            kSubsystemConstants.kPidfConfigs[2].kI = 0.0001; //TODO: tune in client
+            kSubsystemConstants.kPidfConfigs[2].kI = 0.0001;
             kSubsystemConstants.kPidfConfigs[2].kD = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kFF = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kDFilter = 0.0;
@@ -477,8 +477,8 @@ public final class Constants {
         public static final int kSpinUpRPM = 2500;
         public static final int kPoopRPM = 1000;
         public static final int kExhaustRPM = -1000;
-        public static final int kAmpTopRPM = 100;
-        public static final int kAmpBotRPM = 1400;
+        public static final int kAmpTopRPM = 150;
+        public static final int kAmpBotRPM = 1450;
 
         public static final double kSpinUpDistance = 4.0;
         public static final double kDoableShotDistance = 4.0; //TODO: tune

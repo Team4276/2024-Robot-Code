@@ -11,7 +11,7 @@ import frc.team4276.frc2024.Constants.FlywheelConstants;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.rev.VIKCANSparkMax;
 import frc.team4276.lib.rev.CANSparkMaxFactory;
-
+import frc.team1678.lib.Util;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.requests.Request;
@@ -122,12 +122,11 @@ public class FlywheelSubsystem extends Subsystem {
     }
 
     public boolean isTopSpunUp() {
-        return (Math.abs(mPeriodicIO.top_RPM - mPeriodicIO.top_demand) < FlywheelConstants.kFlywheelTolerance) && (mPeriodicIO.top_demand > 2000);
+        return Util.epsilonEquals(mPeriodicIO.des_top_rpm, mPeriodicIO.meas_top_RPM, FlywheelConstants.kFlywheelTolerance);
     }
 
     public boolean isBottomSpunUp() {
-        return Math.abs(
-                mPeriodicIO.bottom_RPM - mPeriodicIO.bottom_demand) < FlywheelConstants.kFlywheelTolerance && (mPeriodicIO.bottom_demand > 2000);
+        return Util.epsilonEquals(mPeriodicIO.des_bot_rpm, mPeriodicIO.meas_bottom_RPM, FlywheelConstants.kFlywheelTolerance);
     }
 
     @Override
@@ -137,8 +136,8 @@ public class FlywheelSubsystem extends Subsystem {
 
     private class PeriodicIO {
         // Inputs
-        double top_RPM = 0.0;
-        double bottom_RPM = 0.0;
+        double meas_top_RPM = 0.0;
+        double meas_bottom_RPM = 0.0;
         double top_voltage = 0.0;
         double bottom_voltage = 0.0;
         double des_top_rpm = 0.0;
@@ -152,8 +151,8 @@ public class FlywheelSubsystem extends Subsystem {
 
     @Override
     public void readPeriodicInputs() {
-        mPeriodicIO.top_RPM = mTopEncoder.getVelocity();
-        mPeriodicIO.bottom_RPM = mBottomEncoder.getVelocity();
+        mPeriodicIO.meas_top_RPM = mTopEncoder.getVelocity();
+        mPeriodicIO.meas_bottom_RPM = mBottomEncoder.getVelocity();
 
         mPeriodicIO.top_voltage = mTopMotor.getAppliedVoltage();
         mPeriodicIO.bottom_voltage = mBottomMotor.getAppliedVoltage();
@@ -193,8 +192,8 @@ public class FlywheelSubsystem extends Subsystem {
         SmartDashboard.putBoolean("Debug/Flywheels Spun Up", isSpunUp());
         SmartDashboard.putNumber("Debug/Des Top RPM", mPeriodicIO.des_top_rpm);
         SmartDashboard.putNumber("Debug/Des Bottom RPM", mPeriodicIO.des_bot_rpm);
-        SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.top_RPM);
-        SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.bottom_RPM);
+        SmartDashboard.putNumber("Debug/Top RPM", mPeriodicIO.meas_top_RPM);
+        SmartDashboard.putNumber("Debug/Bottom RPM", mPeriodicIO.meas_bottom_RPM);
         SmartDashboard.putNumber("Debug/Top Voltage", mPeriodicIO.top_voltage);
         SmartDashboard.putNumber("Debug/Bottom Voltage", mPeriodicIO.bottom_voltage);
     }

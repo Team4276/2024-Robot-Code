@@ -19,7 +19,6 @@ import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.lib.drivers.ADISGyro;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.ProfiledHeadingController;
-import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team1678.lib.loops.Loop;
@@ -63,7 +62,7 @@ public class DriveSubsystem extends Subsystem {
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
     private MotionPlanner mMotionPlanner;
-    private HeadingController mHeadingController;
+    private ProfiledHeadingController mHeadingController;
 
     private boolean mOverrideHeading = false;
 
@@ -96,7 +95,16 @@ public class DriveSubsystem extends Subsystem {
                 mPeriodicIO.meas_module_states);
 
         mMotionPlanner = new MotionPlanner();
-        mHeadingController = HeadingController.getInstance();
+        mHeadingController = ProfiledHeadingController.getInstance();
+        
+        Shuffleboard.getTab("Path").addNumber("X Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::x);
+        Shuffleboard.getTab("Path").addNumber("Y Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::y);
+        Shuffleboard.getTab("Path").addNumber("Rotation", RobotState.getInstance().getLatestFieldToVehicle().getRotation()::getDegrees);
+        
+        Shuffleboard.getTab("Path").addNumber("X Error", mMotionPlanner.getTranslationError()::x);
+        Shuffleboard.getTab("Path").addNumber("Y Error", mMotionPlanner.getTranslationError()::y);
+        Shuffleboard.getTab("Path").addNumber("Translation Error", mMotionPlanner.getTranslationError()::norm);
+        Shuffleboard.getTab("Path").addNumber("Rotation Error", mMotionPlanner.getRotationError()::getDegrees);
     }
 
     public synchronized void teleopDrive(ChassisSpeeds speeds) {
@@ -108,7 +116,7 @@ public class DriveSubsystem extends Subsystem {
             if (Math.abs(speeds.omegaRadiansPerSecond) > 1.0) {
                 mControlState = DriveControlState.OPEN_LOOP;
             } else {
-                mPeriodicIO.des_chassis_speeds = new ChassisSpeeds( //TODO: clean this up
+                mPeriodicIO.des_chassis_speeds = new ChassisSpeeds(
                         speeds.vxMetersPerSecond,
                         speeds.vyMetersPerSecond,
                         mHeadingController.update(mPeriodicIO.heading.getRadians(), mPeriodicIO.timestamp));
@@ -148,8 +156,8 @@ public class DriveSubsystem extends Subsystem {
             mControlState = DriveControlState.HEADING_CONTROL;
         }
 
-        if (mHeadingController.getTargetRad() != angle.getRadians()) {
-            mHeadingController.setTarget(angle.getRadians());
+        if (Util.epsilonEquals(Math.toDegrees(mHeadingController.getTargetRad()), Math.toDegrees(angle.getRadians()), 1.0)) {
+            mHeadingController.setTarget(angle.getRadians(), mPeriodicIO.heading.getRadians(), mPeriodicIO.meas_chassis_speeds.omegaRadiansPerSecond);
         }
     }
 
@@ -458,15 +466,5 @@ public class DriveSubsystem extends Subsystem {
         }
 
         if(Constants.disableExtraTelemetry) return;
-        
-        // Shuffleboard.getTab("Path").addNumber("X Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::x);
-        // Shuffleboard.getTab("Path").addNumber("Y Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::y);
-        // Shuffleboard.getTab("Path").addNumber("Rotation", RobotState.getInstance().getLatestFieldToVehicle().getRotation()::getDegrees);
-        
-        // Shuffleboard.getTab("Path").addNumber("X Error", mMotionPlanner.getTranslationError()::x);
-        // Shuffleboard.getTab("Path").addNumber("Y Error", mMotionPlanner.getTranslationError()::y);
-        // Shuffleboard.getTab("Path").addNumber("Translation Error", mMotionPlanner.getTranslationError()::norm);
-        // Shuffleboard.getTab("Path").addNumber("Rotation Error", mMotionPlanner.getRotationError()::getDegrees);
-
     }
 }
