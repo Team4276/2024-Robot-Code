@@ -363,6 +363,8 @@ public class Superstructure extends Subsystem {
                         rumbleRequest()
                     )
                 ));
+
+                break;
             case SHOOT:
                 if(mPrevGoalState == mGoalState) break;
 

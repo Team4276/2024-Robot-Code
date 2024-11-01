@@ -20,8 +20,8 @@ public class Ports {
 
     public static final int INTAKE = 12;
 
-    public static final int CLIMBER_LEFT = 14;
-    public static final int CLIMBER_RIGHT = 15;
+    public static final int CLIMBER_RIGHT = 14;
+    public static final int CLIMBER_LEFT = 15;
 
     /* DIOs */
     public static final int BEAM_BACK = 0;

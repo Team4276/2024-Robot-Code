@@ -11,7 +11,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.field.Field;
 import frc.team4276.lib.drivers.Subsystem;
@@ -137,4 +137,8 @@ public class PhotonDevice extends Subsystem {
     public void writePeriodicOutputs() {
     }
 
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putBoolean("Comp/Camera " + getName() + " is connected", isConnected());
+    }
 }

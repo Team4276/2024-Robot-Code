@@ -177,6 +177,8 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         return Math.max(Math.min(pos, mConstants.kMaxPosition), mConstants.kMinPosition);
     }
 
+    
+
     public void setWantBrakeMode(boolean brake) {
         mMaster.setWantBrakeMode(brake);
         for (VIKCANSparkMax follower : mFollowers) {

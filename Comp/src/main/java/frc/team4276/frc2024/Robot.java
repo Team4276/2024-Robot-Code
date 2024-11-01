@@ -14,6 +14,7 @@ import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
 import frc.team4276.frc2024.controlboard.ControlBoard;
 import frc.team4276.frc2024.field.AllianceChooser;
+import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
+    private ClimberSubsystem mClimberSubsystem;
 
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
@@ -66,6 +68,9 @@ public class Robot extends TimedRobot {
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
+            mClimberSubsystem = ClimberSubsystem.getInstance();
+
+            mClimberSubsystem.setDisabled(true);
 
             // Set subsystems
             mSubsystemManager.setSubsystems(
@@ -74,6 +79,7 @@ public class Robot extends TimedRobot {
                     mIntakeSubsystem,
                     mFlywheelSubsystem,
                     mFourbarSubsystem,
+                    mClimberSubsystem,
                     mVisionDeviceManager
                 );
 
@@ -123,7 +129,11 @@ public class Robot extends TimedRobot {
         mAutoModeSelector.reset();
         mAutoModeSelector.updateModeCreator(false);
         mAutoModeExecutor = new AutoModeExecutor();
+
+        hasFlippedClimberSetting = false;
     }
+
+    private boolean hasFlippedClimberSetting = false;
 
     @Override
     public void disabledPeriodic() {
@@ -141,6 +151,16 @@ public class Robot extends TimedRobot {
             }
 
             mFourbarSubsystem.setWantBrakeMode(!mControlBoard.wantFourbarCoastMode());
+
+            if(mControlBoard.wantClimberCoastMode()) {
+                hasFlippedClimberSetting = true; // Climber Brake Mode Safety
+            }
+            
+            if (hasFlippedClimberSetting) {  
+                mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
+            } else {
+                mClimberSubsystem.setWantBrakeMode(false);
+            }
 
         } catch (Throwable t) {
             throw t;

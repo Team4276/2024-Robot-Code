@@ -81,7 +81,6 @@ public class CANSparkMaxFactory {
         RelativeEncoder e = motor.getEncoder();
 
         e.setAverageDepth(config.kAvgSamplingDepth);
-        e.setInverted(config.kIsInverted); 
         e.setMeasurementPeriod(config.kMeasurementPeriod);
         e.setPositionConversionFactor(config.kUnitsPerRotation);
         e.setVelocityConversionFactor(config.kUnitsPerRotation / 60.0);

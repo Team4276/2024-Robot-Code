@@ -19,6 +19,7 @@ import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.lib.drivers.ADISGyro;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.ProfiledHeadingController;
+import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team1678.lib.loops.Loop;
@@ -62,7 +63,7 @@ public class DriveSubsystem extends Subsystem {
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
     private MotionPlanner mMotionPlanner;
-    private ProfiledHeadingController mHeadingController;
+    private HeadingController mHeadingController;
 
     private boolean mOverrideHeading = false;
 
@@ -95,7 +96,7 @@ public class DriveSubsystem extends Subsystem {
                 mPeriodicIO.meas_module_states);
 
         mMotionPlanner = new MotionPlanner();
-        mHeadingController = ProfiledHeadingController.getInstance();
+        mHeadingController = HeadingController.getInstance();
     }
 
     public synchronized void teleopDrive(ChassisSpeeds speeds) {
@@ -148,7 +149,7 @@ public class DriveSubsystem extends Subsystem {
         }
 
         if (mHeadingController.getTargetRad() != angle.getRadians()) {
-            mHeadingController.setTarget(angle.getRadians(), mPeriodicIO.heading.getRadians(), mPeriodicIO.meas_chassis_speeds.omegaRadiansPerSecond);
+            mHeadingController.setTarget(angle.getRadians());
         }
     }
 
@@ -289,7 +290,7 @@ public class DriveSubsystem extends Subsystem {
 
             @Override
             public void onStart(double timestamp) {
-                mHeadingController.reset(mPeriodicIO.heading.getRadians(), 0.0);
+                // mHeadingController.reset(mPeriodicIO.heading.getRadians(), 0.0);
             }
 
             @Override
@@ -458,14 +459,14 @@ public class DriveSubsystem extends Subsystem {
 
         if(Constants.disableExtraTelemetry) return;
         
-        Shuffleboard.getTab("Path").addNumber("X Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::x);
-        Shuffleboard.getTab("Path").addNumber("Y Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::y);
-        Shuffleboard.getTab("Path").addNumber("Rotation", RobotState.getInstance().getLatestFieldToVehicle().getRotation()::getDegrees);
+        // Shuffleboard.getTab("Path").addNumber("X Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::x);
+        // Shuffleboard.getTab("Path").addNumber("Y Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::y);
+        // Shuffleboard.getTab("Path").addNumber("Rotation", RobotState.getInstance().getLatestFieldToVehicle().getRotation()::getDegrees);
         
-        Shuffleboard.getTab("Path").addNumber("X Error", mMotionPlanner.getTranslationError()::x);
-        Shuffleboard.getTab("Path").addNumber("Y Error", mMotionPlanner.getTranslationError()::y);
-        Shuffleboard.getTab("Path").addNumber("Translation Error", mMotionPlanner.getTranslationError()::norm);
-        Shuffleboard.getTab("Path").addNumber("Rotation Error", mMotionPlanner.getRotationError()::getDegrees);
+        // Shuffleboard.getTab("Path").addNumber("X Error", mMotionPlanner.getTranslationError()::x);
+        // Shuffleboard.getTab("Path").addNumber("Y Error", mMotionPlanner.getTranslationError()::y);
+        // Shuffleboard.getTab("Path").addNumber("Translation Error", mMotionPlanner.getTranslationError()::norm);
+        // Shuffleboard.getTab("Path").addNumber("Rotation Error", mMotionPlanner.getRotationError()::getDegrees);
 
     }
 }

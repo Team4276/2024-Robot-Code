@@ -340,12 +340,12 @@ public final class Constants {
             kSubsystemConstants.kPidfConfigs[2] = new CANSparkMaxFactory.CANSparkMaxPIDFConfig();
             kSubsystemConstants.kPidfConfigs[2].kSlotId = 2; // Fuse Motion
             kSubsystemConstants.kPidfConfigs[2].kP = 0.02;
-            kSubsystemConstants.kPidfConfigs[2].kI = 0.001; //TODO: tune in client
+            kSubsystemConstants.kPidfConfigs[2].kI = 0.0001; //TODO: tune in client
             kSubsystemConstants.kPidfConfigs[2].kD = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kFF = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kDFilter = 0.0;
             kSubsystemConstants.kPidfConfigs[2].kIZone = 1.0;
-            kSubsystemConstants.kPidfConfigs[2].kIMaxAccum = 0.04;
+            kSubsystemConstants.kPidfConfigs[2].kIMaxAccum = 0.01;
             kSubsystemConstants.kPidfConfigs[2].kPIDOutputRange = 1.0;
 
             kSubsystemConstants.kFuseMotionConfig = new VIKCANSparkMaxServo.FuseMotionConfig();
@@ -409,8 +409,8 @@ public final class Constants {
             kClimberServoConstants.kMaxAccel = 0.0;
             kClimberServoConstants.kS = 0.0; // Smart Motion Firmware
             kClimberServoConstants.kTol = 0.0;
-            kClimberServoConstants.kForwardLimitPolarity = Type.kNormallyOpen;
-            kClimberServoConstants.kReverseLimitPolarity = Type.kNormallyOpen;
+            // kClimberServoConstants.kForwardLimitPolarity = Type.kNormallyOpen;
+            // kClimberServoConstants.kReverseLimitPolarity = Type.kNormallyOpen;
 
             kClimberServoConstants.kSlotIdSmartMotionCruise = 0;
             kClimberServoConstants.kSlotIdSmartMotionMaintain = 1;
@@ -448,7 +448,7 @@ public final class Constants {
             kClimberServoConstants.kPidfConfigs[2].kFF = 0.0;
             kClimberServoConstants.kPidfConfigs[2].kDFilter = 0.0;
             kClimberServoConstants.kPidfConfigs[2].kIZone = 0.0;
-            kClimberServoConstants.kPidfConfigs[2].kIMaxAccum = 0.00;
+            kClimberServoConstants.kPidfConfigs[2].kIMaxAccum = 0.0;
             kClimberServoConstants.kPidfConfigs[2].kPIDOutputRange = 1.0;
 
             kClimberServoConstants.kFuseMotionConfig = new VIKCANSparkMaxServo.FuseMotionConfig();
@@ -469,7 +469,7 @@ public final class Constants {
         public static final double kFourbarIntakeState = 135.0;
         public static final double kFourbarSubCloseState = 135.0;
         public static final double kFourbarFerryState = 135.0;
-        public static final double kFourbarAmpState = 120;
+        public static final double kFourbarAmpState = 135;
         public static final double kFourbarSkimState = 120;
 
         public static final int kNormalShotRPM = 3500;
@@ -477,11 +477,11 @@ public final class Constants {
         public static final int kSpinUpRPM = 2500;
         public static final int kPoopRPM = 1000;
         public static final int kExhaustRPM = -1000;
-        public static final int kAmpTopRPM = 1300;
-        public static final int kAmpBotRPM = 1700;
+        public static final int kAmpTopRPM = 100;
+        public static final int kAmpBotRPM = 1400;
 
         public static final double kSpinUpDistance = 4.0;
-        public static final double kDoableShotDistance = 4.0; //TODD: tune
+        public static final double kDoableShotDistance = 4.0; //TODO: tune
     }
 
     public static final class VisionConstants {
@@ -491,14 +491,16 @@ public final class Constants {
             kFrontCameraConstants.kCameraNameId = "Arducam_OV9281_USB_Camera";
             kFrontCameraConstants.kRobotToCamera = new Transform3d(new Translation3d(
                 Units.inchesToMeters(9.591351), Units.inchesToMeters(7.500000) * -1.0, Units.inchesToMeters(5.575688)), 
-                new Rotation3d(0.0, Math.toRadians(20) * -1.0, 0.0));
+                new Rotation3d(0.0, Math.toRadians(20.0) * -1.0, 0.0));
         }
 
         public static final PhotonDeviceConstants kBackCameraConstants = new PhotonDeviceConstants();
         static {
             kFrontCameraConstants.kCameraName = "Back Camera";
-            kBackCameraConstants.kCameraNameId = "PI_CAM_3";
-            kBackCameraConstants.kRobotToCamera = new Transform3d();
+            kBackCameraConstants.kCameraNameId = "Arducam_12MP";
+            kBackCameraConstants.kRobotToCamera = new Transform3d(new Translation3d(
+                Units.inchesToMeters(7.837035), Units.inchesToMeters(8.750000), Units.inchesToMeters(6.072381)),
+                new Rotation3d(0.0, Math.toRadians(20.0) * -1.0, 0.0));
         }
     }
 }

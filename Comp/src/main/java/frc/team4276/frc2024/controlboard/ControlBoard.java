@@ -7,6 +7,7 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.Constants.OIConstants;
+import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
@@ -22,9 +23,11 @@ public class ControlBoard {
     public final BetterXboxController operator;
 
     private final DigitalInput fourbarSetting;
+    private final DigitalInput climberSetting;
 
     private DriveSubsystem mDriveSubsystem;
     private Superstructure mSuperstructure;
+    private ClimberSubsystem mClimberSubsystem;
 
     private static ControlBoard mInstance;
 
@@ -40,9 +43,11 @@ public class ControlBoard {
         operator = new BetterXboxController(OIConstants.kOpControllerPort);
 
         fourbarSetting = new DigitalInput(Ports.FOURBAR_BRAKE_SWITCH);
+        climberSetting = new DigitalInput(Ports.CLIMBER_BRAKE_SWITCH);
 
         mDriveSubsystem = DriveSubsystem.getInstance();
         mSuperstructure = Superstructure.getInstance();
+        mClimberSubsystem = ClimberSubsystem.getInstance();
     }
 
     private double mTuningFlywheelTopSetpoint = 4500;
@@ -56,7 +61,7 @@ public class ControlBoard {
 
         if (operator.getPOVUP()) {
             if (operator.getRightBumperReleased()) {
-                mTuningFlywheelTopSetpoint += 100 * sign;
+                mTuningFlywheelTopSetpoint += 50 * sign;
 
             } else if (operator.getLeftBumperReleased()) {
                 mTuningFlywheelTopSetpoint += 1000 * sign;
@@ -65,7 +70,7 @@ public class ControlBoard {
 
         } else if(operator.getPOVDOWN()){
             if (operator.getRightBumperReleased()) {
-                mTuningFlywheelBotSetpoint += 100 * sign;
+                mTuningFlywheelBotSetpoint += 50 * sign;
                 
             } else if (operator.getLeftBumperReleased()) {
                 mTuningFlywheelBotSetpoint += 1000 * sign;
@@ -152,16 +157,18 @@ public class ControlBoard {
         }
     }
 
+    private double climberVoltageTest = 0.0;
+
     public void updateNominal() {
         mSuperstructure.setNominal();
 
-        if(wantReady() && wantDynamic() && !wantAmpOrHoldCancelDynamic()) {
+        if(wantReady() && wantDynamic() && !wantAmpOrHoldCancelDynamicOrClimb()) {
             mDriveSubsystem.overrideHeading(true);
         } else {
             mDriveSubsystem.overrideHeading(false);
         }
 
-        if (wantDynamic() && !wantAmpOrHoldCancelDynamic()){
+        if (wantDynamic() && !wantAmpOrHoldCancelDynamicOrClimb()){
             mSuperstructure.setDynamic(true);
             
         } else {
@@ -211,14 +218,9 @@ public class ControlBoard {
         } else if (wantReady()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.READY);
 
-        } else if (wantAmpOrHoldCancelDynamic() && !wantReady()) {
-            if(false){
+        } else if (wantAmpOrHoldCancelDynamicOrClimb() && !wantReady() && !wantClimb()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.AMP);
 
-
-            } else {
-                mSuperstructure.setGoalState(Superstructure.GoalState.AMP);
-
-            }
         } else if (wantExhaust()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.EXHAUST);
 
@@ -226,6 +228,40 @@ public class ControlBoard {
             mSuperstructure.setGoalState(Superstructure.GoalState.STOW);
 
         }
+
+        if (wantClimb()){
+            mSuperstructure.setForceDisablePrep(true);
+
+            // if(wantLowRaiseClimber()){
+            //     mClimberSubsystem.setSetpointState(ClimberSubsystem.SetpointState.LOW_RAISE);
+
+            // } else {
+                // mClimberSubsystem.setSetpointState(ClimberSubsystem.SetpointState.HIGH_RAISE);
+            // }
+            
+        } else if(wantCancelClimb()) {
+            mSuperstructure.setForceDisablePrep(false);
+        }
+
+        double sign = operator.getYButton() ? -1 : 1;
+
+        if (operator.getRightBumperReleased()) {
+            climberVoltageTest += 0.1 * sign;
+
+        }
+
+        if(operator.getRT()){
+            SmartDashboard.putNumber("Debug/Climber Voltage Test", climberVoltageTest);
+            mClimberSubsystem.setVoltage(climberVoltageTest);
+
+        } else {
+            mClimberSubsystem.setVoltage(operator.getRightY() * 4.0);
+        }
+
+        SmartDashboard.putBoolean("Debug/Climber Coast Mode", climberSetting.get());
+
+
+
     }
 
     public void updateManual() {
@@ -324,7 +360,7 @@ public class ControlBoard {
         return driver.getRT();
     }
 
-    public boolean wantAmpOrHoldCancelDynamic() {
+    public boolean wantAmpOrHoldCancelDynamicOrClimb() {
         return driver.getRightBumper();
     }
 
@@ -365,6 +401,14 @@ public class ControlBoard {
         }
 
         return wasIdle;
+    }
+
+    public boolean wantClimb(){
+        return operator.getAButtonReleased();
+    }
+    
+    public boolean wantCancelClimb(){
+        return operator.getRightBumperReleased();
     }
 
     public boolean wantOffsetFerry() {
@@ -429,13 +473,17 @@ public class ControlBoard {
         return fourbarSetting.get();
     }
 
+    public boolean wantClimberCoastMode() {
+        return climberSetting.get();
+    }
+
     // Extra
     public boolean enableFourbarFuse() {
         return true;
     }
 
     public boolean wantTuning() {
-        return false;
+        return true;
     }
 
 }

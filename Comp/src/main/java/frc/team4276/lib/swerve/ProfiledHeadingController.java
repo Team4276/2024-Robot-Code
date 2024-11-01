@@ -52,7 +52,7 @@ public class ProfiledHeadingController {
 
     public void setTarget(double angle_rad, double headingRadians, double omegaRadsPerSecond){
         mTargetState[0] = angle_rad;
-        reset(headingRadians, omegaRadsPerSecond);
+        reset(headingRadians, omegaRadsPerSecond); //TODO: fix
     }
 
     public double getTargetRad(){
