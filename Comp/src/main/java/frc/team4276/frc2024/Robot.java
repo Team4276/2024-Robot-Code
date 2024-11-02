@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
             mFourbarSubsystem = FourbarSubsystem.getInstance();
             mClimberSubsystem = ClimberSubsystem.getInstance();
 
-            mClimberSubsystem.setDisabled(true);
+            // mClimberSubsystem.setDisabled(true);
 
             // Set subsystems
             mSubsystemManager.setSubsystems(
@@ -152,14 +152,14 @@ public class Robot extends TimedRobot {
 
             mFourbarSubsystem.setWantBrakeMode(!mControlBoard.wantFourbarCoastMode());
 
-            if(mControlBoard.wantClimberCoastMode()) {
+            if(!mControlBoard.wantClimberCoastMode()) {
                 hasFlippedClimberSetting = true; // Climber Brake Mode Safety
             }
             
             if (hasFlippedClimberSetting) {  
                 mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
             } else {
-                mClimberSubsystem.setWantBrakeMode(false);
+                mClimberSubsystem.setWantBrakeMode(true);
             }
 
         } catch (Throwable t) {
