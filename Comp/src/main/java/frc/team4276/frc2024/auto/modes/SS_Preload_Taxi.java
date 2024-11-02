@@ -6,6 +6,7 @@ import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.ChoreoTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.SeriesAction;
 import frc.team4276.frc2024.auto.actions.SuperstructureAction;
+import frc.team4276.frc2024.auto.actions.WaitAction;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
@@ -37,6 +38,9 @@ public class SS_Preload_Taxi extends AutoModeBase {
             new SuperstructureAction(GoalState.READY, kReadyWaitTime),
             new SuperstructureAction(GoalState.SHOOT, kShotWaitTime),
             new SuperstructureAction(GoalState.STOW),
+
+            new WaitAction(0.0),
+
             traj1
             
         ));
