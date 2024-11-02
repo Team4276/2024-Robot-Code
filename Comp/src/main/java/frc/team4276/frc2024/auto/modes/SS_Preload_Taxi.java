@@ -27,7 +27,7 @@ public class SS_Preload_Taxi extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         // Set Control States
-        mSuperstructure.setDynamic(true);
+        mSuperstructure.setDynamic(false);
         mSuperstructure.setNominal();
         mSuperstructure.setPrep(true);
         DriveSubsystem.getInstance().overrideHeading(false);
@@ -39,11 +39,13 @@ public class SS_Preload_Taxi extends AutoModeBase {
             new SuperstructureAction(GoalState.SHOOT, kShotWaitTime),
             new SuperstructureAction(GoalState.STOW),
 
-            new WaitAction(0.0),
+            new WaitAction(10.0)
 
-            traj1
+            // traj1
             
         ));
+
+        mSuperstructure.setDynamic(true);
     }
 
     @Override

@@ -39,9 +39,9 @@ public class RegressionMaps {
 
     public static InterpolatingDoubleTreeMap kFerryFourbarAngles = new InterpolatingDoubleTreeMap();
     static {
-        kFerryFourbarAngles.put(5.3, 115.0);
-        kFerryFourbarAngles.put(7.9, 120.0);
-        kFerryFourbarAngles.put(9.3, 125.0);
+        kFerryFourbarAngles.put(5.3, 130.0);
+        kFerryFourbarAngles.put(7.9, 130.0);
+        kFerryFourbarAngles.put(9.3, 130.0);
         kFerryFourbarAngles.put(12.3, 135.0);
     }
 
