@@ -177,7 +177,7 @@ public class ControlBoard {
         }
 
         if (wantFerry()) {
-            mSuperstructure.setFerry(true);
+            // mSuperstructure.setFerry(true);
         } else {
             mSuperstructure.setFerry(false);
         }
@@ -229,19 +229,26 @@ public class ControlBoard {
 
         }
 
-        if (wantClimb()){
-            mSuperstructure.setForceDisablePrep(true);
+        // if (wantClimb()){
+        //     mSuperstructure.setForceDisablePrep(true);
 
-            // if(wantLowRaiseClimber()){
-            //     mClimberSubsystem.setSetpointState(ClimberSubsystem.SetpointState.LOW_RAISE);
+        //     if(wantRaiseClimber()){
+        //         mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.RAISE);
 
-            // } else {
-                // mClimberSubsystem.setSetpointState(ClimberSubsystem.SetpointState.HIGH_RAISE);
-            // }
+        //     } else if(wantLowerClimber()){
+        //         mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.LOWER);
+
+        //     } else {
+        //         mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.IDLE);
+
+        //     }
             
-        } else if(wantCancelClimb()) {
-            mSuperstructure.setForceDisablePrep(false);
-        }
+        // } else if(wantCancelClimb()) {
+        //     mSuperstructure.setForceDisablePrep(false);
+        // }
+
+        
+        mSuperstructure.setForceDisablePrep(true);
 
         double sign = operator.getYButton() ? -1 : 1;
 
@@ -366,11 +373,11 @@ public class ControlBoard {
 
     // Operator Controls
     public boolean wantStow() {
-        return operator.getAButton();
+        return operator.getAButtonReleased();
     }
 
     public boolean wantPrep() {
-        return operator.getLT();
+        return operator.getBButtonReleased();
     }
 
     private boolean isDynamic = true;
@@ -396,19 +403,27 @@ public class ControlBoard {
     private boolean wasIdle = false;
 
     public boolean wantIdle() {
-        if (operator.getBButtonReleased()) {
-            wasIdle = !wasIdle;
-        }
+        // if (operator.get()) {
+        //     wasIdle = !wasIdle;
+        // }
 
         return wasIdle;
     }
 
     public boolean wantClimb(){
-        return operator.getAButtonReleased();
+        return operator.getRightBumperReleased();
     }
     
     public boolean wantCancelClimb(){
-        return operator.getRightBumperReleased();
+        return operator.getLeftBumperReleased();
+    }
+
+    public boolean wantRaiseClimber(){
+        return operator.getLT();
+    }
+    
+    public boolean wantLowerClimber(){
+        return operator.getRT();
     }
 
     public boolean wantOffsetFerry() {
@@ -483,7 +498,7 @@ public class ControlBoard {
     }
 
     public boolean wantTuning() {
-        return true;
+        return false;
     }
 
 }

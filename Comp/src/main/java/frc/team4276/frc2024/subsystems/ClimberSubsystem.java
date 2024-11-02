@@ -1,14 +1,26 @@
 package frc.team4276.frc2024.subsystems;
 
-import com.revrobotics.RelativeEncoder;
+// import com.revrobotics.RelativeEncoder;
 
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team4276.frc2024.Constants.ClimberSubsystemConstants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
-import frc.team4276.lib.rev.CANSparkMaxFactory;
+// import frc.team4276.lib.rev.CANSparkMaxFactory;
 
 public class ClimberSubsystem extends ServoMotorSubsystem {
+    public enum VoltageState {
+        IDLE(0.0),
+        RAISE(0.0),
+        LOWER(0.0);
+
+        public double voltage;
+
+        private VoltageState(double voltage) {
+            this.voltage = voltage;
+        }
+    }
+
     public enum SetpointState {
         STOW(0.0),
         LOW_RAISE(0.0),
@@ -34,17 +46,21 @@ public class ClimberSubsystem extends ServoMotorSubsystem {
     private ClimberSubsystem() {
         super(ClimberSubsystemConstants.kClimberServoConstants);
 
-        RelativeEncoder e = CANSparkMaxFactory.configRelativeEncoder(mMaster, ClimberSubsystemConstants.kEncoderConfig);
+        // RelativeEncoder e = CANSparkMaxFactory.configRelativeEncoder(mMaster, ClimberSubsystemConstants.kEncoderConfig);
 
-        mMaster.getPIDController().setFeedbackDevice(e);
+        // mMaster.getPIDController().setFeedbackDevice(e);
 
-        mMaster.configFuseMotion(mConstants.kFuseMotionConfig, e::getPosition);
+        // mMaster.configFuseMotion(mConstants.kFuseMotionConfig, e::getPosition);
 
         burnFlash();
     }
 
     public void setSetpointState(SetpointState state) {
         setFuseMotionSetpoint(state.position);
+    }
+
+    public void setVoltageState(VoltageState state) {
+        setVoltage(state.voltage);
     }
 
     @Override
