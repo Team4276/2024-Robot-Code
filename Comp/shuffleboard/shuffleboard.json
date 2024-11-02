@@ -546,6 +546,140 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "0,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Debug/Climber Coast Mode",
+              "_title": "Debug/Climber Coast Mode",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "1,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Des Rot Speed: ",
+              "_title": "Comp/Des Rot Speed: ",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Module 1 Delta Distance",
+              "_title": "Module 1 Delta Distance",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Heading",
+              "_title": "Comp/Heading",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Drive Mode",
+              "_title": "Comp/Drive Mode",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Pos X",
+              "_title": "Comp/Pos X",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Pos Y",
+              "_title": "Comp/Pos Y",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Scoring Offset",
+              "_title": "Comp/Scoring Offset",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Ferry Offset",
+              "_title": "Comp/Ferry Offset",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Comp/Is Prep",
+              "_title": "Comp/Is Prep",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
           }
         }
       }
@@ -854,7 +988,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "0,0": {
+          "15,1": {
             "size": [
               1,
               1
@@ -867,7 +1001,7 @@
               "_showGlyph": false
             }
           },
-          "1,0": {
+          "15,2": {
             "size": [
               1,
               1
@@ -876,32 +1010,6 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Comp/Pos Y",
               "_title": "Pos Y",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "2,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Comp/Climber Setpoint",
-              "_title": "Climber Setpoint",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "3,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Comp/Climber Measured Position",
-              "_title": "Climber Measured Position",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -1557,9 +1665,9 @@
     }
   ],
   "windowGeometry": {
-    "x": 0.800000011920929,
-    "y": 0.800000011920929,
-    "width": 1534.4000244140625,
-    "height": 814.4000244140625
+    "x": -7.199999809265137,
+    "y": -7.199999809265137,
+    "width": 1550.4000244140625,
+    "height": 830.4000244140625
   }
 }
