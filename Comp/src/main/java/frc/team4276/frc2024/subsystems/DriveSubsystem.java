@@ -18,7 +18,7 @@ import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.lib.drivers.ADISGyro;
 import frc.team4276.lib.drivers.Subsystem;
-import frc.team4276.lib.swerve.ProfiledHeadingController;
+import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team1678.lib.loops.Loop;
@@ -62,7 +62,7 @@ public class DriveSubsystem extends Subsystem {
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
     private MotionPlanner mMotionPlanner;
-    private ProfiledHeadingController mHeadingController;
+    private HeadingController mHeadingController;
 
     private boolean mOverrideHeading = false;
 
@@ -95,7 +95,7 @@ public class DriveSubsystem extends Subsystem {
                 mPeriodicIO.meas_module_states);
 
         mMotionPlanner = new MotionPlanner();
-        mHeadingController = ProfiledHeadingController.getInstance();
+        mHeadingController = HeadingController.getInstance();
         
         Shuffleboard.getTab("Path").addNumber("X Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::x);
         Shuffleboard.getTab("Path").addNumber("Y Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::y);
@@ -156,8 +156,10 @@ public class DriveSubsystem extends Subsystem {
             mControlState = DriveControlState.HEADING_CONTROL;
         }
 
-        if (Util.epsilonEquals(Math.toDegrees(mHeadingController.getTargetRad()), Math.toDegrees(angle.getRadians()), 1.0)) {
-            mHeadingController.setTarget(angle.getRadians(), mPeriodicIO.heading.getRadians(), mPeriodicIO.meas_chassis_speeds.omegaRadiansPerSecond);
+        if (mHeadingController.getTargetRad() != angle.getRadians()) {
+            mHeadingController.setTarget(angle.getRadians()
+            // , mPeriodicIO.heading.getRadians(), mPeriodicIO.meas_chassis_speeds.omegaRadiansPerSecond
+            );
         }
     }
 
