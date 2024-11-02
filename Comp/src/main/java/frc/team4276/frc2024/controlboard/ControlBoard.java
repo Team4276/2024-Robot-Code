@@ -162,13 +162,13 @@ public class ControlBoard {
     public void updateNominal() {
         mSuperstructure.setNominal();
 
-        if(wantReady() && wantDynamic() && !wantAmpOrHoldCancelDynamicOrClimb()) {
+        if(wantReady() && wantDynamic()) {
             mDriveSubsystem.overrideHeading(true);
         } else {
             mDriveSubsystem.overrideHeading(false);
         }
 
-        if (wantDynamic() && !wantAmpOrHoldCancelDynamicOrClimb()){
+        if (wantDynamic()){
             mSuperstructure.setDynamic(true);
             
         } else {
@@ -200,11 +200,11 @@ public class ControlBoard {
         }
 
         // If vision is disabled
-        if (wantStow()) {
-            mSuperstructure.setPrep(false);
-        } else if (wantPrep()) {
-            mSuperstructure.setPrep(true);
-        }
+        // if (wantStow()) {
+        //     mSuperstructure.setPrep(false);
+        // } else if (wantPrep()) {
+        //     mSuperstructure.setPrep(true);
+        // }
 
         if (wantIdle()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.IDLE);
@@ -248,21 +248,21 @@ public class ControlBoard {
         // }
 
         
-        mSuperstructure.setForceDisablePrep(true);
+        // mSuperstructure.setForceDisablePrep(true);
 
-        double sign = operator.getYButton() ? -1 : 1;
+        // double sign = operator.getYButton() ? -1 : 1;
 
-        if (operator.getRightBumperReleased()) {
-            climberVoltageTest += 0.1 * sign;
+        // if (operator.getRightBumperReleased()) {
+        //     climberVoltageTest += 0.1 * sign;
 
-        }
+        // }
 
         if(operator.getRT()){
             SmartDashboard.putNumber("Debug/Climber Voltage Test", climberVoltageTest);
             mClimberSubsystem.setVoltage(climberVoltageTest);
 
         } else {
-            mClimberSubsystem.setVoltage(operator.getRightY() * 4.0);
+            mClimberSubsystem.setVoltage(operator.getRightY() * 6.0);
         }
 
         SmartDashboard.putBoolean("Debug/Climber Coast Mode", climberSetting.get());
