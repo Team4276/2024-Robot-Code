@@ -7,6 +7,7 @@ import frc.team4276.lib.rev.RevUtil;
 
 import com.revrobotics.AbsoluteEncoder;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.requests.Request;
@@ -78,5 +79,11 @@ public class FourbarSubsystem extends ServoMotorSubsystem {
         return mMaster.getAbsoluteEncoder().getVelocity();
     }
 
+    @Override
+    public synchronized void outputTelemetry() {
+        SmartDashboard.putNumber("Comp/" + mConstants.kName + " Setpoint", mPeriodicIO.demand);
+        SmartDashboard.putNumber("Comp/" + mConstants.kName + " Measured Position", mPeriodicIO.meas_position);
 
+        super.outputTelemetry();
+    }
 }

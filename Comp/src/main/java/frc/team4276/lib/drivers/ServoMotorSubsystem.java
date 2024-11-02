@@ -117,7 +117,7 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         }
     }
 
-    protected PeriodicIO mPeriodicIO;
+    public PeriodicIO mPeriodicIO;
 
     protected ControlState mControlState = ControlState.VOLTAGE;
 
@@ -217,14 +217,14 @@ public abstract class ServoMotorSubsystem extends Subsystem {
         setVoltage(0.0);
     }
 
-    protected class PeriodicIO {
+    public class PeriodicIO {
         // Inputs
-        protected double meas_master_voltage;
-        protected double meas_position;
-        protected double meas_velocity;
+        public double meas_master_voltage;
+        public double meas_position;
+        public double meas_velocity;
 
         // Outputs
-        protected double demand;
+        public double demand;
     }
 
     @Override
@@ -294,9 +294,6 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     @Override
     public synchronized void outputTelemetry() {
-        SmartDashboard.putNumber("Comp/" + mConstants.kName + " Setpoint", mPeriodicIO.demand);
-        SmartDashboard.putNumber("Comp/" + mConstants.kName + " Measured Position", mPeriodicIO.meas_position);
-
         if(Constants.disableExtraTelemetry) return;
 
         SmartDashboard.putNumber("Debug/" + mConstants.kName + " Measured Voltage", mPeriodicIO.meas_master_voltage);
