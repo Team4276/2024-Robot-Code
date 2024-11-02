@@ -62,7 +62,8 @@ public class Superstructure extends Subsystem {
         AMP,
         SHOOT,
         EXHAUST,
-        POOP
+        POOP,
+        CLIMB
     }
 
     public enum Mode {
@@ -404,6 +405,16 @@ public class Superstructure extends Subsystem {
                 ));
                 
                 break;
+
+            case CLIMB:
+                if(mPrevGoalState == mGoalState) break;
+
+                request(new ParallelRequest(
+                    mFlywheelSubsystem.rpmRequest(0.0),
+                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE),
+                    mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarClimbState)
+
+                ));
         
             default:
                 break;

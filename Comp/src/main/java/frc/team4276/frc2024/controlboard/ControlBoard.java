@@ -157,8 +157,6 @@ public class ControlBoard {
         }
     }
 
-    private double climberVoltageTest = 0.0;
-
     public void updateNominal() {
         mSuperstructure.setNominal();
 
@@ -208,6 +206,9 @@ public class ControlBoard {
 
         if (wantIdle()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.IDLE);
+    
+        } else if(wantClimb()) {
+            mSuperstructure.setGoalState(Superstructure.GoalState.CLIMB);
 
         } else if (wantIntake()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.INTAKE);
@@ -218,7 +219,7 @@ public class ControlBoard {
         } else if (wantReady()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.READY);
 
-        } else if (wantAmpOrHoldCancelDynamicOrClimb() && !wantReady() && !wantClimb()) {
+        } else if (wantAmpOrHoldCancelDynamicOrClimb() && !wantReady()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.AMP);
 
         } else if (wantExhaust()) {
@@ -229,43 +230,25 @@ public class ControlBoard {
 
         }
 
-        // if (wantClimb()){
-        //     mSuperstructure.setForceDisablePrep(true);
+        if (wantClimb()){
+            mSuperstructure.setForceDisablePrep(true);
 
-        //     if(wantRaiseClimber()){
-        //         mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.RAISE);
+            // if(wantRaiseClimber()){
+            //     mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.RAISE);
 
-        //     } else if(wantLowerClimber()){
-        //         mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.LOWER);
+            // } else if(wantLowerClimber()){
+            //     mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.LOWER);
 
-        //     } else {
-        //         mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.IDLE);
+            // } else {
+            //     mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.IDLE);
 
-        //     }
+            // }
             
-        // } else if(wantCancelClimb()) {
-        //     mSuperstructure.setForceDisablePrep(false);
-        // }
-
-        
-        // mSuperstructure.setForceDisablePrep(true);
-
-        // double sign = operator.getYButton() ? -1 : 1;
-
-        // if (operator.getRightBumperReleased()) {
-        //     climberVoltageTest += 0.1 * sign;
-
-        // }
-
-        if(operator.getRT()){
-            SmartDashboard.putNumber("Debug/Climber Voltage Test", climberVoltageTest);
-            mClimberSubsystem.setVoltage(climberVoltageTest);
-
         } else {
-            mClimberSubsystem.setVoltage(operator.getRightY() * 6.0);
+            mSuperstructure.setForceDisablePrep(false);
         }
 
-        SmartDashboard.putBoolean("Debug/Climber Coast Mode", climberSetting.get());
+        mClimberSubsystem.setVoltage(operator.getRightY() * 6.0);
 
 
 
@@ -299,6 +282,8 @@ public class ControlBoard {
         } else {
             mSuperstructure.setManualIntakeState(IntakeSubsystem.State.IDLE);
         }
+
+        mSuperstructure.setManualFourbarVoltage(operator.getLeftYDeadband() * 6.0);
     }
 
     // Driver Controls
@@ -410,12 +395,13 @@ public class ControlBoard {
         return wasIdle;
     }
 
+    private boolean wasClimb = false;
     public boolean wantClimb(){
-        return operator.getRightBumperReleased();
-    }
-    
-    public boolean wantCancelClimb(){
-        return operator.getLeftBumperReleased();
+        if(operator.getRightBumperReleased()){
+            wasClimb = !wasClimb;
+        }
+
+        return wasClimb;
     }
 
     public boolean wantRaiseClimber(){
