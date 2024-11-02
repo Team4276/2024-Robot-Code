@@ -473,7 +473,7 @@ public final class Constants {
         public static final double kFourbarSkimState = 120;
 
         public static final int kNormalShotRPM = 3500;
-        public static final int kFerryRPM = 4500;
+        public static final int kFerryRPM = 3500;
         public static final int kSpinUpRPM = 2500;
         public static final int kPoopRPM = 1000;
         public static final int kExhaustRPM = -1000;

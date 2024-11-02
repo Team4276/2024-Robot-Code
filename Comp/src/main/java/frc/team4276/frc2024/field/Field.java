@@ -97,7 +97,7 @@ public class Field {
         public static final POIs kPOIs = new POIs();
 
         static {
-            kPOIs.kSpeakerCenter = new Translation2d(0.225, 5.55);
+            kPOIs.kSpeakerCenter = new Translation2d(0, 5.55);
             kPOIs.kSpeakerSS = new Translation2d();
             kPOIs.kSpeakerAS = new Translation2d();
             kPOIs.kAmp = new Translation2d();
@@ -133,7 +133,7 @@ public class Field {
         public static final POIs kPOIs = new POIs();
 
         static {
-            kPOIs.kSpeakerCenter = new Translation2d(16.317, 5.55);
+            kPOIs.kSpeakerCenter = new Translation2d(16.575, 5.55);
             kPOIs.kSpeakerSS = new Translation2d();
             kPOIs.kSpeakerAS = new Translation2d();
             kPOIs.kAmp = new Translation2d();

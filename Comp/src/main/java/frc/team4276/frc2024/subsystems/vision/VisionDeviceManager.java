@@ -62,6 +62,8 @@ public class VisionDeviceManager extends Subsystem {
         if(Constants.disableExtraTelemetry) return;
 
         for(PhotonDevice camera : mAllCameras) { //TODO: get rid of this probably when calibration is finished
+            camera.outputTelemetry();
+
             if(!camera.isConnected()) return;
 
             if (camera.getLatestUpdate() != null) {

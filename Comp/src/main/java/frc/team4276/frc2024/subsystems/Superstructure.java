@@ -573,6 +573,7 @@ public class Superstructure extends Subsystem {
         SmartDashboard.putNumber("Comp/Scoring Offset", mScoringOffset);
         SmartDashboard.putNumber("Comp/Ferry Offset", mFerryOffset);
 
+        SmartDashboard.putString("Comp/Mode", mMode.toString());
         SmartDashboard.putBoolean("Comp/Is Prep", mIsPrep);
         SmartDashboard.putBoolean("Comp/Is Ferry", mIsFerry);
         SmartDashboard.putBoolean("Comp/Is Dynamic", mIsDymanic);

@@ -177,7 +177,7 @@ public class ControlBoard {
         }
 
         if (wantFerry()) {
-            // mSuperstructure.setFerry(true);
+            mSuperstructure.setFerry(true);
         } else {
             mSuperstructure.setFerry(false);
         }
