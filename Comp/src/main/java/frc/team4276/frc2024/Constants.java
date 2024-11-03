@@ -300,7 +300,7 @@ public final class Constants {
             kSubsystemConstants.kSmartCurrentLimit = 40;
             kSubsystemConstants.kIdleMode = IdleMode.kBrake;
             kSubsystemConstants.kIsCircular = false; // assume max position is 360
-            kSubsystemConstants.kMinPosition = 65.0; // Input Bound
+            kSubsystemConstants.kMinPosition = 50.0; // Input Bound
             kSubsystemConstants.kMaxPosition = 135.0; // Input Bound
             kSubsystemConstants.kMaxVel = 150.0;
             kSubsystemConstants.kMaxAccel = 175.0; //TODO: tune to be faster
@@ -465,18 +465,19 @@ public final class Constants {
 
     public static final class SuperstructureConstants {
         public static final double kFourbarStowState = 70.0;
-        public static final double kFourbarPrepState = 90.7;
+        public static final double kFourbarPrepState = 90.0;
         public static final double kFourbarIntakeState = 135.0;
         public static final double kFourbarSubCloseState = 135.0;
         public static final double kFourbarFerryState = 135.0;
         public static final double kFourbarAmpState = 135;
         public static final double kFourbarSkimState = 120;
-        public static final double kFourbarClimbState = 65.0;
+        public static final double kFourbarClimbState = 50.0;
+        public static final double kFourbarPoopState = 50.0;
 
         public static final int kNormalShotRPM = 3500;
         public static final int kFerryRPM = 3500;
         public static final int kSpinUpRPM = 2500;
-        public static final int kPoopRPM = 1000;
+        public static final int kPoopRPM = 3500;
         public static final int kExhaustRPM = -1000;
         public static final int kAmpTopRPM = 150;
         public static final int kAmpBotRPM = 1450;

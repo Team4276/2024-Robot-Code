@@ -63,7 +63,7 @@ public class AutoModeSelector {
         case DO_NOTHING:
             return Optional.of(new DoNothingMode());
         case TEST_2:
-            return Optional.of(new ChoreoTest("Test2"));
+            return Optional.of(new BoxTest());
         case CLOSE_4NOTE_SAFE:
             return Optional.of(new Close_4Note_Safe());
         case CLOSE_4NOTE_FAST:

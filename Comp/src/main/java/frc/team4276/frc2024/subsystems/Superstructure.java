@@ -11,6 +11,7 @@ import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.shooting.FerryUtil;
 import frc.team4276.frc2024.shooting.ShootingUtil;
 import frc.team4276.frc2024.controlboard.ControlBoard;
+import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.lib.drivers.Subsystem;
 
 import frc.team1678.lib.drivers.BeamBreak;
@@ -399,9 +400,13 @@ public class Superstructure extends Subsystem {
                 if(mPrevGoalState == mGoalState) break;
 
                 request(new ParallelRequest(
-                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kPoopRPM),
-                    mIntakeSubsystem.stateRequest(IntakeSubsystem.State.SLOW_FEED),
-                    new LambdaRequest(() -> mIsHoldingNote = false)
+                    mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPoopState),
+                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kPoopRPM)
+                    // ,
+                    // new LambdaRequest(() -> mDriveSubsystem.setHeadingSetpoint(
+                    //     AllianceChooser.getInstance().isAllianceRed() ? 
+                    //         Rotation2d.fromDegrees(30.0) : 
+                    //         Rotation2d.fromDegrees(150.0)))
                 ));
                 
                 break;
@@ -415,6 +420,8 @@ public class Superstructure extends Subsystem {
                     mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarClimbState)
 
                 ));
+
+                break;
         
             default:
                 break;

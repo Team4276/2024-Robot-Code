@@ -160,13 +160,13 @@ public class ControlBoard {
     public void updateNominal() {
         mSuperstructure.setNominal();
 
-        if(wantReady() && wantDynamic()) {
+        if(wantReady() && wantDynamic() && !wantAmp() && !wantPoop()) {
             mDriveSubsystem.overrideHeading(true);
         } else {
             mDriveSubsystem.overrideHeading(false);
         }
 
-        if (wantDynamic()){
+        if (wantDynamic() && !wantAmp() && !wantPoop()){
             mSuperstructure.setDynamic(true);
             
         } else {
@@ -216,10 +216,13 @@ public class ControlBoard {
         } else if (wantShoot()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.SHOOT);
 
+        } else if(wantPoop()){
+            mSuperstructure.setGoalState(Superstructure.GoalState.POOP);
+
         } else if (wantReady()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.READY);
 
-        } else if (wantAmpOrHoldCancelDynamicOrClimb() && !wantReady()) {
+        } else if (wantAmp()) {
             mSuperstructure.setGoalState(Superstructure.GoalState.AMP);
 
         } else if (wantExhaust()) {
@@ -230,20 +233,9 @@ public class ControlBoard {
 
         }
 
-        if (wantClimb()){
+        if (wantClimb() || wantAmp()){
             mSuperstructure.setForceDisablePrep(true);
 
-            // if(wantRaiseClimber()){
-            //     mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.RAISE);
-
-            // } else if(wantLowerClimber()){
-            //     mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.LOWER);
-
-            // } else {
-            //     mClimberSubsystem.setVoltageState(ClimberSubsystem.VoltageState.IDLE);
-
-            // }
-            
         } else {
             mSuperstructure.setForceDisablePrep(false);
         }
@@ -352,7 +344,11 @@ public class ControlBoard {
         return driver.getRT();
     }
 
-    public boolean wantAmpOrHoldCancelDynamicOrClimb() {
+    public boolean wantAmp() {
+        return driver.getBButton();
+    }
+
+    public boolean wantPoop() {
         return driver.getRightBumper();
     }
 
