@@ -151,12 +151,14 @@ public class DriveSubsystem extends Subsystem {
             mControlState = DriveControlState.PATH_FOLLOWING;
         }
 
-        mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            speeds.vxMetersPerSecond, 
-            speeds.vyMetersPerSecond, 
-            speeds.omegaRadiansPerSecond, 
-            Rotation2d.fromDegrees(0.0).toWPI(), 
-            AllianceChooser.getInstance().isAllianceRed());
+        mPeriodicIO.des_chassis_speeds = speeds;
+
+        // mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        //     speeds.vxMetersPerSecond, 
+        //     speeds.vyMetersPerSecond, 
+        //     speeds.omegaRadiansPerSecond, 
+        //     Rotation2d.fromDegrees(0.0).toWPI(), 
+        //     AllianceChooser.getInstance().isAllianceRed());
     }
 
     public synchronized void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
