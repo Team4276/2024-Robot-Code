@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
+import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.lib.drivers.ADISGyro;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
@@ -143,12 +144,19 @@ public class DriveSubsystem extends Subsystem {
         // mMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
     }
 
+
+
     public synchronized void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
         if (mControlState != DriveControlState.PATH_FOLLOWING) {
             mControlState = DriveControlState.PATH_FOLLOWING;
         }
 
-        mPeriodicIO.des_chassis_speeds = speeds;
+        mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            speeds.vxMetersPerSecond, 
+            speeds.vyMetersPerSecond, 
+            speeds.omegaRadiansPerSecond, 
+            Rotation2d.fromDegrees(0.0).toWPI(), 
+            AllianceChooser.getInstance().isAllianceRed());
     }
 
     public synchronized void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
