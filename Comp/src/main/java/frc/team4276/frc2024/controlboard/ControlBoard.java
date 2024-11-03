@@ -240,7 +240,7 @@ public class ControlBoard {
             mSuperstructure.setForceDisablePrep(false);
         }
 
-        mClimberSubsystem.setVoltage(operator.getRightY() * 6.0);
+        mClimberSubsystem.setVoltage(operator.getRightY() * 12.0);
 
 
 

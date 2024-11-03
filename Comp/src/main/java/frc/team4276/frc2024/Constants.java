@@ -400,7 +400,7 @@ public final class Constants {
             kClimberServoConstants.kFollowerConstants[0].id = Ports.CLIMBER_LEFT;
             kClimberServoConstants.kFollowerConstants[0].isInverted = true;
 
-            kClimberServoConstants.kSmartCurrentLimit = 40;
+            kClimberServoConstants.kSmartCurrentLimit = 60;
             kClimberServoConstants.kIdleMode = IdleMode.kBrake;
             kClimberServoConstants.kIsCircular = false; // assume max position is 360
             kClimberServoConstants.kMinPosition = 0.0; // Input Bound
@@ -477,7 +477,8 @@ public final class Constants {
         public static final int kNormalShotRPM = 3500;
         public static final int kFerryRPM = 3500;
         public static final int kSpinUpRPM = 2500;
-        public static final int kPoopRPM = 3500;
+        public static final int kPoopTopRPM = 3500;
+        public static final int kPoopBotRPM = 3200;
         public static final int kExhaustRPM = -1000;
         public static final int kAmpTopRPM = 150;
         public static final int kAmpBotRPM = 1450;

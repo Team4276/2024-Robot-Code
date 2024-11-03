@@ -401,11 +401,12 @@ public class Superstructure extends Subsystem {
 
                 request(new ParallelRequest(
                     mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPoopState),
-                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kPoopRPM),
-                    new LambdaRequest(() -> mDriveSubsystem.setHeadingSetpoint(
-                        AllianceChooser.getInstance().isAllianceRed() ? 
-                            Rotation2d.fromDegrees(30.0) : 
-                            Rotation2d.fromDegrees(150.0)))
+                    mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kPoopTopRPM, SuperstructureConstants.kPoopBotRPM)
+                    // ,
+                    // new LambdaRequest(() -> mDriveSubsystem.setHeadingSetpoint(
+                    //     AllianceChooser.getInstance().isAllianceRed() ? 
+                    //         Rotation2d.fromDegrees(30.0) : 
+                    //         Rotation2d.fromDegrees(150.0)))
                 ));
                 
                 break;
