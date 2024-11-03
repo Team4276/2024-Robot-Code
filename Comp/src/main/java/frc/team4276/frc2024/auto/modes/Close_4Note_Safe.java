@@ -3,7 +3,7 @@ package frc.team4276.frc2024.auto.modes;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
-import frc.team4276.frc2024.auto.actions.ChoreoTrajectoryAction;
+import frc.team4276.frc2024.auto.actions.PhoreoTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.SeriesAction;
 import frc.team4276.frc2024.auto.actions.SuperstructureAction;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
@@ -13,22 +13,22 @@ import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 public class Close_4Note_Safe extends AutoModeBase {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
-    private final ChoreoTrajectoryAction traj1;
-    private final ChoreoTrajectoryAction traj2;
-    private final ChoreoTrajectoryAction traj3;
-    private final ChoreoTrajectoryAction traj4;
-    private final ChoreoTrajectoryAction traj5;
-    private final ChoreoTrajectoryAction traj6;
-    private final ChoreoTrajectoryAction traj7;
+    private final PhoreoTrajectoryAction traj1;
+    private final PhoreoTrajectoryAction traj2;
+    private final PhoreoTrajectoryAction traj3;
+    private final PhoreoTrajectoryAction traj4;
+    private final PhoreoTrajectoryAction traj5;
+    private final PhoreoTrajectoryAction traj6;
+    private final PhoreoTrajectoryAction traj7;
 
     public Close_4Note_Safe(){
-        traj1 = new ChoreoTrajectoryAction("Close_4Note_Safe", 1);
-        traj2 = new ChoreoTrajectoryAction("Close_4Note_Safe", 2);
-        traj3 = new ChoreoTrajectoryAction("Close_4Note_Safe", 3);
-        traj4 = new ChoreoTrajectoryAction("Close_4Note_Safe", 4);
-        traj5 = new ChoreoTrajectoryAction("Close_4Note_Safe", 5);
-        traj6 = new ChoreoTrajectoryAction("Close_4Note_Safe", 6);
-        traj7 = new ChoreoTrajectoryAction("Close_4Note_Safe", 7);
+        traj1 = new PhoreoTrajectoryAction("Close_4Note_Safe", 1);
+        traj2 = new PhoreoTrajectoryAction("Close_4Note_Safe", 2);
+        traj3 = new PhoreoTrajectoryAction("Close_4Note_Safe", 3);
+        traj4 = new PhoreoTrajectoryAction("Close_4Note_Safe", 4);
+        traj5 = new PhoreoTrajectoryAction("Close_4Note_Safe", 5);
+        traj6 = new PhoreoTrajectoryAction("Close_4Note_Safe", 6);
+        traj7 = new PhoreoTrajectoryAction("Close_4Note_Safe", 7);
     }
 
     private double kShotWaitTime = 0.5;
@@ -40,7 +40,6 @@ public class Close_4Note_Safe extends AutoModeBase {
         // Set Control States
         mSuperstructure.setDynamic(false);
         mSuperstructure.setNominal();
-        mSuperstructure.setPrep(true);
         DriveSubsystem.getInstance().overrideHeading(false);
 
         runAction(new SeriesAction(
@@ -84,10 +83,6 @@ public class Close_4Note_Safe extends AutoModeBase {
             new SuperstructureAction(GoalState.SHOOT, kShotWaitTime),
             new SuperstructureAction(GoalState.STOW)
         ));
-        
-        mSuperstructure.setDynamic(true);
-        mSuperstructure.setPrep(false);
-
     }
 
     @Override

@@ -127,12 +127,20 @@ public class DriveSubsystem extends Subsystem {
         mPeriodicIO.des_chassis_speeds = speeds;
     }
 
-    public synchronized void setChoreoTraj(Trajectory<SwerveSample> traj) {
+    public synchronized void setPhoreoTraj(Trajectory<?> traj) {
         if(mControlState != DriveControlState.PATH_FOLLOWING_CHOR) {
             mControlState = DriveControlState.PATH_FOLLOWING_CHOR;
         }
 
         mMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
+    }
+
+    public synchronized void setChoreoTraj(Trajectory<SwerveSample> traj) {
+        if(mControlState != DriveControlState.PATH_FOLLOWING_CHOR) {
+            mControlState = DriveControlState.PATH_FOLLOWING_CHOR;
+        }
+
+        // mMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
     }
 
     public synchronized void updatePathFollowingSetpoint(ChassisSpeeds speeds) {

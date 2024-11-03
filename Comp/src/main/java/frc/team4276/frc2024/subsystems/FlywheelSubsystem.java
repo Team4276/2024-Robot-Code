@@ -117,7 +117,7 @@ public class FlywheelSubsystem extends Subsystem {
         mPeriodicIO.bottom_demand = mBottomFF.calculate(bottom_RPM);
     }
 
-    public boolean isSpunUp() { //TODO: check
+    public boolean isSpunUp() {
         return isTopSpunUp() && isBottomSpunUp();
     }
 

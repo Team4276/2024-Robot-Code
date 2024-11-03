@@ -3,9 +3,9 @@ package frc.team4276.frc2024.auto.modes;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
+import frc.team4276.frc2024.auto.actions.PhoreoTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.SeriesAction;
 import frc.team4276.frc2024.auto.actions.SuperstructureAction;
-import frc.team4276.frc2024.auto.actions.SwerveTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.WaitAction;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
@@ -14,10 +14,10 @@ import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 public class SS_Preload_Taxi extends AutoModeBase {
     private Superstructure mSuperstructure = Superstructure.getInstance();
 
-    private SwerveTrajectoryAction traj1;
+    private PhoreoTrajectoryAction traj1;
 
     public SS_Preload_Taxi(){
-        traj1 = new SwerveTrajectoryAction("SS_Preload_Taxi");
+        traj1 = new PhoreoTrajectoryAction("SS_Preload_Taxi");
 
     }
     

@@ -3,7 +3,7 @@ package frc.team4276.frc2024.auto.modes;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
-import frc.team4276.frc2024.auto.actions.ChoreoTrajectoryAction;
+import frc.team4276.frc2024.auto.actions.PhoreoTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.ParallelAction;
 import frc.team4276.frc2024.auto.actions.SeriesAction;
 import frc.team4276.frc2024.auto.actions.SuperstructureAction;
@@ -16,16 +16,16 @@ import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 public class Close_5Note_MidSteal extends AutoModeBase {
     private final Superstructure mSuperstructure = Superstructure.getInstance();
 
-    private final ChoreoTrajectoryAction traj1;
-    private final ChoreoTrajectoryAction traj2;
-    private final ChoreoTrajectoryAction traj3;
-    private final ChoreoTrajectoryAction traj4;
+    private final PhoreoTrajectoryAction traj1;
+    private final PhoreoTrajectoryAction traj2;
+    private final PhoreoTrajectoryAction traj3;
+    private final PhoreoTrajectoryAction traj4;
     
     public Close_5Note_MidSteal(){
-        traj1 = new ChoreoTrajectoryAction("Close_5Note_MidSteal", 1);
-        traj2 = new ChoreoTrajectoryAction("Close_5Note_MidSteal", 2);
-        traj3 = new ChoreoTrajectoryAction("Close_5Note_MidSteal", 3);
-        traj4 = new ChoreoTrajectoryAction("Close_5Note_MidSteal", 4);
+        traj1 = new PhoreoTrajectoryAction("Close_5Note_MidSteal", 1);
+        traj2 = new PhoreoTrajectoryAction("Close_5Note_MidSteal", 2);
+        traj3 = new PhoreoTrajectoryAction("Close_5Note_MidSteal", 3);
+        traj4 = new PhoreoTrajectoryAction("Close_5Note_MidSteal", 4);
 
     }
 

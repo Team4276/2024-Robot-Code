@@ -3,7 +3,7 @@ package frc.team4276.frc2024.auto.modes;
 import frc.team254.lib.geometry.Pose2d;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
-import frc.team4276.frc2024.auto.actions.ChoreoTrajectoryAction;
+import frc.team4276.frc2024.auto.actions.PhoreoTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.SeriesAction;
 import frc.team4276.frc2024.auto.actions.SuperstructureAction;
 import frc.team4276.frc2024.auto.actions.WaitForAction;
@@ -14,10 +14,10 @@ import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 public class Center_Preload_Taxi extends AutoModeBase {
     private Superstructure mSuperstructure = Superstructure.getInstance();
 
-    private ChoreoTrajectoryAction traj1;
+    private PhoreoTrajectoryAction traj1;
 
     public Center_Preload_Taxi(){
-        traj1 = new ChoreoTrajectoryAction("Center_Preload_Taxi");
+        traj1 = new PhoreoTrajectoryAction("Center_Preload_Taxi");
 
     }
 

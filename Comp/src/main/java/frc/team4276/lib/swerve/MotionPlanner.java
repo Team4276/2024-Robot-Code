@@ -2,7 +2,7 @@ package frc.team4276.lib.swerve;
 
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
-
+import choreo.trajectory.TrajectorySample;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Constants.DriveConstants;
 import frc.team4276.lib.path.AdaptiveTrajectoryTimeSampler;
@@ -17,7 +17,7 @@ public class MotionPlanner {
     private final DriveToTrajectoryState mDriveToTrajectoryState;
     private final AdaptiveTrajectoryTimeSampler mAdaptiveTrajectoryTimeSampler;
 
-    private Trajectory<SwerveSample> mTrajectory;
+    private Trajectory<?> mTrajectory;
 
     private boolean mIsFinished = true;
 
@@ -31,7 +31,7 @@ public class MotionPlanner {
         mAdaptiveTrajectoryTimeSampler = new AdaptiveTrajectoryTimeSampler(DriveConstants.kAutoMaxError);
     }
 
-    public synchronized void setTrajectory(Trajectory<SwerveSample> traj, Pose2d currentPose, ChassisSpeeds currentSpeeds, double timestamp){
+    public synchronized void setTrajectory(Trajectory<?> traj, Pose2d currentPose, ChassisSpeeds currentSpeeds, double timestamp){
         mTrajectory = traj;
         mIsFinished = false;
         mDriveToTrajectoryState.reset();
@@ -41,7 +41,7 @@ public class MotionPlanner {
     public synchronized ChassisSpeeds update(Pose2d currentPose, double timestamp) {
         if(mTrajectory == null) return ChassisSpeeds.identity();
 
-        SwerveSample targetState = mAdaptiveTrajectoryTimeSampler.getTargetTrajectoryState(mTrajectory, currentPose.toWPI(), timestamp);
+        TrajectorySample<?> targetState = mAdaptiveTrajectoryTimeSampler.getTargetTrajectoryState(mTrajectory, currentPose.toWPI(), timestamp);
 
         if (mAdaptiveTrajectoryTimeSampler.getCurrentSampledTime(timestamp) > mTrajectory.getTotalTime()) {
             mIsFinished = true;
