@@ -35,6 +35,8 @@ import frc.team4276.frc2024.subsystems.vision.VisionIOPhoton.PhotonDeviceConstan
  * wherever the
  * constants are needed, to reduce verbosity.
  */
+
+@SuppressWarnings ("unused")
 public final class Constants {
     public static final Mode currentMode = Mode.REAL;
     

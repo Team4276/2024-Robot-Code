@@ -52,7 +52,7 @@ public class ModuleIOSparkMax implements ModuleIO {
             turnMotor.setWantBrakeMode(true);
             turnMotor.setInverted(true);
 
-            driveEncoder.setPositionConversionFactor(DriveConstants.kDrivingMotorReduction );
+            driveEncoder.setPositionConversionFactor(DriveConstants.kDrivingEncoderPositionFactor);
             driveEncoder.setVelocityConversionFactor(DriveConstants.kDrivingEncoderVelocityFactor);
             driveEncoder.setPosition(0.0);
 
@@ -83,12 +83,12 @@ public class ModuleIOSparkMax implements ModuleIO {
 
         /** Updates the set of loggable inputs. */
         public void updateInputs(ModuleIOInputs inputs) {
-            inputs.drivePositionMetres = driveEncoder.getPosition() * 2 * Math.PI;
-            inputs.driveVelocityMetresPerSec = driveEncoder.getPosition();
+            inputs.drivePositionMetres = driveEncoder.getPosition();
+            inputs.driveVelocityMetresPerSec = driveEncoder.getVelocity();
             inputs.driveAppliedVolts = driveMotor.getAppliedVoltage();
             inputs.driveSupplyCurrentAmps = driveMotor.getOutputCurrent();
 
-            inputs.turnAbsolutePosition = Rotation2d.fromRadians(turnAbsoluteEncoder.getPosition());
+            inputs.turnPositionRads = turnAbsoluteEncoder.getPosition();
             inputs.turnVelocityRadsPerSec = turnAbsoluteEncoder.getVelocity();
             inputs.turnAppliedVolts = turnMotor.getAppliedVoltage();
             inputs.turnSupplyCurrentAmps = turnMotor.getOutputCurrent();

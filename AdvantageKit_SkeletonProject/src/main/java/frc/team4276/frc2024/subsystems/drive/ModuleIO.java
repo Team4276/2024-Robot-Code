@@ -6,18 +6,13 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ModuleIO {
     @AutoLog
     class ModuleIOInputs {
-        public boolean driveMotorConnected = true;
-        public boolean turnMotorConnected = true;
-        public boolean hasCurrentControl = false;
-
         public double drivePositionMetres = 0.0;
         public double driveVelocityMetresPerSec = 0.0;
         public double driveAppliedVolts = 0.0;
         public double driveSupplyCurrentAmps = 0.0;
         public double driveTorqueCurrentAmps = 0.0;
 
-        public Rotation2d turnAbsolutePosition = new Rotation2d();
-        public Rotation2d turnPosition = new Rotation2d();
+        public double turnPositionRads = 0.0;
         public double turnVelocityRadsPerSec = 0.0;
         public double turnAppliedVolts = 0.0;
         public double turnSupplyCurrentAmps = 0.0;

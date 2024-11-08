@@ -111,11 +111,6 @@ public class DriveConstants {
     public static final double kAutoRotationKp = 4.0;
     public static final double kAutoRotationKd = 0.0;
 
-    // public static final PIDConstants kAutoTranslationPIDConstants =
-    // new PIDConstants(kAutoTranslationKp, 0, kAutoTranslationKd);
-    // public static final PIDConstants kAutoRotationPIDConstants =
-    // new PIDConstants(kAutoRotationKp, 0, kAutoRotationKd);
-
     public static final double kAutoAccelFF = 0.0;
 
     public static final double kAutoMaxError = 0.75; // Meters
@@ -126,22 +121,4 @@ public class DriveConstants {
 
     public static final double kSnapPositionTolerance = 0.1;
     public static final double kSnapAngularVelocityTolerance = 0.1;
-
-    public static final Drive.KinematicLimits kUncappedLimits = new Drive.KinematicLimits();
-    static {
-        kUncappedLimits.kMaxDriveVelocity = kMaxVel;
-        kUncappedLimits.kMaxAccel = Double.MAX_VALUE;
-        kUncappedLimits.kMaxAngularVelocity = kMaxAngularVel;
-        kUncappedLimits.kMaxAngularAccel = Double.MAX_VALUE;
-        kUncappedLimits.kName = "Uncapped";
-    }
-
-    public static final Drive.KinematicLimits kDemoLimits = new Drive.KinematicLimits();
-    static {
-        kDemoLimits.kMaxDriveVelocity = 1.5;
-        kDemoLimits.kMaxAccel = Double.MAX_VALUE;
-        kDemoLimits.kMaxAngularVelocity = kMaxAngularVel; // Rad/Sec
-        kDemoLimits.kMaxAngularAccel = Double.MAX_VALUE; // 2 * Math.PI;
-        kDemoLimits.kName = "Demo";
-    }
 }
