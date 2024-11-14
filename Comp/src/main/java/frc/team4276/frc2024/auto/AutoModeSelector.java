@@ -15,7 +15,8 @@ public class AutoModeSelector {
         CLOSE_4NOTE_FAST,
         CLOSE_5NOTE_MIDSTEAL,
         CENTER_PRELOAD_TAXI,
-        SS_PRELOAD_TAXI
+        SS_PRELOAD_TAXI,
+        CENTER_TAXI
 
     }
 
@@ -43,6 +44,7 @@ public class AutoModeSelector {
         mModeChooser.addOption("CloseFourNoteMidSteal", DesiredMode.CLOSE_5NOTE_MIDSTEAL);
         mModeChooser.addOption("CenterPreloadTaxi", DesiredMode.CENTER_PRELOAD_TAXI);
         mModeChooser.addOption("SSPreloadTaxi", DesiredMode.SS_PRELOAD_TAXI);
+        mModeChooser.addOption("CenterTaxi", DesiredMode.CENTER_TAXI);
         SmartDashboard.putData("Comp/Auto Mode", mModeChooser);
 
     }
@@ -74,6 +76,8 @@ public class AutoModeSelector {
             return Optional.of(new Center_Preload_Taxi());
         case SS_PRELOAD_TAXI:
             return Optional.of(new SS_Preload_Taxi());
+        case CENTER_TAXI:
+            return Optional.of(new PhoreoTest("Center_Taxi"));
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;

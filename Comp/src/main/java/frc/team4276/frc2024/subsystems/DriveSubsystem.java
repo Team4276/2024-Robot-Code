@@ -255,7 +255,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized boolean isVirtual(){
-        return true;
+        return false;
     }
 
     public synchronized void resetDriveEncoders() {
@@ -340,7 +340,12 @@ public class DriveSubsystem extends Subsystem {
                             case PATH_FOLLOWING:
                                 break;
                             case PATH_FOLLOWING_CHOR:
-                                mPeriodicIO.des_chassis_speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp);
+                                var speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp);
+
+                                mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                                    speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, 
+                                    mPeriodicIO.heading.toWPI());
+                                
 
                                 break;
                             default:

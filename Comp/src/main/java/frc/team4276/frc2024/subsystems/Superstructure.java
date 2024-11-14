@@ -266,6 +266,7 @@ public class Superstructure extends Subsystem {
 
     private GoalState mPrevGoalState = GoalState.IDLE;
     private boolean mPrevPrepVal = false;
+    private boolean mPrevForcePrepVal = false;
     private boolean mPrevFerryVal = false;
 
     private void updateNominal() {
@@ -277,8 +278,9 @@ public class Superstructure extends Subsystem {
                 
                 break;
             case STOW:
-                if(mPrevGoalState == mGoalState && mIsPrep == mPrevPrepVal) break;
+                if(mPrevGoalState == mGoalState && mIsPrep == mPrevPrepVal && mPrevForcePrepVal == mForceDisablePrep) break;
                 mPrevPrepVal = mIsPrep;
+                mPrevForcePrepVal = mForceDisablePrep;
 
                 if(!(!mIsPrep || mForceDisablePrep)){
                     request(new ParallelRequest(

@@ -63,6 +63,10 @@ public class DriveToTrajectoryState{
      * @return the {@code ChassisSpeeds} containing the desired rotation speed to look to the target
      */
     public ChassisSpeeds getTargetSpeeds(Pose2d currentPose, TrajectorySample<?> targetState) {
+        if(targetState == null) {
+            return new ChassisSpeeds();
+        }
+
         if(prevTargetState == null) {
             prevTargetState = targetState;
         }

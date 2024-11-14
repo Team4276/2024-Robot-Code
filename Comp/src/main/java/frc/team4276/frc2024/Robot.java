@@ -189,7 +189,7 @@ public class Robot extends TimedRobot {
                 mDriveSubsystem.resetOdometry(autoMode.get().getStartingPose());
                 RobotState.getInstance().reset(Timer.getFPGATimestamp(), autoMode.get().getStartingPose());
             } else {
-                mDriveSubsystem.resetGyro(AllianceChooser.getInstance().isAllianceRed() ? 180.0 : 0.0);
+                mDriveSubsystem.resetGyro(0.0);
                 mDriveSubsystem.resetOdometry(Pose2d.identity());
                 RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 

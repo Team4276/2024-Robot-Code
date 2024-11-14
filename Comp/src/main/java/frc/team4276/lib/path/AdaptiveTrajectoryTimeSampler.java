@@ -86,12 +86,13 @@ public class AdaptiveTrajectoryTimeSampler {
      */
     public TrajectorySample<?> getTargetTrajectoryState(Trajectory<?> trajectory, Pose2d currentPose, double timestamp) {
         //Sample the trajectory based on time, keeping in account the time offset that has been set previously
-        TrajectorySample<?> sampledState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
+        // TrajectorySample<?> sampledState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
+        TrajectorySample<?> sampledState = null;
 
         //Get the coordinates of the sampled points as Translation2d
-        Translation2d sampledTranslation = sampledState.getPose().getTranslation();
-        //Calculate the distance of the robot to this sampled point
-        double distanceToPoint = currentPose.getTranslation().getDistance(sampledTranslation);
+        // Translation2d sampledTranslation = sampledState.getPose().getTranslation();
+        // //Calculate the distance of the robot to this sampled point
+        // double distanceToPoint = currentPose.getTranslation().getDistance(sampledTranslation);
 
         // //Check if the distance to the target position is smaller than the maximum error
         // if (distanceToPoint < maxError){
