@@ -22,6 +22,7 @@ import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.MotionPlanner;
+import frc.team4276.lib.swerve.SwerveDebug;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.swerve.ModuleState;
@@ -253,6 +254,10 @@ public class DriveSubsystem extends Subsystem {
         return mMotionPlanner.isFinished();
     }
 
+    public synchronized boolean isVirtual(){
+        return true;
+    }
+
     public synchronized void resetDriveEncoders() {
         for (MAXSwerveModule mod : mModules) {
             mod.resetEncoders();
@@ -460,7 +465,10 @@ public class DriveSubsystem extends Subsystem {
     @Override
     public synchronized void writePeriodicOutputs() {
         for (int i = 0; i < mModules.length; i++) {
-            if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
+            if(isVirtual()){
+                mModules[i].setDesiredState(ModuleState.identity(), false);
+
+            } else if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
             } else if (mControlState == DriveControlState.PATH_FOLLOWING
                     || mControlState == DriveControlState.FORCE_ORIENT
@@ -471,6 +479,10 @@ public class DriveSubsystem extends Subsystem {
             mModules[i].writePeriodicOutputs();
         }
 
+        
+        SwerveDebug.outputSmartDashboard(mPeriodicIO.des_chassis_speeds.vxMetersPerSecond, 
+            mPeriodicIO.des_chassis_speeds.vyMetersPerSecond, 
+            mPeriodicIO.des_chassis_speeds.omegaRadiansPerSecond);
     }
 
     @Override
