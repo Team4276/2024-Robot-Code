@@ -39,6 +39,10 @@ public class MotionPlanner {
     }
 
     public synchronized ChassisSpeeds update(Pose2d currentPose, double timestamp) {
+        return update(currentPose, timestamp, false);
+    }
+
+    public synchronized ChassisSpeeds update(Pose2d currentPose, double timestamp, boolean isVirtual) {
         if(mTrajectory == null) return ChassisSpeeds.identity();
 
         TrajectorySample<?> targetState = mAdaptiveTrajectoryTimeSampler.getTargetTrajectoryState(mTrajectory, currentPose.toWPI(), timestamp);
@@ -50,7 +54,8 @@ public class MotionPlanner {
         mTranslationError = Translation2d.fromWPI(mDriveToTrajectoryState.getTranslationError());
         mRotationError = Rotation2d.fromWPI(mDriveToTrajectoryState.getRotationError());
 
-        return ChassisSpeeds.fromWPI(mDriveToTrajectoryState.getTargetSpeeds(currentPose.toWPI(), targetState));
+        return ChassisSpeeds.fromWPI(mDriveToTrajectoryState.getTargetSpeeds(
+            isVirtual ? targetState.getPose() : currentPose.toWPI(), targetState));
     }
 
     public synchronized boolean isFinished(){

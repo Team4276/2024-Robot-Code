@@ -8,8 +8,8 @@ public class SwerveDebug {
         Rotation2d angle = new Rotation2d(vx, vy);
         double vel = Math.hypot(vx, vy);
 
-        SmartDashboard.putNumber("Debug/Swerve Output Direction", angle.getDegrees());
-        SmartDashboard.putNumber("Debug/Swerve Output Velocity", vel);
-        SmartDashboard.putNumber("Debug/Swerve Output Omega", omega);
+        SmartDashboard.putNumber("Comp/Swerve Output Direction", angle.getDegrees());
+        SmartDashboard.putNumber("Comp/Swerve Output Velocity", vel);
+        SmartDashboard.putNumber("Comp/Swerve Output Omega", omega);
     }
 }

@@ -988,9 +988,9 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "15,1": {
+          "13,0": {
             "size": [
-              1,
+              3,
               1
             ],
             "content": {
@@ -1001,9 +1001,9 @@
               "_showGlyph": false
             }
           },
-          "15,2": {
+          "13,1": {
             "size": [
-              1,
+              3,
               1
             ],
             "content": {
@@ -1041,6 +1041,57 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Comp/Swerve Output Direction",
+              "_title": "Swerve Output Direction",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Comp/Swerve Output Velocity",
+              "_title": "Swerve Output Velocity",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Range/Min": -1.0,
+              "Range/Max": 1.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
+            }
+          },
+          "10,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Comp/Swerve Output Omega",
+              "_title": "Swerve Output Omega",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Range/Min": -7.0,
+              "Range/Max": 1.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
+            }
           }
         }
       }
@@ -1069,345 +1120,62 @@
               "_showGlyph": false
             }
           },
-          "7,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Top RPM",
-              "_title": "Top RPM",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Bottom RPM",
-              "_title": "Bottom RPM",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "9,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Top Voltage",
-              "_title": "Top Voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "10,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Bottom Voltage",
-              "_title": "Bottom Voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,5": {
+          "8,4": {
             "size": [
               2,
-              1
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Voltage",
-              "_title": "Fourbar Measured Voltage",
+              "_type": "Gyro",
+              "_source0": "network_table:///SmartDashboard/Debug/Swerve Output Direction",
+              "_title": "Swerve Output Direction",
               "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "0,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Position",
-              "_title": "Fourbar Measured Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "2,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Velocity",
-              "_title": "Fourbar Measured Velocity",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "0,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Controlstate",
-              "_title": "Fourbar Controlstate",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "6,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/Fourbar Des Position",
-              "_title": "Test/Fourbar Des Position",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/Flywheel Des RPM",
-              "_title": "Test/Flywheel Des RPM",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "9,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Distance",
-              "_title": "Regression Tuning/Distance",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Flywheel Setpoint",
-              "_title": "Regression Tuning/Flywheel Setpoint",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Fourbar Setpoint",
-              "_title": "Regression Tuning/Fourbar Setpoint",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Prev Shot Distance",
-              "_title": "Regression Tuning/Prev Shot Distance",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "13,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Prev Shot Flywheel Setpoint",
-              "_title": "Regression Tuning/Prev Shot Flywheel Setpoint",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "1,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Regression Tuning/Prev Shot Fourbar Setpoint",
-              "_title": "Regression Tuning/Prev Shot Fourbar Setpoint",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,5": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/Desired Fourbar Voltage",
-              "_title": "Test/Desired Fourbar Voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "11,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/Tuning Fourbar Voltage",
-              "_title": "Test/Tuning Fourbar Voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,2": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/Tuning Fourbar Setpoint",
-              "_title": "Test/Tuning Fourbar Setpoint",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "13,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera X Translation Displacement",
-              "_title": "Vision Tuning/Back Camera X Translation Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "13,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera Y Translation Displacement",
-              "_title": "Vision Tuning/Back Camera Y Translation Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "0,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera Height Displacement",
-              "_title": "Vision Tuning/Back Camera Height Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Visuals/Major tick spacing": 45.0,
+              "Visuals/Starting angle": 180.0,
+              "Visuals/Show tick mark ring": true,
+              "Visuals/Counter clockwise": false
             }
           },
           "10,4": {
             "size": [
-              1,
-              1
+              2,
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera Yaw Displacement",
-              "_title": "Vision Tuning/Back Camera Yaw Displacement",
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Debug/Swerve Output Velocity",
+              "_title": "Swerve Output Velocity",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Range/Min": 0.0,
+              "Range/Max": 5.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "1,2": {
+          "12,4": {
             "size": [
-              3,
-              1
+              2,
+              2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/Tuning Flywheel Top Setpoint",
-              "_title": "Test/Tuning Flywheel Top Setpoint",
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Debug/Swerve Output Omega",
+              "_title": "Swerve Output Omega",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Range/Min": -7.0,
+              "Range/Max": 7.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "1,3": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/Tuning Flywheel Bot Setpoint",
-              "_title": "Test/Tuning Flywheel Bot Setpoint",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,3": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Test/Distance to target",
-              "_title": "Test/Distance to target",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,0": {
+          "7,0": {
             "size": [
               1,
               1
@@ -1420,7 +1188,33 @@
               "_showGlyph": false
             }
           },
-          "5,0": {
+          "8,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Intake Current",
+              "_title": "Intake Current",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Intake Voltage",
+              "_title": "Intake Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,0": {
             "size": [
               2,
               2
@@ -1435,74 +1229,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "1,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera Roll Displacement",
-              "_title": "Vision Tuning/Back Camera Roll Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "2,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/Back Camera Pitch Displacement",
-              "_title": "Vision Tuning/Back Camera Pitch Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,1": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Debug/Climber Coast Mode",
-              "_title": "Climber Coast Mode",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "3,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Intake Current",
-              "_title": "Intake Current",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "12,0": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Intake Voltage",
-              "_title": "Intake Voltage",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "1,1": {
             "size": [
               1,
               1
@@ -1515,7 +1242,7 @@
               "_showGlyph": false
             }
           },
-          "2,1": {
+          "13,0": {
             "size": [
               1,
               1
@@ -1528,7 +1255,98 @@
               "_showGlyph": false
             }
           },
-          "7,3": {
+          "0,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Top RPM",
+              "_title": "Top RPM",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Bottom RPM",
+              "_title": "Bottom RPM",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Top Voltage",
+              "_title": "Top Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Bottom Voltage",
+              "_title": "Bottom Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Voltage",
+              "_title": "Fourbar Measured Voltage",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Measured Velocity",
+              "_title": "Fourbar Measured Velocity",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Debug/Fourbar Controlstate",
+              "_title": "Fourbar Controlstate",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,2": {
             "size": [
               2,
               2
@@ -1543,7 +1361,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "3,1": {
+          "3,2": {
             "size": [
               1,
               1
@@ -1556,7 +1374,7 @@
               "_showGlyph": false
             }
           },
-          "4,1": {
+          "4,2": {
             "size": [
               1,
               1
@@ -1569,9 +1387,9 @@
               "_showGlyph": false
             }
           },
-          "9,3": {
+          "5,2": {
             "size": [
-              2,
+              1,
               1
             ],
             "content": {
@@ -1582,7 +1400,7 @@
               "_showGlyph": false
             }
           },
-          "11,3": {
+          "6,2": {
             "size": [
               2,
               2
@@ -1596,106 +1414,15 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
-          },
-          "9,1": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Climber Voltage Test",
-              "_title": "Climber Voltage Test",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "12,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME X Translation Displacement",
-              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME X Translation Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "13,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Y Translation Displacement",
-              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Y Translation Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "0,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Height Displacement",
-              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Height Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "10,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Yaw Displacement",
-              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Yaw Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "0,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Roll Displacement",
-              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Roll Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "2,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Debug/Vision Tuning/ERROR_ASSIGN_A_NAME Pitch Displacement",
-              "_title": "Vision Tuning/ERROR_ASSIGN_A_NAME Pitch Displacement",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
           }
         }
       }
     }
   ],
   "windowGeometry": {
-    "x": -6.400000095367432,
-    "y": 1.600000023841858,
-    "width": 876.7999877929688,
-    "height": 814.4000244140625
+    "x": -7.199999809265137,
+    "y": -7.199999809265137,
+    "width": 1550.4000244140625,
+    "height": 830.4000244140625
   }
 }

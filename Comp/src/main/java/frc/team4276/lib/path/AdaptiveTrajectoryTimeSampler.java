@@ -86,8 +86,7 @@ public class AdaptiveTrajectoryTimeSampler {
      */
     public TrajectorySample<?> getTargetTrajectoryState(Trajectory<?> trajectory, Pose2d currentPose, double timestamp) {
         //Sample the trajectory based on time, keeping in account the time offset that has been set previously
-        // TrajectorySample<?> sampledState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
-        TrajectorySample<?> sampledState = null;
+        TrajectorySample<?> sampledState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
 
         //Get the coordinates of the sampled points as Translation2d
         // Translation2d sampledTranslation = sampledState.getPose().getTranslation();
