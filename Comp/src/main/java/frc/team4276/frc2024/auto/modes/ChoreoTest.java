@@ -4,10 +4,13 @@ import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeEndedException;
 import frc.team4276.frc2024.auto.actions.ChoreoTrajectoryAction;
 import frc.team4276.frc2024.auto.actions.WaitAction;
-
+import frc.team4276.frc2024.subsystems.Superstructure;
+import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
 import frc.team254.lib.geometry.Pose2d;
 
 public class ChoreoTest extends AutoModeBase {
+    private Superstructure mSuperstructure = Superstructure.getInstance();
+
     private ChoreoTrajectoryAction traj1;
 
     public ChoreoTest(String name){
@@ -16,6 +19,11 @@ public class ChoreoTest extends AutoModeBase {
 
     @Override
     protected void routine() throws AutoModeEndedException {
+        mSuperstructure.setNominal();
+        mSuperstructure.setGoalState(GoalState.STOW);
+        mSuperstructure.setForceDisablePrep(true);
+        mSuperstructure.setDynamic(false);
+
         runAction(new WaitAction(0.0));
         runAction(traj1);
         

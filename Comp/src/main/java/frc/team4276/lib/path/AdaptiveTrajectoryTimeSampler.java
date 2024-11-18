@@ -41,41 +41,41 @@ public class AdaptiveTrajectoryTimeSampler {
     //  * @return {@code PathPlannerTrajectory.state} containing the information such as
     //  * the desired Pose2d and heading of the sampled point
     //  */
-    // public SwerveSample getTargetTrajectoryState(Trajectory<SwerveSample> trajectory, Pose2d currentPose, double timestamp) {
-    //     //Sample the trajectory based on time, keeping in account the time offset that has been set previously
-    //     SwerveSample sampledState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
+    public SwerveSample getTargetSwerveTrajectoryState(Trajectory<SwerveSample> trajectory, Pose2d currentPose, double timestamp) {
+        //Sample the trajectory based on time, keeping in account the time offset that has been set previously
+        SwerveSample sampledState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
 
-    //     //Get the coordinates of the sampled points as Translation2d
-    //     Translation2d sampledTranslation = sampledState.getPose().getTranslation();
-    //     //Calculate the distance of the robot to this sampled point
-    //     double distanceToPoint = currentPose.getTranslation().getDistance(sampledTranslation);
+        //Get the coordinates of the sampled points as Translation2d
+        Translation2d sampledTranslation = sampledState.getPose().getTranslation();
+        //Calculate the distance of the robot to this sampled point
+        double distanceToPoint = currentPose.getTranslation().getDistance(sampledTranslation);
 
-    //     //Check if the distance to the target position is smaller than the maximum error
-    //     if (distanceToPoint < maxError){
-    //         //Everything is fine, update the previous time and return the sampled state
-    //         prevTime = timestamp;
-    //         return sampledState;
-    //     }
+        //Check if the distance to the target position is smaller than the maximum error
+        if (distanceToPoint < maxError){
+            //Everything is fine, update the previous time and return the sampled state
+            prevTime = timestamp;
+            return sampledState;
+        }
 
-    //     //Increase the offset to make sure the sampled point stays the same until the error is below the threshold again
-    //     double dt = timestamp - prevTime;
-    //     timeOffset += dt;
+        //Increase the offset to make sure the sampled point stays the same until the error is below the threshold again
+        double dt = timestamp - prevTime;
+        timeOffset += dt;
 
-    //     //Update the previous time
-    //     prevTime = timestamp;
+        //Update the previous time
+        prevTime = timestamp;
 
-    //     double[] dummyForces = {0.0, 0.0, 0.0, 0.0};
+        double[] dummyForces = {0.0, 0.0, 0.0, 0.0};
 
-    //     //Sample the trajectory again, but now with the increased offset
-    //     SwerveSample frozenState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
-    //     frozenState = new SwerveSample(frozenState.t, 
-    //         frozenState.x, frozenState.y, frozenState.heading, 
-    //         0.0, 0.0, 0.0, 
-    //         0.0, 0.0, 0.0,  
-    //         dummyForces, dummyForces);
-    //     return frozenState;
+        //Sample the trajectory again, but now with the increased offset
+        SwerveSample frozenState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
+        frozenState = new SwerveSample(frozenState.t, 
+            frozenState.x, frozenState.y, frozenState.heading, 
+            0.0, 0.0, 0.0, 
+            0.0, 0.0, 0.0,  
+            dummyForces, dummyForces);
+        return frozenState;
 
-    // }
+    }
 
     /** Function that samples a trajectory state from the path to drive to
      * @param trajectory Path planner trajectory that the robot is currently following

@@ -23,6 +23,7 @@ import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team4276.lib.swerve.SwerveDebug;
+import frc.team4276.lib.swerve.SwerveMotionPlanner;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.swerve.ModuleState;
@@ -64,6 +65,7 @@ public class DriveSubsystem extends Subsystem {
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
     private MotionPlanner mMotionPlanner;
+    private SwerveMotionPlanner mSwerveMotionPlanner;
     private HeadingController mHeadingController;
 
     private boolean mOverrideHeading = false;
@@ -97,6 +99,7 @@ public class DriveSubsystem extends Subsystem {
                 mPeriodicIO.meas_module_states);
 
         mMotionPlanner = new MotionPlanner();
+        mSwerveMotionPlanner = new SwerveMotionPlanner();
         mHeadingController = HeadingController.getInstance();
         
         Shuffleboard.getTab("Path").addNumber("X Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::x);
@@ -142,7 +145,7 @@ public class DriveSubsystem extends Subsystem {
             mControlState = DriveControlState.PATH_FOLLOWING_CHOR;
         }
 
-        // mMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
+        mSwerveMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
     }
 
 
@@ -251,11 +254,11 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized boolean isTrajFinished() {
-        return mMotionPlanner.isFinished();
+        return mMotionPlanner.isFinished() && mSwerveMotionPlanner.isFinished();
     }
 
     public synchronized boolean isVirtual(){
-        return false;
+        return true;
     }
 
     public synchronized void resetDriveEncoders() {
@@ -340,7 +343,7 @@ public class DriveSubsystem extends Subsystem {
                             case PATH_FOLLOWING:
                                 break;
                             case PATH_FOLLOWING_CHOR:
-                                var speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp, isVirtual());
+                                var speeds = mSwerveMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp, isVirtual());
 
                                 mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                                     speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, 
@@ -496,13 +499,13 @@ public class DriveSubsystem extends Subsystem {
 
         
         SmartDashboard.putNumber("Comp/Pos X", 
-            isVirtual() ? mMotionPlanner.getTargetPose().getTranslation().x() : 
+            isVirtual() ? mSwerveMotionPlanner.getTargetPose().getTranslation().x() : 
             RobotState.getInstance().getLatestFieldToVehicle().getTranslation().x());
         SmartDashboard.putNumber("Comp/Pos Y", 
-            isVirtual() ? mMotionPlanner.getTargetPose().getTranslation().y() : 
+            isVirtual() ? mSwerveMotionPlanner.getTargetPose().getTranslation().y() : 
             RobotState.getInstance().getLatestFieldToVehicle().getTranslation().y());
         SmartDashboard.putNumber("Comp/Heading", 
-            isVirtual() ? mMotionPlanner.getTargetPose().getRotation().getDegrees() : 
+            isVirtual() ? mSwerveMotionPlanner.getTargetPose().getRotation().getDegrees() : 
             mPeriodicIO.heading.getDegrees());
         
         for(int i = 0; i < mModules.length; i++) {

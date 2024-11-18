@@ -38,24 +38,32 @@ public class DriveToTrajectoryState{
     }
 
 
-    // /**
-    //  * @param currentPose           the current pose of the robot
-    //  * @param targetState the desired position and speeds of the robot
-    //  * @return the {@code ChassisSpeeds} containing the desired rotation speed to look to the target
-    //  */
-    // public ChassisSpeeds getTargetSpeeds(Pose2d currentPose, SwerveSample targetState) {
-    //     double xFF = targetState.vx;
-    //     double yFF = targetState.vy;
-    //     double xFFAccel = targetState.ax * translationAccelFF;
-    //     double yFFAccel = targetState.ay * translationAccelFF;
-    //     double xFeedback = this.xController.calculate(currentPose.getX(), targetState.x);
-    //     double yFeedback = this.yController.calculate(currentPose.getY(), targetState.y);
-    //     double thetaFF = targetState.omega;
-    //     double thetaFFAccel = targetState.alpha * rotationAccelFF;
-    //     double thetaFeedback = this.rotationController.calculate(currentPose.getRotation().getRadians(), targetState.heading);
+    /**
+     * @param currentPose           the current pose of the robot
+     * @param targetState the desired position and speeds of the robot
+     * @return the {@code ChassisSpeeds} containing the desired rotation speed to look to the target
+     */
+    public ChassisSpeeds getTargetSpeeds(Pose2d currentPose, SwerveSample targetState) {
+        if(targetState == null) {
+            return new ChassisSpeeds();
+        }
 
-    //     return new ChassisSpeeds(xFFAccel + xFF + xFeedback, yFFAccel + yFF + yFeedback, thetaFFAccel + thetaFF + thetaFeedback);
-    // }
+        if(prevTargetState == null){
+            prevTargetState = targetState;
+        }
+
+        double xFF = targetState.vx;
+        double yFF = targetState.vy;
+        double xFFAccel = targetState.ax * translationAccelFF;
+        double yFFAccel = targetState.ay * translationAccelFF;
+        double xFeedback = this.xController.calculate(currentPose.getX(), targetState.x);
+        double yFeedback = this.yController.calculate(currentPose.getY(), targetState.y);
+        double thetaFF = targetState.omega;
+        double thetaFFAccel = targetState.alpha * rotationAccelFF;
+        double thetaFeedback = this.rotationController.calculate(currentPose.getRotation().getRadians(), targetState.heading);
+
+        return new ChassisSpeeds(xFFAccel + xFF + xFeedback, yFFAccel + yFF + yFeedback, thetaFFAccel + thetaFF + thetaFeedback);
+    }
 
     /**
      * @param currentPose           the current pose of the robot

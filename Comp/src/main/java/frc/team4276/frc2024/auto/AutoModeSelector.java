@@ -77,7 +77,7 @@ public class AutoModeSelector {
         case SS_PRELOAD_TAXI:
             return Optional.of(new SS_Preload_Taxi());
         case CENTER_TAXI:
-            return Optional.of(new PhoreoTest("Center_Taxi"));
+            return Optional.of(new ChoreoTest("Center_Taxi"));
         default:
             System.out.println("ERROR: unexpected auto mode: " + mode);
             break;
