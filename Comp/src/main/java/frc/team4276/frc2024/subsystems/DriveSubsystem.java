@@ -340,7 +340,7 @@ public class DriveSubsystem extends Subsystem {
                             case PATH_FOLLOWING:
                                 break;
                             case PATH_FOLLOWING_CHOR:
-                                var speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp);
+                                var speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp, isVirtual());
 
                                 mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                                     speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, 
@@ -492,11 +492,18 @@ public class DriveSubsystem extends Subsystem {
 
     @Override
     public synchronized void outputTelemetry() {
-        SmartDashboard.putNumber("Comp/Heading", mPeriodicIO.heading.getDegrees());
         SmartDashboard.putString("Comp/Drive Mode", mControlState.name());
 
-        SmartDashboard.putNumber("Comp/Pos X", RobotState.getInstance().getLatestFieldToVehicle().getTranslation().x());
-        SmartDashboard.putNumber("Comp/Pos Y", RobotState.getInstance().getLatestFieldToVehicle().getTranslation().y());
+        
+        SmartDashboard.putNumber("Comp/Pos X", 
+            isVirtual() ? mMotionPlanner.getTargetPose().getTranslation().x() : 
+            RobotState.getInstance().getLatestFieldToVehicle().getTranslation().x());
+        SmartDashboard.putNumber("Comp/Pos Y", 
+            isVirtual() ? mMotionPlanner.getTargetPose().getTranslation().y() : 
+            RobotState.getInstance().getLatestFieldToVehicle().getTranslation().y());
+        SmartDashboard.putNumber("Comp/Heading", 
+            isVirtual() ? mMotionPlanner.getTargetPose().getRotation().getDegrees() : 
+            mPeriodicIO.heading.getDegrees());
         
         for(int i = 0; i < mModules.length; i++) {
             mModules[i].outputTelemetry();

@@ -1,6 +1,5 @@
 package frc.team4276.lib.swerve;
 
-import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import choreo.trajectory.TrajectorySample;
 import frc.team4276.frc2024.Constants;
@@ -23,6 +22,8 @@ public class MotionPlanner {
 
     private Translation2d mTranslationError = Translation2d.identity(); 
     private Rotation2d mRotationError = Rotation2d.identity();
+
+    private Pose2d mTargetPose = Pose2d.identity();
     
     public MotionPlanner(){
         mDriveToTrajectoryState = new DriveToTrajectoryState(DriveConstants.kAutoTranslationPIDConstants,
@@ -51,6 +52,10 @@ public class MotionPlanner {
             mIsFinished = true;
         }
 
+        if(targetState != null){
+            mTargetPose = Pose2d.fromWPI(targetState.getPose());
+        }
+
         mTranslationError = Translation2d.fromWPI(mDriveToTrajectoryState.getTranslationError());
         mRotationError = Rotation2d.fromWPI(mDriveToTrajectoryState.getRotationError());
 
@@ -68,5 +73,9 @@ public class MotionPlanner {
 
     public Rotation2d getRotationError(){
         return mRotationError;
+    }
+
+    public Pose2d getTargetPose(){
+        return mTargetPose;
     }
 }
