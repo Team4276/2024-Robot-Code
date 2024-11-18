@@ -1042,17 +1042,21 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "3,0": {
+          "4,0": {
             "size": [
-              1,
-              1
+              3,
+              3
             ],
             "content": {
-              "_type": "Text View",
+              "_type": "Gyro",
               "_source0": "network_table:///SmartDashboard/Comp/Swerve Output Direction",
               "_title": "Swerve Output Direction",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Visuals/Major tick spacing": 45.0,
+              "Visuals/Starting angle": 180.0,
+              "Visuals/Show tick mark ring": true,
+              "Visuals/Counter clockwise": false
             }
           },
           "7,0": {
@@ -1066,8 +1070,8 @@
               "_title": "Swerve Output Velocity",
               "_glyph": 148,
               "_showGlyph": false,
-              "Range/Min": -1.0,
-              "Range/Max": 1.0,
+              "Range/Min": 0.0,
+              "Range/Max": 5.0,
               "Range/Center": 0.0,
               "Visuals/Num tick marks": 5,
               "Visuals/Show text": true,
@@ -1086,7 +1090,7 @@
               "_glyph": 148,
               "_showGlyph": false,
               "Range/Min": -7.0,
-              "Range/Max": 1.0,
+              "Range/Max": 7.0,
               "Range/Center": 0.0,
               "Visuals/Num tick marks": 5,
               "Visuals/Show text": true,
