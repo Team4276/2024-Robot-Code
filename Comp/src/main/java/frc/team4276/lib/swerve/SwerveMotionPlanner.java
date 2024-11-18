@@ -46,7 +46,7 @@ public class SwerveMotionPlanner {
     public synchronized ChassisSpeeds update(Pose2d currentPose, double timestamp, boolean isVirtual) {
         if(mTrajectory == null) return ChassisSpeeds.identity();
 
-        SwerveSample targetState = mAdaptiveTrajectoryTimeSampler.getTargetSwerveTrajectoryState(mTrajectory, currentPose.toWPI(), timestamp);
+        SwerveSample targetState = mAdaptiveTrajectoryTimeSampler.getTargetSwerveTrajectoryState(mTrajectory, currentPose.toWPI(), timestamp, isVirtual);
 
         if (mAdaptiveTrajectoryTimeSampler.getCurrentSampledTime(timestamp) > mTrajectory.getTotalTime()) {
             mIsFinished = true;

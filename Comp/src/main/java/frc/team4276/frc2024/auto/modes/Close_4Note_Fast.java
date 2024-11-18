@@ -11,7 +11,7 @@ import frc.team4276.frc2024.auto.actions.WaitForAction;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.Superstructure.GoalState;
-
+import frc.team1678.lib.swerve.ChassisSpeeds;
 import frc.team254.lib.geometry.Pose2d;
 
 public class Close_4Note_Fast extends AutoModeBase {
@@ -65,7 +65,7 @@ public class Close_4Note_Fast extends AutoModeBase {
 
         // Note 3 Drive and Pickup and Score
             traj4,
-            new WaitForAction(mSuperstructure::isHoldingNote),
+            // new WaitForAction(mSuperstructure::isHoldingNote),
             new SuperstructureAction(GoalState.READY, kReadyWaitTime),
             new SuperstructureAction(GoalState.SHOOT, kShotWaitTime),
             new SuperstructureAction(GoalState.SKIM),
@@ -74,7 +74,7 @@ public class Close_4Note_Fast extends AutoModeBase {
             traj5,
             new SuperstructureAction(GoalState.INTAKE),
             traj6,
-            new WaitForAction(mSuperstructure::isHoldingNote),
+            // new WaitForAction(mSuperstructure::isHoldingNote),
             new SuperstructureAction(GoalState.READY),
             new LambdaAction(() -> mDriveSubsystem.overrideHeading(true)),
             new WaitAction(2.0),
@@ -87,6 +87,16 @@ public class Close_4Note_Fast extends AutoModeBase {
         mDriveSubsystem.overrideHeading(false);
         mSuperstructure.setPrep(false);
 
+    }
+
+    @Override
+    public void stop() {
+        mSuperstructure.setGoalState(GoalState.STOW);
+
+        mDriveSubsystem.teleopDrive(ChassisSpeeds.identity());
+
+        mDriveSubsystem.overrideHeading(false);
+        mSuperstructure.setPrep(false);
     }
 
     @Override

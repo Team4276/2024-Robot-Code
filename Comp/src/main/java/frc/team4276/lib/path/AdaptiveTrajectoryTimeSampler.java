@@ -41,7 +41,7 @@ public class AdaptiveTrajectoryTimeSampler {
     //  * @return {@code PathPlannerTrajectory.state} containing the information such as
     //  * the desired Pose2d and heading of the sampled point
     //  */
-    public SwerveSample getTargetSwerveTrajectoryState(Trajectory<SwerveSample> trajectory, Pose2d currentPose, double timestamp) {
+    public SwerveSample getTargetSwerveTrajectoryState(Trajectory<SwerveSample> trajectory, Pose2d currentPose, double timestamp, boolean isVirtual) {
         //Sample the trajectory based on time, keeping in account the time offset that has been set previously
         SwerveSample sampledState = trajectory.sampleAt(timestamp - startTime - timeOffset, false);
 
@@ -51,7 +51,7 @@ public class AdaptiveTrajectoryTimeSampler {
         double distanceToPoint = currentPose.getTranslation().getDistance(sampledTranslation);
 
         //Check if the distance to the target position is smaller than the maximum error
-        if (distanceToPoint < maxError){
+        if (distanceToPoint < maxError || isVirtual){
             //Everything is fine, update the previous time and return the sampled state
             prevTime = timestamp;
             return sampledState;
