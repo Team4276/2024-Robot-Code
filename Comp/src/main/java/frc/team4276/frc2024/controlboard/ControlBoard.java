@@ -294,7 +294,7 @@ public class ControlBoard {
             double scaled_x = Util.scaledDeadband(forwardAxis, 1.0, Math.abs(deadband_vector.x()));
             double scaled_y = Util.scaledDeadband(strafeAxis, 1.0, Math.abs(deadband_vector.y()));
             return new Translation2d(scaled_x, scaled_y)
-                    .scale(DriveSubsystem.getInstance().getKinematicLimits().kMaxDriveVelocity);
+                    .scale(DriveSubsystem.getInstance().getKinematicLimits().kMaxDriveVelocity * 0.8);
         }
     }
 

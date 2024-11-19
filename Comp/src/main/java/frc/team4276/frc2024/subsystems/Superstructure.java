@@ -283,7 +283,10 @@ public class Superstructure extends Subsystem {
 
                 if(!(!mIsPrep || mForceDisablePrep)){
                     request(new ParallelRequest(
-                        mFlywheelSubsystem.rpmRequest(SuperstructureConstants.kSpinUpRPM), 
+                        mFlywheelSubsystem.rpmRequest(
+                            // SuperstructureConstants.kSpinUpRPM
+                            0.0
+                        ), 
                         mFourbarSubsystem.positionRequest(SuperstructureConstants.kFourbarPrepState),
                         mIntakeSubsystem.stateRequest(IntakeSubsystem.State.IDLE)
                     ));
