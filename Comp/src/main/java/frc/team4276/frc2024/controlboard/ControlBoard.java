@@ -7,7 +7,6 @@ import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.Ports;
 import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.frc2024.Constants.OIConstants;
-import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
 import frc.team4276.frc2024.subsystems.SimpleClimberSubsystem;

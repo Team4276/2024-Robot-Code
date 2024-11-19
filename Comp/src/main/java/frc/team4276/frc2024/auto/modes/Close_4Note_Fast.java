@@ -65,7 +65,7 @@ public class Close_4Note_Fast extends AutoModeBase {
 
         // Note 3 Drive and Pickup and Score
             traj4,
-            // new WaitForAction(mSuperstructure::isHoldingNote),
+            new WaitForAction(mSuperstructure::isHoldingNote),
             new SuperstructureAction(GoalState.READY, kReadyWaitTime),
             new SuperstructureAction(GoalState.SHOOT, kShotWaitTime),
             new SuperstructureAction(GoalState.SKIM),
@@ -74,7 +74,7 @@ public class Close_4Note_Fast extends AutoModeBase {
             traj5,
             new SuperstructureAction(GoalState.INTAKE),
             traj6,
-            // new WaitForAction(mSuperstructure::isHoldingNote),
+            new WaitForAction(mSuperstructure::isHoldingNote),
             new SuperstructureAction(GoalState.READY),
             new LambdaAction(() -> mDriveSubsystem.overrideHeading(true)),
             new WaitAction(2.0),

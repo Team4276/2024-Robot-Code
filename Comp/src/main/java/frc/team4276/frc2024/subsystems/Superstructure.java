@@ -11,7 +11,6 @@ import frc.team4276.frc2024.Constants.SuperstructureConstants;
 import frc.team4276.frc2024.shooting.FerryUtil;
 import frc.team4276.frc2024.shooting.ShootingUtil;
 import frc.team4276.frc2024.controlboard.ControlBoard;
-import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.lib.drivers.Subsystem;
 
 import frc.team1678.lib.drivers.BeamBreak;

@@ -1,12 +1,9 @@
 package frc.team4276.frc2024.subsystems;
 
-// import com.revrobotics.RelativeEncoder;
-
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.loops.Loop;
 import frc.team4276.frc2024.Constants.ClimberSubsystemConstants;
 import frc.team4276.lib.drivers.ServoMotorSubsystem;
-// import frc.team4276.lib.rev.CANSparkMaxFactory;
 
 public class ClimberSubsystem extends ServoMotorSubsystem {
     public enum VoltageState {
@@ -45,12 +42,6 @@ public class ClimberSubsystem extends ServoMotorSubsystem {
 
     private ClimberSubsystem() {
         super(ClimberSubsystemConstants.kClimberServoConstants);
-
-        // RelativeEncoder e = CANSparkMaxFactory.configRelativeEncoder(mMaster, ClimberSubsystemConstants.kEncoderConfig);
-
-        // mMaster.getPIDController().setFeedbackDevice(e);
-
-        // mMaster.configFuseMotion(mConstants.kFuseMotionConfig, e::getPosition);
 
         burnFlash();
     }

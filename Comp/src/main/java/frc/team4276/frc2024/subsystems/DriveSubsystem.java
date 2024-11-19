@@ -16,12 +16,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team4276.frc2024.Constants;
 import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.Constants.DriveConstants;
-import frc.team4276.frc2024.field.AllianceChooser;
 import frc.team4276.lib.drivers.ADISGyro;
 import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
-import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team4276.lib.swerve.SwerveDebug;
 import frc.team4276.lib.swerve.SwerveMotionPlanner;
 import frc.team1678.lib.loops.Loop;
@@ -64,7 +62,6 @@ public class DriveSubsystem extends Subsystem {
     
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
-    private MotionPlanner mMotionPlanner;
     private SwerveMotionPlanner mSwerveMotionPlanner;
     private HeadingController mHeadingController;
 
@@ -98,7 +95,6 @@ public class DriveSubsystem extends Subsystem {
                 DriveConstants.kDriveKinematics,
                 mPeriodicIO.meas_module_states);
 
-        mMotionPlanner = new MotionPlanner();
         mSwerveMotionPlanner = new SwerveMotionPlanner();
         mHeadingController = HeadingController.getInstance();
         
@@ -106,10 +102,10 @@ public class DriveSubsystem extends Subsystem {
         Shuffleboard.getTab("Path").addNumber("Y Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::y);
         Shuffleboard.getTab("Path").addNumber("Rotation", RobotState.getInstance().getLatestFieldToVehicle().getRotation()::getDegrees);
         
-        Shuffleboard.getTab("Path").addNumber("X Error", mMotionPlanner.getTranslationError()::x);
-        Shuffleboard.getTab("Path").addNumber("Y Error", mMotionPlanner.getTranslationError()::y);
-        Shuffleboard.getTab("Path").addNumber("Translation Error", mMotionPlanner.getTranslationError()::norm);
-        Shuffleboard.getTab("Path").addNumber("Rotation Error", mMotionPlanner.getRotationError()::getDegrees);
+        Shuffleboard.getTab("Path").addNumber("X Error", mSwerveMotionPlanner.getTranslationError()::x);
+        Shuffleboard.getTab("Path").addNumber("Y Error", mSwerveMotionPlanner.getTranslationError()::y);
+        Shuffleboard.getTab("Path").addNumber("Translation Error", mSwerveMotionPlanner.getTranslationError()::norm);
+        Shuffleboard.getTab("Path").addNumber("Rotation Error", mSwerveMotionPlanner.getRotationError()::getDegrees);
     }
 
     public synchronized void teleopDrive(ChassisSpeeds speeds) {
@@ -130,14 +126,6 @@ public class DriveSubsystem extends Subsystem {
         }
 
         mPeriodicIO.des_chassis_speeds = speeds;
-    }
-
-    public synchronized void setPhoreoTraj(Trajectory<?> traj) {
-        if(mControlState != DriveControlState.PATH_FOLLOWING_CHOR) {
-            mControlState = DriveControlState.PATH_FOLLOWING_CHOR;
-        }
-
-        mMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
     }
 
     public synchronized void setChoreoTraj(Trajectory<SwerveSample> traj) {
@@ -254,7 +242,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized boolean isTrajFinished() {
-        return mMotionPlanner.isFinished() && mSwerveMotionPlanner.isFinished();
+        return mSwerveMotionPlanner.isFinished();
     }
 
     public synchronized boolean isVirtual(){
@@ -348,7 +336,6 @@ public class DriveSubsystem extends Subsystem {
                                 mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                                     speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, 
                                     mPeriodicIO.heading.toWPI());
-                                
 
                                 break;
                             default:
