@@ -21,7 +21,7 @@ import frc.team4276.lib.drivers.Subsystem;
 import frc.team4276.lib.swerve.HeadingController;
 import frc.team4276.lib.swerve.MAXSwerveModule;
 import frc.team4276.lib.swerve.SwerveDebug;
-import frc.team4276.lib.swerve.SwerveMotionPlanner;
+import frc.team4276.lib.swerve.MotionPlanner;
 import frc.team1678.lib.loops.Loop;
 import frc.team1678.lib.loops.ILooper;
 import frc.team1678.lib.swerve.ModuleState;
@@ -56,13 +56,12 @@ public class DriveSubsystem extends Subsystem {
         FORCE_ORIENT,
         OPEN_LOOP,
         HEADING_CONTROL,
-        PATH_FOLLOWING,
-        PATH_FOLLOWING_CHOR
+        PATH_FOLLOWING
     }
     
     private DriveControlState mControlState = DriveControlState.FORCE_ORIENT;
 
-    private SwerveMotionPlanner mSwerveMotionPlanner;
+    private MotionPlanner mMotionPlanner;
     private HeadingController mHeadingController;
 
     private boolean mOverrideHeading = false;
@@ -95,17 +94,17 @@ public class DriveSubsystem extends Subsystem {
                 DriveConstants.kDriveKinematics,
                 mPeriodicIO.meas_module_states);
 
-        mSwerveMotionPlanner = new SwerveMotionPlanner();
+        mMotionPlanner = new MotionPlanner();
         mHeadingController = HeadingController.getInstance();
         
         Shuffleboard.getTab("Path").addNumber("X Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::x);
         Shuffleboard.getTab("Path").addNumber("Y Translation", RobotState.getInstance().getLatestFieldToVehicle().getTranslation()::y);
         Shuffleboard.getTab("Path").addNumber("Rotation", RobotState.getInstance().getLatestFieldToVehicle().getRotation()::getDegrees);
         
-        Shuffleboard.getTab("Path").addNumber("X Error", mSwerveMotionPlanner.getTranslationError()::x);
-        Shuffleboard.getTab("Path").addNumber("Y Error", mSwerveMotionPlanner.getTranslationError()::y);
-        Shuffleboard.getTab("Path").addNumber("Translation Error", mSwerveMotionPlanner.getTranslationError()::norm);
-        Shuffleboard.getTab("Path").addNumber("Rotation Error", mSwerveMotionPlanner.getRotationError()::getDegrees);
+        Shuffleboard.getTab("Path").addNumber("X Error", mMotionPlanner.getTranslationError()::x);
+        Shuffleboard.getTab("Path").addNumber("Y Error", mMotionPlanner.getTranslationError()::y);
+        Shuffleboard.getTab("Path").addNumber("Translation Error", mMotionPlanner.getTranslationError()::norm);
+        Shuffleboard.getTab("Path").addNumber("Rotation Error", mMotionPlanner.getRotationError()::getDegrees);
     }
 
     public synchronized void teleopDrive(ChassisSpeeds speeds) {
@@ -129,32 +128,11 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized void setChoreoTraj(Trajectory<SwerveSample> traj) {
-        if(mControlState != DriveControlState.PATH_FOLLOWING_CHOR) {
-            mControlState = DriveControlState.PATH_FOLLOWING_CHOR;
-        }
-
-        mSwerveMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
-    }
-
-
-
-    public synchronized void updatePathFollowingSetpoint(ChassisSpeeds speeds) {
-        if (mControlState != DriveControlState.PATH_FOLLOWING) {
+        if(mControlState != DriveControlState.PATH_FOLLOWING) {
             mControlState = DriveControlState.PATH_FOLLOWING;
         }
 
-        mPeriodicIO.des_chassis_speeds = speeds;
-
-        // mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        //     speeds.vxMetersPerSecond, 
-        //     speeds.vyMetersPerSecond, 
-        //     speeds.omegaRadiansPerSecond, 
-        //     Rotation2d.fromDegrees(0.0).toWPI(), 
-        //     AllianceChooser.getInstance().isAllianceRed());
-    }
-
-    public synchronized void updatePPPathFollowingSetpoint(edu.wpi.first.math.kinematics.ChassisSpeeds speeds) {
-        updatePathFollowingSetpoint(ChassisSpeeds.fromWPI(speeds));
+        mMotionPlanner.setTrajectory(traj, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, Timer.getFPGATimestamp());
     }
 
     public synchronized void feedTrackingSetpoint(Rotation2d angle) {
@@ -242,7 +220,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized boolean isTrajFinished() {
-        return mSwerveMotionPlanner.isFinished();
+        return mMotionPlanner.isFinished();
     }
 
     public synchronized boolean isVirtual(){
@@ -329,9 +307,7 @@ public class DriveSubsystem extends Subsystem {
                             case HEADING_CONTROL:
                                 break;
                             case PATH_FOLLOWING:
-                                break;
-                            case PATH_FOLLOWING_CHOR:
-                                var speeds = mSwerveMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp, isVirtual());
+                                var speeds = mMotionPlanner.update(RobotState.getInstance().getLatestFieldToVehicle(), timestamp, isVirtual());
 
                                 mPeriodicIO.des_chassis_speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                                     speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, 
@@ -466,8 +442,7 @@ public class DriveSubsystem extends Subsystem {
             } else if (mControlState == DriveControlState.OPEN_LOOP || mControlState == DriveControlState.HEADING_CONTROL) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], true);
             } else if (mControlState == DriveControlState.PATH_FOLLOWING
-                    || mControlState == DriveControlState.FORCE_ORIENT
-                    || mControlState == DriveControlState.PATH_FOLLOWING_CHOR) {
+                    || mControlState == DriveControlState.FORCE_ORIENT) {
                 mModules[i].setDesiredState(mPeriodicIO.des_module_states[i], false);
             }
 
@@ -486,13 +461,13 @@ public class DriveSubsystem extends Subsystem {
 
         
         SmartDashboard.putNumber("Comp/Pos X", 
-            isVirtual() ? mSwerveMotionPlanner.getTargetPose().getTranslation().x() : 
+            isVirtual() ? mMotionPlanner.getTargetPose().getTranslation().x() : 
             RobotState.getInstance().getLatestFieldToVehicle().getTranslation().x());
         SmartDashboard.putNumber("Comp/Pos Y", 
-            isVirtual() ? mSwerveMotionPlanner.getTargetPose().getTranslation().y() : 
+            isVirtual() ? mMotionPlanner.getTargetPose().getTranslation().y() : 
             RobotState.getInstance().getLatestFieldToVehicle().getTranslation().y());
         SmartDashboard.putNumber("Comp/Heading", 
-            isVirtual() ? mSwerveMotionPlanner.getTargetPose().getRotation().getDegrees() : 
+            isVirtual() ? mMotionPlanner.getTargetPose().getRotation().getDegrees() : 
             mPeriodicIO.heading.getDegrees());
         
         for(int i = 0; i < mModules.length; i++) {

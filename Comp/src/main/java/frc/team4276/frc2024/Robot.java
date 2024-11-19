@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import frc.team4276.frc2024.auto.AutoInitializer;
 import frc.team4276.frc2024.auto.AutoModeBase;
 import frc.team4276.frc2024.auto.AutoModeExecutor;
 import frc.team4276.frc2024.auto.AutoModeSelector;
@@ -86,8 +85,6 @@ public class Robot extends TimedRobot {
             mSubsystemManager.registerEnabledLoops(mEnabledLooper);
             mSubsystemManager.registerDisabledLoops(mDisabledLooper);
             RobotState.getInstance().resetKalmanFilters();
-
-            AutoInitializer.init();
 
         } catch (Throwable t) {
             throw t;

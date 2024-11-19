@@ -11,7 +11,7 @@ import frc.team254.lib.geometry.Pose2d;
 import frc.team254.lib.geometry.Rotation2d;
 import frc.team254.lib.geometry.Translation2d;
 
-public class SwerveMotionPlanner {
+public class MotionPlanner {
     private Trajectory<SwerveSample> mTrajectory;
 
     private double startTime = 0.0;
@@ -29,7 +29,7 @@ public class SwerveMotionPlanner {
     private final PIDController yController;
     private final PIDController rotationController;
 
-    public SwerveMotionPlanner() {
+    public MotionPlanner() {
         this.xController = new PIDController(DriveConstants.kAutoTranslationKp, 0.0, DriveConstants.kAutoTranslationKd,
                 Constants.kLooperDt);
         this.yController = new PIDController(DriveConstants.kAutoTranslationKp, 0.0, DriveConstants.kAutoTranslationKd,
