@@ -10,6 +10,7 @@ import frc.team4276.frc2024.Constants.OIConstants;
 import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
+import frc.team4276.frc2024.subsystems.SimpleClimberSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 
 import frc.team1678.lib.Util;
@@ -27,7 +28,7 @@ public class ControlBoard {
 
     private DriveSubsystem mDriveSubsystem;
     private Superstructure mSuperstructure;
-    private ClimberSubsystem mClimberSubsystem;
+    private SimpleClimberSubsystem mSimpleClimber;
 
     private static ControlBoard mInstance;
 
@@ -47,7 +48,7 @@ public class ControlBoard {
 
         mDriveSubsystem = DriveSubsystem.getInstance();
         mSuperstructure = Superstructure.getInstance();
-        mClimberSubsystem = ClimberSubsystem.getInstance();
+        mSimpleClimber = SimpleClimberSubsystem.getInstance();
     }
 
     private double mTuningFlywheelTopSetpoint = 4500;
@@ -240,7 +241,7 @@ public class ControlBoard {
             mSuperstructure.setForceDisablePrep(false);
         }
 
-        mClimberSubsystem.setVoltage(operator.getRightY() * 12.0);
+        mSimpleClimber.setVoltage(operator.getRightY() * 12.0);
 
 
 

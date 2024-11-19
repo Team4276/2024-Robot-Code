@@ -1,6 +1,9 @@
 package frc.team4276.lib.drivers;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.util.function.BooleanSupplier;
 
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.SparkLimitSwitch;
@@ -53,6 +56,16 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
     protected SparkLimitSwitch mForwardLimitSwitch;
     protected SparkLimitSwitch mReverseLimitSwitch;
+
+    /**
+     * If true, cancel positive voltage inputs
+     */
+    protected BooleanSupplier mForwardLimitSupplier;    
+    
+    /**
+     * If true, cancel negative voltage inputs
+     */
+    protected BooleanSupplier mReverseLimitSupplier;
 
     /**
      * Encoder Init needed
@@ -261,6 +274,16 @@ public abstract class ServoMotorSubsystem extends Subsystem {
 
         switch (mControlState) {
             case VOLTAGE:
+                double output = mPeriodicIO.demand;
+
+                if(mForwardLimitSupplier != null){
+                    output = mForwardLimitSupplier.getAsBoolean() ? Math.min(output, 0.0) : output;
+                }
+                
+                if(mReverseLimitSupplier != null){
+                    output = mReverseLimitSupplier.getAsBoolean() ? Math.max(output, 0.0) : output;
+                }
+
                 mMaster.setVoltage(mPeriodicIO.demand);
 
                 break;

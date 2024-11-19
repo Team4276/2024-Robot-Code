@@ -18,6 +18,7 @@ import frc.team4276.frc2024.subsystems.ClimberSubsystem;
 import frc.team4276.frc2024.subsystems.DriveSubsystem;
 import frc.team4276.frc2024.subsystems.FlywheelSubsystem;
 import frc.team4276.frc2024.subsystems.IntakeSubsystem;
+import frc.team4276.frc2024.subsystems.SimpleClimberSubsystem;
 import frc.team4276.frc2024.subsystems.FourbarSubsystem;
 import frc.team4276.frc2024.subsystems.Superstructure;
 import frc.team4276.frc2024.subsystems.vision.VisionDeviceManager;
@@ -47,7 +48,7 @@ public class Robot extends TimedRobot {
     private IntakeSubsystem mIntakeSubsystem;
     private FlywheelSubsystem mFlywheelSubsystem;
     private FourbarSubsystem mFourbarSubsystem;
-    private ClimberSubsystem mClimberSubsystem;
+    private SimpleClimberSubsystem mSimpleClimber;
 
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
@@ -68,7 +69,7 @@ public class Robot extends TimedRobot {
             mIntakeSubsystem = IntakeSubsystem.getInstance();
             mFlywheelSubsystem = FlywheelSubsystem.getInstance();
             mFourbarSubsystem = FourbarSubsystem.getInstance();
-            mClimberSubsystem = ClimberSubsystem.getInstance();
+            mSimpleClimber = SimpleClimberSubsystem.getInstance();
 
             // mClimberSubsystem.setDisabled(true);
 
@@ -79,7 +80,7 @@ public class Robot extends TimedRobot {
                     mIntakeSubsystem,
                     mFlywheelSubsystem,
                     mFourbarSubsystem,
-                    mClimberSubsystem,
+                    mSimpleClimber,
                     mVisionDeviceManager
                 );
 
@@ -157,9 +158,9 @@ public class Robot extends TimedRobot {
             }
             
             if (hasFlippedClimberSetting) {  
-                mClimberSubsystem.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
+                mSimpleClimber.setWantBrakeMode(!mControlBoard.wantClimberCoastMode());
             } else {
-                mClimberSubsystem.setWantBrakeMode(true);
+                mSimpleClimber.setWantBrakeMode(true);
             }
 
         } catch (Throwable t) {

@@ -27,8 +27,10 @@ public class Ports {
     public static final int BEAM_BACK = 0;
     public static final int BEAM_FRONT = 1;
 
-    public static final int CLIMBER_LIMIT_RIGHT = 2;
-    public static final int CLIMBER_LIMIT_LEFT = 3;
+    public static final int CLIMBER_LIMIT_TOP_RIGHT = 8;
+    public static final int CLIMBER_LIMIT_BOT_RIGHT = 9;
+    public static final int CLIMBER_LIMIT_TOP_LEFT = 2;
+    public static final int CLIMBER_LIMIT_BOT_LEFT = 3;
 
     public static final int CLIMBER_BRAKE_SWITCH = 6;
     public static final int FOURBAR_BRAKE_SWITCH = 7;
