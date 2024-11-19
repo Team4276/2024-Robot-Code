@@ -62,7 +62,7 @@ public class MotionPlanner {
             return ChassisSpeeds.identity();
         }
 
-        if(targetState.getPose().getTranslation().getNorm() > DriveConstants.kAutoMaxError && !isVirtual){
+        if(targetState.getPose().getTranslation().getDistance(currentPose.getTranslation().toWPI()) > DriveConstants.kAutoMaxError && !isVirtual){
             double dt = timestamp - prevTime;
             timeOffset += dt;
 
