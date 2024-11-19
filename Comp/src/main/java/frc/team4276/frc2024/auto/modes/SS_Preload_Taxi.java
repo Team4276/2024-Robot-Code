@@ -39,8 +39,8 @@ public class SS_Preload_Taxi extends AutoModeBase {
             new SuperstructureAction(GoalState.SHOOT, kShotWaitTime),
             new SuperstructureAction(GoalState.STOW),
 
-            new WaitAction(9.0),
-            traj1
+            new WaitAction(9.0) 
+            // traj1
             
         ));
     }
