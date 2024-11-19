@@ -258,7 +258,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public synchronized boolean isVirtual(){
-        return true;
+        return false;
     }
 
     public synchronized void resetDriveEncoders() {
