@@ -39,40 +39,35 @@ public class ModuleIOSparkMax implements ModuleIO {
 
         driveMotor.restoreFactoryDefaults();
         turnMotor.restoreFactoryDefaults();
-        driveMotor.setCANTimeout(250);
-        turnMotor.setCANTimeout(250);
 
-        for (int i = 0; i < 30; i++) {
-            driveMotor.setSmartCurrentLimit(50);
-            driveMotor.enableVoltageCompensation(12.0);
-            driveMotor.setWantBrakeMode(true);
-            
-            turnMotor.setSmartCurrentLimit(20);
-            turnMotor.enableVoltageCompensation(12.0);
-            turnMotor.setWantBrakeMode(true);
-            turnMotor.setInverted(true);
+        driveMotor.setSmartCurrentLimit(50);
+        driveMotor.enableVoltageCompensation(12.0);
+        driveMotor.setWantBrakeMode(true);
 
-            driveEncoder.setPositionConversionFactor(DriveConstants.kDrivingEncoderPositionFactor);
-            driveEncoder.setVelocityConversionFactor(DriveConstants.kDrivingEncoderVelocityFactor);
-            driveEncoder.setPosition(0.0);
+        turnMotor.setSmartCurrentLimit(20);
+        turnMotor.enableVoltageCompensation(12.0);
+        turnMotor.setWantBrakeMode(true);
+        turnMotor.setInverted(true);
 
-            turnAbsoluteEncoder.setInverted(true);
-            turnAbsoluteEncoder.setPositionConversionFactor(DriveConstants.kTurningEncoderPositionFactor);
-            turnAbsoluteEncoder.setVelocityConversionFactor(DriveConstants.kTurningEncoderVelocityFactor);
+        driveEncoder.setPositionConversionFactor(DriveConstants.kDrivingEncoderPositionFactor);
+        driveEncoder.setVelocityConversionFactor(DriveConstants.kDrivingEncoderVelocityFactor);
+        driveEncoder.setPosition(0.0);
 
-            drivePid = driveMotor.getPIDController();
-            drivePid.setFeedbackDevice(driveEncoder);
-            drivePid.setP(DriveConstants.kDrivingPIDFConfig.kP);
-            drivePid.setFF(DriveConstants.kDrivingPIDFConfig.kFF);
-            drivePid.setPositionPIDWrappingEnabled(true);
-            drivePid.setPositionPIDWrappingMaxInput(DriveConstants.kTurningEncoderPositionPIDMaxInput);
-            drivePid.setPositionPIDWrappingMinInput(DriveConstants.kTurningEncoderPositionPIDMinInput);
+        turnAbsoluteEncoder.setInverted(true);
+        turnAbsoluteEncoder.setPositionConversionFactor(2 * Math.PI);
+        turnAbsoluteEncoder.setVelocityConversionFactor(2 * Math.PI);
 
-            turnPid = turnMotor.getPIDController();
-            turnPid.setFeedbackDevice(turnAbsoluteEncoder);
-            turnPid.setP(DriveConstants.kTurningPIDFConfig.kP);
+        drivePid = driveMotor.getPIDController();
+        drivePid.setFeedbackDevice(driveEncoder);
+        drivePid.setP(DriveConstants.kDrivingPIDFConfig.kP);
+        drivePid.setFF(DriveConstants.kDrivingPIDFConfig.kFF);
+        drivePid.setPositionPIDWrappingEnabled(true);
+        drivePid.setPositionPIDWrappingMaxInput(2 * Math.PI);
+        drivePid.setPositionPIDWrappingMinInput(0.0);
 
-        }
+        turnPid = turnMotor.getPIDController();
+        turnPid.setFeedbackDevice(turnAbsoluteEncoder);
+        turnPid.setP(DriveConstants.kTurningPIDFConfig.kP);
 
         driveMotor.burnFlash();
         turnMotor.burnFlash();
@@ -81,63 +76,63 @@ public class ModuleIOSparkMax implements ModuleIO {
         turnMotor.setCANTimeout(0);
     }
 
-        /** Updates the set of loggable inputs. */
-        public void updateInputs(ModuleIOInputs inputs) {
-            inputs.drivePositionMetres = driveEncoder.getPosition();
-            inputs.driveVelocityMetresPerSec = driveEncoder.getVelocity();
-            inputs.driveAppliedVolts = driveMotor.getAppliedVoltage();
-            inputs.driveSupplyCurrentAmps = driveMotor.getOutputCurrent();
+    /** Updates the set of loggable inputs. */
+    public void updateInputs(ModuleIOInputs inputs) {
+        inputs.drivePositionMetres = driveEncoder.getPosition();
+        inputs.driveVelocityMetresPerSec = driveEncoder.getVelocity();
+        inputs.driveAppliedVolts = driveMotor.getAppliedVoltage();
+        inputs.driveSupplyCurrentAmps = driveMotor.getOutputCurrent();
 
-            inputs.turnPositionRads = turnAbsoluteEncoder.getPosition();
-            inputs.turnVelocityRadsPerSec = turnAbsoluteEncoder.getVelocity();
-            inputs.turnAppliedVolts = turnMotor.getAppliedVoltage();
-            inputs.turnSupplyCurrentAmps = turnMotor.getOutputCurrent();
+        inputs.turnPositionRads = turnAbsoluteEncoder.getPosition();
+        inputs.turnVelocityRadsPerSec = turnAbsoluteEncoder.getVelocity();
+        inputs.turnAppliedVolts = turnMotor.getAppliedVoltage();
+        inputs.turnSupplyCurrentAmps = turnMotor.getOutputCurrent();
 
-            inputs.odometryDrivePositionsMeters = new double[] {};
-            inputs.odometryTurnPositions = new Rotation2d[] {};
-        }
-    
-        /** Run drive motor at volts */
-        public void runDriveVolts(double volts) {
-            driveMotor.setVoltage(volts);
-        }
-    
-        /** Run turn motor at volts */
-        public void runTurnVolts(double volts) {
-            turnMotor.setVoltage(volts);
-        }
-    
-        /** Run characterization input (amps or volts) into drive motor */
-        public void runCharacterization(double input) {
-        }
-    
-        /** Run to drive velocity setpoint with feedforward */
-        public void runDriveVelocitySetpoint(double velocityRadsPerSec, double feedForward) {
-            driveMotor.setReference(velocityRadsPerSec, ControlType.kVelocity, 0, feedForward, ArbFFUnits.kVoltage);
-        }
-    
-        /** Run to turn position setpoint */
-        public void runTurnPositionSetpoint(double angleRads) {
-            turnMotor.setReference(angleRads, ControlType.kPosition, 0, 0.0, ArbFFUnits.kVoltage);
-        }
-    
-        /** Configure drive PID */
-        public void setDrivePID(double kP, double kI, double kD) {
-        }
-    
-        /** Configure turn PID */
-        public void setTurnPID(double kP, double kI, double kD) {
-        }
-    
-        /** Enable or disable brake mode on the drive motor. */
-        public void setDriveBrakeMode(boolean enable) {
-        }
-    
-        /** Enable or disable brake mode on the turn motor. */
-        public void setTurnBrakeMode(boolean enable) {
-        }
-    
-        /** Disable output to all motors */
-        public void stop() {
-        }
+        inputs.odometryDrivePositionsMeters = new double[] {};
+        inputs.odometryTurnPositions = new Rotation2d[] {};
+    }
+
+    /** Run drive motor at volts */
+    public void runDriveVolts(double volts) {
+        driveMotor.setVoltage(volts);
+    }
+
+    /** Run turn motor at volts */
+    public void runTurnVolts(double volts) {
+        turnMotor.setVoltage(volts);
+    }
+
+    /** Run characterization input (amps or volts) into drive motor */
+    public void runCharacterization(double input) {
+    }
+
+    /** Run to drive velocity setpoint with feedforward */
+    public void runDriveVelocitySetpoint(double velocityMetresPerSec, double feedForward) {
+        driveMotor.setReference(velocityMetresPerSec, ControlType.kVelocity, 0, feedForward, ArbFFUnits.kVoltage);
+    }
+
+    /** Run to turn position setpoint */
+    public void runTurnPositionSetpoint(double angleRads) {
+        turnMotor.setReference(angleRads, ControlType.kPosition, 0, 0.0, ArbFFUnits.kVoltage);
+    }
+
+    /** Configure drive PID */
+    public void setDrivePID(double kP, double kI, double kD) {
+    }
+
+    /** Configure turn PID */
+    public void setTurnPID(double kP, double kI, double kD) {
+    }
+
+    /** Enable or disable brake mode on the drive motor. */
+    public void setDriveBrakeMode(boolean enable) {
+    }
+
+    /** Enable or disable brake mode on the turn motor. */
+    public void setTurnBrakeMode(boolean enable) {
+    }
+
+    /** Disable output to all motors */
+    public void stop() {
+    }
 }

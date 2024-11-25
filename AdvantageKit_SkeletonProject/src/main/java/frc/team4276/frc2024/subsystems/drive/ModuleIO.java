@@ -39,7 +39,7 @@ public interface ModuleIO {
     }
 
     /** Run to drive velocity setpoint with feedforward */
-    default void runDriveVelocitySetpoint(double velocityRadsPerSec, double feedForward) {
+    default void runDriveVelocitySetpoint(double velocityMetresPerSec, double feedForward) {
     }
 
     /** Run to turn position setpoint */

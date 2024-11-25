@@ -48,7 +48,7 @@ public class SparkMaxFactory {
         public double kDFilter = 0.0;
         public double kIZone = 0.0;
         public double kIMaxAccum = 0.0;
-        public double kPIDOutputRange = 0.0;
+        public double kPIDOutputRange = 1.0;
     }
 
     public static void configPIDF(CANSparkMax motor, CANSparkMaxPIDFConfig config) {
