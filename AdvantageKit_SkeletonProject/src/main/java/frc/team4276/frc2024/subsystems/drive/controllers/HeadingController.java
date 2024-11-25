@@ -2,12 +2,14 @@ package frc.team4276.frc2024.subsystems.drive.controllers;
 
 import frc.team4276.frc2024.subsystems.drive.DriveConstants;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.controller.PIDController;
 
 public class HeadingController {
     private PIDController mController;
 
-    private double mTargetHeading;
+    private DoubleSupplier mTargetHeadingSupplier;
 
     public HeadingController(){
         mController = new PIDController(
@@ -18,19 +20,15 @@ public class HeadingController {
         mController.setTolerance(DriveConstants.kSnapPositionTolerance);
         mController.enableContinuousInput(-Math.PI, Math.PI);
 
-        mTargetHeading = 0.0;
+        mTargetHeadingSupplier = () -> 0.0;
     }
 
-    public void setTarget(double angle_rad){
-        mTargetHeading = angle_rad;
-    }
-
-    public double getTargetRad(){
-        return mTargetHeading;
+    public void setTarget(DoubleSupplier headingSupplier){
+        mTargetHeadingSupplier = headingSupplier;
     }
     
     public double update(double headingRadians) {
-        double output = mController.calculate(headingRadians, mTargetHeading);
+        double output = mController.calculate(headingRadians, mTargetHeadingSupplier.getAsDouble());
 
         return output;
 

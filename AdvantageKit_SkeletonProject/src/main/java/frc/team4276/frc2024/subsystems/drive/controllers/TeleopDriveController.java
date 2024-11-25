@@ -21,7 +21,7 @@ public class TeleopDriveController {
         controllerOmega = omega;
     }
 
-    public ChassisSpeeds update(){
+    public ChassisSpeeds update(Rotation2d heading){
         if(Math.hypot(controllerX, controllerY) < controllerDeadband) {
             return new ChassisSpeeds();
         }

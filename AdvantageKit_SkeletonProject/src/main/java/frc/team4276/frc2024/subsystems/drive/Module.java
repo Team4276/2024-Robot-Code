@@ -25,11 +25,9 @@ public class Module {
 
     /** Runs to {@link SwerveModuleState} */
     public void runSetpoint(SwerveModuleState setpoint) {
-        setpointState = SwerveModuleState.optimize(setpoint, getAngle());
-
         io.runDriveVelocitySetpoint(
-                setpointState.speedMetersPerSecond, 0.0);
-        io.runTurnPositionSetpoint(setpointState.angle.getRadians());
+                setpoint.speedMetersPerSecond, 0.0);
+        io.runTurnPositionSetpoint(setpoint.angle.getRadians());
     }
 
     public SwerveModuleState getSetpointState() {

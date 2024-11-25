@@ -1,11 +1,15 @@
 package frc.team4276.frc2024.subsystems.drive;
 
+import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team4276.frc2024.Constants;
@@ -33,7 +37,6 @@ public class Drive extends SubsystemBase {
     private final Module[] mModules = new Module[4];
 
     private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
-    private ChassisSpeeds setpointSpeeds = new ChassisSpeeds();
     private SwerveModuleState[] moduleStates = new SwerveModuleState[4];
 
     private final TeleopDriveController mTeleopDriveController;
@@ -55,26 +58,36 @@ public class Drive extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
+    public void periodic() { //TODO: add odom
         mGyroIO.updateInputs(gyroInputs);
 
         for(Module module : mModules){
             module.updateInputs();
         }
 
+        Pose2d latestFieldToVehicle = RobotState.getInstance().getLatestFieldToVehicle();
+
         switch (mMode) {
             case TELEOP:
-                desiredSpeeds = mTeleopDriveController.update();
+                desiredSpeeds = mTeleopDriveController.update(latestFieldToVehicle.getRotation());
 
                 if(isHeadingControlled){
                     isHeadingControlled = desiredSpeeds.omegaRadiansPerSecond < 0.25;
-                    desiredSpeeds.omegaRadiansPerSecond = mHeadingController.update(RobotState.getInstance().getLatestFieldToVehicle().getRotation().getRadians());
+
+                    desiredSpeeds.omegaRadiansPerSecond = mHeadingController.update(latestFieldToVehicle.getRotation().getRadians());
 
                 }
+
+            var states = DriveConstants.kDriveKinematics.toSwerveModuleStates(desiredSpeeds);
+
+            SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.kMaxVel);
+
+            desiredSpeeds = DriveConstants.kDriveKinematics.toChassisSpeeds(states);
                 
                 break;
         
             case TRAJECTORY:
+                desiredSpeeds = mTrajectoryController.update(latestFieldToVehicle, Timer.getFPGATimestamp());
                 
                 break;
                 
@@ -86,108 +99,41 @@ public class Drive extends SubsystemBase {
                 break;
         }
 
-        SwerveModuleState[] desiredModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(desiredSpeeds);
-
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates, DriveConstants.kMaxVel);
-
-
-        //TODO: fix all this bullshit
-        Pose2d robot_pose_vel = new Pose2d(desiredSpeeds.vxMetersPerSecond * Constants.kLooperDt,
-                desiredSpeeds.vyMetersPerSecond * Constants.kLooperDt,
-                Rotation2d.fromRadians(desiredSpeeds.omegaRadiansPerSecond * Constants.kLooperDt));
-
-        var tv = new Pose2d().log(robot_pose_vel); //TODO: hacky but wtv it works; fix soon pls
-        double scalar = 1.0 / Constants.kLooperDt;
-        Twist2d twist_vel = new Twist2d(tv.dx * scalar, tv.dy * scalar, tv.dtheta * scalar);
-
-        ChassisSpeeds wanted_speeds = new ChassisSpeeds(twist_vel.dx, twist_vel.dy, twist_vel.dtheta);
-
-        if (mMode != DriveMode.TRAJECTORY) {
-            // Limit rotational velocity
-            wanted_speeds.omegaRadiansPerSecond = Math.signum(wanted_speeds.omegaRadiansPerSecond)
-                    * Math.min(DriveConstants.kMaxAngularVel, Math.abs(wanted_speeds.omegaRadiansPerSecond));
-
-            // Limit translational velocity
-            double velocity_magnitude = Math.hypot(desiredSpeeds.vxMetersPerSecond,
-                    desiredSpeeds.vyMetersPerSecond);
-            if (velocity_magnitude > DriveConstants.kMaxVel) {
-                wanted_speeds.vxMetersPerSecond = (wanted_speeds.vxMetersPerSecond / velocity_magnitude)
-                        * DriveConstants.kMaxVel;
-                wanted_speeds.vyMetersPerSecond = (wanted_speeds.vyMetersPerSecond / velocity_magnitude)
-                        * DriveConstants.kMaxVel;
-            }
-
-            SwerveModuleState[] prev_module_states = moduleStates.clone(); // Get last setpoint to get
-                                                                                    // differentials
-            ChassisSpeeds prev_chassis_speeds = DriveConstants.kDriveKinematics.toChassisSpeeds(prev_module_states);
-            SwerveModuleState[] target_module_states = DriveConstants.kDriveKinematics.toSwerveModuleStates(wanted_speeds);
-
-            if (Math.hypot(wanted_speeds.vxMetersPerSecond, wanted_speeds.vyMetersPerSecond) < 0.1) {
-                for (int i = 0; i < target_module_states.length; i++) {
-                    target_module_states[i].speedMetersPerSecond = 0.0;
-                    target_module_states[i].angle = prev_module_states[i].angle;
-                }
-            }
-
-            double dx = wanted_speeds.vxMetersPerSecond - prev_chassis_speeds.vxMetersPerSecond;
-            double dy = wanted_speeds.vyMetersPerSecond - prev_chassis_speeds.vyMetersPerSecond;
-            double domega = wanted_speeds.omegaRadiansPerSecond - prev_chassis_speeds.omegaRadiansPerSecond;
-
-            double max_velocity_step = DriveConstants.kMaxAccel * Constants.kLooperDt;
-            double min_translational_scalar = 1.0;
-
-            if (max_velocity_step < Double.MAX_VALUE * Constants.kLooperDt) {
-                // Check X
-                double x_norm = Math.abs(dx / max_velocity_step);
-                min_translational_scalar = Math.min(min_translational_scalar, x_norm);
-
-                // Check Y
-                double y_norm = Math.abs(dy / max_velocity_step);
-                min_translational_scalar = Math.min(min_translational_scalar, y_norm);
-
-                min_translational_scalar *= max_velocity_step;
-            }
-
-            double max_omega_step = DriveConstants.kMaxAccel * Constants.kLooperDt;
-            double min_omega_scalar = 1.0;
-
-            if (max_omega_step < Double.MAX_VALUE * Constants.kLooperDt) {
-                double omega_norm = Math.abs(domega / max_omega_step);
-                min_omega_scalar = Math.min(min_omega_scalar, omega_norm);
-
-                min_omega_scalar *= max_omega_step;
-            }
-            
-            wanted_speeds = new ChassisSpeeds(
-                prev_chassis_speeds.vxMetersPerSecond + dx * min_translational_scalar,
-                prev_chassis_speeds.vyMetersPerSecond + dy * min_translational_scalar,
-                prev_chassis_speeds.omegaRadiansPerSecond + domega * min_omega_scalar);
-        }
+        ChassisSpeeds wanted_speeds = ChassisSpeeds.discretize(desiredSpeeds, Constants.kLooperDt);
+    
+        moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(wanted_speeds);
         
         SmartDashboard.putNumber("Comp/Des X Speed: ", wanted_speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("Comp/Des Y Speed: ", wanted_speeds.vyMetersPerSecond);
         SmartDashboard.putNumber("Comp/Des Rot Speed: ", wanted_speeds.omegaRadiansPerSecond);
 
-        SwerveModuleState[] real_module_setpoints = DriveConstants.kDriveKinematics.toSwerveModuleStates(wanted_speeds);
-        moduleStates = real_module_setpoints;
+        SwerveModuleState[] optimizedDesiredStates = new SwerveModuleState[4];
 
+        for (int i = 0; i < mModules.length; i++){
+            optimizedDesiredStates[i] = SwerveModuleState.optimize(moduleStates[i], mModules[i].getAngle());
+
+            mModules[i].runSetpoint(optimizedDesiredStates[i]);
+        }
+
+        Logger.recordOutput("Drive/SwerveStates/Setpoints", optimizedDesiredStates);
     }
 
-    // public void setPathFollowingPath(PathPlannerPath path) {
-    //     if (mode != DriveMode.TRAJECTORY) {
-    //         mode = DriveMode.TRAJECTORY;
-    //     }
+    public void feedTeleopInput(double controllerX, double controllerY, double controllerOmega) {
+        if(!DriverStation.isTeleopEnabled()) return;
 
-    //     mMotionPlanner.setTrajectory(path, RobotState.getInstance().getLatestFieldToVehicle(), mPeriodicIO.meas_chassis_speeds, mPeriodicIO.timestamp);
-    // }
+        if(mMode != DriveMode.AUTO_ALIGN){
+            mMode = DriveMode.TELEOP;
+        }
 
-    // public void setHeadingSetpoint(Rotation2d angle) {
-    //     if (mode != DriveMode.AUTO_ALIGN) {
-    //         mode = DriveMode.AUTO_ALIGN;
-    //     }
+        mTeleopDriveController.feedDriveInput(controllerX, controllerY, controllerOmega);
+    }
 
-    //     if (mHeadingController.getTargetRad() != angle.getRadians()) {
-    //         mHeadingController.setTarget(angle.getRadians());
-    //     }
-    // }
+    public void setHeadingControlled(boolean isHeadingControlled){
+        this.isHeadingControlled = isHeadingControlled;
+    }
+
+    public void setHeadingGoal(DoubleSupplier headingGoal){
+        mHeadingController.setTarget(headingGoal);
+        isHeadingControlled = true;
+    }
 }

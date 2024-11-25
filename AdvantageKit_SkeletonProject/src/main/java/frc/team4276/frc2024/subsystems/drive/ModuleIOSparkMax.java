@@ -83,7 +83,7 @@ public class ModuleIOSparkMax implements ModuleIO {
         inputs.driveAppliedVolts = driveMotor.getAppliedVoltage();
         inputs.driveSupplyCurrentAmps = driveMotor.getOutputCurrent();
 
-        inputs.turnPositionRads = turnAbsoluteEncoder.getPosition();
+        inputs.turnPositionRads = turnAbsoluteEncoder.getPosition() - absoluteEncoderOffset;
         inputs.turnVelocityRadsPerSec = turnAbsoluteEncoder.getVelocity();
         inputs.turnAppliedVolts = turnMotor.getAppliedVoltage();
         inputs.turnSupplyCurrentAmps = turnMotor.getOutputCurrent();
@@ -113,7 +113,7 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     /** Run to turn position setpoint */
     public void runTurnPositionSetpoint(double angleRads) {
-        turnMotor.setReference(angleRads, ControlType.kPosition, 0, 0.0, ArbFFUnits.kVoltage);
+        turnMotor.setReference(angleRads + absoluteEncoderOffset, ControlType.kPosition, 0, 0.0, ArbFFUnits.kVoltage);
     }
 
     /** Configure drive PID */

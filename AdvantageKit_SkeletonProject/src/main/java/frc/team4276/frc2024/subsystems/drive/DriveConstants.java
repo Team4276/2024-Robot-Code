@@ -3,6 +3,8 @@ package frc.team4276.frc2024.subsystems.drive;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import frc.team4276.frc2024.Ports;
+import frc.team4276.frc2024.subsystems.drive.ModuleIOSparkMax.ModuleConfig;
 import frc.team4276.lib.rev.SparkMaxFactory;
 
 public class DriveConstants {
@@ -42,10 +44,28 @@ public class DriveConstants {
             new Translation2d(-kTrackWidthY / 2, kTrackWidthX / 2),
             new Translation2d(-kTrackWidthY / 2, -kTrackWidthX / 2));
 
-    public static final double kFrontLeftOffset = -Math.PI / 2;
-    public static final double kFrontRightOffset = 0;
-    public static final double kBackLeftOffset = Math.PI;
-    public static final double kBackRightOffset = Math.PI / 2;
+    public static final ModuleConfig[] kModuleConfigs = new ModuleConfig[4];
+    static {
+        kModuleConfigs[0].kName = "Front Left";
+        kModuleConfigs[0].kDriveId = Ports.FRONT_LEFT_DRIVE;
+        kModuleConfigs[0].kTurnId = Ports.FRONT_LEFT_TURN;
+        kModuleConfigs[0].kOffset = -Math.PI / 2;
+        
+        kModuleConfigs[1].kName = "Front Right";
+        kModuleConfigs[1].kDriveId = Ports.FRONT_RIGHT_DRIVE;
+        kModuleConfigs[1].kTurnId = Ports.FRONT_RIGHT_TURN;
+        kModuleConfigs[1].kOffset = 0;
+
+        kModuleConfigs[2].kName = "Back Left";
+        kModuleConfigs[2].kDriveId = Ports.BACK_LEFT_DRIVE;
+        kModuleConfigs[2].kTurnId = Ports.BACK_LEFT_TURN;
+        kModuleConfigs[2].kOffset = Math.PI;
+        
+        kModuleConfigs[3].kName = "Back Right";
+        kModuleConfigs[3].kDriveId = Ports.BACK_RIGHT_DRIVE;
+        kModuleConfigs[3].kTurnId = Ports.BACK_RIGHT_TURN;
+        kModuleConfigs[3].kOffset = Math.PI / 2;
+    }
 
     public static final double kMaxVel = kDriveWheelFreeSpeedRps * 0.8; // meters per second
     public static final double kMaxAccel = 8.9;
@@ -68,4 +88,11 @@ public class DriveConstants {
 
     public static final double kSnapPositionTolerance = 0.1;
     public static final double kSnapAngularVelocityTolerance = 0.1;
+    
+    public static final double kProfiledSnapHeadingKp = 0.0;
+    public static final double kProfiledSnapHeadingKi = 0.0;
+    public static final double kProfiledSnapHeadingKd = 0.0;
+
+    public static final double kProfiledSnapPositionTolerance = 2 * Math.PI / 180;
+    public static final double kProfiledSnapAngularVelocityTolerance = 0.5;
 }
