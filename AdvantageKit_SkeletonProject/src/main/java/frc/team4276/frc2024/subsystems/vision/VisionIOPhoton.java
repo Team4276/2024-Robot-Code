@@ -1,12 +1,14 @@
 package frc.team4276.frc2024.subsystems.vision;
 
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Transform3d;
 import java.util.Optional;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
+
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Transform3d;
 
 public class VisionIOPhoton implements VisionIO {
     private final PhotonCamera mCamera;
@@ -34,27 +36,26 @@ public class VisionIOPhoton implements VisionIO {
                 PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS);
     }
 
+    //TODO: impl rio logic vision
     @Override
-    public void updateInputs(VisionIOInputs inputs) {
-        inputs.isValid = true;
+    public void updateInputs(VisionIOInputs inputs) { //TODO: impl fudge factors 
+        inputs.isConnected = mCamera.isConnected();
+
+        if(!inputs.isConnected){
+            return;
+        }
 
         PhotonPipelineResult result = mCamera.getLatestResult();
 
-        if (!result.hasTargets()) {
-            inputs.isValid = false;
-            return;
-        }
-
         Optional<EstimatedRobotPose> pose = mPoseEstimator.update(result);
 
-        if (pose.isEmpty()) {
-            inputs.isValid = false;
+        if (pose.isEmpty())
             return;
-        }
 
-        inputs.result = result;
         inputs.estimatedPose = pose.get().estimatedPose;
-        inputs.targetsUsed = pose.get().targetsUsed;
-        inputs.timestampSeconds = pose.get().timestampSeconds;
+        inputs.timestampSeconds = result.getTimestampSeconds();
+        inputs.bestTargets = result.targets.stream().map(target -> target.getBestCameraToTarget()).toArray(Transform3d[]::new);
+        inputs.altTargets = result.targets.stream().map(target -> target.getAlternateCameraToTarget()).toArray(Transform3d[]::new);
+        inputs.targetAmbiguities = result.targets.stream().mapToDouble(target -> target.getPoseAmbiguity()).toArray();
     }
 }

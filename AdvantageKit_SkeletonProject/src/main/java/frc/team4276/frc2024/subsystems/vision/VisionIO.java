@@ -1,24 +1,21 @@
 package frc.team4276.frc2024.subsystems.vision;
 
+import org.littletonrobotics.junction.AutoLog;
+
 import edu.wpi.first.math.geometry.Pose3d;
-import java.util.List;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
+import edu.wpi.first.math.geometry.Transform3d;
 
 public interface VisionIO {
-
-    // TODO: expand for other inputs
-    // @AutoLog
+    @AutoLog
     class VisionIOInputs {
-        public PhotonPipelineResult result;
+        public boolean isConnected;
+        public boolean hasTargets;
 
         public Pose3d estimatedPose;
-
         public double timestampSeconds;
-
-        public List<PhotonTrackedTarget> targetsUsed;
-
-        public boolean isValid;
+        public Transform3d[] bestTargets;
+        public Transform3d[] altTargets;
+        public double[] targetAmbiguities;
     }
 
     void updateInputs(VisionIOInputs inputs);

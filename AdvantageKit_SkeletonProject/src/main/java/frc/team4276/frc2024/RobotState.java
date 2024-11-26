@@ -105,7 +105,6 @@ public class RobotState {
     }
 
     public synchronized void visionHeadingUpdate(double heading_rad) {
-        mEstimatedVisionHeading.addNumber(heading_rad);
     }
 
     public synchronized void addOdomObservations(double timestamp, SwerveDriveWheelPositions positions, Rotation2d heading) {
@@ -124,10 +123,10 @@ public class RobotState {
 
     public static class VisionUpdate {
         public final double timestamp;
-        public final Translation2d fieldToVis;
+        public final Pose2d fieldToVis;
         public final double distStDev;
 
-        public VisionUpdate(double timestamp, Translation2d fieldToVis, double distStDev) {
+        public VisionUpdate(double timestamp, Pose2d fieldToVis, double distStDev) {
             this.timestamp = timestamp;
             this.fieldToVis = fieldToVis;
             this.distStDev = distStDev;
@@ -141,7 +140,9 @@ public class RobotState {
         if (mOdomPoseBuffer.getInternalBuffer().lastKey() - kObservationBufferTime > visionTimestamp)
             return;
 
-        mEstimatedPose = update.fieldToVis.plus(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue()
+        mEstimatedVisionHeading.addNumber(update.fieldToVis.getRotation().getRadians());
+
+        mEstimatedPose = update.fieldToVis.getTranslation().plus(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue()
                         .getTranslation().minus(mOdomPoseBuffer.getSample(visionTimestamp).get().getTranslation()));
 
         if (!mHasUpdated) {
