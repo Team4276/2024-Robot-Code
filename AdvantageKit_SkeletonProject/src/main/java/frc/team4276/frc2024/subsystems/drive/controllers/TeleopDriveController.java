@@ -3,7 +3,6 @@ package frc.team4276.frc2024.subsystems.drive.controllers;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.team4276.frc2024.RobotState;
 import frc.team4276.frc2024.subsystems.drive.DriveConstants;
 
 public class TeleopDriveController {
@@ -30,8 +29,7 @@ public class TeleopDriveController {
             controllerX * DriveConstants.kMaxVel * velocityScalar,
             controllerY * DriveConstants.kMaxVel * velocityScalar,
             controllerOmega * DriveConstants.kMaxAngularVel * velocityScalar * angularVelocityScalar,
-            RobotState.getInstance().getLatestFieldToVehicle().getRotation().rotateBy(
-                DriverStation.getAlliance().get() == DriverStation.Alliance.Red ?
+            heading.rotateBy(DriverStation.getAlliance().get() == DriverStation.Alliance.Red ?
                 Rotation2d.fromDegrees(180.0) : new Rotation2d()));
     }
 }

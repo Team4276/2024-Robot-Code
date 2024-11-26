@@ -8,12 +8,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N2;
 import frc.team4276.frc2024.field.Field;
 import frc.team4276.frc2024.shooting.RegressionMaps;
+import frc.team4276.frc2024.subsystems.drive.DriveConstants;
 import frc.team4276.lib.MovingAverage;
 
 public class RobotState {
+    private final SwerveDriveOdometry mOdometry;
+
     private Translation2d mEstimatedPose = new Translation2d();
     private MovingAverage mEstimatedVisionHeading = new MovingAverage(100);
 
@@ -22,7 +28,7 @@ public class RobotState {
 
     private static final double kObservationBufferTime = 1.0;
 
-    private final TimeInterpolatableBuffer<edu.wpi.first.math.geometry.Pose2d> mOdomPoseBuffer;
+    private final TimeInterpolatableBuffer<Pose2d> mOdomPoseBuffer;
 
     private Field.POIs mPOIs = Field.Red.kPOIs;
 
@@ -62,6 +68,7 @@ public class RobotState {
     }
 
     private RobotState() {
+        mOdometry = new SwerveDriveOdometry(DriveConstants.kKinematics, new Rotation2d(), new SwerveModulePosition[4]);
         mOdomPoseBuffer = TimeInterpolatableBuffer.createBuffer(kObservationBufferTime);
 
         reset(0.0, new Pose2d());
@@ -101,13 +108,18 @@ public class RobotState {
         mEstimatedVisionHeading.addNumber(heading_rad);
     }
 
-    public synchronized void addOdomObservations(double timestamp, Pose2d odom_to_robot) {
+    public synchronized void addOdomObservations(double timestamp, SwerveDriveWheelPositions positions, Rotation2d heading) {
         latestSpeakerParams = null;
         latestFerryParams = null;
 
-        mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), Constants.kLooperDt);
+        mOdometry.update(heading, positions);
 
-        mOdomPoseBuffer.addSample(timestamp, odom_to_robot);
+        mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), Constants.kLooperDt);
+        
+        mEstimatedPose = mEstimatedPose.plus(mOdometry.getPoseMeters().getTranslation().minus(
+            mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getTranslation()));
+
+        mOdomPoseBuffer.addSample(timestamp, mOdometry.getPoseMeters());
     }
 
     public static class VisionUpdate {
@@ -122,24 +134,15 @@ public class RobotState {
         }
     }
 
+
     public synchronized void visionUpdate(VisionUpdate update) {
-        latestSpeakerParams = null;
-        latestFerryParams = null;
-        
         double visionTimestamp = update.timestamp;
 
         if (mOdomPoseBuffer.getInternalBuffer().lastKey() - kObservationBufferTime > visionTimestamp)
             return;
 
-        Pose2d sample = mOdomPoseBuffer.getSample(visionTimestamp).get();
-
-        mEstimatedPose = update.fieldToVis.plus(
-                mOdomPoseBuffer
-                        .getInternalBuffer()
-                        .lastEntry()
-                        .getValue()
-                        .getTranslation()
-                        .minus(sample.getTranslation()));
+        mEstimatedPose = update.fieldToVis.plus(mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue()
+                        .getTranslation().minus(mOdomPoseBuffer.getSample(visionTimestamp).get().getTranslation()));
 
         if (!mHasUpdated) {
             mKalmanFilter.setXhat(0, mEstimatedPose.getX());
@@ -150,17 +153,16 @@ public class RobotState {
         }
 
         try {
-            mKalmanFilter.correct(
-                    VecBuilder.fill(0.0, 0.0),
-                    VecBuilder.fill(mEstimatedPose.getX(), mEstimatedPose.getX()),
-                    StateSpaceUtil.makeCovarianceMatrix(
-                            Nat.N2(), VecBuilder.fill(update.distStDev, update.distStDev)));
-            mEstimatedPose.plus(new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1)));
+            mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0),
+                    VecBuilder.fill(mEstimatedPose.getX(), mEstimatedPose.getY()),
+                    StateSpaceUtil.makeCovarianceMatrix(Nat.N2(), VecBuilder.fill(update.distStDev, update.distStDev)));
+            mEstimatedPose = new Translation2d(mKalmanFilter.getXhat(0), mKalmanFilter.getXhat(1));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     public synchronized Pose2d getLatestFieldToVehicle() {
         return new Pose2d(mEstimatedPose, mOdomPoseBuffer.getInternalBuffer().lastEntry().getValue().getRotation());

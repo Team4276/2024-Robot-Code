@@ -126,13 +126,17 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     /** Enable or disable brake mode on the drive motor. */
     public void setDriveBrakeMode(boolean enable) {
+        driveMotor.setWantBrakeMode(enable);
     }
 
     /** Enable or disable brake mode on the turn motor. */
     public void setTurnBrakeMode(boolean enable) {
+        turnMotor.setWantBrakeMode(enable);
     }
 
     /** Disable output to all motors */
     public void stop() {
+        driveMotor.set(0.0);
+        turnMotor.set(0.0);
     }
 }
