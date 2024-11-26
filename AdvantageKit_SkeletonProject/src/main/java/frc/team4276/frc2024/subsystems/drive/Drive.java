@@ -73,7 +73,7 @@ public class Drive extends SubsystemBase { //TODO: impl high freq odom reading
 
         RobotState.getInstance().addOdomObservations(Timer.getFPGATimestamp(), wheelPositions, mGyroInputs.yawPosition);
 
-        Pose2d latestFieldToVehicle = RobotState.getInstance().getLatestFieldToVehicle();
+        Pose2d latestFieldToVehicle = RobotState.getInstance().getEstimatedPose();
 
         ChassisSpeeds uncheckedSpeeds = new ChassisSpeeds();
 

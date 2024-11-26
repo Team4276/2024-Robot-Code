@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.team4276.frc2024.subsystems.vision.VisionIOPhoton.PhotonDeviceConstants;
 
 /**
@@ -38,11 +39,20 @@ import frc.team4276.frc2024.subsystems.vision.VisionIOPhoton.PhotonDeviceConstan
 
 @SuppressWarnings ("unused")
 public final class Constants {
-    public static final Mode currentMode = Mode.REAL;
+    public static enum RobotType {
+        SIMBOT,
+        COMPBOT
+    }
+
+    public static final RobotType robotType = RobotType.COMPBOT;
+
+    public static RobotType getType(){
+        return robotType;
+    }
     
     public static final boolean SysIdMode = false;
     static {
-        assert !(SysIdMode && currentMode != Mode.REAL) : "Robot must be in REAL mode when SysIdMode is enabled.";
+        assert !(SysIdMode && getMode() != Mode.REAL) : "Robot must be in REAL mode when SysIdMode is enabled.";
     }
 
     public static enum Mode {
@@ -56,38 +66,14 @@ public final class Constants {
         REPLAY,
     }
 
+    public static Mode getMode(){
+        return switch (robotType) {
+            case COMPBOT -> RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
+            case SIMBOT -> Mode.SIM;
+        };
+    }
+
     public static final double kLooperDt = 0.02;
 
     public static final boolean isTuning = false;
-
-    public static final class RobotStateConstants {
-        public static final boolean kVisionResetsHeading = false;
-
-        public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.05, 1), Math.pow(0.05, 1));
-        public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.03, 1),
-                Math.pow(0.03, 1));
-    }
-
-    public static final class VisionConstants {
-        public static final PhotonDeviceConstants kFrontCameraConstants = new PhotonDeviceConstants();
-
-        static {
-            kFrontCameraConstants.kCameraName = "Front Camera";
-            kFrontCameraConstants.kCameraNameId = "Arducam_OV9281_USB_Camera";
-            kFrontCameraConstants.kRobotToCamera = new Transform3d(
-                    new Translation3d(
-                            Units.inchesToMeters(9.591351),
-                            Units.inchesToMeters(7.500000) * -1.0,
-                            Units.inchesToMeters(5.575688)),
-                    new Rotation3d(0.0, Math.toRadians(20) * -1.0, 0.0));
-        }
-
-        public static final PhotonDeviceConstants kBackCameraConstants = new PhotonDeviceConstants();
-
-        static {
-            kFrontCameraConstants.kCameraName = "Back Camera";
-            kBackCameraConstants.kCameraNameId = "PI_CAM_3";
-            kBackCameraConstants.kRobotToCamera = new Transform3d();
-        }
-    }
 }

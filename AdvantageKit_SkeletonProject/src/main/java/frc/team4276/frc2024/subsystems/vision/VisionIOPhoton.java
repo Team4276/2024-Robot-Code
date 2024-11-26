@@ -36,9 +36,8 @@ public class VisionIOPhoton implements VisionIO {
                 PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS);
     }
 
-    //TODO: impl rio logic vision
     @Override
-    public void updateInputs(VisionIOInputs inputs) { //TODO: impl fudge factors 
+    public void updateInputs(VisionIOInputs inputs) { 
         inputs.isConnected = mCamera.isConnected();
 
         if(!inputs.isConnected){

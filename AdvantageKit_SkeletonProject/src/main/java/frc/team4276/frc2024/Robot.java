@@ -21,6 +21,9 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -44,7 +47,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
         // Set up data receivers & replay source
-        switch (Constants.currentMode) {
+        switch (Constants.getMode()) {
             case REAL:
                 // Running on a real robot, log to a USB stick ("/U/logs")
                 Logger.addDataReceiver(new WPILOGWriter());
@@ -70,6 +73,10 @@ public class Robot extends LoggedRobot {
 
         // Start AdvantageKit logger
         Logger.start();
+
+        DataLogManager.start();
+
+        DriverStation.startDataLog(DataLogManager.getLog());
 
         // Initialize auto chooser
         chooser.addDefaultOption("Default Auto", defaultAuto);
