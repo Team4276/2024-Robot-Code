@@ -23,6 +23,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.team4276.lib.util.VirtualSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -86,6 +87,7 @@ public class Robot extends LoggedRobot {
     /** This function is called periodically during all modes. */
     @Override
     public void robotPeriodic() {
+        VirtualSubsystem.periodicAll();
         // idk if we need this will set this to take up all cpu time on the roborio saw
         // 6328 use it
         // Threads.setCurrentThreadPriority(true, 10);

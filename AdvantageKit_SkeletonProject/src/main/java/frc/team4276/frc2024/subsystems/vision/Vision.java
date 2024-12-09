@@ -3,10 +3,11 @@ package frc.team4276.frc2024.subsystems.vision;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.team4276.frc2024.RobotState;
 
-public class Vision extends SubsystemBase {
+import frc.team4276.frc2024.RobotState;
+import frc.team4276.lib.util.VirtualSubsystem;
+
+public class Vision extends VirtualSubsystem {
     private final VisionIO[] ios;
     private final VisionIOInputsAutoLogged[] inputs;
 
