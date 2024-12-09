@@ -4,12 +4,11 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.SparkLimitSwitch.Type;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.team4276.frc2024.Constants;
-import frc.team4276.lib.feedforwards.IFeedForward;
+
 import frc.team4276.lib.rev.VIKSparkMax;
 
 public class ArmIOSparkMax implements ArmIO {
@@ -17,12 +16,7 @@ public class ArmIOSparkMax implements ArmIO {
     private final VIKSparkMax followerSparkMax;
     private final AbsoluteEncoder absoluteEncoder;
 
-    private TrapezoidProfile.Constraints profileConstraints = new TrapezoidProfile.Constraints(80.0, 60.0);
-    private TrapezoidProfile profile;
-    private TrapezoidProfile.State setpointState = new TrapezoidProfile.State();
-    private IFeedForward ff;
-
-    public ArmIOSparkMax(IFeedForward ff) {
+    public ArmIOSparkMax() {
         leaderSparkMax = new VIKSparkMax(ArmConstants.kMasterId);
         followerSparkMax = new VIKSparkMax(ArmConstants.kFollowerId);
         absoluteEncoder = leaderSparkMax.getAbsoluteEncoder();
@@ -38,6 +32,8 @@ public class ArmIOSparkMax implements ArmIO {
             leaderSparkMax.setSmartCurrentLimit(40);
             leaderSparkMax.setWantBrakeMode(true);
             leaderSparkMax.setPeriodicFramePeriodSec(PeriodicFrame.kStatus0, 0.005);
+            leaderSparkMax.getForwardLimitSwitch(Type.kNormallyOpen).enableLimitSwitch(true);
+            leaderSparkMax.getReverseLimitSwitch(Type.kNormallyOpen).enableLimitSwitch(true);
 
             followerSparkMax.follow(leaderSparkMax, true);
             followerSparkMax.enableVoltageCompensation(12.0);
@@ -48,11 +44,15 @@ public class ArmIOSparkMax implements ArmIO {
             absoluteEncoder.setInverted(false);
             absoluteEncoder.setPositionConversionFactor(360.0);
             absoluteEncoder.setVelocityConversionFactor(360.0);
-            absoluteEncoder.setZeroOffset(214.5);
+            absoluteEncoder.setZeroOffset(94.5); //TODO: FIND IT
 
             SparkPIDController pidController = leaderSparkMax.getPIDController();
             pidController.setFeedbackDevice(absoluteEncoder);
-            pidController.setP(0.05);
+            pidController.setP(0.02);
+            pidController.setI(0.0001);
+            pidController.setD(0.0);
+            pidController.setIZone(1.0);
+            pidController.setIMaxAccum(0.01, 0);
 
         }
 
@@ -61,15 +61,12 @@ public class ArmIOSparkMax implements ArmIO {
 
         leaderSparkMax.setCANTimeout(0);
         followerSparkMax.setCANTimeout(0);
-
-        profile = new TrapezoidProfile(profileConstraints);
-        this.ff = ff;
     }
 
     @Override
     public void updateInputs(ArmIOInputs inputs) {
-        inputs.absoluteEncoderPositionRads = absoluteEncoder.getPosition();
-        inputs.velocityRadsPerSec = absoluteEncoder.getVelocity();
+        inputs.absoluteEncoderPositionRads = Math.toRadians(absoluteEncoder.getPosition()); //TODO: figure out where we want to use units n stuff
+        inputs.velocityRadsPerSec = Math.toRadians(absoluteEncoder.getVelocity());
         
         inputs.appliedVolts[0] = leaderSparkMax.getAppliedVoltage();
         inputs.currentAmps[0] = leaderSparkMax.getOutputCurrent();
@@ -81,14 +78,15 @@ public class ArmIOSparkMax implements ArmIO {
     }
 
     @Override
-    public void runSetpoint(double setpointRads) {
+    public void runSetpoint(double setpointRads, double ff) {
         double setpointDeg = Units.radiansToDegrees(setpointRads);
 
-        setpointState = profile.calculate(Constants.kLooperDt, setpointState,
-                new TrapezoidProfile.State(setpointDeg, 0.0));
-
-        leaderSparkMax.setReference(setpointState.position, ControlType.kPosition, 0,
-                ff.calculate(setpointState.position, setpointState.velocity, 0.0), ArbFFUnits.kVoltage);
+        leaderSparkMax.setReference(setpointDeg, ControlType.kPosition, 0, ff, ArbFFUnits.kVoltage);
+    }
+    
+    @Override
+    public void runSetpoint(double setpointRads) {
+        runSetpoint(setpointRads, 0.0);
     }
 
     @Override
@@ -115,8 +113,7 @@ public class ArmIOSparkMax implements ArmIO {
     @Override
     public void stop() {
         leaderSparkMax.stopMotor();
-
-        setpointState = new TrapezoidProfile.State(absoluteEncoder.getPosition(), 0);
+        followerSparkMax.stopMotor();
     }
 
 }

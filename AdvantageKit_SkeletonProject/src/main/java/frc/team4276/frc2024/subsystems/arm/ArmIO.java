@@ -22,6 +22,10 @@ public interface ArmIO {
     }
 
     /** Run to setpoint angle in radians */
+    default void runSetpoint(double setpointRads, double ff) {
+    }
+
+    /** Run to setpoint angle in radians */
     default void runSetpoint(double setpointRads) {
     }
 

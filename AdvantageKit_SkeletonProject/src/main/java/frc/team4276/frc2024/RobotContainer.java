@@ -9,7 +9,6 @@ import frc.team4276.frc2024.subsystems.arm.ArmConstants;
 import frc.team4276.frc2024.subsystems.arm.ArmIOSparkMax;
 import frc.team4276.frc2024.subsystems.drive.Drive;
 import frc.team4276.frc2024.subsystems.drive.DriveConstants;
-import frc.team4276.frc2024.subsystems.drive.GyroIO;
 import frc.team4276.frc2024.subsystems.drive.GyroIOADIS;
 import frc.team4276.frc2024.subsystems.drive.ModuleIOSparkMax;
 import frc.team4276.frc2024.subsystems.feedtake.Feedtake;
@@ -52,7 +51,7 @@ public class RobotContainer {
                             new VisionIOPhoton(VisionConstants.kBackCameraConstants));
                     flywheels = new Flywheels(new FlywheelIOSpark());
                     feedtake = new Feedtake(new Roller(new RollerIOSparkMax()), new RollerSensorsIOHardware());
-                    arm = new Arm(new ArmIOSparkMax(new FourbarFeedForward(ArmConstants.kFeedForwardConstants)));
+                    arm = new Arm(new ArmIOSparkMax(), new FourbarFeedForward(ArmConstants.kFeedForwardConstants));
 
                 }
                 case SIMBOT -> {

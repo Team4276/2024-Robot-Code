@@ -65,14 +65,23 @@ public class SparkMaxFactory {
                 -1.0 * config.kPIDOutputRange, config.kPIDOutputRange, config.kSlotId);
     }
 
+    /**
+     * NO USE
+     */
     public static void configAnalogSensor(VIKSparkMax motor, double periodSec) {
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus3, periodSec);
     }
 
+    /**
+     * NO USE
+     */
     public static void configAlternateEncoder(VIKSparkMax motor, double periodSec) {
         motor.setPeriodicFramePeriodSec(PeriodicFrame.kStatus4, periodSec);
     }
 
+    /**
+     * NO USE
+     */
     public static AbsoluteEncoder configAbsoluteEncoder(
             VIKSparkMax motor, SparkAbsoluteEncoderConfig config) {
         AbsoluteEncoder e = motor.getAbsoluteEncoder();
