@@ -17,13 +17,14 @@ public class FlywheelConstants {
     public static double kV_Bottom = 0.002;
     public static double kA = 0.0;
 
-    public static double kPrepRpm = 2000.0;
-    public static double kAmpTopRpm = 0.0;
-    public static double kAmpBottomRpm = 2000.0;
-    public static double kBlindSubRpm = 4000.0;
-    public static double kBlindPodiumRpm = 4500.0;
-    public static double kBlindFerryRpm = 4500.0;
-    public static double kBlindPoopRpm = 4500.0;
+    public static final int kNormalShotRPM = 3500;
+    public static final int kFerryRPM = 3500;
+    public static final int kSpinUpRPM = 2500;
+    public static final int kPoopTopRPM = 3500;
+    public static final int kPoopBotRPM = 3200;
+    public static final int kExhaustRPM = -1000;
+    public static final int kAmpTopRPM = 150;
+    public static final int kAmpBotRPM = 1450;
 
     public static double kFlywheelTolerance = 300.0; // RPM
 }

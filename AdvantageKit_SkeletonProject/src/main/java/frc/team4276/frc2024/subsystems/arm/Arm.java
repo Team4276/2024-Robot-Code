@@ -29,7 +29,7 @@ public class Arm extends SubsystemBase {
         AMP(new LoggedTunableNumber("Arm/AmpDegrees", 135.0)),
         SUB(new LoggedTunableNumber("Arm/SubDegrees", 135.0)),
         PODIUM(new LoggedTunableNumber("Arm/PodiumDegrees", 90.0)),
-        FERRY_FALLBACK(new LoggedTunableNumber("Arm/FerryFallbackDegrees", 135.0)),
+        BLIND_FERRY(new LoggedTunableNumber("Arm/BlindFerryDegrees", 135.0)),
         SKIM(new LoggedTunableNumber("Arm/SkimSetpoint", 120.0)),
         CLIMB(new LoggedTunableNumber("Arm/ClimbSetpoint", 50.0)),
         POOP(new LoggedTunableNumber("Arm/PoopSetpoint", 50.0)),

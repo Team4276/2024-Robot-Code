@@ -1,7 +1,13 @@
 package frc.team4276.frc2024;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.team4276.frc2024.subsystems.arm.Arm;
@@ -37,9 +43,11 @@ public class RobotContainer {
     private final CommandXboxController operator = new CommandXboxController(1);
     private final DigitalInput armCoastDio = new DigitalInput(Ports.ARM_COAST_SWITCH);
 
+    private final BooleanSupplier disableDriveAim = () -> true;
+
     public RobotContainer() {
         if (Constants.getMode() != Constants.Mode.REPLAY) {
-            switch (Constants.getType()){
+            switch (Constants.getType()) {
                 case COMPBOT -> {
                     drive = new Drive(
                             new GyroIOADIS(),
@@ -106,10 +114,28 @@ public class RobotContainer {
         drive.setDefaultCommand(drive.run(() -> drive.feedTeleopInput(
                 -driver.getLeftY(), -driver.getLeftX(), -driver.getRightX())));
 
-        driver.rightTrigger().whileTrue(
+        Supplier<Command> driveAimCommand = () -> 
+            Commands.either(
                 Commands.startEnd(
-                        () -> drive.setHeadingGoal(
-                                () -> robotState.getSpeakerAimingParameters().getDriveHeading().getRadians()),
-                        () -> drive.setHeadingControlled(false)));
+                        () -> drive.setHeadingGoal(robotState.getSpeakerAimingParameters().getDriveHeading()::getRadians),
+                        () -> drive.setHeadingControlled(false)),        
+                Commands.none(),
+                disableDriveAim);
+        
+        Supplier<Command> speakerAimCommand = () -> 
+            Commands.either(
+                Commands.startEnd(
+                        () -> drive.setHeadingGoal(robotState.getSpeakerAimingParameters().getDriveHeading()::getRadians),
+                        () -> drive.setHeadingControlled(false)),        
+                Commands.none(),
+                disableDriveAim);
+
+        driver.rightTrigger().whileTrue(new ParallelCommandGroup(
+            driveAimCommand.get(),
+            Commands.either(
+                Commands.startEnd(
+                    () -> arm.setGoalCommand(Arm.Goal.SUB), 
+                    () -> arm.setGoalCommand(Arm.Goal.STOW)), null, disableDriveAim) // AAAAAAAAAAAAAAAAAAAAAAAAAA
+        ));
     }
 }

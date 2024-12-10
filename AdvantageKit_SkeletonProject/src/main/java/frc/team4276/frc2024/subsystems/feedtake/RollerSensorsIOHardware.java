@@ -12,7 +12,6 @@ public class RollerSensorsIOHardware implements RollerSensorsIO {
         backTrigger = new DigitalInput(Ports.BEAM_BACK);
     }
 
-    //TODO: check beam inputs again bc i forgot if its open by default
     @Override
     public void updateInputs(RollerSensorsIOInputs inputs) {
         inputs.frontTrigger = !frontTrigger.get();

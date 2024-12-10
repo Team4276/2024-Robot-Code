@@ -36,12 +36,13 @@ public class Flywheels extends SubsystemBase {
         IDLE(() -> 0.0, () -> 0.0),
         SPEAKER(() -> RobotState.getInstance().getSpeakerAimingParameters().flywheelRpm()),
         FERRY(() -> RobotState.getInstance().getFerryAimingParameters().flywheelRpm()),
-        AMP(() -> FlywheelConstants.kAmpTopRpm, () -> FlywheelConstants.kAmpBottomRpm),
-        PREP(() -> FlywheelConstants.kPrepRpm),
-        BLIND_SUB(() -> FlywheelConstants.kBlindSubRpm),
-        BLIND_PODIUM(() -> FlywheelConstants.kBlindPodiumRpm),
-        BLIND_FERRY(() -> FlywheelConstants.kBlindFerryRpm),
-        BLIND_POOP(() -> FlywheelConstants.kBlindPoopRpm),
+        AMP(() -> FlywheelConstants.kAmpTopRPM, () -> FlywheelConstants.kAmpBotRPM),
+        PREP(() -> FlywheelConstants.kSpinUpRPM),
+        SUB(() -> FlywheelConstants.kNormalShotRPM),
+        PODIUM(() -> FlywheelConstants.kNormalShotRPM),
+        BLIND_FERRY(() -> FlywheelConstants.kFerryRPM),
+        POOP(() -> FlywheelConstants.kPoopTopRPM, () -> FlywheelConstants.kPoopBotRPM),
+        EXHAUST(() -> FlywheelConstants.kExhaustRPM),
         CHARACTERIZING(() -> 0.0, () -> 0.0);
 
         public DoubleSupplier topRpm, bottomRpm;
