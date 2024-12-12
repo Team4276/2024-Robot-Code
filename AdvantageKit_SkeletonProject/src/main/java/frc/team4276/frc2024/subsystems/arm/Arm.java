@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.team4276.frc2024.Constants;
@@ -19,7 +20,7 @@ import frc.team4276.lib.LoggedTunableNumber;
 import frc.team4276.lib.feedforwards.IFeedForward;
 
 //TODO: cleanup; refactor; add viz; add characterization
-public class Arm extends SubsystemBase {
+public class Arm extends SubsystemBase{
     public enum Goal {
         STOW(new LoggedTunableNumber("Arm/StowDegrees", 70.0)),
         INTAKE(new LoggedTunableNumber("Arm/IntakeDegrees", 135.0)),
@@ -50,9 +51,9 @@ public class Arm extends SubsystemBase {
         }
     }
 
-    @AutoLogOutput private Goal goal = Goal.STOW;
+    private Goal goal = Goal.STOW;
     private LoggedTunableNumber kMinPosition = new LoggedTunableNumber("Arm/MinPosition", 50.0);
-    private LoggedTunableNumber kMaxPosition = new LoggedTunableNumber("Arm/MinPosition", 135.0);
+    private LoggedTunableNumber kMaxPosition = new LoggedTunableNumber("Arm/MaxPosition", 135.0);
 
     private final ArmIO io;
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -70,8 +71,6 @@ public class Arm extends SubsystemBase {
         
         profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(150.0, 175.0));
         this.ff = ff; //TODO: test adding accel
-
-        setDefaultCommand(setGoalCommand(Goal.STOW));
     }
 
     public void setCoastOverride(BooleanSupplier coastOverride){
@@ -120,8 +119,17 @@ public class Arm extends SubsystemBase {
 
     }
 
-    public Command setGoalCommand(Goal goal){
-        return startEnd(() -> this.goal = goal, () -> this.goal = Goal.STOW);
+    @AutoLogOutput 
+    public void setGoal(Goal goal){
+        this.goal = goal;
+    }
+    
+    @AutoLogOutput 
+    public Goal getGoal(){
+        return goal;
+    }
 
+    public Command setGoalCommand(Goal goal){
+        return Commands.startEnd(() -> setGoal(goal), () -> setGoal(Goal.STOW));
     }
 }

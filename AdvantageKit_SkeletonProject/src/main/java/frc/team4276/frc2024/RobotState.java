@@ -21,7 +21,7 @@ import frc.team4276.frc2024.subsystems.drive.DriveConstants;
 import frc.team4276.lib.MovingAverage;
 
 public class RobotState {
-    private boolean kVisionResetsHeading = false;
+    private boolean kVisionResetsHeading = false; //TODO: impl auto heading reset with reliable reads
 
     private MovingAverage mEstimatedVisionHeading = new MovingAverage(100);
 
@@ -138,12 +138,18 @@ public class RobotState {
         kFerryFlywheelRPMs.put(12.3, 5000.0);
     }
 
-    public synchronized void reset(double start_time, Pose2d initial_pose) {
+    public synchronized void reset(double start_time, Pose2d initial_pose) { //TODO: check if need to reset prev heading
         mOdomPose = initial_pose;
         mEstimatedPose = initial_pose;
         mOdomPoseBuffer.clear();
         mOdomPoseBuffer.addSample(start_time, initial_pose);
     }
+
+    public synchronized void resetHeading(double start_time, Rotation2d currentHeading) {
+        reset(start_time, new Pose2d(mEstimatedPose.getTranslation(), currentHeading));
+        mPrevGyroHeading = mPrevGyroHeading.plus(currentHeading.minus(mEstimatedPose.getRotation()));
+    }
+
 
     public synchronized void resetKalmanFilters() {
         mKalmanFilter = new ExtendedKalmanFilter<N2, N2, N2>(

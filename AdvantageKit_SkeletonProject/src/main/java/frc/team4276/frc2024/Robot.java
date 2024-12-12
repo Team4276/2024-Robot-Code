@@ -13,16 +13,22 @@
 
 package frc.team4276.frc2024;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.team4276.lib.util.VirtualSubsystem;
 
 /**
@@ -35,10 +41,8 @@ import frc.team4276.lib.util.VirtualSubsystem;
  * project.
  */
 public class Robot extends LoggedRobot {
-    private static final String defaultAuto = "Default";
-    private static final String customAuto = "My Auto";
-    private String autoSelected;
-    private final LoggedDashboardChooser<String> chooser = new LoggedDashboardChooser<>("Auto Choices");
+    private Command autoCommand;
+    private RobotContainer robotContainer;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -47,6 +51,26 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void robotInit() {
+        Logger.recordMetadata("Robot", Constants.getType().toString());
+        Logger.recordMetadata("IsTuning", Boolean.toString(Constants.isTuning));
+        Logger.recordMetadata("RuntimeType", getRuntimeType().toString());
+        Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+        Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+        Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+        Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+        Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+        switch (BuildConstants.DIRTY) {
+            case 0:
+                Logger.recordMetadata("GitDirty", "All changes committed");
+                break;
+            case 1:
+                Logger.recordMetadata("GitDirty", "Uncomitted changes");
+                break;
+            default:
+                Logger.recordMetadata("GitDirty", "Unknown");
+                break;
+        }
+
         // Set up data receivers & replay source
         switch (Constants.getMode()) {
             case REAL:
@@ -79,38 +103,63 @@ public class Robot extends LoggedRobot {
 
         DriverStation.startDataLog(DataLogManager.getLog());
 
-        // Initialize auto chooser
-        chooser.addDefaultOption("Default Auto", defaultAuto);
-        chooser.addOption("My Auto", customAuto);
+        // Log active commands
+        Map<String, Integer> commandCounts = new HashMap<>();
+        BiConsumer<Command, Boolean> logCommandFunction = (Command command, Boolean active) -> {
+            String name = command.getName();
+            int count = commandCounts.getOrDefault(name, 0) + (active ? 1 : -1);
+            commandCounts.put(name, count);
+            Logger.recordOutput(
+                    "CommandsUnique/" + name + "_" + Integer.toHexString(command.hashCode()), active);
+            Logger.recordOutput("CommandsAll/" + name, count > 0);
+        };
+        CommandScheduler.getInstance()
+                .onCommandInitialize(
+                        (Command command) -> {
+                            logCommandFunction.accept(command, true);
+                        });
+        CommandScheduler.getInstance()
+                .onCommandFinish(
+                        (Command command) -> {
+                            logCommandFunction.accept(command, false);
+                        });
+        CommandScheduler.getInstance()
+                .onCommandInterrupt(
+                        (Command command) -> {
+                            logCommandFunction.accept(command, false);
+                        });
+        
+        robotContainer = new RobotContainer();
     }
 
     /** This function is called periodically during all modes. */
     @Override
     public void robotPeriodic() {
+        Threads.setCurrentThreadPriority(true, 99); // Set high thread prio
         VirtualSubsystem.periodicAll();
-        // idk if we need this will set this to take up all cpu time on the roborio saw
-        // 6328 use it
-        // Threads.setCurrentThreadPriority(true, 10);
+        CommandScheduler.getInstance().run();
+
+        Threads.setCurrentThreadPriority(true, 10);
     }
 
     /** This function is called once when autonomous is enabled. */
     @Override
     public void autonomousInit() {
-        autoSelected = chooser.get();
-        System.out.println("Auto selected: " + autoSelected);
+        autoCommand = robotContainer.getAutoCommand();
+        if(autoCommand != null){
+            autoCommand.schedule();
+        }
     }
 
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-        switch (autoSelected) {
-            case customAuto:
-                // Put custom auto code here
-                break;
-            case defaultAuto:
-            default:
-                // Put default auto code here
-                break;
+    }
+
+    @Override
+    public void autonomousExit() {
+        if(autoCommand != null) {
+            autoCommand.cancel();
         }
     }
 
