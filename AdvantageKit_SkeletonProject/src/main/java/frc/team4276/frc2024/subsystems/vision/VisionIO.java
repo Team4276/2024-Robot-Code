@@ -18,5 +18,5 @@ public interface VisionIO {
         public double[] targetAmbiguities;
     }
 
-    void updateInputs(VisionIOInputs inputs);
+    default void updateInputs(VisionIOInputs inputs){}
 }

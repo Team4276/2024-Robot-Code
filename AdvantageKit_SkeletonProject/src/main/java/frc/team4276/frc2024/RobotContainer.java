@@ -18,10 +18,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.team4276.frc2024.subsystems.arm.Arm;
 import frc.team4276.frc2024.subsystems.arm.ArmConstants;
+import frc.team4276.frc2024.subsystems.arm.ArmIOSim;
 import frc.team4276.frc2024.subsystems.arm.ArmIOSparkMax;
 import frc.team4276.frc2024.subsystems.drive.Drive;
 import frc.team4276.frc2024.subsystems.drive.DriveConstants;
+import frc.team4276.frc2024.subsystems.drive.GyroIO;
 import frc.team4276.frc2024.subsystems.drive.GyroIOADIS;
+import frc.team4276.frc2024.subsystems.drive.ModuleIOSim;
 import frc.team4276.frc2024.subsystems.drive.ModuleIOSparkMax;
 import frc.team4276.frc2024.subsystems.feedtake.Feedtake;
 import frc.team4276.frc2024.subsystems.feedtake.Roller;
@@ -32,6 +35,7 @@ import frc.team4276.frc2024.subsystems.flywheels.FlywheelIOSpark;
 import frc.team4276.frc2024.subsystems.flywheels.Flywheels;
 import frc.team4276.frc2024.subsystems.vision.Vision;
 import frc.team4276.frc2024.subsystems.vision.VisionConstants;
+import frc.team4276.frc2024.subsystems.vision.VisionIO;
 import frc.team4276.frc2024.subsystems.vision.VisionIOPhoton;
 import frc.team4276.lib.feedforwards.FourbarFeedForward;
 
@@ -72,6 +76,16 @@ public class RobotContainer {
 
                 }
                 case SIMBOT -> {
+                    drive = new Drive(
+                            new GyroIO() {},
+                            new ModuleIOSim(DriveConstants.kModuleConfigs[0]),
+                            new ModuleIOSim(DriveConstants.kModuleConfigs[1]),
+                            new ModuleIOSim(DriveConstants.kModuleConfigs[2]),
+                            new ModuleIOSim(DriveConstants.kModuleConfigs[3]));
+                    vision = new Vision(new VisionIO() {});
+                    flywheels = new Flywheels(new FlywheelIOSpark());
+                    feedtake = new Feedtake(new Roller(new RollerIOSparkMax()), new RollerSensorsIOHardware());
+                    arm = new Arm(new ArmIOSim(), new FourbarFeedForward(ArmConstants.kFeedForwardConstants));
 
                 }
 
